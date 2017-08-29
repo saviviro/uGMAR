@@ -5,7 +5,7 @@
 \title{Calculate standard errors for estimates of GMAR or StMAR model}
 \usage{
 standardErrors(data, p, M, params, StMAR = FALSE, restricted = FALSE,
-  constraints = FALSE, R, conditional = TRUE, epsilon)
+  constraints = FALSE, R, conditional = TRUE, epsilon, minval)
 }
 \arguments{
 \item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
@@ -69,6 +69,12 @@ This argument is ignored if \code{constraints==FALSE}.}
 \item{epsilon}{an (optional) negative real number specifying the logarithm of the smallest positive non-zero number that will be
 handled without external packages. Too small value may lead to a failure or biased results and too large value will make the code
 run significantly slower. Default is \code{round(log(.Machine$double.xmin)+10)} and should not be adjusted too much.}
+
+\item{minval}{a negative real number defining the log-likelihood value that will be returned with \code{boundaries==TRUE}
+when the parameter is out of the boundaries. Ignored if \code{boundaries==FALSE}.}
+}
+\value{
+Approximate standard errors of the parameter values
 }
 \description{
 \code{standardErrors} numerically approximates standard errors for the given estimates of GMAR or StMAR model

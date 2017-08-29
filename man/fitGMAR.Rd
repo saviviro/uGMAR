@@ -80,7 +80,7 @@ Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
 If not specified (or \code{FALSE} as is default), the initial population will be drawn randomly.}
 
-\item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{max(round(0.1*length(data)), 200)}.}
+\item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
 
 \item{popsize}{an (optional) positive even integer specifying the population in size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
 
@@ -196,8 +196,8 @@ fit12r <- fitGMAR(VIX, 1, 2, restricted=TRUE, nCalls=10,
 # StMAR model
 fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
 
-# Non-mixture version of StMAR model
-fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE)
+# Non-mixture version of StMAR model: without multicore
+fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4)
 
 # Fit GMAR model that is a mixture of AR(1) and such AR(3) model that the
 # second AR coeffiecient is constrained to zero.

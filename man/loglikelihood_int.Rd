@@ -6,7 +6,7 @@
 \usage{
 loglikelihood_int(data, p, M, params, StMAR = FALSE, restricted = FALSE,
   constraints = FALSE, R, conditional = TRUE, boundaries = FALSE,
-  checks = TRUE, returnTerms = FALSE, epsilon)
+  checks = TRUE, returnTerms = FALSE, epsilon, minval)
 }
 \arguments{
 \item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
@@ -67,7 +67,7 @@ This argument is ignored if \code{constraints==FALSE}.}
 
 \item{conditional}{an (optional) logical argument specifying wether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
 
-\item{boundaries}{an (optional) logical argument. If \code{TRUE} then \code{loglikelihood} returns -99999 if...
+\item{boundaries}{an (optional) logical argument. If \code{TRUE} then \code{loglikelihood} returns \code{minval} if...
 \itemize{
   \item any component variance is not larger than zero,
   \item any parametrized mixing weight \eqn{\alpha_{1},...,\alpha_{M-1}} is not larger than zero,
@@ -86,6 +86,9 @@ should not be summed to calculate the log-likelihood value, but to be returned a
 \item{epsilon}{an (optional) negative real number specifying the logarithm of the smallest positive non-zero number that will be
 handled without external packages. Too small value may lead to a failure or biased results and too large value will make the code
 run significantly slower. Default is \code{round(log(.Machine$double.xmin)+10)} and should not be adjusted too much.}
+
+\item{minval}{a negative real number defining the log-likelihood value that will be returned with \code{boundaries==TRUE}
+when the parameter is out of the boundaries. Ignored if \code{boundaries==FALSE}.}
 }
 \value{
 \describe{

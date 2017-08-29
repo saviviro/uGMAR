@@ -6,7 +6,7 @@
 \usage{
 GAfit(data, p, M, StMAR = FALSE, restricted = FALSE, constraints = FALSE,
   R, conditional = TRUE, ngen, popsize, smartMu, ar0scale, sigmascale,
-  initpop = FALSE, epsilon)
+  initpop = FALSE, epsilon, minval)
 }
 \arguments{
 \item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
@@ -36,7 +36,7 @@ This argument is ignored if \code{constraints==FALSE}.}
 
 \item{conditional}{an (optional) logical argument specifying wether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
 
-\item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{max(round(0.1*length(data)), 200)}.}
+\item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
 
 \item{popsize}{an (optional) positive even integer specifying the population in size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
 
@@ -86,6 +86,9 @@ If not specified (or \code{FALSE} as is default), the initial population will be
 \item{epsilon}{an (optional) negative real number specifying the logarithm of the smallest positive non-zero number that will be
 handled without external packages. Too small value may lead to a failure or biased results and too large value will make the code
 run significantly slower. Default is \code{round(log(.Machine$double.xmin)+10)} and should not be adjusted too much.}
+
+\item{minval}{a real number defining the minimum value of the log-likelihood function that will be considered.
+Values smaller than this will be treated as they were \code{minval} and the corresponding inidividuals will never survive.}
 }
 \value{
 Returns estimated parameter vector...

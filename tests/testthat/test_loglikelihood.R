@@ -47,8 +47,8 @@ test_that("Loglikelihood gives correct value for non-restricted models", {
   expect_equal(loglikelihood_int(VIX, 2, 3, params23, StMAR=FALSE), -329.4227, tolerance=1e-3)
   expect_equal(loglikelihood_int(5*VIX, 2, 3, params23, StMAR=FALSE), -10192.5, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX[1:4], 2, 3, params23, conditional=FALSE, StMAR=FALSE), -8.210192, tolerance=1e-3)
-  expect_equal(loglikelihood_int(VIX, 1, 2, params12bound, boundaries=TRUE, StMAR=FALSE), -99999)
-  expect_equal(loglikelihood_int(VIX, 2, 2, params22bound, boundaries=TRUE, StMAR=FALSE), -99999)
+  expect_equal(loglikelihood_int(VIX, 1, 2, params12bound, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
+  expect_equal(loglikelihood_int(VIX, 2, 2, params22bound, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
 })
 
 test_that("Loglikelihood gives correct value for resticted models", {
@@ -64,8 +64,8 @@ test_that("Loglikelihood gives correct value for resticted models", {
   expect_equal(loglikelihood_int(10*VIX[100:150], 2, 3, params23r, restricted=TRUE, conditional=FALSE, StMAR=FALSE), -5231.426, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 2, 3, params23tr, StMAR=TRUE, restricted=TRUE, conditional=FALSE), -412.6474, tolerance=1e-3)
   expect_equal(loglikelihood_int(3*VIX, 2, 3, params23tr, StMAR=TRUE, restricted=TRUE, epsilon=-2), -955.0699, tolerance=1e-3)
-  expect_equal(loglikelihood_int(VIX, 1, 2, params12rbound, restricted=TRUE, boundaries=TRUE, StMAR=FALSE), -99999)
-  expect_equal(loglikelihood_int(VIX, 1, 3, params13rbound, restricted=TRUE, boundaries=TRUE, StMAR=FALSE), -99999)
+  expect_equal(loglikelihood_int(VIX, 1, 2, params12rbound, restricted=TRUE, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
+  expect_equal(loglikelihood_int(VIX, 1, 3, params13rbound, restricted=TRUE, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
 })
 
 test_that("Loglikelihood gives correct value for constrained models", {
@@ -74,7 +74,7 @@ test_that("Loglikelihood gives correct value for constrained models", {
   expect_equal(loglikelihood_int(VIX, 2, 1, params21c, StMAR=TRUE, constraints=TRUE, R=list(R3), epsilon=-1), -315.6233, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 2, 2, params22c, StMAR=TRUE, constraints=TRUE, R=list(R4, R3)), -1098.969, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 2, 2, params22c_2, constraints=TRUE, R=list(R4, R4)), -389.3221, tolerance=1e-3)
-  expect_equal(loglikelihood_int(VIX, 2, 1, params21cr, restricted=TRUE, constraints=TRUE, R=R3, boundaries=TRUE), -99999)
+  expect_equal(loglikelihood_int(VIX, 2, 1, params21cr, restricted=TRUE, constraints=TRUE, R=R3, boundaries=TRUE, minval=-9999), -9999)
   expect_equal(loglikelihood_int(VIX, 2, 2, params22cr, StMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3), -381.8174, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 3, 2, params32cr, restricted=TRUE, constraints=TRUE, R=R1, conditional=FALSE, epsilon=-1), -7602.361, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 2, 3, params23cr, restricted=TRUE, constraints=TRUE, R=R4), -462.2798, tolerance=1e-3)

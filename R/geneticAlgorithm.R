@@ -5,7 +5,7 @@
 #' @description \code{GAfit} estimates specified GMAR or StMAR model using genetic algorithm. It's designed to find starting values for gradient based methods.
 #'
 #' @inheritParams loglikelihood_int
-#' @param ngen an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{max(round(0.1*length(data)), 200)}.
+#' @param ngen an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.
 #' @param popsize an (optional) positive even integer specifying the population in size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.
 #' @param smartMu an (optional) positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
 #'  This means that mutating individuals will mostly mutate fairly close to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.
@@ -46,6 +46,8 @@
 #'  Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} model
 #'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
 #'  If not specified (or \code{FALSE} as is default), the initial population will be drawn randomly.
+#' @param minval a real number defining the minimum value of the log-likelihood function that will be considered.
+#'   Values smaller than this will be treated as they were \code{minval} and the corresponding inidividuals will never survive.
 #' @details The user should consider adjusting \code{ar0scale} and/or \code{sigmascale} accordingly to the best knowledge about the process.
 #'
 #'    The genetic algorithm is mostly based on the description by \emph{Dorsey R. E. ja Mayer W. J. (1995)}.
@@ -90,7 +92,7 @@
 #'    \item References regarding the StMAR model and general linear constraints will be updated after they are published.
 #'  }
 
-GAfit <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, ngen, popsize, smartMu, ar0scale, sigmascale, initpop=FALSE, epsilon) {
+GAfit <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, ngen, popsize, smartMu, ar0scale, sigmascale, initpop=FALSE, epsilon, minval) {
 
   data = checkAndCorrectData(data, p)
 
@@ -117,7 +119,7 @@ GAfit <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE, 
     popsize = 10*d
   }
   if(missing(ngen)) {
-    ngen = max(round(0.1*length(data)), 200)
+    ngen = min(400, max(round(0.1*length(data)), 200))
   }
   if(missing(smartMu)) {
     smartMu =  min(100, round(0.5*ngen))
@@ -203,7 +205,7 @@ GAfit <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE, 
 
   # Initial setup
   generations = array(dim=c(d, popsize, ngen))
-  logliks = matrix(-99999, nrow=ngen, ncol=popsize)
+  logliks = matrix(minval, nrow=ngen, ncol=popsize)
   whichRedundant_alt = numeric(M)
   wrMeasure_alt = 0
 
@@ -240,15 +242,16 @@ GAfit <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE, 
           logliks[i1, i2] = survivorLiks[i2] # Individual is unchanged
         } else {
           logliks[i1, i2] = loglikelihood_int(data=data, p=p, M=M, params=G[,i2], StMAR=StMAR, restricted=restricted, constraints=constraints, R=R,
-                                          conditional=conditional, boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon)
+                                          conditional=conditional, boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
         }
       }
     } else { # The first round
       logliks[i1,] = vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M, params=G[,i2], StMAR=StMAR, restricted=restricted, constraints=constraints,
-                                                                  R=R, conditional=conditional, boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon), numeric(1))
+                                                                      R=R, conditional=conditional, boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon,
+                                                                      minval=minval), numeric(1))
     }
-    # If loglik is so bad it is less than -99999: setting -99999 will make the surviving probability zero in the next phase
-    logliks[i1, which(logliks[i1,] < -99999)] = -99999
+    # If loglik is so bad it is less than "minval": setting "minval" will make the surviving probability zero in the next phase
+    logliks[i1, which(logliks[i1,] < minval)] = minval
 
     ### Creating new generation start here ###
 

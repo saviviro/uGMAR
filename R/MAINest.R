@@ -111,8 +111,8 @@
 #' # StMAR model
 #' fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
 #'
-#' # Non-mixture version of StMAR model
-#' fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE)
+#' # Non-mixture version of StMAR model: without multicore
+#' fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4)
 #'
 #' # Fit GMAR model that is a mixture of AR(1) and such AR(3) model that the
 #' # second AR coeffiecient is constrained to zero.
@@ -137,6 +137,14 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
   checkPM(p, M)
   data = checkAndCorrectData(data, p)
   epsilon = round(log(.Machine$double.xmin)+10)
+  minval = -9999
+  while(TRUE) {
+    if(minval<(-10*length(data))) {
+      break;
+    } else {
+      minval = 10*minval-9
+    }
+  }
   if(constraints==TRUE) {
     checkConstraintMat(p, M, R, restricted=restricted)
   }
@@ -148,7 +156,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
     popsize = 10*d
   }
   if(missing(ngen)) {
-    ngen = max(round(0.1*length(data)), 200)
+    ngen = min(400, max(round(0.1*length(data)), 200))
   }
   if(missing(smartMu)) {
     smartMu = min(100, round(0.5*ngen))
@@ -201,7 +209,8 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
     print("Optimizing with genetic algorithm...")
     GAfit_tmp <- function(round) {
       ret = GAfit(data, p, M, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional,
-                  ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale, sigmascale=sigmascale, epsilon=epsilon)
+                  ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale, sigmascale=sigmascale, epsilon=epsilon,
+                  minval=minval)
       print(paste0(round, "/", nCalls))
       return(ret)
     }
@@ -213,7 +222,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
                                   "isIdentifiable", "StMAR", "sortComponents", "smartIndividual_int", "randomIndividual_int",
                                   "checkAndCorrectData", "reformParameters", "parameterChecks", "reformConstrainedPars",
                                   "checkConstraintMat", "mixingWeights_int", "extractRegime", "changeRegime", "epsilon",
-                                  "nParams"), envir = environment())
+                                  "nParams", "minval"), envir = environment())
     parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
 
     print("Optimizing with genetic algorithm...")
@@ -222,18 +231,20 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
       GAresults = pbapply::pblapply(1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, restricted=restricted,
                                                                 constraints=constraints, R=R, conditional=conditional,
                                                                 ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale,
-                                                                sigmascale=sigmascale, initpop=initpop, epsilon=epsilon), cl=cl)
+                                                                sigmascale=sigmascale, initpop=initpop, epsilon=epsilon,
+                                                                minval=minval), cl=cl)
     } else {
       GAresults = parallel::parLapply(cl, 1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, restricted=restricted,
                                                                       constraints=constraints, R=R, conditional=conditional,
                                                                       ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale,
-                                                                      sigmascale=sigmascale, initpop=initpop, epsilon=epsilon))
+                                                                      sigmascale=sigmascale, initpop=initpop, epsilon=epsilon,
+                                                                      minval=minval))
     }
     parallel::stopCluster(cl=cl)
   }
   loks = sapply(1:nCalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], StMAR=StMAR, restricted=restricted,
                                                         constraints=constraints, R=R, conditional=conditional, boundaries=TRUE,
-                                                        checks=FALSE, returnTerms=FALSE, epsilon=epsilon))
+                                                        checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval))
   if(printRes==TRUE) {
     print("Results from genetic algorithm:")
     print(paste("lowest value:", round(min(loks), 3)))
@@ -263,7 +274,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
       params = manipulateDFS(M=M, params=params, logDFS=FALSE) # Unlogarithmize dfs
     }
     loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R,
-                  boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon)
+                  boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
   }
 
   # Calculate gradient of the log-likelihood function using central finite difference
@@ -282,7 +293,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
     parallel::clusterExport(cl, c("GAresults", "f", "manipulateDFS", "data", "p", "M", "conditional", "restricted", "constraints",
                                   "R", "loglikelihood_int", "isStationary_int", "isIdentifiable", "sortComponents",
                                   "checkAndCorrectData", "StMAR", "parameterChecks", "reformParameters",
-                                  "reformConstrainedPars", "checkConstraintMat", "epsilon", "gr"), envir = environment())
+                                  "reformConstrainedPars", "checkConstraintMat", "epsilon", "gr", "minval", "d"), envir = environment())
     parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
 
     print("Optimizing with quasi-Newton method...")
@@ -331,7 +342,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
 
   # Warnings and notifications
   if(any(vapply(1:M, function(i1) sum(mw[,i1]>0.05)<0.01*length(data), logical(1)))) {
-    print("NOTE: At least one the regimes in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or re-specify the model.")
+    print("NOTE: At least one the regimes in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or respecify the model.")
   }
   if(bestfit$convergence==1) {
     print("NOTE: Iteration limit was reached when estimating the best fitting individual!")
@@ -361,11 +372,18 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
 
   # Standard errors of the estimates
   stdErrors = standardErrors(data=data, p=p, M=M, params=params, StMAR=StMAR, restricted=restricted,
-                             constraints=constraints, R=R, conditional=conditional, epsilon=epsilon)
+                             constraints=constraints, R=R, conditional=conditional, epsilon=epsilon,
+                             minval=minval)
   estimates = data.frame(params, stdErrors)
   colnames(estimates) = c("estimate", "stdError")
   if(printRes==TRUE) {
-    print(round(estimates, 3))
+    if(all(is.na(stdErrors))) {
+      print("Unable to calculate approximate standard errors!")
+      print("Estimates:")
+      print(round(estimates$estimate, 3))
+    } else {
+      print(round(estimates, 3))
+    }
   }
 
   # Collect the stuff to be returned
@@ -395,13 +413,14 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, restricted=FALSE, constraints=FALSE
 #' @description \code{standardErrors} numerically approximates standard errors for the given estimates of GMAR or StMAR model
 #'
 #' @inheritParams loglikelihood_int
+#' @return Approximate standard errors of the parameter values
 
-standardErrors <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, epsilon) {
+standardErrors <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, epsilon, minval) {
 
   # Function to derivate
   fn <- function(params) {
     loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R,
-                  boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon)
+                  boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
   }
   h0 = c(6e-06, 1e-06, 0.001) # Difference
   d = length(params)
