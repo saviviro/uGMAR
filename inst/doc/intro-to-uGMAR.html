@@ -12,7 +12,7 @@
 
 <meta name="author" content="Savi Virolainen" />
 
-<meta name="date" content="2017-08-29" />
+<meta name="date" content="2017-10-16" />
 
 <title>Introduction to uGMAR</title>
 
@@ -32,7 +32,7 @@
 
 <h1 class="title toc-ignore">Introduction to uGMAR</h1>
 <h4 class="author"><em>Savi Virolainen</em></h4>
-<h4 class="date"><em>2017-08-29</em></h4>
+<h4 class="date"><em>2017-10-16</em></h4>
 
 
 
@@ -70,15 +70,15 @@
 </div>
 <div id="applying-general-linear-constraints-and-how-it-affects-the-parameter-vector" class="section level3">
 <h3>Applying general linear constraints and how it affects the parameter vector</h3>
-<p>This packages makes it easy to apply linear constraints to the autoregressive parameters of GMAR and StMAR models. uGMAR considers constraints of form <span class="math display">\[\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}, \enspace m=1,...,M,\]</span> where <span class="math inline">\(\boldsymbol{R_{m}}\)</span> is known size <span class="math inline">\((pxq_{m})\)</span> constraint matrix of full column rank and <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span> is size <span class="math inline">\(q_{m}x1\)</span> parameter vector.</p>
+<p>This packages makes it easy to apply linear constraints to the autoregressive parameters of GMAR and StMAR models. uGMAR considers constraints of form <span class="math display">\[\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}, \enspace m=1,...,M,\]</span> where <span class="math inline">\(\boldsymbol{R_{m}}\)</span> is known size <span class="math inline">\((pxq_{m})\)</span> constraint matrix of full column rank and <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span> is size <span class="math inline">\((q_{m}x1)\)</span> parameter vector.</p>
 <p>A special case of this is to constrain some of the AR coefficients to be zero. Another special case is mixture version Heterogenious Autoregressive (HAR) model, which can be obtained by setting <span class="math display">\[\boldsymbol{R_{m}}=\left[{\begin{array}{ccc}
    \boldsymbol{\iota}_{5} &amp; \frac{1}{5}\boldsymbol{1}_{5} &amp; \frac{1}{22}\boldsymbol{1}_{5} \\
    0_{17} &amp; 0_{17} &amp; \frac{1}{22}\boldsymbol{1}_{17} \\
   \end{array}}\right],\]</span> where <span class="math inline">\(\boldsymbol{\iota}_{5}=[1,0,0,0,0]'\)</span> for all regimes <span class="math inline">\(m=1,...,M\)</span> and applying the constraints to GMAR(22,M) model.</p>
-<p>In order to apply linear constraints in uGMAR, you simply parametrize the model with vectors <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span> instead of <span class="math inline">\(\boldsymbol{\phi_{m}}\)</span> and provide the constrained matrices <span class="math inline">\(\boldsymbol{R_{m}}\)</span>. And remember to set <code>constraints=TRUE</code> in the function’s arguments. Note that despite the lengths of <span class="math inline">\(\psi_{m}\)</span> the nominal order of AR coefficients is always <span class="math inline">\(p\)</span> for all regimes.</p>
+<p>In order to apply linear constraints in uGMAR, you simply parametrize the model with vectors <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span> instead of <span class="math inline">\(\boldsymbol{\phi_{m}}\)</span> and provide the constraint matrices <span class="math inline">\(\boldsymbol{R_{m}}\)</span>. And remember to set <code>constraints=TRUE</code> in the function’s arguments. Note that despite the lengths of <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span> the nominal order of AR coefficients is always <span class="math inline">\(p\)</span> for all regimes.</p>
 <div id="non-restricted-gmar-and-stmar-models" class="section level4">
 <h4>Non-restricted GMAR and StMAR models</h4>
-<p>Similarly as in the case of regular GMAR model, the parameter vector for <strong>constrained GMAR</strong> model is of form <span class="math display">\[\boldsymbol{\theta}=(\boldsymbol{\upsilon_{1}},...,\boldsymbol{\upsilon_{M}}, \alpha_{1},...,\alpha_{M-1}),\]</span> but now the vectors <span class="math inline">\(\boldsymbol{\upsilon_{m}}\)</span> are defined using vectors <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span>, that is <span class="math display">\[\boldsymbol{\upsilon_{m}}=(\phi_{m,0},\boldsymbol{\psi_{m}}, \sigma_{m}^2) \enspace and \enspace \boldsymbol{\psi_{m}}=(\psi_{m,1},...,\psi_{m,q_{m}}), \enspace m=1,...,M.\]</span> The user has to also provide a list of constraint matrices <span class="math inline">\(\boldsymbol{R_{m}}\)</span> that satisfy <span class="math inline">\(\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}\)</span> for all <span class="math inline">\(m=1,...,M.\)</span></p>
+<p>Similarly as in the case of regular GMAR model, the parameter vector for <strong>constrained GMAR</strong> model is of form <span class="math display">\[\boldsymbol{\theta}=(\boldsymbol{\upsilon_{1}},...,\boldsymbol{\upsilon_{M}}, \alpha_{1},...,\alpha_{M-1}),\]</span> but now the vectors <span class="math inline">\(\boldsymbol{\upsilon_{m}}\)</span> are defined by using vectors <span class="math inline">\(\boldsymbol{\psi_{m}}\)</span>, that is <span class="math display">\[\boldsymbol{\upsilon_{m}}=(\phi_{m,0},\boldsymbol{\psi_{m}}, \sigma_{m}^2) \enspace and \enspace \boldsymbol{\psi_{m}}=(\psi_{m,1},...,\psi_{m,q_{m}}), \enspace m=1,...,M.\]</span> The user has to also provide a list of constraint matrices <span class="math inline">\(\boldsymbol{R_{m}}\)</span> that satisfy <span class="math inline">\(\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}\)</span> for all <span class="math inline">\(m=1,...,M.\)</span></p>
 <p>The parameter vector for <strong>constrained StMAR</strong> model is again defined by simply adding the degrees of freedom parameters, that is <span class="math display">\[(\boldsymbol{\theta}, \boldsymbol{\nu}),\quad where \quad \boldsymbol{\nu}=(\nu_{1},...,\nu_{M}),\]</span> and <span class="math inline">\(\boldsymbol{\theta}\)</span> is as in the case of constrained GMAR model.</p>
 </div>
 <div id="restricted-gmar-and-stmar-models-1" class="section level4">
@@ -105,8 +105,8 @@
 </div>
 <div id="plotgmar" class="section level3">
 <h3>plotGMAR</h3>
-<p>The function <code>plotGMAR</code> is designed to give an easy access to quantile residual based model diagnostics.</p>
-<p>It plots quantile residual time series, QQ-plot, autocorrelation function and squared quantile residual autocorrelation function. It also plots the individual statistics associated with the quantile residual tests with their approximate 95% critical bounds. Calculating the critical bounds will take a while, so you might want to set <code>approxBounds=FALSE</code> in the function´s arguments in order to take a look at the quantile residuals faster.</p>
+<p>The function <code>plotGMAR</code> is designed to give an easy access to graphical quantile residual based model diagnostics.</p>
+<p>It plots quantile residual time series, QQ-plot, autocorrelation function and squared quantile residual autocorrelation function. There is also an option to plot the individual statistics associated with the quantile residual tests with their approximate 95% critical bounds. Be warned that calculating the critical bounds will take a while. However if it takes too long for StMAR models, make sure that you have succesfully installed the suggested package “gsl” (it’s not imported because in my experience it might be tricky to install it on some machines).</p>
 </div>
 <div id="simulategmar" class="section level3">
 <h3>simulateGMAR</h3>

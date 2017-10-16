@@ -38,13 +38,13 @@ This argument is ignored if \code{constraints==FALSE}.}
 
 \item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
 
-\item{popsize}{an (optional) positive even integer specifying the population in size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
+\item{popsize}{an (optional) positive even integer specifying the population size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
 
 \item{smartMu}{an (optional) positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
-This means that mutating individuals will mostly mutate fairly close to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.}
+This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.}
 
 \item{ar0scale}{an (optional) real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
-from which the \eqn{\phi_{m,0}} parameters are generated in the random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
+from which the \eqn{\phi_{m,0}} parameters are generated in random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
 avg is sample mean, \code{c1} is the first sample autocovariance and \code{c0} is sample variance.}
 
 \item{sigmascale}{an (optional) positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution

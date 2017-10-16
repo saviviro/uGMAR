@@ -125,3 +125,14 @@ pred32trc <- forecastGMAR(VIX, 3, 2, params32trc, StMAR=TRUE, restricted=TRUE, c
                           R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2), nsteps=5)
 }
 }
+\references{
+\itemize{
+   \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
+           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
+   \item Lutkepohl H. New Introduction to Multiple Time Series Analysis,
+           \emph{Springer}, 2005.
+   \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
+           in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
+   \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+ }
+}

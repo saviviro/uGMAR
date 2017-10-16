@@ -278,7 +278,7 @@ loglikelihood_int <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE,
 #' @description \code{loglikelihood} computes the log-likelihood value of the specified GMAR or StMAR model for the given data.
 #'
 #' @inheritParams loglikelihood_int
-#' @inherit loglikelihood return references
+#' @inherit loglikelihood_int return references
 #' @examples
 #' # GMAR model
 #' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)

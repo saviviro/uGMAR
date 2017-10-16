@@ -88,5 +88,5 @@ Returns modified parameter vector of the form descripted in \code{params}.
 }
 \description{
 \code{changeRegime} changes the specified regime of the parameter vector to correspond the given
- regime-parameter vector and returns the modified parameter vector. Does not affect mixing weights parameters.
+ regime-parameter vector and returns the modified parameter vector. Does not affect mixing weight parameters.
 }

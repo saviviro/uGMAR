@@ -48,7 +48,7 @@ So you will have to work with different kind of parameter vectors depending on w
 ### Applying general linear constraints and how it affects the parameter vector
 This packages makes it easy to apply linear constraints to the autoregressive parameters of GMAR and StMAR models. uGMAR considers constraints of form 
 $$\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}, \enspace m=1,...,M,$$
-where $\boldsymbol{R_{m}}$ is known size $(pxq_{m})$ constraint matrix of full column rank and $\boldsymbol{\psi_{m}}$ is size $q_{m}x1$ parameter vector.
+where $\boldsymbol{R_{m}}$ is known size $(pxq_{m})$ constraint matrix of full column rank and $\boldsymbol{\psi_{m}}$ is size $(q_{m}x1)$ parameter vector.
 
 A special case of this is to constrain some of the AR coefficients to be zero. Another special case is mixture version Heterogenious Autoregressive (HAR) model, which can be obtained by setting 
 $$\boldsymbol{R_{m}}=\left[{\begin{array}{ccc}
@@ -57,12 +57,12 @@ $$\boldsymbol{R_{m}}=\left[{\begin{array}{ccc}
   \end{array}}\right],$$
 where $\boldsymbol{\iota}_{5}=[1,0,0,0,0]'$ for all regimes $m=1,...,M$ and applying the constraints to GMAR(22,M) model.
 
-In order to apply linear constraints in uGMAR, you simply parametrize the model with vectors $\boldsymbol{\psi_{m}}$ instead of $\boldsymbol{\phi_{m}}$ and provide the constrained matrices $\boldsymbol{R_{m}}$. And remember to set `constraints=TRUE` in the function's arguments. Note that despite the lengths of $\psi_{m}$ the nominal order of AR coefficients is always $p$ for all regimes. 
+In order to apply linear constraints in uGMAR, you simply parametrize the model with vectors $\boldsymbol{\psi_{m}}$ instead of $\boldsymbol{\phi_{m}}$ and provide the constraint matrices $\boldsymbol{R_{m}}$. And remember to set `constraints=TRUE` in the function's arguments. Note that despite the lengths of $\boldsymbol{\psi_{m}}$ the nominal order of AR coefficients is always $p$ for all regimes. 
 
 #### Non-restricted GMAR and StMAR models
 Similarly as in the case of regular GMAR model, the parameter vector for __constrained GMAR__ model is of form 
 $$\boldsymbol{\theta}=(\boldsymbol{\upsilon_{1}},...,\boldsymbol{\upsilon_{M}}, \alpha_{1},...,\alpha_{M-1}),$$
-but now the vectors $\boldsymbol{\upsilon_{m}}$ are defined using vectors $\boldsymbol{\psi_{m}}$, that is
+but now the vectors $\boldsymbol{\upsilon_{m}}$ are defined by using vectors $\boldsymbol{\psi_{m}}$, that is
 $$\boldsymbol{\upsilon_{m}}=(\phi_{m,0},\boldsymbol{\psi_{m}}, \sigma_{m}^2) \enspace and \enspace \boldsymbol{\psi_{m}}=(\psi_{m,1},...,\psi_{m,q_{m}}), \enspace m=1,...,M.$$
 The user has to also provide a list of constraint matrices $\boldsymbol{R_{m}}$ that satisfy $\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}$ for all $m=1,...,M.$
 
@@ -97,9 +97,9 @@ The function `quantileResidualTests` performs quantile residual tests for the sp
 `quantileResidualTests` returns a list of data frames containing the test results for `$normality`, `$autocorrelation` and `$cond.heteroscedasticity` of the quantile residuals. Consider installing the suggested package "gsl" for faster evaluations of quantile residuals in the cases of StMAR models.
 
 ### plotGMAR 
-The function `plotGMAR` is designed to give an easy access to quantile residual based model diagnostics.
+The function `plotGMAR` is designed to give an easy access to graphical quantile residual based model diagnostics.
 
-It plots quantile residual time series, QQ-plot, autocorrelation function and squared quantile residual autocorrelation function. It also plots the individual statistics associated with the quantile residual tests with their approximate 95% critical bounds. Calculating the critical bounds will take a while, so you might want to set `approxBounds=FALSE` in the function´s arguments in order to take a look at the quantile residuals faster. 
+It plots quantile residual time series, QQ-plot, autocorrelation function and squared quantile residual autocorrelation function. There is also an option to plot the individual statistics associated with the quantile residual tests with their approximate 95% critical bounds. Be warned that calculating the critical bounds will take a while. However if it takes too long for StMAR models, make sure that you have succesfully installed the suggested package "gsl" (it's not imported because in my experience it might be tricky to install it on some machines). 
 
 ### simulateGMAR
 The function `simulateGMAR` can be used to simulate values from a specified GMAR or StMAR process. 

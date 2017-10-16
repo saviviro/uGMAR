@@ -46,6 +46,6 @@ test_that("quantileResiduals gives correct residuals for constrained models", {
   expect_equal(quantileResiduals_int(VIX, 2, 2, params22c, StMAR=TRUE, constraints=TRUE, R=list(R4, R3))[1], 1.913685, tolerance=1e-3)
   expect_equal(quantileResiduals_int(3*VIX, 2, 2, params22c_2, constraints=TRUE, R=list(R4, R4))[113], 5.578132, tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 2, 2, params22cr, StMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3)[24], 0.4021366, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 3, 2, params32cr, restricted=TRUE, constraints=TRUE, R=R1)[2], 8.209536, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 3, 2, params32cr, restricted=TRUE, constraints=TRUE, R=R1)[2], 8.125891, tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 2, 3, params23cr, restricted=TRUE, constraints=TRUE, R=R4)[130], 0.4080434, tolerance=1e-3)
 })

@@ -51,8 +51,8 @@
 #'   \item{\code{$stdErrors}}{Approximate standard errors of the estimates. \code{NA} values may sometimes occur because the observed information matrix is numerically estimated.}
 #'   \item{\code{$loglikelihood}}{Log-likelihood value of the estimated model.}
 #'   \item{\code{$IC}}{A data frame containing information criteria scores of the estimated model: \code{$AIC}, \code{$BIC}, \code{$HQIC}.}
-#'   \item{\code{$quantileResiduals}}{A numeric vector containing the quantile residuals of the estimated model.}
-#'   \item{\code{$mixingWeights}}{A numeric matrix containing the mixing weights of the estimated model (i:th column for i:th regime).}
+#'   \item{\code{$quantileResiduals}}{A numeric vector containing quantile residuals of the estimated model.}
+#'   \item{\code{$mixingWeights}}{A numeric matrix containing mixing weights of the estimated model (i:th column for i:th regime).}
 #'   \item{\code{$allEstimates}}{A list of estimated parameter vectors from all of the estimation rounds.}
 #'   \item{\code{$allLoglikelihoods}}{A numeric vector containing the log-likelihood values from all of the estimation rounds. Corresponds to \code{$allEstimates}.}
 #'   \item{\code{$converged}}{A logical vector containing information whether the quasi-Newton algorithm converged successfully or not. Corresponds to \code{$allEstimates}.}
@@ -124,7 +124,7 @@
 #' R0 <- matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
 #' fit31tc <- fitGMAR(VIX, 3, 1, StMAR=TRUE, constraints=TRUE, R=list(R0))
 #'
-#' # Fit such StMAR(3,2) that the AR coefficients are restricted to be
+#' # Fit such StMAR(3,2) model that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
 #' fit32trc <- fitGMAR(VIX, 3, 2, StMAR=TRUE, restricted=TRUE, constraints=TRUE,

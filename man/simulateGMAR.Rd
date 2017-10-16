@@ -107,3 +107,14 @@ r1 = c(1, rep(0, 21)); r2 = c(rep(0.2, 5), rep(0, 17)); r3 = rep(1/22, 22)
 R0 = cbind(r1, r2, r3)
 simuHAR2 <- simulateGMAR(22, 2, paramsHAR2, constraints=TRUE, R=list(R0, R0), nsimu=100)
 }
+\references{
+\itemize{
+   \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
+           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
+   \item Lutkepohl H. New Introduction to Multiple Time Series Analysis,
+           \emph{Springer}, 2005.
+   \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
+           in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
+   \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+ }
+}

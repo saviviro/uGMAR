@@ -82,13 +82,13 @@ If not specified (or \code{FALSE} as is default), the initial population will be
 
 \item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
 
-\item{popsize}{an (optional) positive even integer specifying the population in size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
+\item{popsize}{an (optional) positive even integer specifying the population size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
 
 \item{smartMu}{an (optional) positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
-This means that mutating individuals will mostly mutate fairly close to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.}
+This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.}
 
 \item{ar0scale}{an (optional) real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
-from which the \eqn{\phi_{m,0}} parameters are generated in the random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
+from which the \eqn{\phi_{m,0}} parameters are generated in random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
 avg is sample mean, \code{c1} is the first sample autocovariance and \code{c0} is sample variance.}
 
 \item{sigmascale}{an (optional) positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
@@ -132,8 +132,8 @@ Returns a list with...
   \item{\code{$stdErrors}}{Approximate standard errors of the estimates. \code{NA} values may sometimes occur because the observed information matrix is numerically estimated.}
   \item{\code{$loglikelihood}}{Log-likelihood value of the estimated model.}
   \item{\code{$IC}}{A data frame containing information criteria scores of the estimated model: \code{$AIC}, \code{$BIC}, \code{$HQIC}.}
-  \item{\code{$quantileResiduals}}{A numeric vector containing the quantile residuals of the estimated model.}
-  \item{\code{$mixingWeights}}{A numeric matrix containing the mixing weights of the estimated model (i:th column for i:th regime).}
+  \item{\code{$quantileResiduals}}{A numeric vector containing quantile residuals of the estimated model.}
+  \item{\code{$mixingWeights}}{A numeric matrix containing mixing weights of the estimated model (i:th column for i:th regime).}
   \item{\code{$allEstimates}}{A list of estimated parameter vectors from all of the estimation rounds.}
   \item{\code{$allLoglikelihoods}}{A numeric vector containing the log-likelihood values from all of the estimation rounds. Corresponds to \code{$allEstimates}.}
   \item{\code{$converged}}{A logical vector containing information whether the quasi-Newton algorithm converged successfully or not. Corresponds to \code{$allEstimates}.}
@@ -209,7 +209,7 @@ fit32c <- fitGMAR(VIX, 3, 2, constraints=TRUE, R=R, ar0scale=c(3, 2))
 R0 <- matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
 fit31tc <- fitGMAR(VIX, 3, 1, StMAR=TRUE, constraints=TRUE, R=list(R0))
 
-# Fit such StMAR(3,2) that the AR coefficients are restricted to be
+# Fit such StMAR(3,2) model that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
 fit32trc <- fitGMAR(VIX, 3, 2, StMAR=TRUE, restricted=TRUE, constraints=TRUE,

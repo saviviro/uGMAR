@@ -168,9 +168,10 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
     }
     res0 = rowSums(res0)
   }
-  res0[which(res0==1)] <- 1-1e-16 # To prevent numeric "Inf" in the return values
-  qresiduals = qnorm(res0)
-  return(qresiduals)
+  # To prevent problems with numerical approximations
+  res0[which(res0>=1)] <- 1-2e-16
+  res0[which(res0<=0)] <- 2e-16
+  return(qnorm(res0))
 }
 
 

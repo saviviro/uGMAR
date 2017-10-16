@@ -6,11 +6,11 @@
 #'
 #' @inheritParams loglikelihood_int
 #' @param ngen an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.
-#' @param popsize an (optional) positive even integer specifying the population in size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.
+#' @param popsize an (optional) positive even integer specifying the population size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.
 #' @param smartMu an (optional) positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
-#'  This means that mutating individuals will mostly mutate fairly close to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.
+#'  This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.
 #' @param ar0scale an (optional) real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
-#'  from which the \eqn{\phi_{m,0}} parameters are generated in the random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
+#'  from which the \eqn{\phi_{m,0}} parameters are generated in random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
 #'  avg is sample mean, \code{c1} is the first sample autocovariance and \code{c0} is sample variance.
 #' @param sigmascale an (optional) positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
 #'  from which the component variance parameters are generated in the random mutations in the genetic algorithm. Default is \code{1+sd(data)}.
@@ -1030,7 +1030,7 @@ extractRegime <- function(p, M, params, StMAR=FALSE, restricted=FALSE, constrain
 #' @title Change the specified regime of parameter vector to the given regime-parameter vector
 #'
 #' @description \code{changeRegime} changes the specified regime of the parameter vector to correspond the given
-#'  regime-parameter vector and returns the modified parameter vector. Does not affect mixing weights parameters.
+#'  regime-parameter vector and returns the modified parameter vector. Does not affect mixing weight parameters.
 #'
 #' @inheritParams loglikelihood
 #' @param regimeParams a numeric vector specifying the parameter values that should be inserted to the specified regime.

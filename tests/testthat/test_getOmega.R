@@ -9,7 +9,7 @@ test_that("quantileResiduals works", {
   expect_equal(quantileResiduals_int(VIX, 1, 1, c(-2, 0.8, 1, 12), StMAR=TRUE)[13], 0.9494652, tolerance=1e-3)
 })
 
-# getOmega calls other functions to deal with constraints, so they are not tested separately
+# # getOmega calls other functions to deal with constraints, so they are not tested separately
 # params11t <- c(-2, 0.8, 1, 12)
 # params12 <- c(1.1, 0.9, 0.29, 4.5, 0.7, 3.2, 0.8)
 # params23t <- c(1.8, 0.9, -0.06, 0.4, 7.2, 0.3, -0.009, 0.1, 3.1, 0.83, -0.05, 3.7, 0.7, 0.2, 11, 339, 198)
