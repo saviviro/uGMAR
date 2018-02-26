@@ -4,13 +4,14 @@
 \alias{parameterChecks}
 \title{Check the parameter vector is specified correctly}
 \usage{
-parameterChecks(p, M, params, pars, alphas, StMAR = FALSE,
+parameterChecks(p, M, params, pars, alphas, StMAR = FALSE, GStMAR = FALSE,
   constraints = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -19,6 +20,8 @@ parameterChecks(p, M, params, pars, alphas, StMAR = FALSE,
     \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
   \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
     \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+  \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+    \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
 }}
 
 \item{pars}{a parameter matrix containing parameters \eqn{(\phi_{i,0},...,\phi_{i,p}, \sigma_{i}^2)}
@@ -28,6 +31,9 @@ so that i:th column denotes i:th component.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
 
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
+
 \item{constraints}{an (optional) logical argument stating whether general linear constraints should be applied to the model. Default is \code{FALSE}.}
 }
 \value{
@@ -35,7 +41,7 @@ Throws an error if any check fails. Doesn't return anything.
 }
 \description{
 \code{parameterChecks} checks dimension, restrictions, stationarity and identifibility of the given parameters
-  of GMAR or StMAR model. Throws an error if any check fails.
+  of GMAR, StMAR or G-StMAR model. Throws an error if any check fails.
 }
 \details{
 Note that the "params" -parameter vector is assumed to be in the "standard" form for restricted models as well.

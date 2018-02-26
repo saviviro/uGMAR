@@ -2,7 +2,7 @@
 #' @import graphics
 #' @importFrom grDevices rgb
 #'
-#' @title Quantile residual based diagnostic plots for GMAR or StMAR model
+#' @title Quantile residual based diagnostic plots for GMAR, StMAR and G-StMAR models
 #'
 #' @description \code{plotGMAR} plots quantile residual time series, normal QQ-plot, autocorrelation function and squared
 #'   quantile residual autocorrelation function. There is an option to also plot the individual statistics associated with the quantile residual
@@ -13,14 +13,16 @@
 #' @param nlags an (optional) positive integer specifying how many lags should be calculated for the autocorrelation and conditional heteroscedasticity statistics. Default is 20.
 #' @param nsimu an (optional) positive integer specifying to how many process's simulated values the covariance matrix "Omega" should be based on.
 #'  If smaller than data size, then it will be based on the given data. Ignored if \code{approxBounds==FALSE}. Default is 2000.
-#' @param approxBounds set \code{TRUE} if the individual statistics and their approximate 95\% critical bounds should be plotted (this may take some time). Default is FALSE.
+#' @param approxBounds set \code{TRUE} if the Kalliovirta's (2012) individual statistics and their approximate 95\% critical bounds should be plotted (this may take some time). Default is FALSE.
 #' @details Sometimes the individual statistics are not plotted because it was not (numerically) possible for the code to
 #'   calculate all the necessary estimates required. This may suggest that the model is misspecified.
+#'
+#'   The dashed lines plotted with autocorrelation functions (for quantile residuals and their squares) are plus-minus \eqn{1.96*T^{-1/2}}.
 #' @return \code{plotGMAR} only plots to a graphical device and doesn't return anything. Use the function \code{quantileResidualTests} if you wish to obtain the statistics.
 #' @inherit quantileResidualTests references
 #' @section Suggested packages:
-#'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR models.
-#'   For large StMAR models with large data the evaluations for approximating the critical bounds may take
+#'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
+#'   For large StMAR and G-StMAR models with large data the evaluations for approximating the critical bounds may take
 #'   significantly long time without the package "gsl".
 #' @examples
 #' \donttest{
@@ -34,8 +36,16 @@
 #' plotGMAR(VIX, 1, 2, params12r, restricted=TRUE, nsimu=1, approxBounds=TRUE)
 #'
 #' # StMAR model
-#' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 120, 3.6)
-#' plotGMAR(VIX, 1, 2, params12t, StMAR=TRUE, nlags=15)
+#' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
+#' plotGMAR(VIX, 1, 2, params12t, StMAR=TRUE)
+#'
+#' # G-StMAR model (similar to the StMAR model above)
+#' params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
+#' plotGMAR(VIX, 1, c(1,1), params12gs, GStMAR=TRUE)
+#'
+#' # Restricted G-StMAR-model
+#' params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20)
+#' plotGMAR(VIX, 1, c(2, 1), params13gsr, GStMAR=TRUE, restricted=TRUE)
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
@@ -51,18 +61,25 @@
 #' }
 #' @export
 
-plotGMAR <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, nlags=20, nsimu=2000, approxBounds=FALSE) {
+plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, nlags=20, nsimu=2000, approxBounds=FALSE) {
 
-  checkPM(p, M)
-  if(length(params)!=nParams(p=p, M=M, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R)) {
-    stop("the parameter vector is wrong dimension")
+  checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
+  checkPM(p, M, GStMAR=GStMAR)
+  M_orig = M
+  if(GStMAR==TRUE) {
+    M1 = M[1]
+    M2 = M[2]
+    M = sum(M)
+  }
+  if(length(params)!=nParams(p=p, M=M_orig, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
+    stop("The parameter vector has wrong dimension")
   }
   if(nlags<1) {
-    stop("the number of lags has to be equal or greater than one")
+    stop("The number of lags has to be equal or greater than one")
   }
   data = checkAndCorrectData(data, p)
   nsimu = max(nsimu, length(data))
-  qresiduals = quantileResiduals_int(data, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R)
+  qresiduals = quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
   old_par = par(no.readonly=T) # Save old settings
   if(approxBounds==TRUE) {
     par(mfrow=c(3, 2), mar=c(2.1, 2.1, 2.1, 0.8)) # Set new temporary settings
@@ -89,6 +106,7 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constrai
   abline(h=ticks2, col=rgb(0.1, 0.1, 0.1, 0.2)); abline(h=0); abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
   segments(x0=1:nlags, y0=rep(0, nlags), x1=1:nlags, y1=qr_acf)
   points(1:nlags, qr_acf, pch=20, col="blue")
+  abline(h=c(-1.96*length(data)^{-1/2}, 1.96*length(data)^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
 
   # Plot autocorrelation function of squared quantile residuals
   plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags+1), ylim=c(-yaxt0, yaxt0), xlab="", ylab="", main="Squared quant. res. acf")
@@ -96,10 +114,11 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constrai
   abline(h=ticks2, col=rgb(0.1, 0.1, 0.1, 0.2)); abline(h=0); abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
   segments(x0=1:nlags, y0=rep(0, nlags), x1=1:nlags, y1=qrsquare_acf)
   points(1:nlags, qrsquare_acf, pch=20, col="blue")
+  abline(h=c(-1.96*length(data)^{-1/2}, 1.96*length(data)^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
 
   if(approxBounds==TRUE) {
     # Obtain tests statistics
-    testResults = quantileResidualTests(data, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints,
+    testResults = quantileResidualTests(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
                                         R=R, lagsAC=1:nlags, lagsCH=1:nlags, nsimu=nsimu, printRes=FALSE)
 
     # Plot autocorrelation statistics

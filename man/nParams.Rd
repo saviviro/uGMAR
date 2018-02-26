@@ -4,14 +4,19 @@
 \alias{nParams}
 \title{Calculate the number of parameters}
 \usage{
-nParams(p, M, StMAR = FALSE, restricted = FALSE, constraints = FALSE, R)
+nParams(p, M, StMAR = FALSE, GStMAR = FALSE, restricted = FALSE,
+  constraints = FALSE, R)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 
 \item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes. Default is \code{FALSE}.}
@@ -34,5 +39,5 @@ This argument is ignored if \code{constraints==FALSE}.}
 returns the number of parameters.
 }
 \description{
-\code{nParams} calculates the number of parameters
+\code{nParams} calculates the number of parameters that should be in the parameter vector.
 }

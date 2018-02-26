@@ -2,15 +2,17 @@
 % Please edit documentation in R/simulateGMAR.R
 \name{simulateGMAR}
 \alias{simulateGMAR}
-\title{Simulate GMAR or StMAR process}
+\title{Simulate values from GMAR, StMAR or G-StMAR process}
 \usage{
-simulateGMAR(p, M, params, StMAR = FALSE, restricted = FALSE,
-  constraints = FALSE, R, nsimu, initvalues)
+simulateGMAR(p, M, params, StMAR = FALSE, GStMAR = FALSE,
+  restricted = FALSE, constraints = FALSE, R, nsimu, initvalues,
+  ntimes = 1)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -21,6 +23,8 @@ simulateGMAR(p, M, params, StMAR = FALSE, restricted = FALSE,
         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
       \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
         matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
@@ -32,18 +36,23 @@ simulateGMAR(p, M, params, StMAR = FALSE, restricted = FALSE,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
       \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
         \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{v} a degrees of
-freedom parameter.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
+freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 
 \item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes. Default is \code{FALSE}.}
@@ -66,6 +75,9 @@ This argument is ignored if \code{constraints==FALSE}.}
 
 \item{initvalues}{an (optional) size \eqn{(px1)} vector (where \eqn{p} is the order of AR coefficients) specifying the initial
 values for the simulation. If not specified, initial values will be simulated from the process's stationary distribution.}
+
+\item{ntimes}{a positive integer specifying how many sets of simulations should be performed. If larger than one then
+only the samples are returned. Uses the same initial values for each set. Default is one.}
 }
 \value{
 Returns a list with...
@@ -75,18 +87,20 @@ Returns a list with...
     \item{\code{$mixingWeights}}{a size (\code{nsimu}\eqn{xM}) matrix containing the mixing weights corresponding to the
      sample so that \eqn{i}:th column is for \eqn{i}:th component.}
   }
+  Or if \strong{\code{ntimes>1}} returns a matrix containing the samples so that the \code{i}:th
+  sample can be obtained at \code{i}:th column.
 }
 \description{
-\code{simulateGMAR} simulates values from the specified GMAR or StMAR process.
+\code{simulateGMAR} simulates values from the specified GMAR, StMAR or G-StMAR process.
 }
 \examples{
 # GMAR process
 params12 <- c(-0.3, 0.9, 0.5, 0.1, -0.2, 0.1, 0.6)
 simu12 <- simulateGMAR(1, 2, params12, nsimu=100)
 
-# Restricted GMAR process
+# Restricted GMAR process: 10 realizations, samples only
 params12r <- c(1.4, 1.8, 0.9, 0.3, 3.2, 0.8)
-simu12r <- simulateGMAR(1, 2, params12r, restricted=TRUE, nsimu=100)
+simu12r <- simulateGMAR(1, 2, params12r, restricted=TRUE, nsimu=100, ntimes=10)
 
 # StMAR process with initial values
 params22t <- c(0.1, 0.7, 0.1, 0.5, -0.1, 0.5, -0.2, 0.3, 0.6, 3, 10)
@@ -95,6 +109,14 @@ simu22t <- simulateGMAR(2, 2, params22t, StMAR=TRUE, nsimu=100, initvalues=c(0.1
 # Restricted StMAR process
 params13tr <- c(0.1, 0.2, 0.3, -0.9, 0.1, 0.2, 0.3, 0.45, 0.35, 3, 9, 27)
 simu13tr <- simulateGMAR(1, 3, params13tr, StMAR=TRUE, restricted=TRUE, nsimu=100)
+
+# G-StMAR process
+params13gs <- c(0, 0.9, 1, -1, 0.5, 0.8, 1, -0.5, 0.5, 0.3, 0.4, 5, 7)
+simu13gs <- simulateGMAR(1, c(1, 2), params13gs, GStMAR=TRUE, nsimu=100)
+
+# Restricted G-StMAR process
+params22gsr <- c(-1, 1, -0.7, 0.2, 2, 1, 0.5, 7)
+simu22gsr <- simulateGMAR(2, c(1, 1), params22gsr, GStMAR=TRUE, restricted=TRUE, nsimu=100)
 
 # Restricted GMAR process with p=4, where the first three AR coefficients are restricted to be zero
 R <- as.matrix(c(0, 0, 0, 1))
@@ -115,6 +137,6 @@ simuHAR2 <- simulateGMAR(22, 2, paramsHAR2, constraints=TRUE, R=list(R0, R0), ns
            \emph{Springer}, 2005.
    \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-   \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+   \item References regarding StMAR and G-StMAR models will be updated after they are published.
  }
 }

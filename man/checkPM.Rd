@@ -4,12 +4,16 @@
 \alias{checkPM}
 \title{Check p and M are correctly set}
 \usage{
-checkPM(p, M)
+checkPM(p, M, GStMAR = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 }
 \value{
 Doesn't return anything, but throws and error if something is wrong.

@@ -4,7 +4,7 @@
 \alias{fitGMAR}
 \title{Estimate Gaussian or Student's t Mixture Autoregressive model}
 \usage{
-fitGMAR(data, p, M, StMAR = FALSE, restricted = FALSE,
+fitGMAR(data, p, M, StMAR = FALSE, GStMAR = FALSE, restricted = FALSE,
   constraints = FALSE, R, conditional = TRUE, nCalls, multicore = TRUE,
   ncores, initpop = FALSE, ngen, popsize, smartMu, ar0scale, sigmascale,
   printRes = TRUE, runTests = FALSE)
@@ -14,9 +14,13 @@ fitGMAR(data, p, M, StMAR = FALSE, restricted = FALSE,
 
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 
 \item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes. Default is \code{FALSE}.}
@@ -57,6 +61,8 @@ Default is that the number of available cores is detected with \code{parallel::d
         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
       \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
         matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
@@ -68,6 +74,8 @@ Default is that the number of available cores is detected with \code{parallel::d
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
       \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
         \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
@@ -76,7 +84,7 @@ Default is that the number of available cores is detected with \code{parallel::d
 }
 Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{v} a degrees of
 freedom parameter.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} model
+Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
 If not specified (or \code{FALSE} as is default), the initial population will be drawn randomly.}
 
@@ -110,6 +118,8 @@ Returns a list with...
          \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
        \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+       \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
        \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vectors \strong{\eqn{\phi_{m}}} replaced with vectors \strong{\eqn{\psi_{m}}}
          that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
          \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
@@ -121,6 +131,8 @@ Returns a list with...
          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
        \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
+       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
+         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
        \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vector \strong{\eqn{\phi}} replaced with vector \strong{\eqn{\psi}}
          that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
          \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
@@ -128,7 +140,7 @@ Returns a list with...
    }
  }
  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
- freedom parameter.}
+ freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.}
   \item{\code{$stdErrors}}{Approximate standard errors of the estimates. \code{NA} values may sometimes occur because the observed information matrix is numerically estimated.}
   \item{\code{$loglikelihood}}{Log-likelihood value of the estimated model.}
   \item{\code{$IC}}{A data frame containing information criteria scores of the estimated model: \code{$AIC}, \code{$BIC}, \code{$HQIC}.}
@@ -147,7 +159,7 @@ Returns a list with...
 }
 }
 \description{
-\code{fitGMAR} estimates GMAR or StMAR model in two phases. It uses genetic algorithm to find parameter values close to the maximum point
+\code{fitGMAR} estimates GMAR, StMAR or G-StMAR model in two phases. It uses genetic algorithm to find parameter values close to the maximum point
  of the log-likelihood function and then uses them as starting values for quasi-Newton method to find the maximum point.
 }
 \details{
@@ -161,7 +173,7 @@ The user should consider adjusting \code{ar0scale} and/or \code{sigmascale} acco
   The results printed out regarding the genetic algorithm and quasi-Newton estimations are the log-likelihood values
   the algorithms ended up with. The lowest value, mean value and largest value are printed to give perspective.
 
-  If quantile residual tests are run, the results from the tests are printed so that the letter "N" means normality test, "A" autocorrelation test
+  If quantile residual tests are ran, the results from the tests are printed so that the letter "N" means normality test, "A" autocorrelation test
   and "H" conditional heteroscedasticity test. The numbers right next to "A" and "H" indicate the number of lags used
   in each test. The statistics following them are the corresponding test statistics and p-values.
   \code{NA} values mean that it was not (numerically) possible for the code to calculate all the necessary estimates for the tests.
@@ -171,8 +183,8 @@ The user should consider adjusting \code{ar0scale} and/or \code{sigmascale} acco
 
   Install the suggested package "pbapply" if you wish to see a progress bar during parallel computing.
 
-  For faster evaluation of the quantile residuals of StMAR model install the suggested package "gsl".
-  Note that for large StMAR models with large data the evaluations for the quantile residual tests may take
+  For faster evaluation of the quantile residuals of StMAR and G-StMAR models install the suggested package "gsl".
+  Note that for large StMAR and G-StMAR models with large data the evaluations for the quantile residual tests may take
   significantly long time without the package "gsl".
 }
 
@@ -198,6 +210,12 @@ fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
 
 # Non-mixture version of StMAR model: without multicore
 fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4)
+
+# GStMAR model
+fit12gs <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, conditional=FALSE)
+
+# Restricted G-StMAR model
+fit12gsr <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, restricted=TRUE)
 
 # Fit GMAR model that is a mixture of AR(1) and such AR(3) model that the
 # second AR coeffiecient is constrained to zero.
@@ -230,6 +248,6 @@ fit32trc <- fitGMAR(VIX, 3, 2, StMAR=TRUE, restricted=TRUE, constraints=TRUE,
          \emph{Springer}, 2005.
    \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-   \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+   \item References regarding the StMAR and G-StMAR models will be updated after they are published.
  }
 }

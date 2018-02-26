@@ -15,6 +15,8 @@ params11 = c(1, 0.1, 1, 2)
 params12 = c(1, 0.5, 1, 2, -0.5, 2, 0.7)
 params22 = c(1, 0.99, -0.001, 1, 2, 0.8, 0.2, 0.4, 0.6, 3, 12)
 params12_2 = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.6)
+params22gs = c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 10) # M1=1, M2=1
+params13gs = c(1, 0.1, 1, 2, 0.2, 2, 3, 0.3, 3, 0.2, 0.5, 2, 3) # M1=1, M2=2
 
 test_that("parameterChecks throws errors correctly", {
   expect_error(parameterChecks(1, 1, params11, pars=as.matrix(params11[1:3]), alphas=1, StMAR=TRUE))
@@ -25,6 +27,8 @@ test_that("parameterChecks throws errors correctly", {
   expect_error(parameterChecks(2, 2, params22, pars=matrix(params22[1:8], ncol=2), alphas=c(0.6, 0.4)))
   expect_error(parameterChecks(2, 2, params22, pars=matrix(params22[1:8], ncol=2), alphas=c(0.6, 0.4), StMAR=TRUE))
   expect_error(parameterChecks(1, 2, params12_2, pars=matrix(params12_2[1:6], ncol=2), alphas=c(0.6, 0.4)))
+  expect_error(parameterChecks(2, c(1,1), params22gs, pars=matrix(params22gs, ncol=2), alphas=c(0.3, 0.7), GStMAR=TRUE))
+  expect_error(parameterChecks(1, c(1,2), params13gs, pars=matrix(params13gs[1:9], ncol=3), alphas=c(0.2, 0.5, 0.3), GStMAR=TRUE))
 })
 
 R1 = diag(1, ncol=3, nrow=3)
@@ -53,6 +57,10 @@ test_that("checkPM throws errors correctly", {
   expect_error(checkPM(10.2, 2))
   expect_error(checkPM(2, -2))
   expect_error(checkPM(1, 1.1))
+  expect_error(checkPM(1, 1, GStMAR=TRUE))
+  expect_error(checkPM(1, c(0, 2), GStMAR=TRUE))
+  expect_error(checkPM(1, c(2, 0), GStMAR=TRUE))
+  expect_error(checkPM(2, c(1.5, 2), GStMAR=TRUE))
 })
 
 
@@ -69,9 +77,14 @@ R4 <- diag(1, ncol=2, nrow=2)
 params32c <- c(1, 0.1, -0.1, 1, 2, 0.2, -0.2, 2, 0.6, 11, 12) # R1, R1, StMAR
 params33c <- c(1, 0.1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 3, 0.3, -0.3, 3, 0.5, 0.4) # R2, R2, R1
 params21c <- c(1, 0.9, 1, 3) # R3, StMAR
+params23gs <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 2, 3, 0.3, 0.3, 3, 0.4, 0.4, 3, 4) # M1=1, M2=2
+params32gsc <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10) # M1=1, M2=1, R1, R2
+params23gsc <- c(1, 0.1, 1, 2, 0.2, 2, 3, 0.3, 0.3, 3, 0.3, 0.4, 20, 30) # M1=1, M2=2, R3, R3, R4
 
 params21cr <- c(1, 1, 1) # R3 bound
 params22cr <- c(1, 2, 0.8, 1, 2, 0.7, 11, 12) # R3, StMAR
+params22gsr <- c(1, 2, 0.1, 0.1, 1, 2, 0.3, 3) # M1=1, M2=1
+params22gsrc <- c(1, 2, 0.5, 1, 2, 0.5, 10) # M1=1, M2=1, R3
 
 test_that("nParams works correctly", {
   expect_equal(nParams(1, 2, StMAR=TRUE), length(params12t))
@@ -83,4 +96,13 @@ test_that("nParams works correctly", {
   expect_equal(nParams(2, 1, StMAR=TRUE, constraints=TRUE, R=list(R3)), length(params21c))
   expect_equal(nParams(2, 1, restricted=TRUE, constraints=TRUE, R=R3), length(params21cr))
   expect_equal(nParams(2, 2, StMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3), length(params22cr))
+  expect_equal(nParams(2, c(1, 2), GStMAR=TRUE), length(params23gs))
+  expect_equal(nParams(2, c(1, 1), GStMAR=TRUE, restricted=TRUE), length(params22gsr))
+  expect_equal(nParams(3, c(1, 1), GStMAR=TRUE, constraints=TRUE, R=list(R1, R2)), length(params32gsc))
+  expect_equal(nParams(2, c(1, 2), GStMAR=TRUE, constraints=TRUE, R=list(R3, R3, R4)), length(params23gsc))
+  expect_equal(nParams(2, c(1, 1), GStMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3), length(params22gsrc))
+})
+
+test_that("checkLogicals works correctly", {
+  expect_error(checkLogicals(StMAR=TRUE, GStMAR=TRUE))
 })

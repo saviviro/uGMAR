@@ -1,14 +1,14 @@
 #' @import stats
 #'
-#' @title Compute quantile residuals of GMAR or StMAR model
+#' @title Compute quantile residuals of GMAR, StMAR or G-StMAR model
 #'
-#' @description FOR INTERNAL USE. \code{quantileResiduals_int} computes the quantile residuals of the specified GMAR or StMAR model.
+#' @description FOR INTERNAL USE. \code{quantileResiduals_int} computes the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns a length \eqn{(Tx1)} numeric vector containing the quantile residuals associated with
-#'  the specified GMAR or StMAR model.
+#'  the specified GMAR, StMAR or G-StMAR model.
 #' @section Suggested packages:
-#'   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR models.
+#'   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR and G-StMAR models.
 #' @references
 #'  \itemize{
 #'    \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
@@ -19,11 +19,16 @@
 #'          \emph{Springer}, 2005.
 #'    \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
 #'            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-#'    \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+#'    \item References regarding the StMAR and G-StMAR models will be updated when they are published.
 #'  }
 
-quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, epsilon) {
-
+quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, epsilon) {
+  M_orig = M
+  if(GStMAR==TRUE) {
+    M1 = M[1]
+    M2 = M[2]
+    M = sum(M)
+  }
   if(missing(epsilon)) {
     epsilon = round(log(.Machine$double.xmin)+10)
   }
@@ -31,18 +36,18 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
   # Reform and collect parameters
   if(constraints==TRUE) {
     checkConstraintMat(p, M, R, restricted=restricted)
-    params = reformConstrainedPars(p, M, params, R=R, StMAR=StMAR, restricted=restricted)
+    params = reformConstrainedPars(p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, R=R)
   }
-  pars_tmp = reformParameters(p, M, params, StMAR=StMAR, restricted=restricted)
+  pars_tmp = reformParameters(p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)
   params = pars_tmp$params
   pars = pars_tmp$pars
   alphas = pars_tmp$alphas
   sigmas = pars[p+2,]
-  if(StMAR==TRUE) {
+  if(StMAR==TRUE | GStMAR==TRUE) {
     dfs = pars_tmp$dfs
   }
   data = checkAndCorrectData(data, p)
-  parameterChecks(p, M, params, pars, alphas, StMAR=StMAR, constraints=constraints)
+  parameterChecks(p, M_orig, params=params, pars=pars, alphas=alphas, StMAR=StMAR, GStMAR=GStMAR, constraints=constraints)
   n_obs = nrow(data)
 
   #### Start calculating the quantile residuals ####
@@ -81,16 +86,26 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
   # Calculate the log multivariate normal or student's t values (Kalliovirta 2015, s250 eq.(7) or MPS 2007) for each vector y_t and for each m=1,..,M
   # First row for initial values y_0 (as denoted by Kalliovirta 2015) and i:th row for y_(i-1). First column for component m=1 and j:th column for m=j.
   logmv_values = matrix(nrow=(n_obs-p+1), ncol=M)
-  if(StMAR==FALSE) {
+  if(StMAR==FALSE & GStMAR==FALSE) { # GMAR
     for(i1 in 1:M) {
       detG = 1/det(as.matrix(invG[,,i1]))
       logmv_values[,i1] = -0.5*p*log(2*pi)-0.5*log(detG)-0.5*matProd[,i1]
     }
-  } else { # If StMAR==TRUE
+  } else if(StMAR==TRUE){ # StMAR
     for(i1 in 1:M) {
       detG = 1/det(as.matrix(invG[,,i1]))
       logC = lgamma(0.5*(p+dfs[i1]))-0.5*p*log(pi)-0.5*p*log(dfs[i1]-2)-lgamma(0.5*dfs[i1])
       logmv_values[,i1] = logC - 0.5*log(detG) - 0.5*(p+dfs[i1])*log(1 + matProd[,i1]/(dfs[i1]-2))
+    }
+  } else {  # If GStMAR==TRUE
+    for(i1 in 1:M) {
+      detG = 1/det(as.matrix(invG[,,i1]))
+      if(i1 <= M1) { # Multinormals
+        logmv_values[,i1] = -0.5*p*log(2*pi)-0.5*log(detG)-0.5*matProd[,i1]
+      } else { # Multistudents
+        logC = lgamma(0.5*(p+dfs[i1-M1]))-0.5*p*log(pi)-0.5*p*log(dfs[i1-M1]-2)-lgamma(0.5*dfs[i1-M1])
+        logmv_values[,i1] = logC - 0.5*log(detG) - 0.5*(p+dfs[i1-M1])*log(1 + matProd[,i1]/(dfs[i1-M1]-2))
+      }
     }
   }
 
@@ -118,10 +133,10 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
 
   # Calculate the quantile residuals
   Y2 = Y[2:nrow(Y),1] # Only first column and rows 2...T are needed
-  if(StMAR==FALSE) {
+  if(StMAR==FALSE & GStMAR==FALSE) {
     invsqrt_sigmas = sigmas^(-1/2)
     res0 = rowSums(vapply(1:M, function(i1) alpha_mt[,i1]*pnorm((Y2-mu_mt[,i1])*invsqrt_sigmas[i1]), numeric(n_obs-p)))
-  } else { # If StMAR==TRUE
+  } else if(StMAR==TRUE) { # If StMAR==TRUE
     matProd0 = matProd[1:(n_obs-p),] # Last row is not needed because sigma_t uses y_{t-1}
     if(M==1) {
       sigma_mt = as.matrix(sigmas*(dfs - 2 + matProd0)/(dfs - 2 + p))
@@ -167,6 +182,58 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
       }
     }
     res0 = rowSums(res0)
+  } else { # If GStMAR==TRUE
+    # GMAR components
+    invsqrt_sigmas = sigmas[1:M1]^(-1/2)
+    resM1 = rowSums(vapply(1:M1, function(i1) alpha_mt[,i1]*pnorm((Y2-mu_mt[,i1])*invsqrt_sigmas[i1]), numeric(n_obs-p)))
+
+    # StMAR components
+    matProd0 = matProd[1:(n_obs-p),(M1+1):M] # Last row is not needed because sigma_t uses y_{t-1}
+    sigmasM2 = sigmas[(M1+1):M]
+    if(M2==1) {
+      sigma_mt = as.matrix(sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p))
+    } else {
+      sigma_mt = t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2) # Calculate conditional variances
+    }
+    resM2 = matrix(ncol=M2, nrow=n_obs-p)
+    if(requireNamespace("gsl", quietly = TRUE)) { # Calculate with hypergeometric function what can be calculated
+      for(i1 in 1:M2) {
+        whichDef = which(abs(mu_mt[,M1+i1]-Y2)<sqrt(sigma_mt[,i1]*(dfs[i1]+p-2))) # Which ones can be calculated with hyper geometric function
+        whichNotDef = (1:length(Y2))[-whichDef]
+
+        if(length(whichDef)>0) { # Calculate CDF for values y_t that are bigger than mu_mt (or equal)
+          Y0 = Y2[whichDef]
+          alpha_mt0 = alpha_mt[whichDef, M1+i1]
+          mu_mt0 = mu_mt[whichDef, M1+i1]
+          sigma_mt0 = sigma_mt[whichDef, i1]
+          a0 = exp(lgamma(0.5*(1+dfs[i1]+p))-lgamma(0.5*(dfs[i1]+p)))/sqrt(sigma_mt0*pi*(dfs[i1]+p-2))
+          resM2[whichDef, i1] = alpha_mt0*(0.5 - a0*(mu_mt0-Y0)*gsl::hyperg_2F1(0.5, 0.5*(1+dfs[i1]+p), 1.5, -((mu_mt0-Y0)^2)/(sigma_mt0*(dfs[i1]+p-2)), give=FALSE, strict=TRUE))
+        }
+        # Calculate CDF for the values that can't be calculated with hypergeometric function
+        if(length(whichNotDef)>0) {
+          for(i2 in whichNotDef) {
+            # Conditional density function to integrate numerically
+            f_mt <- function(y_t) {
+              alpha_mt[i2,M1+i1]*exp(lgamma(0.5*(1+dfs[i1]+p))-lgamma(0.5*(dfs[i1]+p)))/sqrt(sigma_mt[i2,i1]*pi*(dfs[i1]+p-2))*
+                (1 + ((y_t-mu_mt[i2,M1+i1])^2)/((dfs[i1]+p-2)*sigma_mt[i2,i1]))^(-0.5*(1+dfs[i1]+p))
+            }
+            resM2[i2, i1] = integrate(f_mt, lower=-Inf, upper=Y2[i2])$value # Integrate PDF numerically
+          }
+        }
+      }
+    } else { # Numerically integrate everything if package "gsl" is not available: slow but works always with all platforms
+      for(i1 in 1:M2) {
+        for(i2 in 1:length(Y2)) {
+          # Conditional density function to integrate numerically
+          f_mt <- function(y_t) {
+            alpha_mt[i2,M1+i1]*exp(lgamma(0.5*(1+dfs[i1]+p))-lgamma(0.5*(dfs[i1]+p)))/sqrt(sigma_mt[i2,i1]*pi*(dfs[i1]+p-2))*
+              (1 + ((y_t-mu_mt[i2,M1+i1])^2)/((dfs[i1]+p-2)*sigma_mt[i2,i1]))^(-0.5*(1+dfs[i1]+p))
+          }
+          resM2[i2, i1] = integrate(f_mt, lower=-Inf, upper=Y2[i2])$value # Integrate PDF numerically
+        }
+      }
+    }
+    res0 = rowSums(cbind(resM1, resM2))
   }
   # To prevent problems with numerical approximations
   res0[which(res0>=1)] <- 1-2e-16
@@ -177,14 +244,14 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
 
 #' @import stats
 #'
-#' @title Compute quantile residuals of GMAR or StMAR model
+#' @title Compute quantile residuals of GMAR, StMAR or G-StMAR model
 #'
-#' @description \code{quantileResiduals} computes the quantile residuals of the specified GMAR or StMAR model.
+#' @description \code{quantileResiduals} computes the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
 #'
 #' @inheritParams quantileResiduals_int
 #' @inherit quantileResiduals_int return references
 #' @section Suggested packages:
-#'   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR models.
+#'   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR and G-StMAR models.
 #' @examples
 #' # GMAR model
 #' params12 <- c(1.12, 0.9, 0.29, 4.53, 0.7, 3.22, 0.84)
@@ -202,6 +269,14 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
 #' params11t <- c(0.76, 0.93, 1.35, 2.4)
 #' qr11t <- quantileResiduals(VIX, 1, 1, params11t, StMAR=TRUE)
 #'
+#' # G-StMAR model
+#' params12gs <- c(1.5, 0.8, 1.5, 2.9, 0.8, 1.1, 0.6, 3)
+#' qr12gs <- quantileResiduals(VIX, 1, c(1, 1), params12gs, GStMAR=TRUE)
+#'
+#' # Restricted G-StMAR model
+#' params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20)
+#' qr12gsr <- quantileResiduals(VIX, 1, c(2, 1), params13gsr, GStMAR=TRUE, restricted=TRUE)
+#'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' params22c <- c(1.2, 0.85, 0.04, 0.3, 3.3, 0.77, 2.8, 0.77)
@@ -216,10 +291,11 @@ quantileResiduals_int <- function(data, p, M, params, StMAR=FALSE, restricted=FA
 #'                              R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' @export
 
-quantileResiduals <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R) {
-  checkPM(p, M)
-  if(length(params)!=nParams(p=p, M=M, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R)) {
-    stop("the parameter vector is wrong dimension")
+quantileResiduals <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R) {
+  checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
+  checkPM(p, M, GStMAR=GStMAR)
+  if(length(params)!=nParams(p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
+    stop("The parameter vector has wrong dimension")
   }
-  return(quantileResiduals_int(data=data, p=p, M=M, params=params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R))
+  return(quantileResiduals_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R))
 }

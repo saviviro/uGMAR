@@ -1,8 +1,8 @@
 #' @import stats
 #'
-#' @title Quantile residual tests for GMAR or StMAR model
+#' @title Quantile residual tests for GMAR, StMAR or G-StMAR model
 #'
-#' @description \code{quantileResidualTests} performs quantile residual tests for GMAR or StMAR model, testing normality, autocorrelation and conditional heteroscedasticy.
+#' @description \code{quantileResidualTests} performs quantile residual tests for GMAR, StMAR or G-StMAR model, testing normality, autocorrelation and conditional heteroscedasticy.
 #'
 #' @inheritParams loglikelihood
 #' @param lagsAC an (optional) numeric vector of positive integers specifying the lags for which autocorrelation is tested. Default is \code{c(1, 2, 4, 6, 8, 10)}.
@@ -31,8 +31,8 @@
 #'   and "H" conditional heteroscedasticity test. The numbers right next to "A" and "H" indicate the number of lags used
 #'   in each test. The statistics following them are the corresponding test statistics and p-values.
 #' @section Suggested packages:
-#'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR models.
-#'   For large StMAR models with large data the evaluations may take significantly long time without
+#'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
+#'   For large StMAR and G-StMAR models with large data the evaluations may take significantly long time without
 #'   the package "gsl".
 #' @inherit quantileResiduals_int references
 #' @examples
@@ -66,25 +66,32 @@
 #' }
 #' @export
 
-quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=TRUE) {
+quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=TRUE) {
 
-  checkPM(p, M)
-  if(length(params)!=nParams(p=p, M=M, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R)) {
-    stop("the parameter vector is wrong dimension")
+  checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
+  checkPM(p, M, GStMAR=GStMAR)
+  M_orig = M
+  if(GStMAR==TRUE) {
+    M1 = M[1]
+    M2 = M[2]
+    M = sum(M)
+  }
+  if(length(params)!=nParams(p=p, M=M_orig, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
+    stop("The parameter vector is wrong dimension")
   }
   data = checkAndCorrectData(data, p)
   T0 = length(data)-p
   if(max(c(lagsAC, lagsCH))>=T0) {
-    stop("the lags are too large compared to the data size")
+    stop("The lags are too large compared to the data size")
   }
-  qresiduals = quantileResiduals_int(data, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R)
+  qresiduals = quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
   if(nsimu > T0) {
-    simuData = simulateGMAR(p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R, nsimu=nsimu+200)
+    simuData = simulateGMAR(p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, nsimu=nsimu+200)
     simuData = as.matrix(simuData$sample[201:length(simuData$sample)])
   } else {
     simuData = data
   }
-  qresiduals_simuData = quantileResiduals_int(simuData, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R)
+  qresiduals_simuData = quantileResiduals_int(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
   results = list()
 
   ####################
@@ -96,7 +103,7 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, restricted=FA
   }
 
   # Omega (Kalliovirta 2013 eq.(2.4))
-  Omega = getOmega(simuData, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=3, qresiduals=qresiduals_simuData)
+  Omega = getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=3, qresiduals=qresiduals_simuData)
 
   # Test statistics and p-value
   sumg = as.matrix(rowSums(t(g(qresiduals))))
@@ -132,7 +139,7 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, restricted=FA
     }
 
     # Omega (Kalliovirta 2013 eq.(2.4))
-    Omega = getOmega(simuData, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
+    Omega = getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
 
     # Test statistics, sample autocorrelation for of the current lag and p-value
     sumg = as.matrix(colSums(g(qresiduals)))  # Unscaled and uncentered sample autocovariances of the quantile residuals
@@ -177,7 +184,7 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, restricted=FA
     }
 
     # Omega (Kalliovirta 2012 eq.(2.4))
-    Omega = getOmega(simuData, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
+    Omega = getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
 
     # Test statistics,individual statisics d_k and p-value
     sumg = as.matrix(colSums(g(qresiduals)))

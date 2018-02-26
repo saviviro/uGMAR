@@ -32,6 +32,16 @@ params22cr <- c(1, 2, 0.8, 1, 2, 0.7, 11, 12) # R3, StMAR
 params32cr <- c(1, 2, 0.3, -0.3, 1, 2, 0.6) # R1
 params23cr <- c(1.7, 1.9, 2.1, 0.8, -0.05, 0.3, 0.7, 4.5, 0.7, 0.2) # R4 (should be same as non-constrained)
 
+params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
+params23gs <- c(1, 0.1, 0.1, 1, 1.2, 0.2, 0.2, 1.2, 1.3, 0.3, -0.3, 1.3, 0.3, 0.4, 11, 12) # M1=1, M2=2
+params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20) # M1=2, M2=1
+
+params12gs2 <- c(1.5, 0.8, 1.5, 2.9, 0.8, 1.1, 0.6, 3) # M1=1, M2=1
+params13gsr2 <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20) # M1=2, M2=1
+
+params32gsc <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10) # M1=1, M2=1, R1, R2
+params22gsrc <- c(1, 2, 0.5, 1, 2, 0.5, 10) # M1=1, M2=1, R3
+
 test_that("Loglikelihood gives correct value for non-restricted models", {
   expect_equal(loglikelihood_int(VIX, 1, 2, params12, StMAR=FALSE), -307.5011, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 1, 2, params12, conditional=FALSE, StMAR=FALSE), -310.944, tolerance=1e-3)
@@ -49,6 +59,9 @@ test_that("Loglikelihood gives correct value for non-restricted models", {
   expect_equal(loglikelihood_int(VIX[1:4], 2, 3, params23, conditional=FALSE, StMAR=FALSE), -8.210192, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 1, 2, params12bound, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
   expect_equal(loglikelihood_int(VIX, 2, 2, params22bound, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
+  expect_equal(loglikelihood_int(VIX, 1, c(1,1), params12gs, GStMAR=TRUE, conditional=FALSE), -677.1648, tolerance=1e-3)
+  expect_equal(loglikelihood_int(VIX, 2, c(1,2), params23gs, GStMAR=TRUE), -981.8043, tolerance=1e-3)
+  expect_equal(loglikelihood_int(VIX, 1, c(1,1), params12gs2, GStMAR=TRUE), -366.1986, tolerance=1e-3)
 })
 
 test_that("Loglikelihood gives correct value for resticted models", {
@@ -66,9 +79,13 @@ test_that("Loglikelihood gives correct value for resticted models", {
   expect_equal(loglikelihood_int(3*VIX, 2, 3, params23tr, StMAR=TRUE, restricted=TRUE, epsilon=-2), -955.0699, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 1, 2, params12rbound, restricted=TRUE, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
   expect_equal(loglikelihood_int(VIX, 1, 3, params13rbound, restricted=TRUE, boundaries=TRUE, StMAR=FALSE, minval=-9999), -9999)
+  expect_equal(loglikelihood_int(VIX, 1, c(2,1), params13gsr, GStMAR=TRUE, restricted=TRUE, conditional=FALSE), -448.9022, tolerance=1e-3)
+  expect_equal(loglikelihood_int(VIX, 1, c(2,1), params13gsr2, GStMAR=TRUE, restricted=TRUE), -515.032, tolerance=1e-3)
 })
 
 test_that("Loglikelihood gives correct value for constrained models", {
+  expect_equal(loglikelihood_int(VIX, 3, c(1, 1), params32gsc, GStMAR=TRUE, constraints=TRUE, R=list(R1, R2), conditional=FALSE), -668.9493, tolerance=1e-3)
+  expect_equal(loglikelihood_int(VIX, 2, c(1, 1), params22gsrc, GStMAR=TRUE,  restricted=TRUE, constraints=TRUE, R=R3, conditional=FALSE), -784.8558, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 3, 2, params32c, StMAR=TRUE, constraints=TRUE, R=list(R1, R1), conditional=FALSE), -1312.314, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 3, 3, params33c, constraints=TRUE, R=list(R2, R2, R1)), -977.7254, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 2, 1, params21c, StMAR=TRUE, constraints=TRUE, R=list(R3), epsilon=-1), -315.6233, tolerance=1e-3)
@@ -81,6 +98,9 @@ test_that("Loglikelihood gives correct value for constrained models", {
 })
 
 test_that("mixingWeights gives correct weights for non-restricted models", {
+  expect_equal(mixingWeights_int(VIX, 1, c(1, 1), params12gs2, GStMAR=TRUE)[10, 1], 0.1972129, tolerance=1e-3)
+  expect_equal(mixingWeights_int(VIX, 1, c(1, 1), params12gs, GStMAR=TRUE)[10, 2], 0.9906132, tolerance=1e-3)
+  expect_equal(mixingWeights_int(VIX, 2, c(1, 2), params23gs, GStMAR=TRUE)[20, 3], 0.2209903, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 1, 2, params12, StMAR=FALSE)[2, 1], 0.0007360931, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 1, 2, params12t, StMAR=TRUE, epsilon=-1)[20, 2], 0.14159, tolerance=1e-5)
   expect_equal(mixingWeights_int(VIX, 2, 2, params22t, StMAR=TRUE)[1, 1], 1.742628e-07, tolerance=1e-6)
@@ -88,6 +108,8 @@ test_that("mixingWeights gives correct weights for non-restricted models", {
 })
 
 test_that("mixingWeights gives correct weights for restricted models", {
+  expect_equal(mixingWeights_int(VIX, 1, c(2, 1), params13gsr2, GStMAR=TRUE, restricted=TRUE)[20, 2], 0.9989134, tolerance=1e-3)
+  expect_equal(mixingWeights_int(VIX, 1, c(2, 1), params13gsr, GStMAR=TRUE, restricted=TRUE)[40, 1], 0.1064519, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 1, 2, params12r, StMAR=FALSE, restricted=TRUE)[100, 1], 0.9360905, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 1, 2, params12tr, StMAR=TRUE, restricted=TRUE)[1, 2], 0.9091443, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 2, 3, params23r, StMAR=FALSE, restricted=TRUE)[13, 2], 0.009593899, tolerance=1e-6)
@@ -95,6 +117,8 @@ test_that("mixingWeights gives correct weights for restricted models", {
 })
 
 test_that("mixingWeights gives correct weights for constrained models", {
+  expect_equal(mixingWeights_int(VIX, 3, c(1, 1), params32gsc, GStMAR=TRUE, constraints=TRUE, R=list(R1, R2))[1, 2], 1, tolerance=1e-3)
+  expect_equal(mixingWeights_int(VIX, 2, c(1, 1), params22gsrc, GStMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3)[1, 2], 1, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 3, 2, params32c, StMAR=TRUE, constraints=TRUE, R=list(R1, R1))[1, 1], 0.01096221, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 3, 3, params33c, StMAR=FALSE, constraints=TRUE, R=list(R2, R2, R1))[113, 3], 0.0001194389, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 2, 1, params21c, StMAR=TRUE, constraints=TRUE, R=list(R3))[200, 1], 1, tolerance=1e-6)

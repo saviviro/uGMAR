@@ -11,12 +11,12 @@ vignette: >
 
 ## Introduction 
 
-The package uGMAR contains tools to estimate and work with univariate Gaussian Mixture Autoregressive (GMAR) and Student's t Mixture Autoregressive (StMAR) models. It supports applying general linear constraints to the autoregressive parameters, which enables to consider some other models as well. Besides most likelihood estimation, uGMAR also provides functions for model diagnostics and forecasting for example. 
+The package uGMAR contains tools to estimate and work with univariate Gaussian Mixture Autoregressive (GMAR), Student's t Mixture Autoregressive (StMAR) and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models. It supports applying general linear constraints to the autoregressive parameters, which enables to consider some other models as well. Besides most likelihood estimation, uGMAR also provides functions for  model diagnostics and forecasting for example. 
 
 ## Parameter vector
-All the functions in uGMAR require the user to specify the order of AR coefficients $p$ and the number of regimes $M$. Other important argument regarding the functions in uGMAR is the parameter vector of the model. The form of the parameter vector to work with will depend on specifics of the model: is GMAR or StMAR model considered, are all the AR coefficients restricted to be the same for all regimes and/or are general linear constraints applied to the model? It's vital to use the correct type of parameter vector accordingly.
+All the functions in uGMAR require the user to specify the order of AR coefficients $p$ and the number of mixture components $M$. For G-StMAR model one has to define the number of GMAR-type components $M1$ and the number of StMAR-type components $M2$, and it hence has total of $M1+M2=M$ components. Other important argument regarding the functions in uGMAR is the parameter vector of the model. The form of the parameter vector to work with will depend on specifics of the model: is GMAR, StMAR or G-StMAR model considered, are all the AR coefficients restricted to be the same for all regimes and/or are general linear constraints applied to the model? It's vital to use the correct type of parameter vector accordingly.
 
-### Regular GMAR and StMAR models
+### Regular GMAR, StMAR and G-StMAR models
 
 #### GMAR model
 The parameter vector for regular __GMAR__ model is size $(M(p+3)-1)x1$ vector of form
@@ -31,8 +31,14 @@ denotes the degrees of freedom parameters and parameter $\boldsymbol{\theta}$ is
 
 If you wish work with StMAR model, be sure to set `StMAR=TRUE` in the function's arguments. 
 
-### Restricted GMAR and StMAR models
-Besides the regular $GMAR$ and $StMAR$ models, this package gives an option to work with restricted models. This means that the AR coefficients $\phi_{m,1},...,\phi_{m,p}$ are restricted to be the same for all regimes $m=1,..,M.$ Structure of the parameter vector is different for restricted and non-restricted models. 
+##### G-StMAR model
+In the G-StMAR model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+The parameter vector of G-StMAR model is similar to the one of StMAR model, with $M2$ degrees of freedom parameters for the StMAR-components. That is, a size $(M(p+3)+M2-1)x1$ vector of form 
+$$(\boldsymbol{\theta}, \boldsymbol{\nu}),\quad where \quad \boldsymbol{\nu}=(\nu_{M1+1},...,\nu_{M})$$ 
+denotes the degrees of freedom parameters and parameter $\boldsymbol{\theta}$ is as in the case of GMAR model. As in the StMAR case, the degrees of freedom parameters are assumed to be larger than two, and one needs to set `G-StMAR=TRUE` in the function's arguments in order to consider the G-StMAR model.
+
+### Restricted GMAR, StMAR and G-StMAR models
+Besides the regular $GMAR$, $StMAR$ and $G-StMAR$ models, this package gives an option to work with restricted models. This means that the AR coefficients $\phi_{m,1},...,\phi_{m,p}$ are restricted to be the same for all regimes $m=1,..,M.$ Structure of the parameter vector is different for restricted and non-restricted models. 
 
 #### GMAR model
 The parameter vector for __restricted GMAR__ model is size $(3M-p+1)x1$ vector of form
@@ -43,14 +49,18 @@ The parameter vector for __restricted StMAR__ model is then defined by adding th
 $$(\boldsymbol{\theta}, \boldsymbol{\nu}),\quad where \quad \boldsymbol{\nu}=(\nu_{1},...,\nu_{M})$$
 again denotes the degrees of freedom parameters and parameter $\boldsymbol{\theta}$ is as in the case of GMAR model.
 
+#### G-StMAR model
+The parameter vector for __restricted G-StMAR__ model is similar to the StMAR model's one, but with $M2$ degrees of freedom parameters for the StMAR components. 
+
 So you will have to work with different kind of parameter vectors depending on wether you work with restricted or non-restricted model. The functions in uGMAR work with the regular non-restricted GMAR model by default. If you want to work with restricted models instead, it's vital to set `restricted=TRUE` in the function's arguments and make sure to use the parameter vector specified for restricted models.
 
+
 ### Applying general linear constraints and how it affects the parameter vector
-This packages makes it easy to apply linear constraints to the autoregressive parameters of GMAR and StMAR models. uGMAR considers constraints of form 
+This packages makes it easy to apply linear constraints to the autoregressive parameters of GMAR, StMAR and G-StMAR models. uGMAR considers constraints of form 
 $$\boldsymbol{\phi_{m}}=\boldsymbol{R_{m}\psi_{m}}, \enspace m=1,...,M,$$
 where $\boldsymbol{R_{m}}$ is known size $(pxq_{m})$ constraint matrix of full column rank and $\boldsymbol{\psi_{m}}$ is size $(q_{m}x1)$ parameter vector.
 
-A special case of this is to constrain some of the AR coefficients to be zero. Another special case is mixture version Heterogenious Autoregressive (HAR) model, which can be obtained by setting 
+A special case of this is to constrain some of the AR coefficients to be zero. Another special case is the mixture version of Heterogenious Autoregressive (HAR) model, which can be obtained by setting 
 $$\boldsymbol{R_{m}}=\left[{\begin{array}{ccc}
    \boldsymbol{\iota}_{5} & \frac{1}{5}\boldsymbol{1}_{5} & \frac{1}{22}\boldsymbol{1}_{5} \\
    0_{17} & 0_{17} & \frac{1}{22}\boldsymbol{1}_{17} \\
@@ -59,7 +69,7 @@ where $\boldsymbol{\iota}_{5}=[1,0,0,0,0]'$ for all regimes $m=1,...,M$ and appl
 
 In order to apply linear constraints in uGMAR, you simply parametrize the model with vectors $\boldsymbol{\psi_{m}}$ instead of $\boldsymbol{\phi_{m}}$ and provide the constraint matrices $\boldsymbol{R_{m}}$. And remember to set `constraints=TRUE` in the function's arguments. Note that despite the lengths of $\boldsymbol{\psi_{m}}$ the nominal order of AR coefficients is always $p$ for all regimes. 
 
-#### Non-restricted GMAR and StMAR models
+#### Non-restricted GMAR, StMAR and G-StMAR models
 Similarly as in the case of regular GMAR model, the parameter vector for __constrained GMAR__ model is of form 
 $$\boldsymbol{\theta}=(\boldsymbol{\upsilon_{1}},...,\boldsymbol{\upsilon_{M}}, \alpha_{1},...,\alpha_{M-1}),$$
 but now the vectors $\boldsymbol{\upsilon_{m}}$ are defined by using vectors $\boldsymbol{\psi_{m}}$, that is
@@ -70,20 +80,22 @@ The parameter vector for __constrained StMAR__ model is again defined by simply 
 $$(\boldsymbol{\theta}, \boldsymbol{\nu}),\quad where \quad \boldsymbol{\nu}=(\nu_{1},...,\nu_{M}),$$
 and $\boldsymbol{\theta}$ is as in the case of constrained GMAR model. 
 
-#### Restricted GMAR and StMAR models
-Just as for non-restricted models, the parameter vectors for constrained versions of restricted GMAR and StMAR models are defined by simply replacing vector $\boldsymbol{\phi}$ with vector $\boldsymbol{\psi}$. Hence the parameter vector for __restricted and constrained GMAR__ model
+The parameter vector for __constrained G-StMAR__ model is similar to the one of constrained StMAR model, but with degrees of freedom parameters for the StMAR components only. 
+
+#### Restricted GMAR, StMAR and G-StMAR models
+Just as for non-restricted models, the parameter vectors for constrained versions of restricted GMAR, StMAR and G-StMAR models are defined by simply replacing vector $\boldsymbol{\phi}$ with vector $\boldsymbol{\psi}$. Hence the parameter vector for __restricted and constrained GMAR__ model
 is of form
 $$\boldsymbol{\theta}=(\phi_{1,0},...,\phi_{M,0},\boldsymbol{\psi},\sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}),  \quad where \quad \boldsymbol{\psi}=(\psi_{1},...,\psi_{p}).$$
 The user has to also provide a constraint matrix $\boldsymbol{R}$ that satisfies $\boldsymbol{\phi}=\boldsymbol{R\psi}.$
 
 The parameter vector for __restricted and constrained StMAR__ model is then again defined by adding the degrees of freedom parameters, that is
-$(\boldsymbol{\theta}, \boldsymbol{\nu})$ where $\boldsymbol{\nu}=(\nu_{1},...,\nu_{M}).$
+$(\boldsymbol{\theta}, \boldsymbol{\nu})$ where $\boldsymbol{\nu}=(\nu_{1},...,\nu_{M}).$ For __restricted and constrained G-StMAR__ model the parameter vector is similar to the one of restricted and constrained StMAR model, but with degrees of freedom parameters for the StMAR components only.
 
 ## The most important functions in uGMAR
 I thought it would be helpful to make a short list of the most important functions in uGMAR and explain briefly what they do.
 
 ### fitGMAR
-Probably the most imporant function in this package is `fitGMAR`, which is used to estimate a GMAR or StMAR model.
+Probably the most imporant function in this package is `fitGMAR`, which is used to estimate a GMAR, StMAR or G-StMAR model.
 
 The maximum likelihood estimation process is done in two phases. In the first phase `fitGMAR` uses genetic algorithm to find starting values for gradient based quasi-Newton method, which it then uses in the second phase for final estimations. There is also an option to perform some quantile residual tests for the estimated model to get a quick sense how the model fits to the data. 
 
@@ -92,27 +104,27 @@ By default `fitGMAR` takes use of parallel computing and will perform multiple e
 The function `fitGMAR` will return a list containing the estimates, their approximate standard errors, quantile residuals, mixing weights, results from all estimation rounds and lots of other useful stuff. 
 
 ### quantileResidualTests
-The function `quantileResidualTests` performs quantile residual tests for the specified GMAR or StMAR model, testing normality, autocorrelation and conditional heteroscedasticity. The tests are based on the paper by _Kalliovirta (2012)_.
+The function `quantileResidualTests` performs quantile residual tests for the specified GMAR, StMAR or G-StMAR model, testing normality, autocorrelation and conditional heteroscedasticity. The tests are based on the paper by _Kalliovirta (2012)_.
 
-`quantileResidualTests` returns a list of data frames containing the test results for `$normality`, `$autocorrelation` and `$cond.heteroscedasticity` of the quantile residuals. Consider installing the suggested package "gsl" for faster evaluations of quantile residuals in the cases of StMAR models.
+`quantileResidualTests` returns a list of data frames containing the test results for `$normality`, `$autocorrelation` and `$cond.heteroscedasticity` of the quantile residuals. Consider installing the suggested package "gsl" for much faster evaluations of quantile residuals in the cases of StMAR and G-StMAR models.
 
 ### plotGMAR 
 The function `plotGMAR` is designed to give an easy access to graphical quantile residual based model diagnostics.
 
-It plots quantile residual time series, QQ-plot, autocorrelation function and squared quantile residual autocorrelation function. There is also an option to plot the individual statistics associated with the quantile residual tests with their approximate 95% critical bounds. Be warned that calculating the critical bounds will take a while. However if it takes too long for StMAR models, make sure that you have succesfully installed the suggested package "gsl" (it's not imported because in my experience it might be tricky to install it on some machines). 
+It plots quantile residual time series, QQ-plot, autocorrelation function and squared quantile residual autocorrelation function. There is also an option to plot the individual statistics associated with the quantile residual tests with their approximate 95% critical bounds. Be warned that calculating the critical bounds will take a while. However if it takes too long for StMAR and G-StMAR models, make sure that you have succesfully installed the suggested package "gsl" (it's not imported because in my experience it might be tricky to install it on some machines). 
 
 ### simulateGMAR
-The function `simulateGMAR` can be used to simulate values from a specified GMAR or StMAR process. 
+The function `simulateGMAR` can be used to simulate values from a specified GMAR, StMAR or G-StMAR process. 
 
 By default `simulateGMAR` will simulate initial values from the process's stationary distribution, but you can set your own  inital values you wish to. `simulateGMAR` will return a list containing the simulated sample, information which component model was used to generate which sample and the corresponding mixing weights. 
 
 ### forecastGMAR
-The function `forecastGMAR` is used to forecast a specified GMAR or StMAR process by simulation. It uses the given data to simulate the process's possible future values and will then base the prediction on the sample median (or mean if set `useMean=TRUE`) and confidence intervals on the empirical fractiles. 
+The function `forecastGMAR` is used to forecast a specified GMAR, StMAR or G-StMAR process by simulation. It uses the given data to simulate the process's possible future values and will then base the prediction on the sample median (or mean if set `useMean=TRUE`) and confidence intervals on the empirical fractiles. 
 
 By default `forecastGMAR` will then plot the prediction and the confidence intervals along with the data. Note that if the data is in the form of univariate time series object, the plots will take advantage of the timespan and frequency provided. `forecastGMAR` will return a data frame containing the prediction and confidence intervals. 
 
 ## References
 * Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series. _Journal of Time Series Analysis_, __36__, 247-266.
 * Kalliovirta L. (2012) Misspecification tests based on quantile residuals. _The Econometrics Journal_, __15__, 358-393.
-* References regarding StMAR model and general linear constraints will be updated after they are published.
+* References regarding StMAR and G-StMAR models will be updated after they are published.
 

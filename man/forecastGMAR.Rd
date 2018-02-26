@@ -2,18 +2,21 @@
 % Please edit documentation in R/forecastGMAR.R
 \name{forecastGMAR}
 \alias{forecastGMAR}
-\title{Forecast GMAR pr StMAR process}
+\title{Forecast GMAR, StMAR or G-StMAR process}
 \usage{
-forecastGMAR(data, p, M, params, StMAR = FALSE, restricted = FALSE,
-  constraints = FALSE, R, nsteps, conflevel = c(0.95, 0.8), nsimu = 10000,
-  printRes = TRUE, plotRes = TRUE, nt, useMean = FALSE)
+forecastGMAR(data, p, M, params, StMAR = FALSE, GStMAR = FALSE,
+  restricted = FALSE, constraints = FALSE, R, nsteps, conflevel = c(0.95,
+  0.8), nsimu = 10000, printRes = TRUE, plotRes = TRUE, nt,
+  useMean = FALSE, oneStepCondMean = FALSE, upperOnly = FALSE,
+  lowerOnly = FALSE)
 }
 \arguments{
 \item{data}{a numeric vector or column matrix or an (univariate) time series object containing the data. \code{NA} values are not supported.}
 
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -24,6 +27,8 @@ forecastGMAR(data, p, M, params, StMAR = FALSE, restricted = FALSE,
         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
       \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
         matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
@@ -35,18 +40,23 @@ forecastGMAR(data, p, M, params, StMAR = FALSE, restricted = FALSE,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
       \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
         \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{v} a degrees of
-freedom parameter.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
+freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 
 \item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes. Default is \code{FALSE}.}
@@ -78,14 +88,21 @@ specifying the confidence levels for the confidence intervals that should be cal
 
 \item{nt}{an (optional) positive integer specifying the number of observations to be plotted along with the prediction. Default is \code{round(length(data)*0.2)}.}
 
-\item{useMean}{set TRUE if the prediction should be based on sample mean instead of median. Default is FALSE.}
+\item{useMean}{set \code{TRUE} if the prediction should be based on sample mean instead of median. Default is FALSE.}
+
+\item{oneStepCondMean}{set \code{TRUE} for optimal one-step forecast using the exact formula for the conditional mean. Default is \code{FALSE}.}
+
+\item{upperOnly}{set \code{TRUE} for upper confidence interval only. Default is \code{FALSE}.}
+
+\item{lowerOnly}{set \code{TRUE} for lower confidence interval only. Default is \code{FALSE}.}
 }
 \value{
 Returns a data frame containing the empirical best predicton and confidence intervals accordingly to \code{conflevel}.
+  Or if \code{oneStepCondMean==TRUE} returns the optimal prediction as (1x1) numeric vector.
 }
 \description{
-\code{forecastGMAR} forecasts the specified GMAR or StMAR process by using the given data to simulate
- its possible future values.
+\code{forecastGMAR} forecasts the specified GMAR, StMAR or G-StMAR process by using the given data to simulate
+ its possible future values. For one-step forecasts use of the exact formula for the conditional mean is supported.
 }
 \details{
 \code{forecastGMAR} uses the last \code{p} values of the given data to simulate \code{nsimu} possible future values for each step.
@@ -100,16 +117,25 @@ pred12 <- forecastGMAR(VIX, 1, 2, params12, nsteps=10)
 # Restricted GMAR model
 params12r <- c(1.4, 1.8, 0.9, 0.3, 3.2, 0.8)
 pred12r <- forecastGMAR(VIX, 1, 2, params12r, restricted=TRUE, nsteps=20,
-                        conflevel=c(0.9, 0.8, 0.6), nt=200)
+                        conflevel=c(0.9, 0.8, 0.6), nt=200, upperOnly=TRUE)
 
-# StMAR model
+# StMAR model (one-step predictions by simulation and by exact formula)
 params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8)
-pred12t <- forecastGMAR(VIX, 1, 2, params12t, StMAR=TRUE, nsteps=1)
+pred12t <- forecastGMAR(VIX, 1, 2, params12t, StMAR=TRUE, nsteps=1, useMean=TRUE)
+pred12te <- forecastGMAR(VIX, 1, 2, params12t, StMAR=TRUE, oneStepCondMean=TRUE)
 
 # Non-mixture version of StMAR model with data as (fictional) time series object
 params11t <- c(0.76, 0.93, 1.4, 2.4)
 pred11t <- forecastGMAR(ts(VIX, start=1900, freq=12), 1, 1, params11t,
-                        StMAR=TRUE, nsteps=5, useMean=TRUE)
+                        StMAR=TRUE, nsteps=5, conflevel=c(0.99))
+
+# G-StMAR model
+params13gs <- c(2.0, 0.83, 0.36, 1.14, 0.90, 0.06, 4.23, 0.72, 3.85, 0.6, 0.20, 3.3)
+pred13gs <- forecastGMAR(VIX, 1, c(2, 1), params13gs, GStMAR=TRUE, nsteps=10)
+
+# G-StMAR model: optimal one-step forecast using the exact formula of conditional mean
+params12gs <- c(3.98, 0.68, 0.36, 0.70, 0.94, 11.75, 0.25, 2.03)
+pred12gs <- forecastGMAR(VIX, 1, c(1, 1), params12gs, GStMAR=TRUE, oneStepCondMean=TRUE)
 
 # GMAR model as a mixture of AR(2) and AR(1) models
 R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
@@ -133,6 +159,6 @@ pred32trc <- forecastGMAR(VIX, 3, 2, params32trc, StMAR=TRUE, restricted=TRUE, c
            \emph{Springer}, 2005.
    \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-   \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+   \item References regarding StMAR and G-StMAR models will be updated after they are published.
  }
 }

@@ -15,6 +15,18 @@ params23r <- c(0.1, 0.3, 0.4, -0.4, 0.3, 1, 2, 3, 0.5, 0.1, 100, 112, 130) # StM
 params13r <- c(1, 2, 3, 0.99999, 1, 2, 3, 0.2, 0.15)
 params23r2 <- c(0.1, 0.2, 0.3, 0.9, 0.2, 0.1, 0.2, 0.3, 0.3, 0.5)
 
+params13gs <- c(1, 0.1, 1, 2, 0.2, 2, 3, 0.3, 3, 0.4, 0.2, 10, 20) # M1=1, M2=2
+params23gs <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 2, 3, 0.3, 0.3, 3, 0.2, 0.3, 10) # M1=2, M2=1
+params14gs <- c(1, 0.1, 1, 2, 0.2, 2, 3, 0.3, 3, 4, 0.4, 4, 0.4, 0.3, 0.2, 11, 12) # M1=2, M2=2
+params22gsr <- c(1, 2, 0.1, 0.2, 1, 2, 0.1, 10) # M1=1, M2=1
+params13gsr <- c(1, 2, 3, 0.5, 1, 2, 3, 0.1, 0.1, 11, 12) # M1=1, M2=2
+params14gsr <- c(1, 2, 3, 4, 0.5, 1, 2, 3, 4, 0.1, 0.2, 0.3, 10) # M1=3, M2=1
+
+ref23gs <- reformParameters(2, c(2, 1), params=params23gs, GStMAR=TRUE)
+ref14gs <- reformParameters(1, c(2, 2), params=params14gs, GStMAR=TRUE)
+ref22gsr <- reformParameters(2, c(1, 1), params=params22gsr, restricted=TRUE, GStMAR=TRUE)
+ref13gsr <- reformParameters(1, c(1, 2), params=params13gsr, restricted=TRUE, GStMAR=TRUE)
+
 ref11 <- reformParameters(1, 1, params=params11, StMAR=TRUE)
 ref12 <- reformParameters(1, 2, params=params12)
 ref12_2 <- reformParameters(1, 2, params=params12_2, StMAR=TRUE)
@@ -53,6 +65,17 @@ test_that("reformParameters works correctly", {
   expect_equal(ref13r$pars[1, 2], 2)
   expect_equal(ref13r$alphas[1], 0.2)
   expect_equal(ref13r$alphas[3], 0.65)
+
+  expect_equal(ref23gs$alphas[3], 0.5)
+  expect_equal(ref23gs$dfs, 10)
+  expect_equal(ref23gs$pars[2,2], 0.2)
+  expect_equal(ref14gs$pars[3,4], 4)
+  expect_equal(ref14gs$alphas[4], 0.1)
+  expect_equal(ref22gsr$params[7], 0.2)
+  expect_equal(ref22gsr$alphas[2], 0.9)
+  expect_equal(ref13gsr$params[8], 0.5)
+  expect_equal(ref13gsr$pars[3,3], 3)
+  expect_equal(ref13gsr$dfs, c(11, 12))
 })
 
 R1 <- matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
@@ -81,7 +104,20 @@ refc22cr <- reformConstrainedPars(2, 2, params=params22cr, StMAR=TRUE, restricte
 params32cr <- c(1, 2, 0.3, -0.3, 1, 2, 0.6)
 refc32cr <- reformConstrainedPars(3, 2, params=params32cr, restricted=TRUE, R=R1)
 
+params32gsc <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10) # M1=1, M2=1, R1, R2
+refc32gsc <- reformConstrainedPars(3, c(1, 1), params=params32gsc, GStMAR=TRUE, R=list(R1, R2))
+
+params23gsc <- c(1, 0.1, 1, 2, 0.2, 2, 3, 0.3, 0.3, 3, 0.3, 0.4, 20, 30) # M1=1, M2=2, R3, R3, R4
+refc23gsc <- reformConstrainedPars(2, c(1, 2), params=params23gsc, GStMAR=TRUE, R=list(R3, R3, R4))
+
+params22gsrc <- c(1, 2, 0.5, 1, 2, 0.5, 10) # M1=1, M2=1, R3
+refc22gsrc <- reformConstrainedPars(2, c(1, 1), params=params22gsrc, GStMAR=TRUE, restricted=TRUE, R=R3)
+
 test_that("reformConstrainedPars works correctly", {
+  expect_equal(refc32gsc, c(1, 0.1, 0, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10))
+  expect_equal(refc23gsc, c(1, 0.05, 0.05, 1, 2, 0.1, 0.1, 2, 3, 0.3, 0.3, 3, 0.3, 0.4, 20, 30) )
+  expect_equal(refc22gsrc, c(1, 2, 0.25, 0.25, 1, 2, 0.5, 10))
+
   expect_equal(refc32c[1], 1)
   expect_equal(refc32c[3], 0)
   expect_equal(refc32c[8], 0)
@@ -112,6 +148,13 @@ test_that("reformConstrainedPars works correctly", {
 })
 
 test_that("sortComponents sorts correctly", {
+ expect_equal(sortComponents(1, c(1, 2), params=params13gs, GStMAR=TRUE), c(1, 0.1, 1, 3, 0.3, 3, 2, 0.2, 2, 0.4, 0.4, 20, 10))
+ expect_equal(sortComponents(2, c(2, 1), params=params23gs, GStMAR=TRUE), c(2, 0.2, 0.2, 2, 1, 0.1, 0.1, 1, 3, 0.3, 0.3, 3, 0.3, 0.2, 10))
+ expect_equal(sortComponents(1, c(2, 2), params=params14gs, GStMAR=TRUE), params14gs)
+ expect_equal(sortComponents(2, c(1, 1), params=params22gsr, GStMAR=TRUE, restricted=TRUE), params22gsr)
+ expect_equal(sortComponents(1, c(1, 2), params=params13gsr, GStMAR=TRUE, restricted=TRUE), c(1, 3, 2, 0.5, 1, 3, 2, 0.1, 0.8, 12, 11))
+ expect_equal(sortComponents(1, c(3, 1), params=params14gsr, GStMAR=TRUE, restricted=TRUE), c(3, 2, 1, 4, 0.5, 3, 2, 1, 4, 0.3, 0.2, 0.1, 10))
+
  expect_equal(sortComponents(1, 1, params11, StMAR=TRUE), params11)
  expect_equal(sortComponents(1, 2, params12), params12)
  expect_equal(sortComponents(1, 2, params12_2, StMAR=TRUE), c(0.8, 0.5, 0.5, 2, -1, 0.1, 0.6, 30, 12))

@@ -7,12 +7,14 @@
 \usage{
 isStationary_int(p, M, params, restricted = FALSE)
 
-isIdentifiable(p, M, params, restricted = FALSE, StMAR = FALSE)
+isIdentifiable(p, M, params, restricted = FALSE, StMAR = FALSE,
+  GStMAR = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -43,6 +45,9 @@ the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 to be the same for all regimes. Default is \code{FALSE}.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 }
 \value{
 Returns \code{TRUE} or \code{FALSE} accordingly.
@@ -63,6 +68,6 @@ These functions don't support models parametrized with general linear constraint
 \itemize{
    \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
          \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item References regarding the StMAR model will be updated after they are published.
+   \item References regarding the StMAR and G-StMAR models will be updated when they are published.
  }
 }

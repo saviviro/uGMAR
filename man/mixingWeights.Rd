@@ -2,17 +2,18 @@
 % Please edit documentation in R/loglikelihood.R
 \name{mixingWeights}
 \alias{mixingWeights}
-\title{Calculate mixing weights of GMAR or StMAR model}
+\title{Calculate mixing weights of GMAR, StMAR or G-StMAR model}
 \usage{
-mixingWeights(data, p, M, params, StMAR = FALSE, restricted = FALSE,
-  constraints = FALSE, R)
+mixingWeights(data, p, M, params, StMAR = FALSE, GStMAR = FALSE,
+  restricted = FALSE, constraints = FALSE, R)
 }
 \arguments{
 \item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
 
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components or regimes.}
+\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
+the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -23,6 +24,8 @@ mixingWeights(data, p, M, params, StMAR = FALSE, restricted = FALSE,
         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
       \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
         matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
@@ -34,18 +37,23 @@ mixingWeights(data, p, M, params, StMAR = FALSE, restricted = FALSE,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
       \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
         \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{v} a degrees of
-freedom parameter.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
+freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+
+\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
+are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
 
 \item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes. Default is \code{FALSE}.}
@@ -65,11 +73,11 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 This argument is ignored if \code{constraints==FALSE}.}
 }
 \value{
-Returns size \eqn{(TxM)} matrix containing the mixing weights of the specified GMAR or StMAR model so that
+Returns size \eqn{(TxM)} matrix containing the mixing weights of the specified GMAR, StMAR or G-StMAR model so that
  \eqn{i}:th column corresponds to \eqn{i}:th mixing component or regime.
 }
 \description{
-\code{mixingWeights} calculates the mixing weights of the specified GMAR or StMAR model and returns them as a matrix.
+\code{mixingWeights} calculates the mixing weights of the specified GMAR, StMAR or G-StMAR model and returns them as a matrix.
 }
 \examples{
 # GMAR model
@@ -87,6 +95,14 @@ mw12t <- mixingWeights(VIX, 1, 2, params12t, StMAR=TRUE)
 # Non-mixture version of StMAR model
 params11t <- c(0.76, 0.93, 1.35, 2.4)
 mw11t <- mixingWeights(VIX, 1, 1, params11t, StMAR=TRUE)
+
+# G-StMAR model
+params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
+mw12gs <- mixingWeights(VIX, 1, c(1,1), params12gs, GStMAR=TRUE)
+
+# Restricted G-StMAR model
+params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20)
+mw13gsr <- mixingWeights(VIX, 1, c(2,1), params13gsr, GStMAR=TRUE, restricted=TRUE)
 
 # GMAR model as a mixture of AR(2) and AR(1) models
 R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
@@ -109,6 +125,6 @@ mw32trc <- mixingWeights(VIX, 3, 2, params32trc, StMAR=TRUE,
            \emph{Springer}, 2005.
    \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-   \item References regarding the StMAR model and general linear constraints will be updated after they are published.
+   \item References regarding StMAR and G-StMAR models will be updated after they are published.
  }
 }

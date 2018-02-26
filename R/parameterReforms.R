@@ -1,8 +1,8 @@
 #' @title Reform any parameter vector into standard form.
 #'
-#' @description \code{reformParameters} takes a parameter vector of any GMAR or StMAR model and returns a list with the
+#' @description \code{reformParameters} takes a parameter vector of any (non-constrained) GMAR, StMAR or G-StMAR model and returns a list with the
 #'  parameter vector in the standard form, parameter matrix containing AR coefficients and component
-#'  variances, mixing weights alphas and in case of StMAR also degrees of freedom parameters.
+#'  variances, mixing weights alphas and in case of StMAR or G-StMAR model also degrees of freedom parameters.
 #'
 #' @inheritParams isStationary
 #' @details This function does not support models parametrized with general linear constraints! Nor does it have any argument checks.
@@ -13,10 +13,15 @@
 #'     component variances. Column for each component.}
 #'   \item{\code{$alphas}}{numeric vector containing mixing weights for all components (also for the last one).}
 #'   \item{\code{$dfs}}{numeric vector containing degrees of freedom parameters for all components.
-#'     Returned only if \code{StMAR==TRUE}.}
+#'     Returned only if \code{StMAR==TRUE} or \code{GStMAR==TRUE}.}
 #'  }
 
-reformParameters <- function(p, M, params, StMAR=FALSE, restricted=FALSE) {
+reformParameters <- function(p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE) {
+  if(GStMAR==TRUE) {
+    M1 = M[1]
+    M2 = M[2]
+    M = sum(M)
+  }
   if(M==1) {
     pars = matrix(params[1:(M*(p+2))], ncol=M)
     alphas = c(1)
@@ -30,6 +35,8 @@ reformParameters <- function(p, M, params, StMAR=FALSE, restricted=FALSE) {
       alphas = c(alphas, 1-sum(alphas)) # last alpha
       if(StMAR==TRUE) {
         dfs = params[(M*(p+3)):(M*(p+4)-1)] # degrees of freedom
+      } else if(GStMAR==TRUE) {
+        dfs = params[(M*(p+3)):(M*(p+3)+M2-1)] # degrees of freedom
       }
     } else {
       # If restricted TRUE: transform the restricted parameter vector into the standard form.
@@ -41,6 +48,9 @@ reformParameters <- function(p, M, params, StMAR=FALSE, restricted=FALSE) {
       if(StMAR==TRUE) {
         dfs = params[(3*M+p):(4*M+p-1)] # degrees of freedom
         params = c(as.vector(pars), alphas, dfs)
+      } else if(GStMAR==TRUE) {
+        dfs = params[(3*M+p):(3*M+M2+p-1)] # degrees of freedom
+        params = c(as.vector(pars), alphas, dfs)
       } else {
         params = c(as.vector(pars), alphas)
       }
@@ -50,7 +60,7 @@ reformParameters <- function(p, M, params, StMAR=FALSE, restricted=FALSE) {
   rownames(pars) = NULL
   ret = list(params, pars, alphas)
   names(ret) = c("params", "pars", "alphas")
-  if(StMAR==TRUE) {
+  if(StMAR==TRUE | GStMAR==TRUE) {
     ret[[length(ret)+1]] = dfs
     names(ret)[length(ret)] = "dfs"
   }
@@ -68,7 +78,12 @@ reformParameters <- function(p, M, params, StMAR=FALSE, restricted=FALSE) {
 #' for non-restricted or restricted models (for non-constrained models), and can hence be used just as the
 #' parameter vectors of non-constrained models.
 
-reformConstrainedPars <- function(p, M, params, StMAR=FALSE, restricted=FALSE, R) {
+reformConstrainedPars <- function(p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, R) {
+  if(GStMAR==TRUE) {
+    M1 = M[1]
+    M2 = M[2]
+    M = sum(M)
+  }
   if(restricted==FALSE) {
     params0 = c()
     j = 0
@@ -84,6 +99,8 @@ reformConstrainedPars <- function(p, M, params, StMAR=FALSE, restricted=FALSE, R
     }
     if(StMAR==TRUE) {
       params0 = c(params0, params[(j+M):(j+2*M-1)]) # add dfs
+    } else if(GStMAR==TRUE) {
+      params0 = c(params0, params[(j+M):(j+M+M2-1)]) # add dfs
     }
   } else { # If restricted==TRUE
     q = ncol(as.matrix(R))
@@ -94,6 +111,8 @@ reformConstrainedPars <- function(p, M, params, StMAR=FALSE, restricted=FALSE, R
     }
     if(StMAR==TRUE) {
       params0 = c(params0, params[(3*M+q):(4*M+q-1)]) # add dfs
+    } else if(GStMAR==TRUE) {
+      params0 = c(params0, params[(3*M+q):(3*M+M2+q-1)]) # add dfs
     }
   }
   return(params0)
@@ -101,9 +120,10 @@ reformConstrainedPars <- function(p, M, params, StMAR=FALSE, restricted=FALSE, R
 
 
 
-#' @title Sort the mixture components of GMAR or StMAR model
+#' @title Sort the mixture components of GMAR, StMAR or G-StMAR model
 #'
-#' @description \code{sortComponents} sorts mixture components of the specified GMAR or StMAR model by the mixing weights.
+#' @description \code{sortComponents} sorts mixture components of the specified GMAR, StMAR or G-StMAR model by the mixing weights
+#'   when the parameter vector is in the "standard form" for restricted or non-restricted models.
 #'
 #' @inheritParams isStationary
 #' @details This function does not support models parametrized with general linear constraints!
@@ -128,72 +148,178 @@ reformConstrainedPars <- function(p, M, params, StMAR=FALSE, restricted=FALSE, R
 #'    }
 #'  }
 #' @section Warning:
-#'  This function doesn't have any argument checks.
+#'  This function doesn't have any argument checks. For models with linear constraints,
+#'   expand the constraints first to the "standard form" and remember to sort constraint matrices as well.
 
-sortComponents <- function(p, M, params, StMAR=FALSE, restricted=FALSE) {
-  if(M==1) {
-    return(params)
-  }
-  if(restricted==FALSE) {
-    pars = matrix(params[1:(M*(p+2))], ncol=M) # Component parameters by column (except alphas and dfs)
-    alphas = params[(M*(p+2)+1):(M*(p+3)-1)]
-    if(length(alphas)==1) {
-      if(alphas<0.5) {
-        pars = pars[,c(2,1)]
+sortComponents <- function(p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE) {
+  if(GStMAR==FALSE) {
+    if(M==1) {
+      return(params)
+    }
+    if(restricted==FALSE) {
+      pars = matrix(params[1:(M*(p+2))], ncol=M) # Component parameters by column (except alphas and dfs)
+      alphas = params[(M*(p+2)+1):(M*(p+3)-1)]
+      if(length(alphas)==1) {
+        if(alphas<0.5) {
+          pars = pars[,c(2,1)]
+          if(StMAR==TRUE) {
+            dfs = params[(M*(p+3)):(M*(p+4)-1)] # degrees of freedom
+            return(c(as.vector(pars), 1-alphas, rev(dfs)))
+          } else {
+            return(c(as.vector(pars), 1-alphas))
+          }
+        } else {
+          return(params)
+        }
+      } else {
+        alphas0 = c(alphas, 1-sum(alphas))
+        sortedByAlphas = order(alphas0, decreasing=TRUE)
+        pars = pars[,sortedByAlphas]
+        alphas = alphas0[sortedByAlphas]
         if(StMAR==TRUE) {
           dfs = params[(M*(p+3)):(M*(p+4)-1)] # degrees of freedom
-          return(c(as.vector(pars), 1-alphas, rev(dfs)))
+          dfs = dfs[sortedByAlphas]
+          return(c(as.vector(pars), alphas[-M], dfs))
         } else {
-          return(c(as.vector(pars), 1-alphas))
+          return(c(as.vector(pars), alphas[-M]))
+        }
+      }
+    } else { # If restricted==TRUE
+      phi0 = params[1:M]
+      arcoefs = params[(M+1):(M+p)]
+      armat = matrix(rep(arcoefs, M), ncol=M)
+      variances = params[(M+p+1):(p+2*M)]
+      pars = rbind(phi0, armat, variances)
+      alphas = params[(p+2*M+1):(3*M+p-1)]
+      if(length(alphas)==1) {
+        if(alphas<0.5) {
+          pars = pars[,c(2,1)]
+          if(StMAR==TRUE) {
+            dfs = params[(3*M+p):(4*M+p-1)] # degrees of freedom
+            pars = pars[,c(2,1)]
+            return(c(pars[1,], arcoefs, pars[p+2,], 1-alphas, rev(dfs)))
+          } else {
+            return(c(pars[1,], arcoefs, pars[p+2,], 1-alphas))
+          }
+        } else {
+          return(params)
         }
       } else {
-        return(params)
-      }
-    } else {
-      alphas0 = c(alphas, 1-sum(alphas))
-      sortedByAlphas = order(alphas0, decreasing=TRUE)
-      pars = pars[,sortedByAlphas]
-      alphas = alphas0[sortedByAlphas]
-      if(StMAR==TRUE) {
-        dfs = params[(M*(p+3)):(M*(p+4)-1)] # degrees of freedom
-        dfs = dfs[sortedByAlphas]
-        return(c(as.vector(pars), alphas[-M], dfs))
-      } else {
-        return(c(as.vector(pars), alphas[-M]))
-      }
-    }
-  } else { # If restricted==TRUE
-    phi0 = params[1:M]
-    arcoefs = params[(M+1):(M+p)]
-    armat = matrix(rep(arcoefs, M), ncol=M)
-    variances = params[(M+p+1):(p+2*M)]
-    pars = rbind(phi0, armat, variances)
-    alphas = params[(p+2*M+1):(3*M+p-1)]
-    if(length(alphas)==1) {
-      if(alphas<0.5) {
-        pars = pars[,c(2,1)]
+        alphas0 = c(alphas, 1-sum(alphas))
+        sortedByAlphas = order(alphas0, decreasing=TRUE)
+        pars = pars[,sortedByAlphas]
+        alphas = alphas0[sortedByAlphas]
         if(StMAR==TRUE) {
           dfs = params[(3*M+p):(4*M+p-1)] # degrees of freedom
-          pars = pars[,c(2,1)]
-          return(c(pars[1,], arcoefs, pars[p+2,], 1-alphas, rev(dfs)))
+          dfs = dfs[sortedByAlphas]
+          return(c(pars[1,], arcoefs, pars[p+2,], alphas[-M], dfs))
         } else {
-          return(c(pars[1,], arcoefs, pars[p+2,], 1-alphas))
+          return(c(pars[1,], arcoefs, pars[p+2,], alphas[-M]))
         }
-      } else {
-        return(params)
       }
-    } else {
-      alphas0 = c(alphas, 1-sum(alphas))
-      sortedByAlphas = order(alphas0, decreasing=TRUE)
-      pars = pars[,sortedByAlphas]
-      alphas = alphas0[sortedByAlphas]
-      if(StMAR==TRUE) {
-        dfs = params[(3*M+p):(4*M+p-1)] # degrees of freedom
-        dfs = dfs[sortedByAlphas]
-        return(c(pars[1,], arcoefs, pars[p+2,], alphas[-M], dfs))
-      } else {
-        return(c(pars[1,], arcoefs, pars[p+2,], alphas[-M]))
+    }
+  } else { # If GStMAR==TRUE
+    M1 <- M[1]
+    M2 <- M[2]
+    Msum = sum(M)
+    if(restricted==FALSE) {
+      pars0 = c() # Collect pars in here
+      alphas0 = c() # Collect alphas in here
+      for(i1 in 1:2) { # Go through GMAR and StMAR parts
+        if(i1==1) {
+          pars = matrix(params[1:(M1*(p+2))], ncol=M1)
+        } else {
+          pars = matrix(params[((M1*(p+2))+1):(Msum*(p+2))], ncol=M2)
+        }
+        if(M[i1]>1) { # If only one component of given type, no need to sort
+          if(i1==1) {
+            alphas = params[(Msum*(p+2)+1):(Msum*(p+2)+M1)]
+          } else {
+            alphas = params[(Msum*(p+2)+M1+1):(Msum*(p+3)-1)]
+            dfs = params[(Msum*(p+3)):(Msum*(p+3)+M2-1)]
+          }
+          if(length(alphas)==1) { # If only one alpha
+            if(i1==2 & alphas<0.5*(1-sum(alphas0))) { # If i1==1, no re-order needed nor should be here anyway
+              pars = pars[,c(2,1)]
+              dfs = rev(dfs) # Reverse order of dfs
+              alphas = 1-(alphas+sum(alphas0))
+            }
+          } else { # If more than one alphas
+            if(i1==2) { # If i1==2, add the non-parametrized alpha
+              alphas = c(alphas, 1-(sum(alphas)+sum(alphas0)))
+            }
+            sortedByAlphas = order(alphas, decreasing=TRUE)
+            pars = pars[,sortedByAlphas]
+            alphas = alphas[sortedByAlphas]
+            if(i1==2) {
+              dfs = dfs[sortedByAlphas]
+              alphas = alphas[-M2] # Delete the last alpha
+            }
+          }
+        } else { # If only one component, still need to collect alphas from GMAR and dfs for StMAR
+          if(i1==1) {
+            alphas = params[Msum*(p+2)+1]
+          } else {
+            dfs = params[Msum*(p+3)]
+            alphas = NULL # No alphas for StMAR if only one StMAR-component
+          }
+        }
+        pars0 = cbind(pars0, pars)
+        alphas0 = c(alphas0, alphas)
       }
+      return(c(as.vector(pars0), alphas0, dfs))
+    } else { # If restricted==TRUE
+      phi00 = c()
+      variances0 = c()
+      alphas0 = c()
+      arcoefs = params[(Msum+1):(Msum+p)]
+      for(i1 in 1:2) {
+        if(i1==1) {
+          phi0 = params[1:M1]
+          variances = params[(Msum+p+1):(Msum+p+M1)]
+        } else {
+          phi0 = params[(M1+1):Msum]
+          variances = params[(Msum+p+M1+1):(2*Msum+p)]
+          dfs = params[(3*Msum+p):(3*Msum+M2+p-1)]
+        }
+        if(M[i1]>1) { # if M[i1]==1, no need to sort
+          if(i1==1) {
+            alphas = params[(2*Msum+p+1):(2*Msum+p+M1)]
+          } else {
+            alphas = params[(2*Msum+p+M1+1):(3*Msum+p-1)]
+          }
+          if(length(alphas)==1) {
+            if(i1==2 & alphas<0.5*(1-sum(alphas0))) { # If i1==1, no order needed
+              phi0 = phi0[c(2,1)]
+              variances = variances[c(2,1)]
+              dfs = rev(dfs)
+              alphas = 1-alphas-sum(alphas0)
+            }
+          } else { # If moore than 1 alphas
+            if(i1==2) { # If i1==2, add the non-parametrized alpha
+              alphas = c(alphas, 1-(sum(alphas)+sum(alphas0)))
+            }
+            sortedByAlphas = order(alphas, decreasing=TRUE)
+            phi0 = phi0[sortedByAlphas]
+            variances = variances[sortedByAlphas]
+            alphas = alphas[sortedByAlphas]
+            if(i1==2) {
+              dfs = dfs[sortedByAlphas]
+              alphas = alphas[-M2] # Delete the last alpha
+            }
+          }
+        } else { # If only one component, no sort but collect alphas
+          if(i1==1) {
+            alphas = params[2*Msum+p+1]
+          } else {
+            alphas = NULL # No alphas if only one StMAR-component
+          }
+        }
+        phi00 = c(phi00, phi0)
+        variances0 = c(variances0, variances)
+        alphas0 = c(alphas0, alphas)
+      }
+      return(c(phi00, arcoefs, variances0, alphas0, dfs))
     }
   }
 }

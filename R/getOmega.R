@@ -16,23 +16,23 @@
 #'          \emph{The Econometrics Journal}, \strong{15}, 358-393.
 #'  }
 
-getOmega <- function(data, p, M, params, StMAR=FALSE, restricted=FALSE, constraints=FALSE, R, g, dim_g, qresiduals) {
+getOmega <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, g, dim_g, qresiduals) {
 
   # Function for calculating gradient of g
   f <- function(params) {
-    g(quantileResiduals_int(data, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R))
+    g(quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R))
   }
   # Function for calculating gradient of the log-likelihood
   l <- function(params) {
-    loglikelihood_int(data, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R, boundaries=FALSE,
-                  conditional=FALSE, checks=FALSE, returnTerms=TRUE)
+    loglikelihood_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, boundaries=FALSE,
+                      conditional=FALSE, checks=FALSE, returnTerms=TRUE)
   }
 
   diff = 1e-08 # Difference for numerical derivates
   d = length(params) # Dimension of the parameter vector
   dataSize = length(data) # Size of the given data
   if(missing(qresiduals)) {
-    qresiduals = quantileResiduals_int(data, p, M, params, StMAR=StMAR, restricted=restricted, constraints=constraints, R=R) # Quantile residuals
+    qresiduals = quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R) # Quantile residuals
   }
 
   # Compute the gradient of g: (v)x(d)x(T)
