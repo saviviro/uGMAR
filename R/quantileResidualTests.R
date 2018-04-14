@@ -112,7 +112,7 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
 
   # Results
   if(printRes==TRUE) {
-    print(sprintf("N: %.2f, p-value: %.2f", N, p_norm))
+    cat(sprintf("N: %.2f, p-value: %.2f", N, p_norm), "\n")
   }
   normRes = data.frame(t(c(N, p_norm)), row.names=NULL)
   colnames(normRes) = c("testStat", "pvalue")
@@ -150,7 +150,7 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
 
     # Results
     if(printRes==TRUE) {
-      print(sprintf("A%.0f: %.2f, p-value: %.2f", lag, A, p_ac))
+      cat(sprintf("A%.0f: %.2f, p-value: %.2f", lag, A, p_ac), "\n")
     }
     acRes[j1, 2] = A
     acRes[j1, 3] = p_ac
@@ -195,7 +195,7 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
 
     # Results
     if(printRes==TRUE) {
-      print(sprintf("H%.0f: %.2f, p-value: %.2f", lag, H, p_ch))
+      cat(sprintf("H%.0f: %.2f, p-value: %.2f", lag, H, p_ch), "\n")
     }
     chRes[j1, 2] = H
     chRes[j1, 3] = p_ch

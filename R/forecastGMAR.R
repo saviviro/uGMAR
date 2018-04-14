@@ -88,7 +88,7 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
     if(missing(nsteps)) {
       nsteps = 1
     } else if(nsteps!=1) {
-      print("Exact conditional expectation is supported for one-step forecasts only!")
+      cat("Exact conditional expectation is supported for one-step forecasts only!", "\n")
       nsteps = 1
     }
   }
@@ -117,7 +117,7 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
       bestcast = sum(mw[nrow(mw),]*(pars[1,] + t(rev(initvalues))%*%pars[2:(2+p-1),]))
     }
     if(printRes==TRUE) {
-      print(paste0("Optimal one-step prediction: ", round(bestcast, 3)))
+      cat(paste0("Optimal one-step prediction: ", round(bestcast, 3)), "\n")
     }
     if(plotRes==TRUE) {
       pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))

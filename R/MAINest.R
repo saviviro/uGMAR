@@ -116,7 +116,7 @@
 #' fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
 #'
 #' # Non-mixture version of StMAR model: without multicore
-#' fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4)
+#' fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4, runTests=TRUE)
 #'
 #' # GStMAR model
 #' fit12gs <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, conditional=FALSE)
@@ -208,7 +208,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   if(nCalls<ncores) {
     ncores = nCalls
   }
-  print(paste("Using", ncores, "cores for", nCalls, "estimation rounds..."))
+  cat(paste("Using", ncores, "cores for", nCalls, "estimation rounds..."), "\n")
 
   #############
   ## FITTING ##
@@ -217,12 +217,12 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   ### Genetic algorithm ###
 
   if(multicore==FALSE) {
-    print("Optimizing with genetic algorithm...")
+    cat("Optimizing with genetic algorithm...", "\n")
     GAfit_tmp <- function(round) {
       ret = GAfit(data, p, M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional,
                   ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale, sigmascale=sigmascale, epsilon=epsilon,
                   initpop=initpop, minval=minval)
-      print(paste0(round, "/", nCalls))
+      cat(paste0(round, "/", nCalls), "\n")
       return(ret)
     }
     GAresults = lapply(1:nCalls, function(round) GAfit_tmp(round))
@@ -236,7 +236,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
                                   "nParams", "minval", "checkLogicals", "checkPM"), envir = environment())
     parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
 
-    print("Optimizing with genetic algorithm...")
+    cat("Optimizing with genetic algorithm...", "\n")
     if(requireNamespace("pbapply", quietly = TRUE)) {
       parallel::clusterEvalQ(cl, library(pbapply))
       GAresults = pbapply::pblapply(1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
@@ -257,10 +257,10 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
                                                          restricted=restricted, constraints=constraints, R=R, conditional=conditional,
                                                          boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval))
   if(printRes==TRUE) {
-    print("Results from genetic algorithm:")
-    print(paste("lowest value:", round(min(loks), 3)))
-    print(paste("mean value:", round(mean(loks), 3)))
-    print(paste("largest value:", round(max(loks), 3)))
+    cat("Results from genetic algorithm:", "\n")
+    cat(paste("lowest value:", round(min(loks), 3)), "\n")
+    cat(paste("mean value:", round(mean(loks), 3)), "\n")
+    cat(paste("largest value:", round(max(loks), 3)), "\n")
   }
 
   ### Quasi-Newton ###
@@ -313,7 +313,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
                                   "minval", "d", "nCalls"), envir = environment())
     parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
 
-    print("Optimizing with quasi-Newton method...")
+    cat("Optimizing with quasi-Newton method...", "\n")
     if(requireNamespace("pbapply", quietly = TRUE)) {
       parallel::clusterEvalQ(cl, library(pbapply))
       NEWTONresults = pbapply::pblapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
@@ -324,7 +324,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
     }
     parallel::stopCluster(cl=cl)
   } else {
-    print("Optimizing with quasi-Newton method...")
+    cat("Optimizing with quasi-Newton method...", "\n")
     NEWTONresults = lapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"), control=list(fnscale=-1)))
   }
 
@@ -342,10 +342,10 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   }
 
   if(printRes==TRUE) {
-    print("Results from quasi-Newton:")
-    print(paste("lowest value:", round(min(loks), 3)))
-    print(paste("mean value:", round(mean(loks), 3)))
-    print(paste("largest value:", round(max(loks), 3)))
+    cat("Results from quasi-Newton:", "\n")
+    cat(paste("lowest value:", round(min(loks), 3)), "\n")
+    cat(paste("mean value:", round(mean(loks), 3)), "\n")
+    cat(paste("largest value:", round(max(loks), 3)), "\n")
   }
 
   # Obtain the estimates
@@ -359,10 +359,10 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
 
   # Warnings and notifications
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1]>0.05)<0.01*length(data), logical(1)))) {
-    print("NOTE: At least one of the components in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or re-specify the model.")
+    cat("NOTE: At least one of the components in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or re-specify the model.", "\n")
   }
   if(bestfit$convergence==1) {
-    print("NOTE: Iteration limit was reached when estimating the best fitting individual!")
+    cat("NOTE: Iteration limit was reached when estimating the best fitting individual!", "\n")
   }
 
   #######################
@@ -371,7 +371,7 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
 
   # Quantile residual tests
   if(runTests==TRUE) {
-    print("Performing quantile residual tests...")
+    cat("Performing quantile residual tests...", "\n")
     qrTests = quantileResidualTests(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
                                     lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=printRes)
   }
@@ -384,7 +384,9 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   HQIC = -2*loglik + 2*d*log(log(T0))
   IC = data.frame(AIC, BIC, HQIC)
   if(printRes==TRUE) {
-    print(round(IC))
+    cat(paste("AIC:", round(AIC)), "\n")
+    cat(paste("HQIC:", round(HQIC)), "\n")
+    cat(paste("BIC:", round(BIC)), "\n")
   }
 
   # Standard errors of the estimates
@@ -395,9 +397,9 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   colnames(estimates) = c("estimate", "stdError")
   if(printRes==TRUE) {
     if(all(is.na(stdErrors))) {
-      print("Unable to calculate approximate standard errors!")
-      print("Estimates:")
-      print(round(estimates$estimate, 3))
+      cat("Unable to calculate approximate standard errors!", "\n")
+      cat("Estimates:", "\n")
+      cat(round(estimates$estimate, 3), "\n")
     } else {
       print(round(estimates, 3))
     }

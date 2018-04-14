@@ -209,7 +209,7 @@ fit12r <- fitGMAR(VIX, 1, 2, restricted=TRUE, nCalls=10,
 fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
 
 # Non-mixture version of StMAR model: without multicore
-fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4)
+fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4, runTests=TRUE)
 
 # GStMAR model
 fit12gs <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, conditional=FALSE)
