@@ -380,11 +380,12 @@ loglikelihood <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restric
 #' @description FOR INTERNAL USE. \code{mixingWeights_int} calculates the mixing weights of the specified GMAR, StMAR or G-StMAR model and returns them as a matrix.
 #'
 #' @inheritParams loglikelihood_int
+#' @param give_t_plus1 should the mixing weights \eqn{\alpha_{m,t+1}} be returned in the last row? Default is \code{FALSE}.
 #' @return Returns size \eqn{(TxM)} matrix containing the mixing weights of the specified GMAR, StMAR or G-StMAR model so that
 #'  \eqn{i}:th column corresponds to \eqn{i}:th mixing component or regime.
 #' @inherit loglikelihood_int references
 
-mixingWeights_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, checks=TRUE, epsilon) {
+mixingWeights_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, checks=TRUE, epsilon, give_t_plus1=FALSE) {
   M_orig = M
   if(GStMAR==TRUE) {
     M1 = M[1]
@@ -507,15 +508,19 @@ mixingWeights_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, res
 
   # Calculate the alpha_mt mixing weights (Kalliovirta 2015, s.250 eq.(8))
   # First row for t=1, second for t=2, and i:th for t=i. First column for m=1, second for m=2 and j:th column for m=j.
-  logmv_values0 = logmv_values[1:(n_obs-p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
+  if(give_t_plus1==TRUE) {
+    logmv_values0 = logmv_values # last row calculates alpha_m,t+1
+  } else {
+    logmv_values0 = logmv_values[1:(n_obs-p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
+  }
   if(!is.matrix(logmv_values0)) logmv_values0 = as.matrix(logmv_values0)
 
   if(M==1) {
-    alpha_mt = as.matrix(rep(1, n_obs-p))
+    alpha_mt = as.matrix(rep(1, nrow(logmv_values0)))
   } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with Brobdingnag if needed
     numerators = lapply(1:M, function(i1) alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]) # alphas[i1]*exp( as.brob(mvn_values[,i1]) )
     denominator = Reduce("+", numerators) # For all t=0,...,T
-    alpha_mt = vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(n_obs-p))
+    alpha_mt = vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(nrow(logmv_values0)))
   } else {
     mv_values0 = exp(logmv_values0)
     denominator = colSums(alphas*t(mv_values0))

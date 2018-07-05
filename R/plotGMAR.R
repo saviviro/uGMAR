@@ -81,6 +81,7 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
   nsimu = max(nsimu, length(data))
   qresiduals = quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
   old_par = par(no.readonly=T) # Save old settings
+  on.exit(par(old_par)) # Restore the settings before quitting
   if(approxBounds==TRUE) {
     par(mfrow=c(3, 2), mar=c(2.1, 2.1, 2.1, 0.8)) # Set new temporary settings
   } else {
@@ -137,5 +138,4 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
     points(1:nlags, dk_normalized, pch=20, col="blue")
     axis(2, at=-3:3, labels=FALSE)
   }
-  on.exit(par(old_par)) # Restore the settings before quitting
 }

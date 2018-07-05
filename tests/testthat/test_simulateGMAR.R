@@ -16,13 +16,13 @@ weights23 <- data23$mixingWeights
 sample23init <- data23init$sample
 
 test_that("simulateGMAR simulates correctly from non-restricted process", {
-  expect_equal(data13gs$sample[1], 1.612845, tolerance=1e-6)
-  expect_equal(data13gs$mixingWeights[3,3], 0.1409309, tolerance=1e-6)
-  expect_equal(sample12[3], 2.214798, tolerance=1e-6)
+  expect_equal(data13gs$sample[1], -0.3833485, tolerance=1e-6)
+  expect_equal(data13gs$mixingWeights[3,3], 0.00969763, tolerance=1e-6)
+  expect_equal(sample12[3], 2.655959, tolerance=1e-6)
   expect_equal(component12[3], 1)
-  expect_equal(sample23, 1.084569, tolerance=1e-6)
-  expect_equal(component23, 1)
-  expect_equal(weights23[,2], 0.7145928, tolerance=1e-6)
+  expect_equal(sample23, 1.017869, tolerance=1e-6)
+  expect_equal(component23, 2)
+  expect_equal(weights23[,2], 0.2067762, tolerance=1e-6)
   expect_equal(sample23init[2], 1.351309, tolerance=1e-6)
 })
 
@@ -41,14 +41,14 @@ sample23r <- data23r$sample
 component23r <- data23r$component
 
 test_that("simulateGMAR simulates correctly from restricted process", {
-  expect_equal(data22gsr$sample[2], 4.68621, tolerance=1e-6)
-  expect_equal(data22gsr$component[1], 1)
-  expect_equal(sample12r, 2.401195, tolerance=1e-6)
-  expect_equal(component12r, 1)
-  expect_equal(weights12r[,1], 0.7719254, tolerance=1e-6)
+  expect_equal(data22gsr$sample[2], 2.583507, tolerance=1e-6)
+  expect_equal(data22gsr$component[1], 2)
+  expect_equal(sample12r, 1.018146, tolerance=1e-6)
+  expect_equal(component12r, 2)
+  expect_equal(weights12r[,1],  0.7716839, tolerance=1e-6)
   expect_equal(sample12init[1], 0.6312408, tolerance=1e-6)
-  expect_equal(sample23r[2], -0.2819325, tolerance=1e-6)
-  expect_equal(component23r[2], 1)
+  expect_equal(sample23r[2], -0.5006049, tolerance=1e-6)
+  expect_equal(component23r[2], 2)
 })
 
 R1 <- matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
@@ -66,11 +66,11 @@ sample32cr <- data32cr$sample
 component32cr <- data32cr$component
 
 test_that("simulateGMAR simulates correctly from constrained process", {
-  expect_equal(data12gsrc$sample[2], 0.9952703, tolerance=1e-6)
+  expect_equal(data12gsrc$sample[2], -1.732949, tolerance=1e-6)
   expect_equal(data12gsrc$component[1], 2)
-  expect_equal(data12gsrc$mixingWeights[,1], c(0.3092060, 0.2991549), tolerance=1e-6)
-  expect_equal(sample22c, 1.728754, tolerance=1e-6)
-  expect_equal(weights22c[,1], 0.9728709, tolerance=1e-6)
-  expect_equal(sample32cr[2], 2.657739, tolerance=1e-6)
+  expect_equal(data12gsrc$mixingWeights[,1], c(0.3122889, 0.3084366), tolerance=1e-6)
+  expect_equal(sample22c,  0.1681538, tolerance=1e-6)
+  expect_equal(weights22c[,1], 0.8956446, tolerance=1e-6)
+  expect_equal(sample32cr[2], 0.7406432, tolerance=1e-6)
   expect_equal(component32cr[2], 1)
 })

@@ -144,6 +144,7 @@
 
 fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, nCalls, multicore=TRUE, ncores, initpop=FALSE, ngen, popsize, smartMu, ar0scale, sigmascale, printRes=TRUE, runTests=FALSE) {
 
+  on.exit(closeAllConnections())
   checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
   checkPM(p, M, GStMAR=GStMAR)
   data = checkAndCorrectData(data, p)
@@ -258,8 +259,8 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
                                                          boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval))
   if(printRes==TRUE) {
     cat("Results from genetic algorithm:", "\n")
-    cat(paste("lowest value:", round(min(loks), 3)), "\n")
-    cat(paste("mean value:", round(mean(loks), 3)), "\n")
+    cat(paste("lowest value: ", round(min(loks), 3)), "\n")
+    cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
     cat(paste("largest value:", round(max(loks), 3)), "\n")
   }
 
@@ -343,8 +344,8 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
 
   if(printRes==TRUE) {
     cat("Results from quasi-Newton:", "\n")
-    cat(paste("lowest value:", round(min(loks), 3)), "\n")
-    cat(paste("mean value:", round(mean(loks), 3)), "\n")
+    cat(paste("lowest value: ", round(min(loks), 3)), "\n")
+    cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
     cat(paste("largest value:", round(max(loks), 3)), "\n")
   }
 
@@ -384,9 +385,9 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   HQIC = -2*loglik + 2*d*log(log(T0))
   IC = data.frame(AIC, BIC, HQIC)
   if(printRes==TRUE) {
-    cat(paste("AIC:", round(AIC)), "\n")
+    cat(paste("AIC: ", round(AIC)), "\n")
     cat(paste("HQIC:", round(HQIC)), "\n")
-    cat(paste("BIC:", round(BIC)), "\n")
+    cat(paste("BIC: ", round(BIC)), "\n")
   }
 
   # Standard errors of the estimates

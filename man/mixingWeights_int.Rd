@@ -5,7 +5,8 @@
 \title{Calculate mixing weights of GMAR, StMAR or G-StMAR model}
 \usage{
 mixingWeights_int(data, p, M, params, StMAR = FALSE, GStMAR = FALSE,
-  restricted = FALSE, constraints = FALSE, R, checks = TRUE, epsilon)
+  restricted = FALSE, constraints = FALSE, R, checks = TRUE, epsilon,
+  give_t_plus1 = FALSE)
 }
 \arguments{
 \item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
@@ -78,6 +79,8 @@ such as stationary checks etc are made. The default is \code{TRUE}.}
 \item{epsilon}{an (optional) negative real number specifying the logarithm of the smallest positive non-zero number that will be
 handled without external packages. Too small value may lead to a failure or biased results and too large value will make the code
 run significantly slower. Default is \code{round(log(.Machine$double.xmin)+10)} and should not be adjusted too much.}
+
+\item{give_t_plus1}{should the mixing weights \eqn{\alpha_{m,t+1}} be returned in the last row? Default is \code{FALSE}.}
 }
 \value{
 Returns size \eqn{(TxM)} matrix containing the mixing weights of the specified GMAR, StMAR or G-StMAR model so that

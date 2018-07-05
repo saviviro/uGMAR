@@ -133,40 +133,35 @@ simulateGMAR <- function(p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FAL
 
   # If initial values are missing simulate them from the processes stationary distribution
   if(missing(initvalues)) {
-    mv_samples = matrix(ncol=M, nrow=p)
+    mv_samples = numeric(p)
+    m <- sample.int(M, size=1, prob=alphas)
     if(StMAR==FALSE & GStMAR==FALSE) {
-      for(i1 in 1:M) {
-        Gamma_m = solve(invG[,,i1])
-        L = t(chol(Gamma_m))
-        mv_samples[,i1] = mu_mp[,i1] + L%*%rnorm(p)
-      }
+      Gamma_m = solve(invG[,,m])
+      L = t(chol(Gamma_m))
+      mv_samples = mu_mp[,m] + L%*%rnorm(p)
     } else if(StMAR==TRUE) {
-       for(i1 in 1:M) {
-        Gamma_m = solve(invG[,,i1])
-        L = t(chol((dfs[i1]-2)/dfs[i1]*Gamma_m))
+        Gamma_m = solve(invG[,,m])
+        L = t(chol((dfs[m]-2)/dfs[m]*Gamma_m))
         Z = L%*%rnorm(p) # Sample from N(0,K)
-        U = rchisq(p, df=dfs[i1]) # Sample from chisq(v)
-        mv_samples[,i1] = mu_mp[,i1] + Z*sqrt(dfs[i1]/U) # sample from student's t
-      }
+        U = rchisq(p, df=dfs[m]) # Sample from chisq(v)
+        mv_samples = mu_mp[,m] + Z*sqrt(dfs[m]/U) # sample from student's t
     } else { # If GStMAR==TRUE
-      for(i1 in 1:M) {
-        if(i1<=M1) { # p-dimensional Gaussian samples
-          Gamma_m = solve(invG[,,i1])
+        if(m<=M1) { # p-dimensional Gaussian samples
+          Gamma_m = solve(invG[,,m])
           L = t(chol(Gamma_m))
-          mv_samples[,i1] = mu_mp[,i1] + L%*%rnorm(p)
+          mv_samples = mu_mp[,m] + L%*%rnorm(p)
         } else { # p-dimensional Student samples
-          Gamma_m = solve(invG[,,i1])
-          L = t(chol((dfs[i1-M1]-2)/dfs[i1-M1]*Gamma_m))
+          Gamma_m = solve(invG[,,m])
+          L = t(chol((dfs[m-M1]-2)/dfs[m-M1]*Gamma_m))
           Z = L%*%rnorm(p) # Sample from N(0,K)
-          U = rchisq(p, df=dfs[i1-M1]) # Sample from chisq(v)
-          mv_samples[,i1] = mu_mp[,i1] + Z*sqrt(dfs[i1-M1]/U) # sample from student's t
+          U = rchisq(p, df=dfs[m-M1]) # Sample from chisq(v)
+          mv_samples = mu_mp[,m] + Z*sqrt(dfs[m-M1]/U) # sample from student's t
         }
-      }
     }
     if(p==1) {
-      Y[1,] = sum(sapply(1:M, function(i1) alphas[i1]*mv_samples[i1])) # Initial values sampled from the stationary distribution
+      Y[1,] = mv_samples # Initial values sampled from the stationary distribution
     } else {
-      Y[1,] = rowSums(vapply(1:M, function(i1) alphas[i1]*mv_samples[,i1], numeric(p))) # Initial values sampled from the stationary distribution
+      Y[1,] = mv_samples #rowSums(vapply(1:M, function(i1) alphas[i1]*mv_samples[,i1], numeric(p))) # Initial values sampled from the stationary distribution
     }
   } else {
     Y[1,] = rev(initvalues)

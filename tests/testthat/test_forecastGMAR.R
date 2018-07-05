@@ -50,6 +50,6 @@ pred12gs <- forecastGMAR(VIX, 1, c(1, 1), params12gs, GStMAR=TRUE, oneStepCondMe
 pred23gs <- forecastGMAR(VIX, 2, c(2, 1), params23gs, GStMAR=TRUE, oneStepCondMean=TRUE, plotRes=FALSE, printRes=FALSE)
 
 test_that("forecastGMAR oneStepCondMean works correctly", {
-  expect_equal(pred12gs, 11.30546, tolerance=1e-4)
-  expect_equal(pred23gs, 11.42612, tolerance=1e-4)
+  expect_equal(pred12gs, 11.3083, tolerance=1e-4)
+  expect_equal(pred23gs, 11.425, tolerance=1e-4)
 })

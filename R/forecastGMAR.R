@@ -109,7 +109,8 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
     stop("The last p values of the given data contain NA values, which is not supported")
   }
   if(oneStepCondMean==TRUE) { # Exact optimal forecast
-    mw = mixingWeights(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
+    mw = mixingWeights_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
+                           R=R, checks=TRUE, give_t_plus1=TRUE)
     pars = reformParameters(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)$pars
     if(p==1) {
       bestcast = sum(mw[nrow(mw),]*(pars[1,] + initvalues*pars[2:(2+p-1),]))
@@ -206,7 +207,7 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
       if(upperOnly==TRUE) {
         ts_uppers = lapply(1:length(confq), function(i1) ts(c(data[n_obs], uppers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
         pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-        dat = ts(data[(n_obs-nt):n_obs], start=time(data)[n_obs-nt], frequency=frequency(data))
+        dat = ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
         t0 = time(pred); values0 = c(as.vector(confints), as.vector(dat))
         ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(values0))-1, round(max(values0))+1))
         ts_lowers = ts(rep(round(min(values0))-2, times=nsteps+1), start=time(data)[n_obs], frequency=frequency(data))
@@ -217,7 +218,7 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
       } else if(lowerOnly==TRUE) {
         ts_lowers = lapply(1:length(confq), function(i1) ts(c(data[n_obs], lowers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
         pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-        dat = ts(data[(n_obs-nt):n_obs], start=time(data)[n_obs-nt], frequency=frequency(data))
+        dat = ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
         t0 = time(pred); values0 = c(as.vector(confints), as.vector(dat))
         ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(values0))-1, round(max(values0))+1))
         ts_uppers = ts(rep(round(max(values0))+2, times=nsteps+1), start=time(data)[n_obs], frequency=frequency(data))
@@ -229,7 +230,7 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
         ts_lowers = lapply(1:(length(confq)/2), function(i1) ts(c(data[n_obs], lowers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
         ts_uppers = lapply(1:(length(confq)/2), function(i1) ts(c(data[n_obs], uppers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
         pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-        dat = ts(data[(n_obs-nt):n_obs], start=time(data)[n_obs-nt], frequency=frequency(data))
+        dat = ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
         t0 = time(pred)
         values0 = c(as.vector(confints), as.vector(dat))
         ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(values0))-1, round(max(values0))+1))
