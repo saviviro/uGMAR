@@ -40,16 +40,16 @@
 #'  }
 
 isStationary_int <- function(p, M, params, restricted=FALSE) {
-  M = sum(M) # For G-StMAR models
+  M <- sum(M) # For G-StMAR models
   if(restricted==FALSE) {
-    pars = matrix(params[1:(M*(p+2))], ncol=M)
+    pars <- matrix(params[1:(M*(p+2))], ncol=M)
     for(i1 in 1:M) {
       if(any(abs(polyroot(c(1, -pars[2:(p+1), i1])))<=1+1e-10)) {
         return(FALSE)
       }
     }
   } else {
-    absroots = abs(polyroot(c(1, -params[(M+1):(M+p)])))
+    absroots <- abs(polyroot(c(1, -params[(M+1):(M+p)])))
     if(any(absroots<=1+1e-10)) {
       return(FALSE)
     }
@@ -112,7 +112,7 @@ isStationary <- function(p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FAL
   }
   if(constraints==TRUE) {
     checkConstraintMat(p=p, M=M, R, restricted=restricted)
-    params = reformConstrainedPars(p, M, params, R=R, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)
+    params <- reformConstrainedPars(p, M, params, R=R, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)
   }
   return(isStationary_int(p=p, M=M, params=params, restricted=restricted))
 }
@@ -122,9 +122,9 @@ isStationary <- function(p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FAL
 
 isIdentifiable <- function(p, M, params, restricted=FALSE, StMAR=FALSE, GStMAR=FALSE) {
   if(GStMAR==TRUE) {
-    M1 = M[1]
-    M2 = M[2]
-    M = sum(M)
+    M1 <- M[1]
+    M2 <- M[2]
+    M <- sum(M)
     if(M1==1 & M2==1) {
       return(TRUE)
     }
@@ -133,30 +133,30 @@ isIdentifiable <- function(p, M, params, restricted=FALSE, StMAR=FALSE, GStMAR=F
     return(TRUE)
   }
   if(restricted==FALSE) {
-    pars = matrix(params[1:(M*(p+2))], ncol=M)
-    alphas = params[(M*(p+2)+1):(M*(p+3)-1)]
-    alphas = c(alphas, 1-sum(alphas))
+    pars <- matrix(params[1:(M*(p+2))], ncol=M)
+    alphas <- params[(M*(p+2)+1):(M*(p+3)-1)]
+    alphas <- c(alphas, 1-sum(alphas))
     if(StMAR==TRUE) {
-      pars = rbind(pars, params[(M*(p+3)):(M*(p+4)-1)])
+      pars <- rbind(pars, params[(M*(p+3)):(M*(p+4)-1)])
     } else if(GStMAR==TRUE) {
-      pars1 = as.matrix(pars[,1:M1])
-      pars2 = as.matrix(pars[,(M1+1):M])
-      pars2 = rbind(pars2, params[(M*(p+3)):(M*(p+3)+M2-1)])
-      alphas1 = alphas[1:M1]
-      alphas2 = alphas[(M1+1):M]
+      pars1 <- as.matrix(pars[,1:M1])
+      pars2 <- as.matrix(pars[,(M1+1):M])
+      pars2 <- rbind(pars2, params[(M*(p+3)):(M*(p+3)+M2-1)])
+      alphas1 <- alphas[1:M1]
+      alphas2 <- alphas[(M1+1):M]
     }
   } else { # If restricted==TRUE
-    pars = rbind(params[1:M], matrix(rep(params[(M+1):(M+p)], M), ncol=M), params[(M+p+1):(p+2*M)])
-    alphas = params[(p+2*M+1):(3*M+p-1)]
-    alphas = c(alphas, 1-sum(alphas))
+    pars <- rbind(params[1:M], matrix(rep(params[(M+1):(M+p)], M), ncol=M), params[(M+p+1):(p+2*M)])
+    alphas <- params[(p+2*M+1):(3*M+p-1)]
+    alphas <- c(alphas, 1-sum(alphas))
     if(StMAR==TRUE) {
-      pars = rbind(pars, params[(3*M+p):(4*M+p-1)])
+      pars <- rbind(pars, params[(3*M+p):(4*M+p-1)])
     } else if(GStMAR==TRUE) {
-      pars1 = as.matrix(pars[,1:M1])
-      pars2 = as.matrix(pars[,(M1+1):M])
-      pars2 = rbind(pars2, params[(3*M+p):(3*M+p+M2-1)])
-      alphas1 = alphas[1:M1]
-      alphas2 = alphas[(M1+1):M]
+      pars1 <- as.matrix(pars[,1:M1])
+      pars2 <- as.matrix(pars[,(M1+1):M])
+      pars2 <- rbind(pars2, params[(3*M+p):(3*M+p+M2-1)])
+      alphas1 <- alphas[1:M1]
+      alphas2 <- alphas[(M1+1):M]
     }
   }
 
@@ -196,10 +196,10 @@ isIdentifiable <- function(p, M, params, restricted=FALSE, StMAR=FALSE, GStMAR=F
 
 checkAndCorrectData <- function(data, p) {
   if(!is.matrix(data)) {
-    data = as.matrix(data)
+    data <- as.matrix(data)
   }
   if(ncol(data)>nrow(data)) {
-    data=t(data)   # The data matrix should contain observation per row (not per column)
+    data <- t(data)   # The data matrix should contain observation per row (not per column)
   }
   if(ncol(data)>1) {
     stop("The data has more than one columns")
@@ -236,17 +236,17 @@ checkAndCorrectData <- function(data, p) {
 
 parameterChecks <- function(p, M, params, pars, alphas, StMAR=FALSE, GStMAR=FALSE, constraints=FALSE) {
   if(StMAR==TRUE) {
-    dfs = params[(M*(p+3)):(M*(p+4)-1)]
+    dfs <- params[(M*(p+3)):(M*(p+4)-1)]
     if(length(params)!=(M*(p+4)-1)) {
       stop("The parameter vector has wrong dimension")
     } else if(any(dfs<=2)) {
       stop("The degrees of freedom parameters have to be larger than 2")
     }
   } else if(GStMAR==TRUE) {
-    M1 = M[1]
-    M2 = M[2]
-    M = sum(M)
-    dfs = params[(M*(p+3)):(M*(p+3)+M2-1)]
+    M1 <- M[1]
+    M2 <- M[2]
+    M <- sum(M)
+    dfs <- params[(M*(p+3)):(M*(p+3)+M2-1)]
     if(length(params)!=M*(p+3)-1+M2) {
       stop("The parameter vector has wrong dimension")
     } else if(any(dfs<=2)) {
@@ -264,7 +264,9 @@ parameterChecks <- function(p, M, params, pars, alphas, StMAR=FALSE, GStMAR=FALS
   } else if(!isStationary_int(p, M, params, restricted=FALSE)) {
     stop("The model doesn't satisfy the stationary condition")
   }
-  if(GStMAR==TRUE) { M = c(M1, M2)}
+  if(GStMAR==TRUE) {
+    M <- c(M1, M2)
+  }
   if(constraints==FALSE & !isIdentifiable(p, M, params, restricted=FALSE, StMAR=StMAR, GStMAR=GStMAR)) {
     stop("The model doesn't satisfy the identification conditions")
   }
@@ -278,7 +280,7 @@ parameterChecks <- function(p, M, params, pars, alphas, StMAR=FALSE, GStMAR=FALS
 #' @return Doesn't return anything, but throws an error if finds out that something is wrong.
 
 checkConstraintMat <- function(p, M, R, restricted=FALSE) {
-  M = sum(M) # For G-StMAR
+  M <- sum(M) # For G-StMAR
   if(restricted==TRUE) {
     if(missing(R)) {
       stop("The constraint matrix R needs to be provided")
@@ -299,8 +301,8 @@ checkConstraintMat <- function(p, M, R, restricted=FALSE) {
       stop("The argument R should be a list of M constraint matrices R_{m} - one for each component model")
     }
     for(i1 in 1:M) {
-      R0 = as.matrix(R[[i1]])
-      q = ncol(R0)
+      R0 <- as.matrix(R[[i1]])
+      q <- ncol(R0)
       if(nrow(R0)!=p) {
         stop(paste("The constraint matrix R for regime", i1 ,"has wrong dimension"))
       } else if(q>p) {
@@ -311,6 +313,7 @@ checkConstraintMat <- function(p, M, R, restricted=FALSE) {
     }
   }
 }
+
 
 #' @title Check p and M are correctly set
 #'
@@ -346,47 +349,47 @@ nParams <- function(p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constrain
   if(restricted==FALSE) {
     if(StMAR==TRUE) {
       if(constraints==FALSE) {
-        d = M*(p+4)-1
+        d <- M*(p+4)-1
       } else {
-        d = 4*M-1+sum(vapply(1:M, function(i1) ncol(as.matrix(R[[i1]])), numeric(1)))
+        d <- 4*M-1+sum(vapply(1:M, function(i1) ncol(as.matrix(R[[i1]])), numeric(1)))
       }
     } else if(GStMAR==TRUE) {
-      M1 = M[1]
-      M2 = M[2]
-      M = sum(M)
+      M1 <- M[1]
+      M2 <- M[2]
+      M <- sum(M)
       if(constraints==FALSE) {
-        d = M*(p+3)+M2-1
+        d <- M*(p+3)+M2-1
       } else {
-        d = 3*M+M2-1+sum(vapply(1:M, function(i1) ncol(as.matrix(R[[i1]])), numeric(1)))
+        d <- 3*M+M2-1+sum(vapply(1:M, function(i1) ncol(as.matrix(R[[i1]])), numeric(1)))
       }
     } else { # If GMAR==TRUE
       if(constraints==FALSE) {
-        d = M*(p+3)-1
+        d <- M*(p+3)-1
       } else {
-        d = 3*M-1+sum(vapply(1:M, function(i1) ncol(as.matrix(R[[i1]])), numeric(1)))
+        d <- 3*M-1+sum(vapply(1:M, function(i1) ncol(as.matrix(R[[i1]])), numeric(1)))
       }
     }
   } else { # if restricted==TRUE
     if(StMAR==TRUE) {
       if(constraints==FALSE) {
-        d = 4*M+p-1
+        d <- 4*M+p-1
       } else {
-        d = 4*M+ncol(as.matrix(R))-1
+        d <- 4*M+ncol(as.matrix(R))-1
       }
     } else if(GStMAR==TRUE) {
-      M1 = M[1]
-      M2 = M[2]
-      M = sum(M)
+      M1 <- M[1]
+      M2 <- M[2]
+      M <- sum(M)
       if(constraints==FALSE) {
-        d = 3*M+M2+p-1
+        d <- 3*M+M2+p-1
       } else {
-        d = 3*M+M2+ncol(as.matrix(R))-1
+        d <- 3*M+M2+ncol(as.matrix(R))-1
       }
     } else { # if GMAR=TRUE
       if(constraints==FALSE) {
-        d = 3*M+p-1
+        d <- 3*M+p-1
       } else {
-        d = 3*M+ncol(as.matrix(R))-1
+        d <- 3*M+ncol(as.matrix(R))-1
       }
     }
   }

@@ -73,7 +73,7 @@ to be the same for all regimes. Default is \code{FALSE}.}
 Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
 This argument is ignored if \code{constraints==FALSE}.}
 
-\item{conditional}{an (optional) logical argument specifying wether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
+\item{conditional}{an (optional) logical argument specifying whether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
 
 \item{returnTerms}{set \code{TRUE} if the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)})
 should not be summed to calculate the log-likelihood value, but to be returned as a numeric vector. Default is \code{FALSE}.}

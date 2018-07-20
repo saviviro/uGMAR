@@ -39,7 +39,7 @@ to be the same for all regimes. Default is \code{FALSE}.}
 Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
 This argument is ignored if \code{constraints==FALSE}.}
 
-\item{conditional}{an (optional) logical argument specifying wether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
+\item{conditional}{an (optional) logical argument specifying whether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
 
 \item{nCalls}{an (optional) positive integer specifying how many rounds of estimation should be done.
 The estimation results may vary from round to round because of multimodality of the log-likelihood function
@@ -211,7 +211,7 @@ fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
 # Non-mixture version of StMAR model: without multicore
 fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4, runTests=TRUE)
 
-# GStMAR model
+# G-StMAR model
 fit12gs <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, conditional=FALSE)
 
 # Restricted G-StMAR model

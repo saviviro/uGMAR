@@ -59,7 +59,7 @@
 #'   }
 #'   Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
 #'   This argument is ignored if \code{constraints==FALSE}.
-#' @param conditional an (optional) logical argument specifying wether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.
+#' @param conditional an (optional) logical argument specifying whether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.
 #' @param boundaries an (optional) logical argument. If \code{TRUE} then \code{loglikelihood} returns \code{minval} if...
 #' \itemize{
 #'   \item any component variance is not larger than zero,
@@ -95,14 +95,14 @@
 #'  }
 
 loglikelihood_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, boundaries=FALSE, checks=TRUE, returnTerms=FALSE, epsilon, minval) {
-  M_orig = M
+  M_orig <- M
   if(GStMAR==TRUE) {
-    M1 = M[1]
-    M2 = M[2]
-    M = sum(M)
+    M1 <- M[1]
+    M2 <- M[2]
+    M <- sum(M)
   }
   if(missing(epsilon)) {
-    epsilon = round(log(.Machine$double.xmin)+10)
+    epsilon <- round(log(.Machine$double.xmin)+10)
   }
 
   # Reform and collect parameters
@@ -110,45 +110,45 @@ loglikelihood_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, res
     if(checks==TRUE) {
       checkConstraintMat(p=p, M=M_orig, R=R, restricted=restricted)
     }
-    params = reformConstrainedPars(p=p, M=M_orig, params=params, R=R, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)
+    params <- reformConstrainedPars(p=p, M=M_orig, params=params, R=R, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)
   }
   if(M==1) {
-    pars = matrix(params[1:(M*(p+2))], ncol=M)
-    alphas = c(1)
+    pars <- matrix(params[1:(M*(p+2))], ncol=M)
+    alphas <- c(1)
     if(StMAR==TRUE) {
-      dfs = params[p+3]
+      dfs <- params[p+3]
     }
   } else {
     if(restricted==FALSE) {
-      pars = matrix(params[1:(M*(p+2))], ncol=M) # Component parameters by column (except alphas and dfs)
-      alphas = params[(M*(p+2)+1):(M*(p+3)-1)]
-      alphas = c(alphas, 1-sum(alphas))
+      pars <- matrix(params[1:(M*(p+2))], ncol=M) # Component parameters by column (except alphas and dfs)
+      alphas <- params[(M*(p+2)+1):(M*(p+3)-1)]
+      alphas <- c(alphas, 1-sum(alphas))
       if(StMAR==TRUE) {
-        dfs = params[(M*(p+3)):(M*(p+4)-1)] # degrees of freedom
+        dfs <- params[(M*(p+3)):(M*(p+4)-1)] # degrees of freedom
       } else if(GStMAR==TRUE) {
-        dfs = params[(M*(p+3)):(M*(p+3)+M2-1)]
+        dfs <- params[(M*(p+3)):(M*(p+3)+M2-1)]
       }
     } else {
       # If restricted TRUE: transform the restricted parameter vector into the standard form. Then do everything like for non-restricted.
-      phi0 = params[1:M]
-      arcoefs = matrix(rep(params[(M+1):(M+p)], M), ncol=M)
-      variances = params[(M+p+1):(p+2*M)]
-      pars = rbind(phi0, arcoefs, variances)
-      alphas = params[(p+2*M+1):(3*M+p-1)]
+      phi0 <- params[1:M]
+      arcoefs <- matrix(rep(params[(M+1):(M+p)], M), ncol=M)
+      variances <- params[(M+p+1):(p+2*M)]
+      pars <- rbind(phi0, arcoefs, variances)
+      alphas <- params[(p+2*M+1):(3*M+p-1)]
       if(StMAR==TRUE) {
-        dfs = params[(3*M+p):(4*M+p-1)] # degrees of freedom
-        params = c(as.vector(pars), alphas, dfs)
+        dfs <- params[(3*M+p):(4*M+p-1)] # degrees of freedom
+        params <- c(as.vector(pars), alphas, dfs)
       } else if(GStMAR==TRUE) {
-        dfs = params[(3*M+p):(3*M+p-1+M2)]
-        params = c(as.vector(pars), alphas, dfs)
+        dfs <- params[(3*M+p):(3*M+p-1+M2)]
+        params <- c(as.vector(pars), alphas, dfs)
       } else {
-        params = c(as.vector(pars), alphas)
+        params <- c(as.vector(pars), alphas)
       }
-      alphas = c(alphas, 1-sum(alphas))
+      alphas <- c(alphas, 1-sum(alphas))
     }
   }
-  rownames(pars) = NULL
-  sigmas = pars[p+2,]
+  rownames(pars) <- NULL
+  sigmas <- pars[p+2,]
 
   # Return minval if parameters are out of their boundaries.
   if(boundaries==TRUE) {
@@ -169,145 +169,145 @@ loglikelihood_int <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, res
   }
 
   if(checks==TRUE) {
-    data = checkAndCorrectData(data=data, p=p)
+    data <- checkAndCorrectData(data=data, p=p)
     parameterChecks(p=p, M=M_orig, params=params, pars=pars, alphas=alphas, StMAR=StMAR, GStMAR=GStMAR, constraints=constraints)
   }
-  n_obs = length(data)
+  n_obs <- length(data)
 
   #### Start evaluating the log-likelihood ####
 
   # Expected values mu_m (Kalliovirta 2015, s.250)
-  mu = vapply(1:M, function(i1) pars[1, i1]/(1-sum(pars[2:(p+1), i1])), numeric(1))
+  mu <- vapply(1:M, function(i1) pars[1, i1]/(1-sum(pars[2:(p+1), i1])), numeric(1))
 
   # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
-  Y = vapply(1:p, function(i1) data[(p-i1+1):(n_obs-i1+1)], numeric(n_obs-p+1) )
+  Y <- vapply(1:p, function(i1) data[(p-i1+1):(n_obs-i1+1)], numeric(n_obs-p+1) )
 
   # Calculate inverse Gamma_m and calculate the matrix products in mv normal and t-distribution (Galbraith and Galbraith 1974)
-  matProd = matrix(nrow=n_obs-p+1, ncol=M)
-  invG = array(dim=c(p, p, M))
+  matProd <- matrix(nrow=n_obs-p+1, ncol=M)
+  invG <- array(dim=c(p, p, M))
   if(p==1) { # Form vectorized Gamma_m (Lutkepohl (2005), s.15-29)
     for(i1 in 1:M) {
-      A = pars[p+1, i1]
-      Sigma = as.matrix(sigmas[i1])
-      VecGamma = solve(1-kronecker(A,A), Sigma)
-      invG[,,i1] = as.matrix(1/VecGamma)
-      matProd[,i1] = (Y-mu[i1])*invG[,,i1]*(Y-mu[i1])
+      A <- pars[p+1, i1]
+      Sigma <- as.matrix(sigmas[i1])
+      VecGamma <- solve(1-kronecker(A,A), Sigma)
+      invG[,,i1] <- as.matrix(1/VecGamma)
+      matProd[,i1] <- (Y-mu[i1])*invG[,,i1]*(Y-mu[i1])
     }
   } else { # Inverse formula by Galbraith, R., Galbraith, J., (1974)
     for(i1 in 1:M) {
-      ARcoefs = pars[2:(p+1), i1]
-      U = diag(1, p, p)
-      V = diag(ARcoefs[p], p, p)
+      ARcoefs <- pars[2:(p+1), i1]
+      U <- diag(1, p, p)
+      V <- diag(ARcoefs[p], p, p)
       for(i2 in 1:(p-1)) {
         U[(i2+1):p, i2] <- -ARcoefs[1:(p-i2)]
         V[(i2+1):p, i2] <- rev(ARcoefs[i2:(p-1)])
       }
-      invG[,,i1] = (crossprod(U, U) - crossprod(V, V))/sigmas[i1]
-      matProd[,i1] = rowSums((Y-mu[i1]*rep(1,p))%*%invG[,,i1]*(Y-mu[i1]*rep(1,p)))
+      invG[,,i1] <- (crossprod(U, U) - crossprod(V, V))/sigmas[i1]
+      matProd[,i1] <- rowSums((Y-mu[i1]*rep(1,p))%*%invG[,,i1]*(Y-mu[i1]*rep(1,p)))
     }
   }
 
   # Calculate the log multivariate normal or student's t values (Kalliovirta 2015, s250 eq.(7) or MPS 2018) for each vector y_t and for each m=1,..,M
   # First row for initial values y_0 (as denoted by Kalliovirta 2015) and i:th row for y_(i-1). First column for component m=1 and j:th column for m=j.
-  logmv_values = matrix(nrow=(n_obs-p+1), ncol=M)
+  logmv_values <- matrix(nrow=(n_obs-p+1), ncol=M)
   if(StMAR==FALSE & GStMAR==FALSE) {
     for(i1 in 1:M) {
-      detG = 1/det(as.matrix(invG[,,i1]))
-      logmv_values[,i1] = -0.5*p*log(2*pi)-0.5*log(detG)-0.5*matProd[,i1]
+      detG <- 1/det(as.matrix(invG[,,i1]))
+      logmv_values[,i1] <- -0.5*p*log(2*pi)-0.5*log(detG)-0.5*matProd[,i1]
     }
   } else if(StMAR==TRUE){
     for(i1 in 1:M) {
-      detG = 1/det(as.matrix(invG[,,i1]))
-      logC = lgamma(0.5*(p+dfs[i1]))-0.5*p*log(pi)-0.5*p*log(dfs[i1]-2)-lgamma(0.5*dfs[i1])
-      logmv_values[,i1] = logC - 0.5*log(detG) - 0.5*(p+dfs[i1])*log(1 + matProd[,i1]/(dfs[i1]-2))
+      detG <- 1/det(as.matrix(invG[,,i1]))
+      logC <- lgamma(0.5*(p+dfs[i1]))-0.5*p*log(pi)-0.5*p*log(dfs[i1]-2)-lgamma(0.5*dfs[i1])
+      logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p+dfs[i1])*log(1 + matProd[,i1]/(dfs[i1]-2))
     }
   } else {  # If GStMAR==TRUE
     for(i1 in 1:M) {
-      detG = 1/det(as.matrix(invG[,,i1]))
+      detG <- 1/det(as.matrix(invG[,,i1]))
       if(i1 <= M1) { # Multinormals
-        logmv_values[,i1] = -0.5*p*log(2*pi)-0.5*log(detG)-0.5*matProd[,i1]
+        logmv_values[,i1] <- -0.5*p*log(2*pi)-0.5*log(detG)-0.5*matProd[,i1]
       } else { # Multistudents
-        logC = lgamma(0.5*(p+dfs[i1-M1]))-0.5*p*log(pi)-0.5*p*log(dfs[i1-M1]-2)-lgamma(0.5*dfs[i1-M1])
-        logmv_values[,i1] = logC - 0.5*log(detG) - 0.5*(p+dfs[i1-M1])*log(1 + matProd[,i1]/(dfs[i1-M1]-2))
+        logC <- lgamma(0.5*(p+dfs[i1-M1]))-0.5*p*log(pi)-0.5*p*log(dfs[i1-M1]-2)-lgamma(0.5*dfs[i1-M1])
+        logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p+dfs[i1-M1])*log(1 + matProd[,i1]/(dfs[i1-M1]-2))
       }
     }
   }
 
   # Calculate the alpha_mt mixing weights (Kalliovirta 2015, s.250 eq.(8))
   # First row for t=1, second for t=2, and i:th for t=i. First column for m=1, second for m=2 and j:th column for m=j.
-  logmv_values0 = logmv_values[1:(n_obs-p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
-  if(!is.matrix(logmv_values0)) logmv_values0 = as.matrix(logmv_values0)
+  logmv_values0 <- logmv_values[1:(n_obs-p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
+  if(!is.matrix(logmv_values0)) logmv_values0 <- as.matrix(logmv_values0)
 
-  l_0 = 0 # "The first term" of the exact log-likelihood
+  l_0 <- 0 # "The first term" of the exact log-likelihood
   if(M==1) {
-    alpha_mt = as.matrix(rep(1, n_obs-p))
+    alpha_mt <- as.matrix(rep(1, n_obs-p))
     if(conditional==FALSE) { # Calculate "the first term" of the log-likelihood (Kalliovirta ym 2015, s.254 eq.(12))
-      l_0 = logmv_values[1]
+      l_0 <- logmv_values[1]
     }
   } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with Brobdingnag if needed
-    numerators = lapply(1:M, function(i1) alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]) # alphas[i1]*exp( as.brob(mvn_values[,i1]) )
-    denominator = Reduce("+", numerators) # For all t=0,...,T
-    alpha_mt = vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(n_obs-p))
+    numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1]))) # alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]
+    denominator <- Reduce("+", numerators) # For all t=0,...,T
+    alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(n_obs-p))
 
     if(conditional==FALSE) {
-      l_0 = log(Reduce("+", lapply(1:M, function(i1) numerators[[i1]][1])))
+      l_0 <- log(Reduce("+", lapply(1:M, function(i1) numerators[[i1]][1])))
     }
   } else {
-    mv_values0 = exp(logmv_values0)
-    denominator = colSums(alphas*t(mv_values0))
-    alpha_mt = t(alphas*t(mv_values0/denominator))
+    mv_values0 <- exp(logmv_values0)
+    denominator <- as.vector(mv_values0%*%alphas) #  denominator = colSums(alphas*t(mv_values0))
+    alpha_mt <- (mv_values0/denominator)%*%diag(alphas) # alpha_mt = t(alphas*t(mv_values0/denominator))
 
     if(conditional==FALSE) {
-      l_0 = log(sum(alphas*mv_values0[1,]))
+      l_0 <- log(sum(alphas*mv_values0[1,]))
     }
   }
 
   # Calculate the conditional means mu_mt (Kalliovirta 2015, s.249 eq.(2)). First row for t=1, second for t=2 etc. First column for m=1, second column for m=2 etc.
   if(p==1) {
-    mu_mt = vapply(1:M, function(i1) rep(pars[1,i1], nrow(Y)-1) + Y[1:(nrow(Y)-1),]*pars[2,i1], numeric(n_obs-p) )
+    mu_mt <- vapply(1:M, function(i1) rep(pars[1,i1], nrow(Y)-1) + Y[1:(nrow(Y)-1),]*pars[2,i1], numeric(n_obs-p) )
   } else {
-    mu_mt = vapply(1:M, function(i1) rep(pars[1,i1], nrow(Y)-1) + colSums(pars[2:(p+1),i1]*t(Y[1:(nrow(Y)-1),])), numeric(n_obs-p) )
+    mu_mt <- vapply(1:M, function(i1) rep(pars[1,i1], nrow(Y)-1) + colSums(pars[2:(p+1),i1]*t(Y[1:(nrow(Y)-1),])), numeric(n_obs-p) )
   }
 
   # Calculate "the second term" of the log-likelihood (Kalliovirta 2015, s.254 eq.(12)-(13) )
-  Y2 = Y[2:nrow(Y),1] # Only first column and rows 2...T are needed
+  Y2 <- Y[2:nrow(Y),1] # Only first column and rows 2...T are needed
   if(StMAR==FALSE & GStMAR==FALSE) {
-    invsqrt_sigmas = sigmas^(-1/2)
+    invsqrt_sigmas <- sigmas^(-1/2)
     if(M==1) {
-      lt_tmp = invsqrt_sigmas*dnorm((Y2-mu_mt)*invsqrt_sigmas)
+      lt_tmp <- invsqrt_sigmas*dnorm((Y2-mu_mt)*invsqrt_sigmas)
     } else {
-      lt_tmp = alpha_mt*dnorm((Y2-mu_mt)%*%diag(invsqrt_sigmas))%*%diag(invsqrt_sigmas)
+      lt_tmp <- alpha_mt*dnorm((Y2-mu_mt)%*%diag(invsqrt_sigmas))%*%diag(invsqrt_sigmas)
     }
   } else if(StMAR==TRUE) { # If StMAR=TRUE
-    matProd0 = matProd[1:(n_obs-p),] # Last row is not needed because sigma_t uses y_{t-1}
+    matProd0 <- matProd[1:(n_obs-p),] # Last row is not needed because sigma_t uses y_{t-1}
     if(M==1) {
-      sigma_mt = sigmas*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances
-      lt_tmp = ((exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2)))/sqrt(sigma_mt))*(1 + ((Y2-mu_mt)^2)/((dfs+p-2)*sigma_mt))^(-0.5*(1+dfs+p))
+      sigma_mt <- sigmas*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances
+      lt_tmp <- ((exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2)))/sqrt(sigma_mt))*(1 + ((Y2-mu_mt)^2)/((dfs+p-2)*sigma_mt))^(-0.5*(1+dfs+p))
     } else {
-      sigma_mt = t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmas)
-      lt_tmp = alpha_mt*t(exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2-mu_mt)^2)/(sigma_mt%*%diag(dfs+p-2)))^(-0.5*(1+dfs+p)))
+      sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmas)
+      lt_tmp <- alpha_mt*t(exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2-mu_mt)^2)/(sigma_mt%*%diag(dfs+p-2)))^(-0.5*(1+dfs+p)))
     }
   } else {  # If GStMAR=TRUE
     # GMAR-components
-    invsqrt_sigmasM1 = sigmas[1:M1]^(-1/2)
+    invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2)
     if(M1==1) {
-      lt_tmpM1 = alpha_mt[,1]*invsqrt_sigmasM1*dnorm((Y2-mu_mt[,1])*invsqrt_sigmasM1)
-    } else { # TESTAA!!
-      lt_tmpM1 = alpha_mt[,1:M1]*dnorm((Y2-mu_mt[,1:M1])%*%diag(invsqrt_sigmasM1))%*%diag(invsqrt_sigmasM1)
+      lt_tmpM1 <- alpha_mt[,1]*invsqrt_sigmasM1*dnorm((Y2-mu_mt[,1])*invsqrt_sigmasM1)
+    } else {
+      lt_tmpM1 <- alpha_mt[,1:M1]*dnorm((Y2-mu_mt[,1:M1])%*%diag(invsqrt_sigmasM1))%*%diag(invsqrt_sigmasM1)
     }
     # StMAR-components
-    sigmasM2 = sigmas[(M1+1):M]
-    matProd0 = matProd[1:(n_obs-p),(M1+1):M]
+    sigmasM2 <- sigmas[(M1+1):M]
+    matProd0 <- matProd[1:(n_obs-p),(M1+1):M]
     if(M2==1) {
-      sigma_mt = sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances
-      lt_tmpM2 = alpha_mt[,(M1+1):M]*((exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2)))/sqrt(sigma_mt))*(1 + ((Y2-mu_mt[,(M1+1):M])^2)/((dfs+p-2)*sigma_mt))^(-0.5*(1+dfs+p))
-    } else { # TESTAA!!
-      sigma_mt = t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2)
-      lt_tmpM2 = alpha_mt[,(M1+1):M]*t(exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2-mu_mt[,(M1+1):M])^2)/(sigma_mt%*%diag(dfs+p-2)))^(-0.5*(1+dfs+p)))
+      sigma_mt <- sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances
+      lt_tmpM2 <- alpha_mt[,(M1+1):M]*((exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2)))/sqrt(sigma_mt))*(1 + ((Y2-mu_mt[,(M1+1):M])^2)/((dfs+p-2)*sigma_mt))^(-0.5*(1+dfs+p))
+    } else {
+      sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2)
+      lt_tmpM2 <- alpha_mt[,(M1+1):M]*t(exp(lgamma(0.5*(1+dfs+p))-lgamma(0.5*(dfs+p)))/sqrt(pi*(dfs+p-2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2-mu_mt[,(M1+1):M])^2)/(sigma_mt%*%diag(dfs+p-2)))^(-0.5*(1+dfs+p)))
     }
-    lt_tmp = cbind(lt_tmpM1, lt_tmpM2)
+    lt_tmp <- cbind(lt_tmpM1, lt_tmpM2)
   }
-  l_t = rowSums(lt_tmp)
+  l_t <- rowSums(lt_tmp)
 
   if(returnTerms==TRUE) {
     return(log(l_t))
@@ -369,7 +369,7 @@ loglikelihood <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restric
   if(length(params)!=nParams(p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
     stop("The parameter vector has wrong dimension")
   }
-  return(loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional, checks=TRUE, returnTerms=returnTerms))
+  loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional, checks=TRUE, returnTerms=returnTerms)
 }
 
 
@@ -583,5 +583,5 @@ mixingWeights <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restric
   if(length(params)!=nParams(p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
     stop("The parameter vector has wrong dimension")
   }
-  return(mixingWeights_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, checks=TRUE))
+  mixingWeights_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, checks=TRUE)
 }

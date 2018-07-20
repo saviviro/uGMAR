@@ -73,7 +73,7 @@ to be the same for all regimes. Default is \code{FALSE}.}
 Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
 This argument is ignored if \code{constraints==FALSE}.}
 
-\item{conditional}{an (optional) logical argument specifying wether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
+\item{conditional}{an (optional) logical argument specifying whether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
 
 \item{boundaries}{an (optional) logical argument. If \code{TRUE} then \code{loglikelihood} returns \code{minval} if...
 \itemize{

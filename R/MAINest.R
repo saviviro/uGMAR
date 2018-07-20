@@ -118,7 +118,7 @@
 #' # Non-mixture version of StMAR model: without multicore
 #' fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4, runTests=TRUE)
 #'
-#' # GStMAR model
+#' # G-StMAR model
 #' fit12gs <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, conditional=FALSE)
 #'
 #' # Restricted G-StMAR model
@@ -147,67 +147,52 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   on.exit(closeAllConnections())
   checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
   checkPM(p, M, GStMAR=GStMAR)
-  data = checkAndCorrectData(data, p)
-  epsilon = round(log(.Machine$double.xmin)+10)
-  minval = -9999
-  while(TRUE) {
-    if(minval<(-10*length(data))) {
-      break;
-    } else {
-      minval = 10*minval-9
-    }
-  }
-  if(constraints==TRUE) {
-    checkConstraintMat(p, M, R, restricted=restricted)
-  }
-  if(missing(R)) {
-    R = NULL
-  }
-  d = nParams(p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
-  if(missing(popsize)) {
-    popsize = 10*d
-  }
-  if(missing(ngen)) {
-    ngen = min(400, max(round(0.1*length(data)), 200))
-  }
-  if(missing(smartMu)) {
-    smartMu = min(100, round(0.5*ngen))
-  }
+  data <- checkAndCorrectData(data, p)
+  epsilon <- round(log(.Machine$double.xmin)+10)
+  minval <- -(10^(ceiling(log10(length(data))) + 1) - 1)
+  if(constraints==TRUE) checkConstraintMat(p, M, R, restricted=restricted)
+  if(missing(R)) R <- NULL
+  d <- nParams(p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
+  if(missing(popsize)) popsize <- 10*d
+  if(missing(ngen)) ngen <- min(400, max(round(0.1*length(data)), 200))
+  if(missing(smartMu)) smartMu <- min(100, round(0.5*ngen))
   if(missing(nCalls)) {
-    nCalls = round(10 + 9*log(sum(M)))
-  } else if(nCalls<1 | nCalls%%1!=0) {
+    nCalls <- round(10 + 9*log(sum(M)))
+  } else if(nCalls < 1 | nCalls%%1 != 0) {
     stop("nCalls has to be positive integer")
   }
   if(missing(ar0scale)) {
-    avg = mean(data); T1 = length(data)
-    c0 = (t(data-avg)%*%(data-avg))/T1
-    c1 = (t((data-avg)[1:(T1-1)])%*%(data-avg)[2:T1])/(T1-1)
-    ar0scale = c(1.5*avg*(1-c1/c0), max(c0, 4))
+    avg <- mean(data)
+    T1 <- length(data)
+    c0 <- crossprod(data-avg, data-avg)/T1
+    c1 <- crossprod((data-avg)[1:(T1-1)], (data-avg)[2:T1])/(T1-1)
+    ar0scale <- c(1.5*avg*(1 - c1/c0), max(c0, 4))
   } else if(length(ar0scale)!=2) {
     stop("ar0scale is wrong dimension")
   } else if(ar0scale[2]<=0) {
     stop("The second element of ar0scale should be larger than zero")
   }
   if(missing(sigmascale)) {
-    sigmascale = 1+sd(data)
-  } else if(length(sigmascale)!=1) {
+    sigmascale <- 1 + sd(data)
+  } else if(length(sigmascale) != 1) {
     stop("sigmascale is wrong dimension")
-  } else if(sigmascale<=0) {
+  } else if(sigmascale <= 0) {
     stop("sigmascale should be larger than zero")
   }
   if(missing(ncores)) {
     if(multicore==TRUE) {
-      ncores = parallel::detectCores()
+      ncores <- min(nCalls, parallel::detectCores())
     } else {
-      ncores = 1
+      ncores <- 1
     }
   } else if(multicore==FALSE) {
-    ncores = 1
-  } else if(ncores<1 | ncores%%1!=0) {
+    ncores <- 1
+  } else if(ncores < 1 | ncores%%1 != 0) {
     stop("ncores has to be positive integer")
   }
-  if(nCalls<ncores) {
-    ncores = nCalls
+  if(nCalls < ncores) {
+    ncores <- nCalls
+    message("ncores was set to be larger than the number of estimation rounds")
   }
   cat(paste("Using", ncores, "cores for", nCalls, "estimation rounds..."), "\n")
 
@@ -218,35 +203,36 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   ### Genetic algorithm ###
 
   if(multicore==FALSE) {
-    cat("Optimizing with genetic algorithm...", "\n")
+    cat("Optimizing with genetic algorithm...\n")
     GAfit_tmp <- function(round) {
-      ret = GAfit(data, p, M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional,
+      ret <- GAfit(data, p, M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional,
                   ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale, sigmascale=sigmascale, epsilon=epsilon,
                   initpop=initpop, minval=minval)
       cat(paste0(round, "/", nCalls), "\n")
       return(ret)
     }
-    GAresults = lapply(1:nCalls, function(round) GAfit_tmp(round))
+    GAresults <- lapply(1:nCalls, function(round) GAfit_tmp(round))
   } else {
-    cl = parallel::makeCluster(ncores)
-    parallel::clusterExport(cl, c("data", "p", "M", "ngen", "popsize", "smartMu", "ar0scale", "sigmascale", "conditional",
-                                  "restricted", "constraints", "R", "initpop", "GAfit", "loglikelihood_int", "isStationary_int",
-                                  "isIdentifiable", "StMAR", "GStMAR", "sortComponents", "smartIndividual_int", "randomIndividual_int",
-                                  "checkAndCorrectData", "reformParameters", "parameterChecks", "reformConstrainedPars",
-                                  "checkConstraintMat", "mixingWeights_int", "extractRegime", "changeRegime", "epsilon",
-                                  "nParams", "minval", "checkLogicals", "checkPM"), envir = environment())
+    cl <- parallel::makeCluster(ncores)
+    # parallel::clusterExport(cl, c("data", "p", "M", "ngen", "popsize", "smartMu", "ar0scale", "sigmascale", "conditional",
+    #                               "restricted", "constraints", "R", "initpop", "GAfit", "loglikelihood_int", "isStationary_int",
+    #                               "isIdentifiable", "StMAR", "GStMAR", "sortComponents", "smartIndividual_int", "randomIndividual_int",
+    #                               "checkAndCorrectData", "reformParameters", "parameterChecks", "reformConstrainedPars",
+    #                               "checkConstraintMat", "mixingWeights_int", "extractRegime", "changeRegime", "epsilon",
+    #                               "nParams", "minval", "checkLogicals", "checkPM"), envir = environment())
+    parallel::clusterExport(cl, ls(environment(fitGMAR)), envir = environment(fitGMAR)) # assign all variables from package:uGMAR
     parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
 
-    cat("Optimizing with genetic algorithm...", "\n")
+    cat("Optimizing with genetic algorithm...\n")
     if(requireNamespace("pbapply", quietly = TRUE)) {
       parallel::clusterEvalQ(cl, library(pbapply))
-      GAresults = pbapply::pblapply(1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
+      GAresults <- pbapply::pblapply(1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
                                                                 constraints=constraints, R=R, conditional=conditional,
                                                                 ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale,
                                                                 sigmascale=sigmascale, initpop=initpop, epsilon=epsilon,
                                                                 minval=minval), cl=cl)
     } else {
-      GAresults = parallel::parLapply(cl, 1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
+      GAresults <- parallel::parLapply(cl, 1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
                                                                       constraints=constraints, R=R, conditional=conditional,
                                                                       ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale,
                                                                       sigmascale=sigmascale, initpop=initpop, epsilon=epsilon,
@@ -254,11 +240,11 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
     }
     parallel::stopCluster(cl=cl)
   }
-  loks = sapply(1:nCalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], StMAR=StMAR, GStMAR=GStMAR,
+  loks <- sapply(1:nCalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], StMAR=StMAR, GStMAR=GStMAR,
                                                          restricted=restricted, constraints=constraints, R=R, conditional=conditional,
                                                          boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval))
   if(printRes==TRUE) {
-    cat("Results from genetic algorithm:", "\n")
+    cat("Results from genetic algorithm:\n")
     cat(paste("lowest value: ", round(min(loks), 3)), "\n")
     cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
     cat(paste("largest value:", round(max(loks), 3)), "\n")
@@ -269,101 +255,102 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   # Logarithmize dfs to get them to the same range as other parameters
   manipulateDFS <- function(M, params, logDFS=TRUE, StMAR) {
     if(StMAR==TRUE) {
-      M2 = M
+      M2 <- M
     } else {  # For G-StMAR models
-      M2 = M[2]
+      M2 <- M[2]
     }
-    dfs = params[(d-M2+1):d]
+    dfs <- params[(d-M2+1):d]
     if(logDFS==TRUE) {
-      params[(d-M2+1):d] = log(dfs) # log dfs
+      params[(d-M2+1):d] <- log(dfs) # log dfs
     } else {
-      params[(d-M2+1):d] = exp(dfs) # exp dfs (from log to normal)
+      params[(d-M2+1):d] <- exp(dfs) # exp dfs (from log to normal)
     }
     return(params)
   }
   if(StMAR==TRUE | GStMAR==TRUE) {
-    GAresults = lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=GAresults[[i1]], logDFS=TRUE, StMAR=StMAR))
+    GAresults <- lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=GAresults[[i1]], logDFS=TRUE, StMAR=StMAR))
   }
 
   # Function to maximize loglikelihood
   f <- function(params) {
     if(StMAR==TRUE | GStMAR==TRUE) {
-      params = manipulateDFS(M=M, params=params, logDFS=FALSE, StMAR=StMAR) # Unlogarithmize dfs
+      params <- manipulateDFS(M=M, params=params, logDFS=FALSE, StMAR=StMAR) # Unlogarithmize dfs
     }
     loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
                       boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
   }
 
   # Calculate gradient of the log-likelihood function using central finite difference
-  h = 1e-8
-  I = diag(rep(1, d))
+  h <- 6e-6
+  I <- diag(rep(1, d))
   gr <- function(params) {
-    grad = numeric(d)
+    grad <- numeric(d)
     for(i1 in 1:d) {
-      grad[i1] = (f(params+I[i1,]*h)-f(params-I[i1,]*h))/(2*h)
+      grad[i1] <- (f(params+I[i1,]*h)-f(params-I[i1,]*h))/(2*h)
     }
     return(grad)
   }
 
   if(multicore==TRUE) {
-    cl = parallel::makeCluster(ncores)
-    parallel::clusterExport(cl, c("GAresults", "f", "manipulateDFS", "data", "p", "M", "conditional", "restricted", "constraints",
-                                  "R", "loglikelihood_int", "isStationary_int", "isIdentifiable", "sortComponents",
-                                  "checkAndCorrectData", "StMAR", "GStMAR", "checkPM", "checkLogicals", "parameterChecks",
-                                  "reformParameters", "reformConstrainedPars", "checkConstraintMat", "epsilon", "gr",
-                                  "minval", "d", "nCalls"), envir = environment())
+    cl <- parallel::makeCluster(ncores)
+    # parallel::clusterExport(cl, c("GAresults", "f", "manipulateDFS", "data", "p", "M", "conditional", "restricted", "constraints",
+    #                               "R", "loglikelihood_int", "isStationary_int", "isIdentifiable", "sortComponents",
+    #                               "checkAndCorrectData", "StMAR", "GStMAR", "checkPM", "checkLogicals", "parameterChecks",
+    #                               "reformParameters", "reformConstrainedPars", "checkConstraintMat", "epsilon", "gr",
+    #                               "minval", "d", "nCalls"), envir = environment())
+    parallel::clusterExport(cl, ls(environment(fitGMAR)), envir = environment(fitGMAR)) # assign all variables from package:uGMAR
     parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
 
-    cat("Optimizing with quasi-Newton method...", "\n")
+    cat("Optimizing with quasi-Newton method...\n")
     if(requireNamespace("pbapply", quietly = TRUE)) {
       parallel::clusterEvalQ(cl, library(pbapply))
-      NEWTONresults = pbapply::pblapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
+      NEWTONresults <- pbapply::pblapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
                                                                      control=list(fnscale=-1)), cl=cl)
     } else {
-      NEWTONresults = parallel::parLapply(cl, 1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
+      NEWTONresults <- parallel::parLapply(cl, 1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
                                                                            control=list(fnscale=-1)))
     }
     parallel::stopCluster(cl=cl)
   } else {
-    cat("Optimizing with quasi-Newton method...", "\n")
-    NEWTONresults = lapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"), control=list(fnscale=-1)))
+    cat("Optimizing with quasi-Newton method...\n")
+    NEWTONresults <- lapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"), control=list(fnscale=-1)))
   }
 
-  loks = vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$value, numeric(1))
-  converged = vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$convergence==0, logical(1))
+  loks <- vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$value, numeric(1))
+  converged <- vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$convergence==0, logical(1))
   if(constraints==FALSE) {
-    newtonEstimates = lapply(1:nCalls, function(i1) sortComponents(p, M, NEWTONresults[[i1]]$par, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted))
+    newtonEstimates <- lapply(1:nCalls, function(i1) sortComponents(p, M, NEWTONresults[[i1]]$par, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted))
   } else { # To maintain the order of matrices R, models with constraints won't be sorted
-    newtonEstimates = lapply(1:nCalls, function(i1) NEWTONresults[[i1]]$par)
+    newtonEstimates <- lapply(1:nCalls, function(i1) NEWTONresults[[i1]]$par)
   }
 
   # Unlogarithmize dfs
   if(StMAR==TRUE | GStMAR==TRUE) {
-    newtonEstimates = lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], logDFS=FALSE, StMAR=StMAR))
+    newtonEstimates <- lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], logDFS=FALSE, StMAR=StMAR))
   }
 
   if(printRes==TRUE) {
-    cat("Results from quasi-Newton:", "\n")
+    cat("Results from quasi-Newton:\n")
     cat(paste("lowest value: ", round(min(loks), 3)), "\n")
     cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
     cat(paste("largest value:", round(max(loks), 3)), "\n")
   }
 
   # Obtain the estimates
-  bestind = which(loks==max(loks))[1]
-  bestfit = NEWTONresults[[bestind]]
-  params = newtonEstimates[[bestind]]
+  bestind <- which(loks==max(loks))[1]
+  bestfit <- NEWTONresults[[bestind]]
+  params <- newtonEstimates[[bestind]]
   if(constraints==FALSE) {
-    params = sortComponents(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted) # Sort the parameter vector by alphas
+    params <- sortComponents(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted) # Sort the parameter vector by alphas
   }
-  mw = mixingWeights_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, epsilon=epsilon)
+  mw <- mixingWeights_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, epsilon=epsilon)
 
   # Warnings and notifications
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1]>0.05)<0.01*length(data), logical(1)))) {
-    cat("NOTE: At least one of the components in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or re-specify the model.", "\n")
+    message("At least one of the components in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or re-specify the model.")
   }
   if(bestfit$convergence==1) {
-    cat("NOTE: Iteration limit was reached when estimating the best fitting individual!", "\n")
+    message("Iteration limit was reached when estimating the best fitting individual!")
   }
 
   #######################
@@ -372,18 +359,19 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
 
   # Quantile residual tests
   if(runTests==TRUE) {
-    cat("Performing quantile residual tests...", "\n")
-    qrTests = quantileResidualTests(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
-                                    lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=printRes)
+    cat("Performing quantile residual tests...\n")
+    qrTests <- quantileResidualTests(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
+                                     lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=printRes)
   }
 
   # Information criteria
-  loglik = bestfit$value
-  T0 = length(data) - p
-  AIC = -2*loglik + 2*d
-  BIC = -2*loglik + d*log(T0)
-  HQIC = -2*loglik + 2*d*log(log(T0))
-  IC = data.frame(AIC, BIC, HQIC)
+  obs <- ifelse(conditional, length(data) - p, length(data))
+  loglik <- bestfit$value
+#  T0 = length(data) - p
+  AIC <- -2*loglik + 2*d
+  BIC <- -2*loglik + d*log(obs)
+  HQIC <- -2*loglik + 2*d*log(log(obs))
+  IC <- data.frame(AIC, BIC, HQIC)
   if(printRes==TRUE) {
     cat(paste("AIC: ", round(AIC)), "\n")
     cat(paste("HQIC:", round(HQIC)), "\n")
@@ -391,14 +379,14 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   }
 
   # Standard errors of the estimates
-  stdErrors = standardErrors(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
+  stdErrors <- standardErrors(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
                              constraints=constraints, R=R, conditional=conditional, epsilon=epsilon,
                              minval=minval)
-  estimates = data.frame(params, stdErrors)
-  colnames(estimates) = c("estimate", "stdError")
+  estimates <- data.frame(params, stdErrors)
+  colnames(estimates) <- c("estimate", "stdError")
   if(printRes==TRUE) {
     if(all(is.na(stdErrors))) {
-      cat("Unable to calculate approximate standard errors!", "\n")
+      cat("Unable to calculate approximate standard errors!\n")
       cat("Estimates:", "\n")
       cat(round(estimates$estimate, 3), "\n")
     } else {
@@ -407,22 +395,22 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   }
 
   # Collect the stuff to be returned
-  results = list(params, stdErrors, loglik, IC,
-                 quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, epsilon=epsilon),
-                 mw, newtonEstimates, loks, converged)
-  names(results) = c("estimates", "stdErrors", "loglikelihood", "IC", "quantileResiduals", "mixingWeights",
+  results <- list(params, stdErrors, loglik, IC,
+                  quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, epsilon=epsilon),
+                  mw, newtonEstimates, loks, converged)
+  names(results) <- c("estimates", "stdErrors", "loglikelihood", "IC", "quantileResiduals", "mixingWeights",
                      "allEstimates", "allLoglikelihoods", "converged")
   if(runTests==TRUE) {
-    results[[length(results)+1]] = qrTests$normality
-    names(results)[length(results)] = "normality"
-    results[[length(results)+1]] = qrTests$autocorrelation
-    names(results)[length(results)] = "autocorrelation"
-    results[[length(results)+1]] = qrTests$cond.heteroscedasticity
-    names(results)[length(results)] = "cond.heteroscedasticity"
+    results[[length(results)+1]] <- qrTests$normality
+    names(results)[length(results)] <- "normality"
+    results[[length(results)+1]] <- qrTests$autocorrelation
+    names(results)[length(results)] <- "autocorrelation"
+    results[[length(results)+1]] <- qrTests$cond.heteroscedasticity
+    names(results)[length(results)] <- "cond.heteroscedasticity"
   }
   if(constraints==TRUE) {
-    results[[length(results)+1]] = reformConstrainedPars(p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, R=R)
-    names(results)[length(results)] = "unconstrainedEstimates"
+    results[[length(results)+1]] <- reformConstrainedPars(p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, R=R)
+    names(results)[length(results)] <- "unconstrainedEstimates"
   }
   return(results)
 }
@@ -442,21 +430,21 @@ standardErrors <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restri
     loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
                   boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
   }
-  h0 = c(6e-06, 1e-06, 0.001) # Difference
-  d = length(params)
-  I = diag(1, ncol=d, nrow=d) # Indicates which parameter is derivated
+  h0 <- c(6e-06, 1e-06, 0.001) # Difference
+  d <- length(params)
+  I <- diag(1, ncol=d, nrow=d) # Indicates which parameter is derivated
 
   for(j1 in 1:length(h0)) {
-    h = h0[j1]
-    Hess = matrix(ncol=d, nrow=d)
+    h <- h0[j1]
+    Hess <- matrix(ncol=d, nrow=d)
 
     # Calculate the second derivatives
     for(i1 in 1:d) {
       for(i2 in i1:d) {
-        dr1 = (fn(params + h*I[i1,] + h*I[i2,]) - fn(params - h*I[i1,] + h*I[i2,]))/(2*h)
-        dr2 = (fn(params + h*I[i1,] - h*I[i2,]) - fn(params - h*I[i1,] - h*I[i2,]))/(2*h)
-        Hess[i1, i2] = (dr1 - dr2)/(2*h)
-        Hess[i2, i1] = Hess[i1, i2] # Take use of symmetry
+        dr1 <- (fn(params + h*I[i1,] + h*I[i2,]) - fn(params - h*I[i1,] + h*I[i2,]))/(2*h)
+        dr2 <- (fn(params + h*I[i1,] - h*I[i2,]) - fn(params - h*I[i1,] - h*I[i2,]))/(2*h)
+        Hess[i1, i2] <- (dr1 - dr2)/(2*h)
+        Hess[i2, i1] <- Hess[i1, i2] # Take use of symmetry
       }
     }
 
@@ -465,9 +453,9 @@ standardErrors <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restri
 
     # Calculate the standard errors if possible: break loop if all calculated and change the difference if not
     if(all(diag(invObsInf)>0) | j1==length(h0)) {
-      stdErrors = sqrt(diag(invObsInf))
+      stdErrors <- sqrt(diag(invObsInf))
       if(all(stdErrors==0)) {
-        stdErrors = rep(NA, d)
+        stdErrors <- rep(NA, d)
       }
       break;
     }

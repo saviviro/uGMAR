@@ -74,7 +74,8 @@ This argument is ignored if \code{constraints==FALSE}.}
 \item{nsimu}{a positive integer specifying how many values will be simulated.}
 
 \item{initvalues}{an (optional) size \eqn{(px1)} vector (where \eqn{p} is the order of AR coefficients) specifying the initial
-values for the simulation. If not specified, initial values will be simulated from the process's stationary distribution.}
+values for the simulation. The \strong{last} element will be used as the initial value for the first lag, the second last element
+will be initial value for the second lag, etc. If not specified, initial values will be simulated from the process's stationary distribution.}
 
 \item{ntimes}{a positive integer specifying how many sets of simulations should be performed. If larger than one then
 only the samples are returned. Uses the same initial values for each set. Default is one.}

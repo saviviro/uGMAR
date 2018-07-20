@@ -65,11 +65,11 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
 
   checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
   checkPM(p, M, GStMAR=GStMAR)
-  M_orig = M
+  M_orig <- M
   if(GStMAR==TRUE) {
-    M1 = M[1]
-    M2 = M[2]
-    M = sum(M)
+    M1 <- M[1]
+    M2 <- M[2]
+    M <- sum(M)
   }
   if(length(params)!=nParams(p=p, M=M_orig, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
     stop("The parameter vector has wrong dimension")
@@ -77,10 +77,10 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
   if(nlags<1) {
     stop("The number of lags has to be equal or greater than one")
   }
-  data = checkAndCorrectData(data, p)
-  nsimu = max(nsimu, length(data))
-  qresiduals = quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
-  old_par = par(no.readonly=T) # Save old settings
+  data <- checkAndCorrectData(data, p)
+  nsimu <- max(nsimu, length(data))
+  qresiduals <- quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
+  old_par <- par(no.readonly=T) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   if(approxBounds==TRUE) {
     par(mfrow=c(3, 2), mar=c(2.1, 2.1, 2.1, 0.8)) # Set new temporary settings
@@ -89,7 +89,8 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
   }
 
   # Plot quantile residuals time series and qq-plot
-  yaxt1 = round(min(qresiduals)); yaxt2=round(max(qresiduals))
+  yaxt1 <- round(min(qresiduals))
+  yaxt2 <- round(max(qresiduals))
   plot(qresiduals, yaxt="n", type="l", col=rgb(0, 0, 0, 1), ylab="", xlab="", main="Quantile residuals")
   axis(2, at=yaxt1:yaxt2, labels=yaxt1:yaxt2)
   abline(h=0, col=rgb(1, 0, 0, 0.3), lwd=2)
@@ -98,13 +99,15 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
   qqline(qresiduals, col=rgb(1, 0, 0, 0.8))
 
   # Plot autocorrelation function of quantile residuals
-  qr_acf = as.matrix(acf(qresiduals, lag.max=nlags, type="correlation", plot=FALSE)$acf[2:(nlags+1)])
-  qrsquare_acf = as.matrix(acf(qresiduals^2, lag.max=nlags, type="correlation", plot=FALSE)$acf[2:(nlags+1)])
-  yaxt0 = max(0.3, round(max(c(qr_acf, qrsquare_acf)+0.05, abs(c(qr_acf, qrsquare_acf))+0.05), 1))
-  ticks1 = round(seq(-yaxt0, yaxt0, by=0.1), 1); ticks2 = seq(-yaxt0, yaxt0, by=0.05)
+  qr_acf <- as.matrix(acf(qresiduals, lag.max=nlags, type="correlation", plot=FALSE)$acf[2:(nlags+1)])
+  qrsquare_acf <- as.matrix(acf(qresiduals^2, lag.max=nlags, type="correlation", plot=FALSE)$acf[2:(nlags+1)])
+  yaxt0 <- max(0.3, round(max(c(qr_acf, qrsquare_acf)+0.05, abs(c(qr_acf, qrsquare_acf))+0.05), 1))
+  ticks1 <- round(seq(-yaxt0, yaxt0, by=0.1), 1); ticks2 = seq(-yaxt0, yaxt0, by=0.05)
   plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags+1), ylim=c(-yaxt0, yaxt0), xlab="", ylab="", main="Quantile residual acf")
   axis(2, at=ticks1, labels=ticks1)
-  abline(h=ticks2, col=rgb(0.1, 0.1, 0.1, 0.2)); abline(h=0); abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
+  abline(h=ticks2, col=rgb(0.1, 0.1, 0.1, 0.2))
+  abline(h=0)
+  abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
   segments(x0=1:nlags, y0=rep(0, nlags), x1=1:nlags, y1=qr_acf)
   points(1:nlags, qr_acf, pch=20, col="blue")
   abline(h=c(-1.96*length(data)^{-1/2}, 1.96*length(data)^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
@@ -112,28 +115,34 @@ plotGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
   # Plot autocorrelation function of squared quantile residuals
   plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags+1), ylim=c(-yaxt0, yaxt0), xlab="", ylab="", main="Squared quant. res. acf")
   axis(2, at=ticks1, labels=FALSE)
-  abline(h=ticks2, col=rgb(0.1, 0.1, 0.1, 0.2)); abline(h=0); abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
+  abline(h=ticks2, col=rgb(0.1, 0.1, 0.1, 0.2))
+  abline(h=0)
+  abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
   segments(x0=1:nlags, y0=rep(0, nlags), x1=1:nlags, y1=qrsquare_acf)
   points(1:nlags, qrsquare_acf, pch=20, col="blue")
   abline(h=c(-1.96*length(data)^{-1/2}, 1.96*length(data)^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
 
   if(approxBounds==TRUE) {
     # Obtain tests statistics
-    testResults = quantileResidualTests(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
+    testResults <- quantileResidualTests(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
                                         R=R, lagsAC=1:nlags, lagsCH=1:nlags, nsimu=nsimu, printRes=FALSE)
 
     # Plot autocorrelation statistics
-    ck_normalized = testResults$autocorrelation$indStat/testResults$autocorrelation$stdError
+    ck_normalized <- testResults$autocorrelation$indStat/testResults$autocorrelation$stdError
     plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags+1), ylim=c(-3, 3), xlab="", ylab="", main="Autocovariance statistics")
-    abline(h=0, lty=1); abline(h=1.96, col=rgb(0, 0, 1, 0.8), lty=2); abline(h=-1.96, col=rgb(0, 0, 1, 0.8), lty=2)
+    abline(h=0, lty=1)
+    abline(h=1.96, col=rgb(0, 0, 1, 0.8), lty=2)
+    abline(h=-1.96, col=rgb(0, 0, 1, 0.8), lty=2)
     segments(x0=1:nlags, y0=rep(0,nlags), x1=1:nlags, y1=ck_normalized)
     points(1:nlags, ck_normalized, pch=20, col="blue")
     axis(2, at=-3:3, labels=-3:3)
 
     # Plot conditional heteroscedasticity statistics
-    dk_normalized = testResults$cond.heteroscedasticity$indStat/testResults$cond.heteroscedasticity$stdError
+    dk_normalized <- testResults$cond.heteroscedasticity$indStat/testResults$cond.heteroscedasticity$stdError
     plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags+1), ylim=c(-3, 3), xlab="", ylab="", main="Cond. h.sked. statistics")
-    abline(h=0, lty=1); abline(h=1.96, col=rgb(0, 0, 1, 0.8), lty=2); abline(h=-1.96, col=rgb(0, 0, 1, 0.8), lty=2)
+    abline(h=0, lty=1)
+    abline(h=1.96, col=rgb(0, 0, 1, 0.8), lty=2)
+    abline(h=-1.96, col=rgb(0, 0, 1, 0.8), lty=2)
     segments(x0=1:nlags, y0=rep(0,nlags), x1=1:nlags, y1=dk_normalized)
     points(1:nlags, dk_normalized, pch=20, col="blue")
     axis(2, at=-3:3, labels=FALSE)

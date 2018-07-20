@@ -74,22 +74,22 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
 
   checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
   checkPM(p, M, GStMAR=GStMAR)
-  n_obs = length(data)
+  n_obs <- length(data)
   if(upperOnly==TRUE & lowerOnly==TRUE) {
     stop("Arguments upperOnly and lowerOnly are both set TRUE, which doesn't make any sense. Set both FALSE (default) for two-sided confidence intervals.")
   }
   if(missing(nt)) {
-    nt = round(n_obs*0.2)
+    nt <- round(n_obs*0.2)
   }
   if(!is.ts(data)) {
-    data = as.ts(data)
+    data <- as.ts(data)
   }
   if(oneStepCondMean==TRUE) {
     if(missing(nsteps)) {
-      nsteps = 1
+      nsteps <- 1
     } else if(nsteps!=1) {
       cat("Exact conditional expectation is supported for one-step forecasts only!", "\n")
-      nsteps = 1
+      nsteps <- 1
     }
   }
   if(any(conflevel>=1) | any(conflevel<=0)) {
@@ -104,92 +104,92 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
     stop("The data should contain p values at minimum")
   }
   # Simulate future values of the process
-  initvalues = data[(n_obs-p+1):n_obs]
+  initvalues <- data[(n_obs-p+1):n_obs]
   if(any(is.na(initvalues))) {
     stop("The last p values of the given data contain NA values, which is not supported")
   }
   if(oneStepCondMean==TRUE) { # Exact optimal forecast
-    mw = mixingWeights_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
+    mw <- mixingWeights_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
                            R=R, checks=TRUE, give_t_plus1=TRUE)
-    pars = reformParameters(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)$pars
+    pars <- reformParameters(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted)$pars
     if(p==1) {
-      bestcast = sum(mw[nrow(mw),]*(pars[1,] + initvalues*pars[2:(2+p-1),]))
+      bestcast <- sum(mw[nrow(mw),]*(pars[1,] + initvalues*pars[2:(2+p-1),]))
     } else {
-      bestcast = sum(mw[nrow(mw),]*(pars[1,] + t(rev(initvalues))%*%pars[2:(2+p-1),]))
+      bestcast <- sum(mw[nrow(mw),]*(pars[1,] + t(rev(initvalues))%*%pars[2:(2+p-1),]))
     }
     if(printRes==TRUE) {
       cat(paste0("Optimal one-step prediction: ", round(bestcast, 3)), "\n")
     }
     if(plotRes==TRUE) {
-      pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-      dat = ts(data[(n_obs-nt):n_obs], start=time(data)[n_obs-nt], frequency=frequency(data))
+      pred <- ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
+      dat <- ts(data[(n_obs-nt):n_obs], start=time(data)[n_obs-nt], frequency=frequency(data))
       ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(min(dat), bestcast)-max(0.1*bestcast, 1)),
                                                                                  round(max(max(dat), bestcast)+max(0.1*bestcast, 1))))
     }
     return(bestcast)
   } else { # If forecast by simulation is considered
-    res = simulateGMAR(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
-                       R=R, nsimu=nsteps, initvalues=initvalues, ntimes=nsimu)
+    res <- simulateGMAR(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints,
+                        R=R, nsimu=nsteps, initvalues=initvalues, ntimes=nsimu)
 
     # Calculate forecast and confidence intervals
     if(useMean==TRUE) {
-      bestcast = rowMeans(res)
+      bestcast <- rowMeans(res)
     } else {
-      bestcast = vapply(1:nsteps, function(i1) median(res[i1,]), numeric(1))
+      bestcast <- vapply(1:nsteps, function(i1) median(res[i1,]), numeric(1))
     }
     if(upperOnly==TRUE) {
-      confq = conflevel
+      confq <- conflevel
     } else if(lowerOnly==TRUE) {
-      confq = 1-conflevel
+      confq <- 1-conflevel
     } else {
-      confq = as.vector(vapply(1:length(conflevel), function(i1) c((1-conflevel[i1])/2, 1-(1-conflevel[i1])/2), numeric(2)))
+      confq <- as.vector(vapply(1:length(conflevel), function(i1) c((1-conflevel[i1])/2, 1-(1-conflevel[i1])/2), numeric(2)))
     }
-    confq = confq[order(confq, decreasing=FALSE)]
+    confq <- confq[order(confq, decreasing=FALSE)]
     if(is.vector(res)) {
-      confints = as.matrix(quantile(res, confq))
+      confints <- as.matrix(quantile(res, confq))
     } else {
-      confints = vapply(1:nsteps, function(i1) quantile(res[i1,], confq), numeric(length(confq)))
+      confints <- vapply(1:nsteps, function(i1) quantile(res[i1,], confq), numeric(length(confq)))
     }
     if(upperOnly==TRUE) {
-      uppers = confints
-      lowers = NULL
+      uppers <- confints
+      lowers <- NULL
     } else if(lowerOnly==TRUE) {
-      uppers = NULL
-      lowers = confints
+      uppers <- NULL
+      lowers <- confints
     } else {
-      lowers = confints[1:(length(confq)/2),]
-      uppers = confints[(length(confq)/2+1):length(confq),]
+      lowers <- confints[1:(length(confq)/2),]
+      uppers <- confints[(length(confq)/2+1):length(confq),]
     }
     if(length(conflevel)==1) {
       if(!is.null(lowers)) {
-        lowers = t(lowers)
+        lowers <- t(lowers)
       }
       if(!is.null(uppers)) {
-        uppers = t(uppers)
+        uppers <- t(uppers)
       }
     }
     if(upperOnly==TRUE) {
-      fcast = data.frame(bestcast, t(uppers))
+      fcast <- data.frame(bestcast, t(uppers))
     } else if(lowerOnly==TRUE) {
-      fcast = data.frame(t(lowers), bestcast)
+      fcast <- data.frame(t(lowers), bestcast)
     } else {
-      fcast = data.frame(t(lowers), bestcast, t(uppers))
+      fcast <- data.frame(t(lowers), bestcast, t(uppers))
     }
     if(useMean==TRUE) {
       if(upperOnly==TRUE) {
-        colnames(fcast) = c("MEAN", confq[1:length(confq)])
+        colnames(fcast) <- c("MEAN", confq[1:length(confq)])
       } else if(lowerOnly==TRUE) {
-        colnames(fcast) = c(confq[1:length(confq)], "MEAN")
+        colnames(fcast) <- c(confq[1:length(confq)], "MEAN")
       } else {
-        colnames(fcast) = c(confq[1:(length(confq)/2)], "MEAN", confq[(length(confq)/2+1):length(confq)])
+        colnames(fcast) <- c(confq[1:(length(confq)/2)], "MEAN", confq[(length(confq)/2+1):length(confq)])
       }
     } else { # Uses median
       if(upperOnly==TRUE) {
-        colnames(fcast) = c(0.5, confq[1:length(confq)])
+        colnames(fcast) <- c(0.5, confq[1:length(confq)])
       } else if(lowerOnly==TRUE) {
-        colnames(fcast) = c(confq[1:length(confq)], 0.5)
+        colnames(fcast) <- c(confq[1:length(confq)], 0.5)
       } else {
-        colnames(fcast) = c(confq[1:(length(confq)/2)], 0.5, confq[(length(confq)/2+1):length(confq)])
+        colnames(fcast) <- c(confq[1:(length(confq)/2)], 0.5, confq[(length(confq)/2+1):length(confq)])
       }
     }
     if(printRes==TRUE) {
@@ -198,41 +198,43 @@ forecastGMAR <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restrict
     if(plotRes==TRUE) {
       if(nsteps==1) {
         if(!is.null(lowers)) {
-          lowers=matrix(t(lowers))
+          lowers <- matrix(t(lowers))
         }
         if(!is.null(uppers)) {
-          uppers=matrix(t(uppers))
+          uppers <- matrix(t(uppers))
         }
       }
       if(upperOnly==TRUE) {
-        ts_uppers = lapply(1:length(confq), function(i1) ts(c(data[n_obs], uppers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
-        pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-        dat = ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
-        t0 = time(pred); values0 = c(as.vector(confints), as.vector(dat))
+        ts_uppers <- lapply(1:length(confq), function(i1) ts(c(data[n_obs], uppers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
+        pred <- ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
+        dat <- ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
+        t0 <- time(pred)
+        values0 <- c(as.vector(confints), as.vector(dat))
         ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(values0))-1, round(max(values0))+1))
-        ts_lowers = ts(rep(round(min(values0))-2, times=nsteps+1), start=time(data)[n_obs], frequency=frequency(data))
+        ts_lowers <- ts(rep(round(min(values0))-2, times=nsteps+1), start=time(data)[n_obs], frequency=frequency(data))
         for(i1 in 1:length(conflevel)) {
           polygon(x=c(t0, rev(t0)), y=c(ts_lowers, rev(pred)), col=rgb(0, 0, 1, 0.2), border=NA)
           polygon(x=c(t0, rev(t0)), y=c(ts_uppers[[i1]], rev(pred)), col=rgb(0, 0, 1, 0.2), border=NA)
         }
       } else if(lowerOnly==TRUE) {
-        ts_lowers = lapply(1:length(confq), function(i1) ts(c(data[n_obs], lowers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
-        pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-        dat = ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
-        t0 = time(pred); values0 = c(as.vector(confints), as.vector(dat))
+        ts_lowers <- lapply(1:length(confq), function(i1) ts(c(data[n_obs], lowers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
+        pred <- ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
+        dat <- ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
+        t0 <- time(pred)
+        values0 <- c(as.vector(confints), as.vector(dat))
         ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(values0))-1, round(max(values0))+1))
-        ts_uppers = ts(rep(round(max(values0))+2, times=nsteps+1), start=time(data)[n_obs], frequency=frequency(data))
+        ts_uppers <- ts(rep(round(max(values0))+2, times=nsteps+1), start=time(data)[n_obs], frequency=frequency(data))
         for(i1 in 1:length(conflevel)) {
           polygon(x=c(t0, rev(t0)), y=c(ts_lowers[[i1]], rev(pred)), col=rgb(0, 0, 1, 0.2), border=NA)
           polygon(x=c(t0, rev(t0)), y=c(ts_uppers, rev(pred)), col=rgb(0, 0, 1, 0.2), border=NA)
         }
       } else { # If two-sided
-        ts_lowers = lapply(1:(length(confq)/2), function(i1) ts(c(data[n_obs], lowers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
-        ts_uppers = lapply(1:(length(confq)/2), function(i1) ts(c(data[n_obs], uppers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
-        pred = ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
-        dat = ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
-        t0 = time(pred)
-        values0 = c(as.vector(confints), as.vector(dat))
+        ts_lowers <- lapply(1:(length(confq)/2), function(i1) ts(c(data[n_obs], lowers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
+        ts_uppers <- lapply(1:(length(confq)/2), function(i1) ts(c(data[n_obs], uppers[i1,]), start=time(data)[n_obs], frequency=frequency(data)))
+        pred <- ts(c(data[n_obs], bestcast), start=time(data)[n_obs], frequency=frequency(data))
+        dat <- ts(data[(n_obs-nt+1):n_obs], start=time(data)[n_obs-nt+1], frequency=frequency(data))
+        t0 <- time(pred)
+        values0 <- c(as.vector(confints), as.vector(dat))
         ts.plot(dat, pred, gpars=list(col=c("black", "blue"), lty=c(1, 2)), ylim=c(round(min(values0))-1, round(max(values0))+1))
         for(i1 in 1:length(conflevel)) {
           polygon(x=c(t0, rev(t0)), y=c(ts_lowers[[i1]], rev(pred)), col=rgb(0, 0, 1, 0.2), border=NA)

@@ -33,33 +33,33 @@ params32gsc <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10) # M1=1, M2=1, R1,
 params22gsrc <- c(1, 2, 0.5, 1, 2, 0.5, 10) # M1=1, M2=1, R3
 
 test_that("quantileResiduals gives correct residuals for non-restricted models", {
-  expect_equal(quantileResiduals_int(VIX, 1, 2, params12, StMAR=FALSE)[1], -0.2574897, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 1, 2, params12, StMAR=FALSE)[1:3], c(-0.2574897, -0.1218930, -0.9431908), tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 1, 2, params12t, StMAR=TRUE)[13], -0.9728816, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX[1:10], 2, 2, params22)[1], 0.5079722, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX[1:10], 2, 2, params22)[1:2], c(0.5079722, -0.3657400), tolerance=1e-3)
   expect_equal(quantileResiduals_int(3*VIX, 2, 2, params22, epsilon=-1)[113], 5.578132, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 2, 2, params22t, StMAR=TRUE)[213], 0.6504481, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 2, 3, params23)[2], -0.6578804, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 2, 2, params22t, StMAR=TRUE)[213:215], c(0.65044814, 0.95905038, -0.03750247), tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 2, 3, params23)[1:2], c(0.2372785, -0.6578804), tolerance=1e-3)
   expect_equal(quantileResiduals_int(3*VIX, 2, 3, params23)[1], 5.053051, tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 1, c(1, 1), params12gs, GStMAR=TRUE)[10], 0.7802472, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 2, c(1, 2), params23gs, GStMAR=TRUE)[100], 1.712417, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 2, c(1, 2), params23gs, GStMAR=TRUE)[100:102], c(1.712417, 1.899989, 1.763852), tolerance=1e-3)
 })
 
 test_that("quantileResiduals gives correct residuals for restricted models", {
   expect_equal(quantileResiduals_int(VIX, 1, 2, params12r, restricted=TRUE)[1], -0.7925692, tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 1, 2, params12r, restricted=TRUE, epsilon=-1)[12], 1.163688, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 1, 2, params12tr, StMAR=TRUE, restricted=TRUE)[1], -0.0005443089, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 1, 2, params12tr, StMAR=TRUE, restricted=TRUE)[2:4], c(0.1618962, -0.4549027, 0.4024535), tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 2, 3, params23tr, StMAR=TRUE, restricted=TRUE)[13], 0.7850545, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 1, c(2,1), params13gsr, GStMAR=TRUE, restricted=TRUE)[7], 0.143749, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 1, c(2,1), params13gsr, GStMAR=TRUE, restricted=TRUE)[7:8], c(0.1437490, 0.1659238), tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 1, c(2,2), params14gsr, GStMAR=TRUE, restricted=TRUE)[70], 0.6686324, tolerance=1e-3)
 })
 
 test_that("quantileResiduals gives correct residuals for constrained models", {
   expect_equal(quantileResiduals_int(VIX, 2, 1, params21c, StMAR=TRUE, constraints=TRUE, R=list(R3))[240], -0.3792682, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 2, 2, params22c, StMAR=TRUE, constraints=TRUE, R=list(R4, R3))[1], 1.913685, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 2, 2, params22c, StMAR=TRUE, constraints=TRUE, R=list(R4, R3))[1:2], c(1.913685, 1.699737), tolerance=1e-3)
   expect_equal(quantileResiduals_int(3*VIX, 2, 2, params22c_2, constraints=TRUE, R=list(R4, R4))[113], 5.578132, tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 2, 2, params22cr, StMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3)[24], 0.4021366, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 3, 2, params32cr, restricted=TRUE, constraints=TRUE, R=R1)[2], 8.125891, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 3, 2, params32cr, restricted=TRUE, constraints=TRUE, R=R1)[2:3], c(8.125891, 8.125891), tolerance=1e-1)
   expect_equal(quantileResiduals_int(VIX, 2, 3, params23cr, restricted=TRUE, constraints=TRUE, R=R4)[130], 0.4080434, tolerance=1e-3)
   expect_equal(quantileResiduals_int(VIX, 3, c(1,1), params32gsc, GStMAR=TRUE, restricted=FALSE, constraints=TRUE, R=list(R1, R2))[13], 1.219363, tolerance=1e-3)
-  expect_equal(quantileResiduals_int(VIX, 2, c(1,1), params22gsrc, GStMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3)[1], 1.269025, tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 2, c(1,1), params22gsrc, GStMAR=TRUE, restricted=TRUE, constraints=TRUE, R=R3)[1:2], c(1.2690254, 0.9798332), tolerance=1e-3)
 })

@@ -70,29 +70,29 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
 
   checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
   checkPM(p, M, GStMAR=GStMAR)
-  M_orig = M
+  M_orig <- M
   if(GStMAR==TRUE) {
-    M1 = M[1]
-    M2 = M[2]
-    M = sum(M)
+    M1 <- M[1]
+    M2 <- M[2]
+    M <- sum(M)
   }
   if(length(params)!=nParams(p=p, M=M_orig, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
     stop("The parameter vector is wrong dimension")
   }
-  data = checkAndCorrectData(data, p)
-  T0 = length(data)-p
+  data <- checkAndCorrectData(data, p)
+  T0 <- length(data)-p
   if(max(c(lagsAC, lagsCH))>=T0) {
     stop("The lags are too large compared to the data size")
   }
-  qresiduals = quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
-  if(nsimu > T0) {
-    simuData = simulateGMAR(p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, nsimu=nsimu+200)
-    simuData = as.matrix(simuData$sample[201:length(simuData$sample)])
+  qresiduals <- quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
+  if(nsimu > length(data)) {
+    simuData <- simulateGMAR(p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, nsimu=nsimu)
+    simuData <- as.matrix(simuData$sample)
   } else {
-    simuData = data
+    simuData <- data
   }
-  qresiduals_simuData = quantileResiduals_int(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
-  results = list()
+  qresiduals_simuData <- quantileResiduals_int(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
+  results <- list()
 
   ####################
   ## Test normality ## (Kalliovirta 2012 sec. 3.3)
@@ -103,32 +103,32 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
   }
 
   # Omega (Kalliovirta 2013 eq.(2.4))
-  Omega = getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=3, qresiduals=qresiduals_simuData)
+  Omega <- getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=3, qresiduals=qresiduals_simuData)
 
   # Test statistics and p-value
-  sumg = as.matrix(rowSums(t(g(qresiduals))))
-  N = t(sumg)%*%solve(Omega, sumg)/T0
-  p_norm = 1 - pchisq(N, df=3)
+  sumg <- as.matrix(rowSums(t(g(qresiduals))))
+  N <- t(sumg)%*%solve(Omega, sumg)/T0
+  p_norm <- 1 - pchisq(N, df=3)
 
   # Results
   if(printRes==TRUE) {
     cat(sprintf("N: %.2f, p-value: %.2f", N, p_norm), "\n")
   }
-  normRes = data.frame(t(c(N, p_norm)), row.names=NULL)
-  colnames(normRes) = c("testStat", "pvalue")
-  results[[1]] = normRes
+  normRes <- data.frame(t(c(N, p_norm)), row.names=NULL)
+  colnames(normRes) <- c("testStat", "pvalue")
+  results[[1]] <- normRes
 
   ##########################
   ## Test autocorrelation ## (Kalliovirta 2012 sec. 3.1)
   ##########################
-  acRes = matrix(nrow=length(lagsAC), ncol=5)
-  acRes[,1] = lagsAC
+  acRes <- matrix(nrow=length(lagsAC), ncol=5)
+  acRes[,1] <- lagsAC
 
   # Calculate autocorrelations
   g0 <- function(r, lag) {
     sapply((1+lag):length(r), function(i1) sapply(1:lag, function(i2) r[i1]*r[i1-i2]))
   }
-  j1 = 1
+  j1 <- 1
   for(lag in lagsAC) {
     g <- function(r) {
       if(lag>1) {
@@ -139,41 +139,41 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
     }
 
     # Omega (Kalliovirta 2013 eq.(2.4))
-    Omega = getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
+    Omega <- getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
 
     # Test statistics, sample autocorrelation for of the current lag and p-value
-    sumg = as.matrix(colSums(g(qresiduals)))  # Unscaled and uncentered sample autocovariances of the quantile residuals
-    A = t(sumg)%*%solve(Omega, sumg)/(T0-lag)
-    sampleAC = sumg[lag]/(T0-lag)
-    stdError = sqrt(Omega[lag,lag]/T0)
-    p_ac = 1 - pchisq(A, df=lag)
+    sumg <- as.matrix(colSums(g(qresiduals)))  # Unscaled and uncentered sample autocovariances of the quantile residuals
+    A <- t(sumg)%*%solve(Omega, sumg)/(T0-lag)
+    sampleAC <- sumg[lag]/(T0-lag)
+    stdError <- sqrt(Omega[lag,lag]/T0)
+    p_ac <- 1 - pchisq(A, df=lag)
 
     # Results
     if(printRes==TRUE) {
       cat(sprintf("A%.0f: %.2f, p-value: %.2f", lag, A, p_ac), "\n")
     }
-    acRes[j1, 2] = A
-    acRes[j1, 3] = p_ac
-    acRes[j1, 4] = sampleAC
-    acRes[j1, 5] = stdError
-    j1 = j1 + 1
+    acRes[j1, 2] <- A
+    acRes[j1, 3] <- p_ac
+    acRes[j1, 4] <- sampleAC
+    acRes[j1, 5] <- stdError
+    j1 <- j1 + 1
   }
-  acRes = data.frame(acRes, row.names=NULL)
-  colnames(acRes) = c("lag", "testStat", "pvalue", "indStat", "stdError")
-  results[[2]] = acRes
+  acRes <- data.frame(acRes, row.names=NULL)
+  colnames(acRes) <- c("lag", "testStat", "pvalue", "indStat", "stdError")
+  results[[2]] <- acRes
 
   #########################################
   ## Test conditional heteroscedasticity ## (Kalliovirta 2012 sec. 3.2)
   #########################################
 
-  chRes = matrix(nrow=length(lagsCH), ncol=5)
-  chRes[,1] = lagsCH
+  chRes <- matrix(nrow=length(lagsCH), ncol=5)
+  chRes[,1] <- lagsCH
 
   # Calculate autocorrelations
   g0 <- function(r, lag) {
     sapply((1+lag):length(r), function(i1) sapply(1:lag, function(i2) (r[i1]^2-1)*r[i1-i2]^2))
   }
-  j1 = 1
+  j1 <- 1
   for(lag in lagsCH) {
     g <- function(r) {
       if(lag>1) {
@@ -184,29 +184,29 @@ quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE,
     }
 
     # Omega (Kalliovirta 2012 eq.(2.4))
-    Omega = getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
+    Omega <- getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
 
     # Test statistics,individual statisics d_k and p-value
-    sumg = as.matrix(colSums(g(qresiduals)))
-    H = t(sumg)%*%solve(Omega, sumg)/(T0-lag)
-    indStat = sumg[lag]/(T0-lag)
-    stdError = sqrt(Omega[lag,lag]/T0)
-    p_ch = 1 - pchisq(H, df=lag)
+    sumg <- as.matrix(colSums(g(qresiduals)))
+    H <- t(sumg)%*%solve(Omega, sumg)/(T0-lag)
+    indStat <- sumg[lag]/(T0-lag)
+    stdError <- sqrt(Omega[lag,lag]/T0)
+    p_ch <- 1 - pchisq(H, df=lag)
 
     # Results
     if(printRes==TRUE) {
       cat(sprintf("H%.0f: %.2f, p-value: %.2f", lag, H, p_ch), "\n")
     }
-    chRes[j1, 2] = H
-    chRes[j1, 3] = p_ch
-    chRes[j1, 4] = indStat
-    chRes[j1, 5] = stdError
+    chRes[j1, 2] <- H
+    chRes[j1, 3] <- p_ch
+    chRes[j1, 4] <- indStat
+    chRes[j1, 5] <- stdError
     j1 = j1 + 1
   }
-  chRes = data.frame(chRes, row.names=NULL)
-  colnames(chRes) = c("lag", "testStat", "pvalue", "indStat", "stdError")
-  results[[3]] = chRes
-  names(results) = c("normality", "autocorrelation", "cond.heteroscedasticity")
+  chRes <- data.frame(chRes, row.names=NULL)
+  colnames(chRes) <- c("lag", "testStat", "pvalue", "indStat", "stdError")
+  results[[3]] <- chRes
+  names(results) <- c("normality", "autocorrelation", "cond.heteroscedasticity")
   return(results)
 }
 
