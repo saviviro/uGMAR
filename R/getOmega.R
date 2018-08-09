@@ -1,78 +1,56 @@
 #' @import stats
 #'
-#' @title Generate covariance matrix omega for quantile residual tests
+#' @title Generate covariance matrix Omega for quantile residual tests
 #'
-#' @description \code{getOmega} generates the covariance matrix omega for quantile residual tests.
+#' @description \code{getOmega} generates the covariance matrix Omega used in the quantile residual tests.
 #'
-#' @inheritParams loglikelihood
+#' @inheritParams loglikelihood_int
 #' @param g a function specifying the transformation.
 #' @param dim_g output dimension of the transformation \code{g}.
-#' @param qresiduals optionally provide the quantile residuals of the model to save time when calculating multiple omegas for the same model.
 #' @details This function is used for quantile residuals tests in \code{quantileResidualTests}.
 #' @return Returns size (\code{dim_g}x\code{dim_g}) covariance matrix Omega.
-#' @references
-#'  \itemize{
-#'    \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
-#'          \emph{The Econometrics Journal}, \strong{15}, 358-393.
-#'  }
+#' @inherit quantileResiduals_int references
 
-getOmega <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, g, dim_g, qresiduals) {
+getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+                     parametrization=c("intercept", "mean"), g, dim_g) {
 
   # Function for calculating gradient of g
   f <- function(params) {
-    g(quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R))
+    g(quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+                            constraints=constraints, parametrization=parametrization))
   }
   # Function for calculating gradient of the log-likelihood
   l <- function(params) {
-    loglikelihood_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, boundaries=FALSE,
-                      conditional=FALSE, checks=FALSE, returnTerms=TRUE)
+    loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+                      constraints=constraints, boundaries=FALSE, conditional=FALSE,
+                      parametrization=parametrization, checks=FALSE, to_return="terms")
   }
 
   diff <- 6e-06 # Difference for numerical derivates
-  d <- length(params) # Dimension of the parameter vector
-  dataSize <- length(data) # Size of the given data
-  if(missing(qresiduals)) {
-    qresiduals <- quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R) # Quantile residuals
+  npars <- length(params) # Dimension of the parameter vector
+
+  # Compute the gradient of g: (v)x(npars)x(T)
+  gres <- f(params)
+  T0 <- nrow(gres)
+
+  I <- diag(rep(1, npars))
+  dg <- array(dim=c(dim_g, npars, T0))  # row per g_i, column per derivative and slice per t=1,..,T.
+  for(i1 in 1:npars) {
+    dg[,i1,] <- t((f(params + I[i1,]*diff) - f(params - I[i1,]*diff))/(2*diff))
   }
 
-  # Compute the gradient of g: (v)x(d)x(T)
-  T0 <- nrow(f(params))
+  # Compute gradient of the log-likelihood: (T)x(npars)
+  dl <- vapply(1:npars, function(i1) (l(params + I[,i1]*diff) - l(params - I[,i1]*diff))/(2*diff), numeric(length(data) - p)) # NOTE: "returnTerms" in loglik is TRUE
 
-  I <- diag(rep(1, d))
-  dg <- array(dim=c(dim_g, d, T0))  # row per g_i, column per derivative and slice per t=1,..,T.
-  for(i1 in 1:d) {
-    dg[,i1,] <- t((f(params+I[i1,]*diff)-f(params-I[i1,]*diff))/(2*diff))
-  }
-
-  # Compute gradient of the log-likelihood: (T)x(d)
-  dl <- vapply(1:d, function(i1) (l(params+I[,i1]*diff)-l(params-I[,i1]*diff))/(2*diff), numeric(dataSize-p)) # NOTE: "returnTerms" in loglik is TRUE
-
- # Estimate Fisher's information matrix
- # FisInf <- matrix(0, ncol=d, nrow=d)
- # for(i1 in 1:nrow(dl)) {
- #   FisInf <- FisInf + tcrossprod(dl[i1,], dl[i1,])
- # }
- # FisInf <- FisInf/(dataSize-p)
-
+  # Estimate Fisher's information matrix
   FisInf <- crossprod(dl, dl)/nrow(dl)
-
-  invFisInf <- tryCatch(solve(FisInf), error=function(cond) {
-    message("The covariance matrix Omega cannot be solved")
-    return(NA)
-  })
-  if(is.na(invFisInf[1])) { # If cannot be solved
-    return(matrix(ncol=dim_g, nrow=dim_g))
-  }
+  invFisInf <- solve(FisInf) # Can cause error which needs to be handed in the call function
 
   # Calculate G (Kalliovirta 2012 eq.(2.4))
-#  G <- apply(dg, c(1,2), mean)
   G <- rowMeans(dg, dims=2)
 
   # Calculate PSI
-#  gres <- t(g(qresiduals))
-  gres <- g(qresiduals)
   dif0 <- nrow(dl) - T0
-#  PSI <- gres%*%dl[(dif0+1):nrow(dl),]/T0
   PSI <- crossprod(gres, dl[(dif0+1):nrow(dl),])/T0
 
   # Calculate H
@@ -80,5 +58,5 @@ getOmega <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=F
 
   # Calculate Omega
   Omega <- G%*%tcrossprod(invFisInf, G) + PSI%*%tcrossprod(invFisInf, G) + G%*%tcrossprod(invFisInf, PSI) + H
-  return(Omega)
+  Omega
 }

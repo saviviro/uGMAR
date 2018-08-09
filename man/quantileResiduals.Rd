@@ -4,16 +4,20 @@
 \alias{quantileResiduals}
 \title{Compute quantile residuals of GMAR, StMAR or G-StMAR model}
 \usage{
-quantileResiduals(data, p, M, params, StMAR = FALSE, GStMAR = FALSE,
-  restricted = FALSE, constraints = FALSE, R)
+quantileResiduals(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL, parametrization = c("intercept",
+  "mean"))
 }
 \arguments{
-\item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
+\item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -27,7 +31,7 @@ the first element and StMAR-components M2 in the second - then the total number 
       \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
       \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
-        matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+        matrices \strong{C} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
     }
   }
@@ -40,40 +44,42 @@ the first element and StMAR-components M2 in the second - then the total number 
       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
       \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
-        \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
+        \strong{\eqn{C}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
     }
   }
 }
 Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
+\eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
+and the rest \code{M2} components are \emph{StMAR-type}.
 Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
-\item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
 
-\item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes. Default is \code{FALSE}.}
-
-\item{constraints}{an (optional) logical argument stating whether general linear constraints should be applied to the model. Default is \code{FALSE}.}
-
-\item{R}{Specifies the linear constraints.
+\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
 \describe{
-\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{R_{m}}} of full column rank
-  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
   \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{R}} of full column rank satisfying
-  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
+\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
-This argument is ignored if \code{constraints==FALSE}.}
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
+alway \code{p} for all regimes.
+Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
+
+\item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
+"means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 }
 \value{
-Returns a length \eqn{(Tx1)} numeric vector containing the quantile residuals associated with
+Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals associated with
  the specified GMAR, StMAR or G-StMAR model.
 }
 \description{
@@ -95,43 +101,45 @@ qr12r <- quantileResiduals(VIX, 1, 2, params12r, restricted=TRUE)
 
 # StMAR model
 params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8)
-qr12t <- quantileResiduals(VIX, 1, 2, params12t, StMAR=TRUE)
+qr12t <- quantileResiduals(VIX, 1, 2, params12t, model="StMAR")
 
 # Non-mixture version of StMAR model
 params11t <- c(0.76, 0.93, 1.35, 2.4)
-qr11t <- quantileResiduals(VIX, 1, 1, params11t, StMAR=TRUE)
+qr11t <- quantileResiduals(VIX, 1, 1, params11t, model="StMAR")
 
 # G-StMAR model
 params12gs <- c(1.5, 0.8, 1.5, 2.9, 0.8, 1.1, 0.6, 3)
-qr12gs <- quantileResiduals(VIX, 1, c(1, 1), params12gs, GStMAR=TRUE)
+qr12gs <- quantileResiduals(VIX, 1, c(1, 1), params12gs, model="G-StMAR")
 
 # Restricted G-StMAR model
 params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20)
-qr12gsr <- quantileResiduals(VIX, 1, c(2, 1), params13gsr, GStMAR=TRUE, restricted=TRUE)
+qr12gsr <- quantileResiduals(VIX, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE)
 
 # GMAR model as a mixture of AR(2) and AR(1) models
-R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 params22c <- c(1.2, 0.85, 0.04, 0.3, 3.3, 0.77, 2.8, 0.77)
-qr22c <- quantileResiduals(VIX, 2, 2, params22c, constraints=TRUE, R=R)
+qr22c <- quantileResiduals(VIX, 2, 2, params22c, constraints=constraints)
 
 # Such StMAR(3,2) that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
 params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
-qr32trc <- quantileResiduals(VIX, 3, 2, params32trc, StMAR=TRUE,
-                             restricted=TRUE, constraints=TRUE,
-                             R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+qr32trc <- quantileResiduals(VIX, 3, 2, params32trc, model="StMAR",
+ restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 }
 \references{
 \itemize{
-   \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
-         \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
-         \emph{The Econometrics Journal}, \strong{15}, 358-393.
-   \item Lutkepohl H. New Introduction to Multiple Time Series Analysis,
-         \emph{Springer}, 2005.
-   \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
+   \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-   \item References regarding the StMAR and G-StMAR models will be updated when they are published.
+   \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
+           \emph{The Econometrics Journal}, \strong{15}, 358-393.
+   \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
+           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
+   \item Lutkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
+           \emph{Springer}.
+   \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
+           arXiv:1805.04010 \strong{[econ.EM]}.
+   \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+           theoretical properties similar to GMAR and StMAR models.
  }
 }

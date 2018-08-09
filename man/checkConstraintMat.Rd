@@ -2,34 +2,38 @@
 % Please edit documentation in R/argumentChecks.R
 \name{checkConstraintMat}
 \alias{checkConstraintMat}
-\title{Check constraint matrices R}
+\title{Check the constraint matrices}
 \usage{
-checkConstraintMat(p, M, R, restricted = FALSE)
+checkConstraintMat(p, M, restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
-\item{R}{Specifies the linear constraints.
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
+
+\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
 \describe{
-\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{R_{m}}} of full column rank
-  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
   \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{R}} of full column rank satisfying
-  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
+\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
-This argument is ignored if \code{constraints==FALSE}.}
-
-\item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes. Default is \code{FALSE}.}
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
+alway \code{p} for all regimes.
+Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Doesn't return anything, but throws an error if finds out that something is wrong.
+Doesn't return anything, but throws an informative error if finds out that something is wrong.
 }
 \description{
-\code{checkConstraintMat} ckecks for some parts that the constraint matrices R are correctly set.
+\code{checkConstraintMat} ckecks for some parts that the constraint matrices are correctly set.
 }

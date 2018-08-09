@@ -2,212 +2,237 @@
 #'
 #' @title Quantile residual tests for GMAR, StMAR or G-StMAR model
 #'
-#' @description \code{quantileResidualTests} performs quantile residual tests for GMAR, StMAR or G-StMAR model, testing normality, autocorrelation and conditional heteroscedasticy.
+#' @description \code{quantileResidualTests} performs quantile residual tests for GMAR, StMAR or G-StMAR model,
+#'  testing normality, autocorrelation and conditional heteroscedasticy.
 #'
-#' @inheritParams loglikelihood
-#' @param lagsAC an (optional) numeric vector of positive integers specifying the lags for which autocorrelation is tested. Default is \code{c(1, 2, 4, 6, 8, 10)}.
-#' @param lagsCH an (optional) numeric vector of positive integers specifying the lags for which conditional heteroscedasticy is tested. Default is \code{c(1, 2, 4, 6, 8, 10)}.
-#' @param nsimu an (optional) positive integer specifying to how many simulated observations the covariance matrix Omega should be based on. If smaller than data size, then omega will be based on the given data. Default is 2000.
-#' @param printRes an (optional) logical argument defining wether results should be printed or not. Default is \code{TRUE}.
-#' @details \code{NA} values mean that it was not (numerically) possible for the code to calculate all the necessary estimates for the tests.
-#'   This may suggest that the model is misspecified.
-#'
-#' For details about the quantile residual tests see \emph{Kalliovirta 2012} from the references.
-#' @return a list of data frames containing the test results:
-#'   \describe{
-#'   \item{\code{$normality}}{A data frame containing results from the normality test.
-#'     \code{$testStat} containing the test statistic and \code{$pvalue} containing the corresponding p-value.}
-#'   \item{\code{$autocorrelation}}{A data frame containing results from the autocorrelation tests.
-#'     \code{$testStat} containing the test statistics and \code{$pvalue} containing the corresponding p-values.
-#'     \code{$indStat} containing uncentered sample autocovariances of the quantile residuals for each lag,
-#'     and \code{$stdError} containing their approximate standard errors.}
-#'   \item{\code{$cond.heteroscedasticity}}{A data frame containing results from the conditional heteroskedasticity tests.
-#'     \code{$testStat} containing the test statistics and \code{$pvalue} containing the corresponding p-values.
-#'     \code{$indStat} containing the individual statistics assiociated with each lag,
-#'     and \code{$stdError} containing their approximate standard errors.}
-#'   }
-#' @section Printed results:
-#'   The results from the tests are printed so that the letter "N" means normality test, "A" autocorrelation test
-#'   and "H" conditional heteroscedasticity test. The numbers right next to "A" and "H" indicate the number of lags used
-#'   in each test. The statistics following them are the corresponding test statistics and p-values.
+#' @inheritParams simulateGSMAR
+#' @param lagsAC a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
+#' @param lagsCH a numeric vector of positive integers specifying the lags for which conditional heteroscedasticy is tested.
+#' @param nsimu a positive integer specifying to how many simulated observations the covariance matrix Omega should be based on.
+#'  If smaller than data size, then omega will be based on the given data.
+#' @param printRes a logical argument defining whether results should be printed or not.
+#' @details For details about the quantile residual tests see the cited article by \emph{Kalliovirta (2012)}.
+#' @return Returns an object of class \code{'qrtest'} containing the test results in data frames. In the cases
+#'   of autocorrelation and conditional heteroscedasticity tests, the returned object also contains the
+#'   associated individual statistics and their standard errors, discussed by \emph{Kalliovirta (2012)} at
+#'   the pages 369-370.
 #' @section Suggested packages:
 #'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
 #'   For large StMAR and G-StMAR models with large data the evaluations may take significantly long time without
 #'   the package "gsl".
 #' @inherit quantileResiduals_int references
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}}, \code{\link{predict.gsmar}},
 #' @examples
 #' \donttest{
 #' # GMAR model
-#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-#' tests13 <- quantileResidualTests(VIX, 1, 3, params13)
+#' params12 <- c(1.12, 0.91, 0.29, 4.53, 0.70, 3.21, 0.84)
+#' gmar12 <- GSMAR(VIX, 1, 2, params12)
+#' qrtest12 <- quantileResidualTests(gmar12)
+#' plot(qrtest12)
 #'
-#' # Restricted GMAR model, using the given data instead of simulated data
+#' # Restricted GMAR model
 #' params12r <- c(1.4, 1.8, 0.88, 0.29, 3.18, 0.84)
-#' tests12r <- quantileResidualTests(VIX, 1, 2, params12r, restricted=TRUE, nsimu=1)
+#' gmar12r <- GSMAR(data=VIX, p=1, M=2, params=params12r, model="GMAR",
+#'  restricted=TRUE)
+#' qrtest12r <- quantileResidualTests(gmar12r, lagsAC=1:10, nsimu=1)
+#' plot(qrtest12r)
 #'
 #' # StMAR model
-#' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 120, 3.6)
-#' tests12t <- quantileResidualTests(VIX, 1, 2, params12t, StMAR=TRUE,
-#'                                   lagsAC=c(1, 5, 10), lagsCH=c(1, 5, 10))
+#' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
+#' stmar12 <- GSMAR(data=VIX, p=1, M=2, params=params12t, model="StMAR")
+#' quantileResidualTests(stmar12, lagsAC=c(1, 2, 5), nsimu=1)
 #'
-#' # GMAR model as a mixture of AR(2) and AR(1) models
-#' R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(1.2, 0.85, 0.04, 0.3, 3.3, 0.77, 2.8, 0.77)
-#' tests22c <- quantileResidualTests(VIX, 2, 2, params22c, constraints=TRUE, R=R)
+#' # G-StMAR model
+#' params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
+#' gstmar12 <- GSMAR(data=VIX, p=1, M=c(1, 1), params=params12gs,
+#'  model="G-StMAR")
+#' quantileResidualTests(gstmar12, lagsAC=c(1, 3), lagsCH=1:2, nsimu=1)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
 #' params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
-#' qr32trc <- quantileResidualTests(VIX, 3, 2, params32trc, StMAR=TRUE,
-#'                                   restricted=TRUE, constraints=TRUE,
-#'                                   R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                                   lagsAC=c(1, 5, 10), lagsCH=c(1, 5, 10))
+#' stmar32rc <- GSMAR(data=VIX, p=3, M=2, params=params32trc, model="StMAR",
+#'  restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' quantileResidualTests(stmar32rc, lagsAC=c(1, 3), nsimu=1)
 #' }
 #' @export
 
-quantileResidualTests <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=TRUE) {
+quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, nsimu=2000, printRes=TRUE) {
+  check_gsmar(gsmar)
+  check_data(gsmar)
+  data <- gsmar$data
+  p <- gsmar$model$p
+  M <- gsmar$model$M
+  params <- gsmar$params
+  model <- gsmar$model$model
+  restricted <- gsmar$model$restricted
+  constraints <- gsmar$model$constraints
+  parametrization <- gsmar$model$parametrization
+  T_obs <- length(data) - p
 
-  checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
-  checkPM(p, M, GStMAR=GStMAR)
-  M_orig <- M
-  if(GStMAR==TRUE) {
-    M1 <- M[1]
-    M2 <- M[2]
-    M <- sum(M)
+  if(!requireNamespace("gsl", quietly=TRUE) & model %in% c("StMAR", "G-StMAR")) {
+    message("Suggested package 'gsl' not found and StMAR or G-StMAR model is considered: performing the tests may take a while")
   }
-  if(length(params)!=nParams(p=p, M=M_orig, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)) {
-    stop("The parameter vector is wrong dimension")
-  }
-  data <- checkAndCorrectData(data, p)
-  T0 <- length(data)-p
-  if(max(c(lagsAC, lagsCH))>=T0) {
-    stop("The lags are too large compared to the data size")
-  }
-  qresiduals <- quantileResiduals_int(data, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
+  if(max(c(lagsAC, lagsCH)) >= T_obs) stop("The lags are too large compared to the data size")
+  qresiduals <- quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+                                      constraints=constraints, parametrization=parametrization)
   if(nsimu > length(data)) {
-    simuData <- simulateGMAR(p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, nsimu=nsimu)
-    simuData <- as.matrix(simuData$sample)
+    omegaData <- as.matrix(simulateGSMAR(gsmar, nsimu=nsimu)$sample)
   } else {
-    simuData <- data
+    omegaData <- data
   }
-  qresiduals_simuData <- quantileResiduals_int(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
-  results <- list()
+
+  try_to_get_omega <- function(g, dim_g, which_test, which_lag=NA) {
+    print_message <- function(because_of) {
+      if(which_test == "norm") {
+        message(paste("Can't perform normality test", because_of))
+      } else if(which_test == "ac") {
+        message(paste("Can't perform autocorrelation test for lag", which_lag, because_of))
+      } else if(which_test == "ch") {
+        message(paste("Can't perform conditional heteroskedasticity test for lag", which_lag, because_of))
+      }
+    }
+    num_string <- "because of numerical problems."
+    omg <- tryCatch(getOmega(data=omegaData, p=p, M=M, params=params, model=model, restricted=restricted,
+                             constraints=constraints, parametrization=parametrization, g=g, dim_g=dim_g),
+                    error=function(e) {
+                      if(model == "StMAR") {
+                        dfs <- pick_dfs(p=p, M=M, params=params, model=model)
+                        if(any(dfs > 30)) {
+                          print_message("- possibly because some degrees of freedom parameter is very large. Consider estimating a G-StMAR model.")
+                        } else {
+                          print_message(num_string)
+                        }
+                      } else if(model == "G-StMAR") {
+                        dfs <- pick_dfs(p=p, M=M, params=params, model=model)
+                        if(any(dfs > 50)) {
+                          print_message("- possibly because some degrees of freedom parameter is very large. Consider changing one StMAR-type component into GMAR-type and re-estimate.")
+                        }
+                      } else {
+                        print_message(num_string)
+                      }
+                      return(NA)
+                    })
+    if(is.matrix(omg) & anyNA(omg)) {
+      print_message("- possibly because the model fits too poorly")
+    } else if(length(omg) == 1) {
+      if(is.na(omg)) return(matrix(NA, nrow=dim_g, ncol=dim_g))
+    }
+    omg
+  }
+
+  format_value0 <- format_valuef(0)
+  format_value3 <- format_valuef(3)
+  print_resf <- function(lag, p_val) {
+    if(lag < 10) {
+      cat(" ", format_value0(lag), " | ", format_value3(p_val), "\n")
+    } else {
+      cat(" ", format_value0(lag), "| ", format_value3(p_val), "\n")
+    }
+  }
 
   ####################
   ## Test normality ## (Kalliovirta 2012 sec. 3.3)
   ####################
 
   g <- function(r) {
-    cbind(r^2-1, r^3, r^4-3)
+    cbind(r^2 - 1, r^3, r^4 - 3)
   }
+  dim_g <- 3
 
   # Omega (Kalliovirta 2013 eq.(2.4))
-  Omega <- getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=3, qresiduals=qresiduals_simuData)
+  Omega <- try_to_get_omega(g=g, dim_g=dim_g, which_test="norm", which_lag=NA)
 
   # Test statistics and p-value
   sumg <- as.matrix(rowSums(t(g(qresiduals))))
-  N <- t(sumg)%*%solve(Omega, sumg)/T0
-  p_norm <- 1 - pchisq(N, df=3)
+  N <- crossprod(sumg, solve(Omega, sumg))/T_obs
+  pvalue <- 1 - pchisq(N, df=dim_g)
 
   # Results
-  if(printRes==TRUE) {
-    cat(sprintf("N: %.2f, p-value: %.2f", N, p_norm), "\n")
-  }
-  normRes <- data.frame(t(c(N, p_norm)), row.names=NULL)
-  colnames(normRes) <- c("testStat", "pvalue")
-  results[[1]] <- normRes
+  if(printRes == TRUE) cat(paste0("Normality test p-value: ", format_value3(pvalue)), "\n\n")
+  norm_res <- data.frame(testStat=N, df=dim_g, pvalue=pvalue, row.names=NULL)
 
   ##########################
   ## Test autocorrelation ## (Kalliovirta 2012 sec. 3.1)
   ##########################
-  acRes <- matrix(nrow=length(lagsAC), ncol=5)
-  acRes[,1] <- lagsAC
+  tmp <- rep(NA, length(lagsAC))
+  ac_res <- data.frame(lags=lagsAC, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
 
-  # Calculate autocorrelations
-  g0 <- function(r, lag) {
-    sapply((1+lag):length(r), function(i1) sapply(1:lag, function(i2) r[i1]*r[i1-i2]))
-  }
-  j1 <- 1
-  for(lag in lagsAC) {
-    g <- function(r) {
-      if(lag>1) {
-        return(t(g0(r, lag)))
+  # Calculate autocorrelations  FUN = r[i1]*r[i1 - i2]
+  get_g <- function(lag, FUN) {
+    FUN <- match.fun(FUN)
+    function(r) {
+      res <- vapply((1 + lag):length(r), function(i1) vapply(1:lag, function(i2) FUN(r, i1, i2), numeric(1)), numeric(lag))
+      if(lag == 1) {
+        return(as.matrix(res))
       } else {
-        return(as.matrix(g0(r, lag)))
+        return(t(res))
       }
     }
+  } # Returns (T - lag x lag) matrix (lag = dim_g)
+
+  if(printRes == TRUE) cat("Autocorrelation tests:\nlags | p-value\n")
+  j1 <- 1
+  for(lag in lagsAC) {
+    g <- get_g(lag, FUN=function(r, i1, i2) r[i1]*r[i1 - i2])
 
     # Omega (Kalliovirta 2013 eq.(2.4))
-    Omega <- getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
+    Omega <- try_to_get_omega(g=g, dim_g=lag, which_test="ac", which_lag=lag)
 
     # Test statistics, sample autocorrelation for of the current lag and p-value
     sumg <- as.matrix(colSums(g(qresiduals)))  # Unscaled and uncentered sample autocovariances of the quantile residuals
-    A <- t(sumg)%*%solve(Omega, sumg)/(T0-lag)
-    sampleAC <- sumg[lag]/(T0-lag)
-    stdError <- sqrt(Omega[lag,lag]/T0)
-    p_ac <- 1 - pchisq(A, df=lag)
+    A <- crossprod(sumg, solve(Omega, sumg))/(T_obs - lag)
+    sampleAC <- sumg[lag]/(T_obs - lag)
+    stdError <- sqrt(Omega[lag, lag]/T_obs)
+    pvalue <- 1 - pchisq(A, df=lag)
 
     # Results
-    if(printRes==TRUE) {
-      cat(sprintf("A%.0f: %.2f, p-value: %.2f", lag, A, p_ac), "\n")
-    }
-    acRes[j1, 2] <- A
-    acRes[j1, 3] <- p_ac
-    acRes[j1, 4] <- sampleAC
-    acRes[j1, 5] <- stdError
+    if(printRes == TRUE) print_resf(lag=lag, p_val=pvalue)
+    ac_res$testStat[j1] <- A
+    ac_res$df[j1] <- lag
+    ac_res$pvalue[j1] <- pvalue
+    ac_res$indStat[j1] <- sampleAC
+    ac_res$stdError[j1] <- stdError
     j1 <- j1 + 1
   }
-  acRes <- data.frame(acRes, row.names=NULL)
-  colnames(acRes) <- c("lag", "testStat", "pvalue", "indStat", "stdError")
-  results[[2]] <- acRes
 
   #########################################
   ## Test conditional heteroscedasticity ## (Kalliovirta 2012 sec. 3.2)
   #########################################
+  tmp <- rep(NA, length(lagsCH))
+  ch_res <- data.frame(lags=lagsCH, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
 
-  chRes <- matrix(nrow=length(lagsCH), ncol=5)
-  chRes[,1] <- lagsCH
-
-  # Calculate autocorrelations
-  g0 <- function(r, lag) {
-    sapply((1+lag):length(r), function(i1) sapply(1:lag, function(i2) (r[i1]^2-1)*r[i1-i2]^2))
-  }
+  # Calculate c-heteroskedasticity statistics FUN = (r[i1]^2 - 1)*r[i1 - i2]^2
+  if(printRes == TRUE) cat("\nConditional heteroskedasticity tests:\nlags | p-value\n")
   j1 <- 1
   for(lag in lagsCH) {
-    g <- function(r) {
-      if(lag>1) {
-        return(t(g0(r, lag)))
-      } else {
-        return(as.matrix(g0(r, lag)))
-      }
-    }
+    g <- get_g(lag, FUN=function(r, i1, i2) (r[i1]^2 - 1)*r[i1 - i2]^2)
 
     # Omega (Kalliovirta 2012 eq.(2.4))
-    Omega <- getOmega(simuData, p, M_orig, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, g=g, dim_g=lag, qresiduals=qresiduals_simuData)
+    Omega <- try_to_get_omega(g=g, dim_g=lag, which_test="ch", which_lag=lag)
 
     # Test statistics,individual statisics d_k and p-value
     sumg <- as.matrix(colSums(g(qresiduals)))
-    H <- t(sumg)%*%solve(Omega, sumg)/(T0-lag)
-    indStat <- sumg[lag]/(T0-lag)
-    stdError <- sqrt(Omega[lag,lag]/T0)
-    p_ch <- 1 - pchisq(H, df=lag)
+    H <- crossprod(sumg, solve(Omega, sumg))/(T_obs - lag)
+    indStat <- sumg[lag]/(T_obs - lag)
+    stdError <- sqrt(Omega[lag, lag]/T_obs)
+    pvalue <- 1 - pchisq(H, df=lag)
 
     # Results
-    if(printRes==TRUE) {
-      cat(sprintf("H%.0f: %.2f, p-value: %.2f", lag, H, p_ch), "\n")
-    }
-    chRes[j1, 2] <- H
-    chRes[j1, 3] <- p_ch
-    chRes[j1, 4] <- indStat
-    chRes[j1, 5] <- stdError
+    if(printRes == TRUE) print_resf(lag=lag, p_val=pvalue)
+    ch_res$testStat[j1] <- H
+    ch_res$df[j1] <- lag
+    ch_res$pvalue[j1] <- pvalue
+    ch_res$indStat[j1] <- indStat
+    ch_res$stdError[j1] <- stdError
     j1 = j1 + 1
   }
-  chRes <- data.frame(chRes, row.names=NULL)
-  colnames(chRes) <- c("lag", "testStat", "pvalue", "indStat", "stdError")
-  results[[3]] <- chRes
-  names(results) <- c("normality", "autocorrelation", "cond.heteroscedasticity")
-  return(results)
+
+  structure(list(norm_res=norm_res,
+                 ac_res=ac_res,
+                 ch_res=ch_res),
+            class="qrtest")
 }
 
 

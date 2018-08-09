@@ -2,25 +2,43 @@
 #'
 #' @title Estimate Gaussian or Student's t Mixture Autoregressive model
 #'
-#' @description \code{fitGMAR} estimates GMAR, StMAR or G-StMAR model in two phases. It uses genetic algorithm to find parameter values close to the maximum point
-#'  of the log-likelihood function and then uses them as starting values for quasi-Newton method to find the maximum point.
+#' @description \code{fitGSMAR} estimates GMAR, StMAR or G-StMAR model in two phases: in the first phase it uses genetic algorithm
+#'   to find starting values for gradient based variable metric algorithm (also known as quasi-Newton method), which it then uses
+#'   to finalize the estimation in the second phase. Parallel computing is used to perform multiple rounds of estimations in parallel.
 #' @inheritParams GAfit
-#' @param nCalls an (optional) positive integer specifying how many rounds of estimation should be done.
+#' @param nCalls a positive integer specifying how many rounds of estimation should be done.
 #'  The estimation results may vary from round to round because of multimodality of the log-likelihood function
-#'  and randomness associated with the genetic algorithm. Default is \code{round(10 + 9*log(M))}.
-#' @param multicore an (optional) logical argument defining whether parallel computing should be used in the estimation process.
-#'  Highly recommended and default is \code{TRUE}.
-#' @param ncores an (optional) positive integer specifying the number of cores to be used in the estimation process.
-#'  Default is that the number of available cores is detected with \code{parallel::detectCores()} and all them are used. Ignored if \code{multicore==FALSE}.
-#' @param printRes an (optional) logical argument defining whether results should be printed or not. Default is \code{TRUE}.
-#' @param runTests an (optional) logical argument defining whether quantile residual tests for the estimated model should be performed or not. Default is \code{FALSE}.
-#' @details The user should consider adjusting \code{ar0scale} and/or \code{sigmascale} accordingly to the best knowledge about the process.
+#'  and randomness associated with the genetic algorithm.
+#' @param nCores a positive integer specifying the number of cores to be used in the estimation process.
+#'  Default is that the number of available cores is detected with \code{parallel::detectCores()} and all of them are used.
+#' @param maxit maximum number of iterations in the variable metric algorithm.
+#' @param printRes should the estimation results be printed?
+#' @param runTests should quantile residuals tests be performed after the estimation?
+#' @param ... additional settings passed to the function \code{GAfit()} employing the genetic algorithm.
+#' @details
+#'  Because of complexity and multimodality of the log-likelihood function, it's \strong{not guaranteed} that the estimation
+#'  algorithms will end up in the global maximum point. It's expected that most of the estimation rounds will end up in some local maximum
+#'  point instead, and therefore a number of estimation rounds is required for reliable results. Because of the nature of the models,
+#'  the estimation may fail particularly in the cases where the number of mixture components is chosen too large.
 #'
-#'   Note that \code{fitGMAR} can't verify whether the found estimates denote the global or just a local maximum point.
-#'   For more reliable results one should increase the number of estimation rounds (\code{nCalls}) to be performed.
-#' @return Returns a list with...
-#' \describe{
-#'   \item{\code{$estimates}}{The estimated parameter vector...
+#'  If the iteration limit in the variable metric algorithm (\code{maxit}) is reached, one can continue estimation by iterating
+#'  more with the function \code{iterate_more()}.
+#'
+#'  The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.
+#'  It uses (slightly modified) individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)}
+#'  and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}.
+#'
+#'  The variable metric algorithm (or quasi-Newton method) used in the second phase is implemented with function
+#'  \code{optim} from the package \code{stats}.
+#'
+#'  Some mixture components of StMAR model may sometimes get very large degrees of freedom parameter estimates. Such estimates may, for
+#'  example, cause computing the quantile residual tests to fail. However, such mixture components are very much similar to the components
+#'  of GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture components with large degrees of freedom
+#'  estimates to be GMAR type.
+#' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
+#'   empirical mixing weights, quantile residuals and quantile residual test results if the tests were performed. In addition, the returned
+#'   object contains the estimates and log-likelihood values from all the estimation rounds. The estimated parameter vector can be obtained
+#'   at \code{gsmar$params} (and the corresponding approximate standard errors at \code{gsmar$std_errors}) and it is...
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
 #'      \describe{
@@ -31,8 +49,8 @@
 #'          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
 #'          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
-#'        \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vectors \strong{\eqn{\phi_{m}}} replaced with vectors \strong{\eqn{\psi_{m}}}
-#'          that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+#'        \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
+#'          matrices \strong{C} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
 #'          \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
 #'      }
 #'    }
@@ -44,293 +62,205 @@
 #'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
 #'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
-#'        \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vector \strong{\eqn{\phi}} replaced with vector \strong{\eqn{\psi}}
-#'          that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
+#'        \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
+#'          \strong{\eqn{C}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
 #'          \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
 #'      }
 #'    }
 #'  }
 #'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-#'  freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.}
-#'   \item{\code{$stdErrors}}{Approximate standard errors of the estimates. \code{NA} values may sometimes occur because the observed information matrix is numerically estimated.}
-#'   \item{\code{$loglikelihood}}{Log-likelihood value of the estimated model.}
-#'   \item{\code{$IC}}{A data frame containing information criteria scores of the estimated model: \code{$AIC}, \code{$BIC}, \code{$HQIC}.}
-#'   \item{\code{$quantileResiduals}}{A numeric vector containing quantile residuals of the estimated model.}
-#'   \item{\code{$mixingWeights}}{A numeric matrix containing mixing weights of the estimated model (i:th column for i:th regime).}
-#'   \item{\code{$allEstimates}}{A list of estimated parameter vectors from all of the estimation rounds.}
-#'   \item{\code{$allLoglikelihoods}}{A numeric vector containing the log-likelihood values from all of the estimation rounds. Corresponds to \code{$allEstimates}.}
-#'   \item{\code{$converged}}{A logical vector containing information whether the quasi-Newton algorithm converged successfully or not. Corresponds to \code{$allEstimates}.}
-#'   \item{\code{$normality}}{A data frame containing results from the normality test. Returned only if \code{runTests==TRUE}.}
-#'   \item{\code{$autocorrelation}}{A data frame containing results from the autocorrelation tests. Returned only if \code{runTests==TRUE}.}
-#'   \item{\code{$cond.heteroscedasticity}}{A data frame containing results from the conditional heteroscedasticity tests. Returned only if \code{runTests==TRUE}.}
-#'   \item{\code{$unconstrainedEstimates}}{A numeric parameter vector denoting the estimates without any constraints (if given any). That is instead of
-#'     vectors \strong{\eqn{\psi_{m}}} the estimates are parametrized with vectors \strong{\eqn{\phi_{m}}} calculated from
-#'     \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}}, or in the case of restricted models
-#'     \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}. Returned only if \code{constraints==TRUE}.}
-#' }
-#' @section Printed results:
-#'   The results printed out regarding the genetic algorithm and quasi-Newton estimations are the log-likelihood values
-#'   the algorithms ended up with. The lowest value, mean value and largest value are printed to give perspective.
-#'
-#'   If quantile residual tests are ran, the results from the tests are printed so that the letter "N" means normality test, "A" autocorrelation test
-#'   and "H" conditional heteroscedasticity test. The numbers right next to "A" and "H" indicate the number of lags used
-#'   in each test. The statistics following them are the corresponding test statistics and p-values.
-#'   \code{NA} values mean that it was not (numerically) possible for the code to calculate all the necessary estimates for the tests.
+#'  freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
+#'  \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
+#'  and the rest \code{M2} components are \emph{StMAR-type}.
+#'  Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
+#'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
+#' @section S3 methods:
+#'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
+#'  \code{logLik}, \code{residuals}.
 #' @section Suggested packages:
-#'   Install the suggested package "pbapply" if you wish to see a progress bar during parallel computing.
-#'
-#'   For faster evaluation of the quantile residuals of StMAR and G-StMAR models install the suggested package "gsl".
-#'   Note that for large StMAR and G-StMAR models with large data the evaluations for the quantile residual tests may take
-#'   significantly long time without the package "gsl".
-#' @section The optimization algorithms:
-#'   The genetic algorithm is mostly based on the description by \emph{Dorsey R. E. ja Mayer W. J. (1995)}. It uses individually
-#'   adaptive crossover and mutation rates described by \emph{Patnaik L.M. and Srinivas M. (1994)}, with slight modifications.
-#'
-#'   The quasi-Newton method is implemented with function \code{optim} from the package \code{stats}.
+#'  For faster evaluation of the quantile residuals of StMAR and G-StMAR models install the suggested package "gsl".
+#'  Note that for large StMAR and G-StMAR models with large data the evaluations for the quantile residual tests may take
+#'  significantly long time without the package "gsl".
+#' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{swap_parametrization}},
+#'  \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}}, \code{\link{diagnosticPlot}},
+#'  , \code{\link{quantileResidualTests}}
 #' @references
 #'  \itemize{
-#'    \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
+#'    \item Dorsey R. E. and Mayer W. J. 1995. Genetic algorithms for estimation problems with multiple optima,
+#'          nondifferentiability, and other irregular features. \emph{Journal of Business & Economic Statistics},
+#'          \strong{13}, 53-66.
+#'    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
 #'          \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-#'    \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
-#'          \emph{The Econometrics Journal}, \strong{15}, 358-393.
-#'    \item Dorsey R. E. ja Mayer W. J. (1995) Genetic algorithms for estimation problems with multiple optima, nondifferentiability, and other irregular features.
-#'          \emph{Journal of Business & Economic Statistics}, \strong{13}, 53-66.
-#'    \item Patnaik L.M. and Srinivas M. (1994) Adaptive Probabilities of Crossover and Mutation in Genetic Algorithms.
+#'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
+#'          arXiv:1805.04010 \strong{[econ.EM]}.
+#'    \item Patnaik L.M. and Srinivas M. 1994. Adaptive Probabilities of Crossover and Mutation in Genetic Algorithms.
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
-#'    \item Lutkepohl H. New Introduction to Multiple Time Series Analysis,
-#'          \emph{Springer}, 2005.
-#'    \item Galbraith, R., Galbraith, J., (1974). On the inverses of some patterned matrices arising
-#'            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
-#'    \item References regarding the StMAR and G-StMAR models will be updated after they are published.
+#'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
+#'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
+#'    \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+#'          theoretical properties similar to GMAR and StMAR models.
 #'  }
 #' @examples
 #' \donttest{
+#' # These are long running examples and use parallel computing
+#'
 #' # GMAR model
-#' fit12 <- fitGMAR(VIX, 1, 2, ar0scale=c(3, 2), runTests=TRUE)
+#' fit12 <- fitGSMAR(VIX, 1, 2, runTests=TRUE)
+#' fit12
+#' summary(fit12)
+#' plot(fit12)
 #'
 #' # Restricted GMAR model
-#' fit12r <- fitGMAR(VIX, 1, 2, restricted=TRUE, nCalls=10,
-#'                   runTests=TRUE)
+#' fit12r <- fitGSMAR(VIX, 1, 2, restricted=TRUE,
+#'  parametrization="mean", nCalls=10)
+#' fit12r
+#' summary(fit12r)
 #'
-#' # StMAR model
-#' fit12t <- fitGMAR(VIX, 1, 2, StMAR=TRUE, ar0scale=c(3, 2))
+#' # Non-mixture version of StMAR model
+#' fit11t <- fitGSMAR(VIX, 1, 1, model="StMAR", nCores=1, nCalls=1)
+#' fit11t
 #'
-#' # Non-mixture version of StMAR model: without multicore
-#' fit11t <- fitGMAR(VIX, 1, 1, StMAR=TRUE, multicore=FALSE, nCalls=4, runTests=TRUE)
+#' # StMAR model, 100 estimations rounds
+#' fit12t <- fitGSMAR(VIX, 1, 2, model="StMAR", nCalls=100)
+#' fit12t
 #'
-#' # G-StMAR model
-#' fit12gs <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, conditional=FALSE)
+#' # Restricted StMAR model (implied by the StMAR(1,2) model)
+#' fit12tr <- fitGSMAR(VIX, 1, 2, model="StMAR", restricted=TRUE)
+#' fit12tr
 #'
-#' # Restricted G-StMAR model
-#' fit12gsr <- fitGMAR(VIX, 1, c(1, 1), GStMAR=TRUE, restricted=TRUE)
+#' # G-StMAR model (implied by the StMAR(1,2) models), 100 estimation rounds
+#' fit12gs <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR", nCalls=100)
+#' fit12gs
+#'
+#' # Restricted G-StMAR model (implied by the previous StMAR and G-StMAR models)
+#' fit12gsr <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR", restricted=TRUE)
+#' fit12gsr
 #'
 #' # Fit GMAR model that is a mixture of AR(1) and such AR(3) model that the
 #' # second AR coeffiecient is constrained to zero.
-#' R <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
-#' fit32c <- fitGMAR(VIX, 3, 2, constraints=TRUE, R=R, ar0scale=c(3, 2))
+#' constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
+#' fit32c <- fitGSMAR(VIX, 3, 2, constraints=constraints)
+#' fit32c
 #'
 #' # Fit such constrained StMAR(3, 1) model that the second order AR coefficient
 #' # is constrained to zero.
-#' R0 <- matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
-#' fit31tc <- fitGMAR(VIX, 3, 1, StMAR=TRUE, constraints=TRUE, R=list(R0))
+#' constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' fit31tc <- fitGSMAR(VIX, 3, 1, model="StMAR", constraints=constraints)
+#' fit31tc
 #'
 #' # Fit such StMAR(3,2) model that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' fit32trc <- fitGMAR(VIX, 3, 2, StMAR=TRUE, restricted=TRUE, constraints=TRUE,
-#'                     R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' fit32trc <- fitGSMAR(VIX, 3, 2, model="StMAR", restricted=TRUE,
+#'                      constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' fit32trc
 #' }
 #' @export
 
-fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, nCalls, multicore=TRUE, ncores, initpop=FALSE, ngen, popsize, smartMu, ar0scale, sigmascale, printRes=TRUE, runTests=FALSE) {
-
+fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
+                     parametrization=c("intercept", "mean"), nCalls=round(10 + 9*log(sum(M))), nCores=min(nCalls, parallel::detectCores()),
+                     maxit=100, printRes=TRUE, runTests=FALSE, ...) {
   on.exit(closeAllConnections())
-  checkLogicals(StMAR=StMAR, GStMAR=GStMAR)
-  checkPM(p, M, GStMAR=GStMAR)
+  model <- match.arg(model)
+  check_model(model)
+  parametrization <- match.arg(parametrization)
+  stopifnot(parametrization %in% c("intercept", "mean"))
+  if(!all_pos_ints(c(nCalls, nCores, maxit))) stop("Arguments nCalls, nCores and maxit have to be positive integers")
+  checkPM(p, M, model=model)
   data <- checkAndCorrectData(data, p)
-  epsilon <- round(log(.Machine$double.xmin)+10)
-  minval <- -(10^(ceiling(log10(length(data))) + 1) - 1)
-  if(constraints==TRUE) checkConstraintMat(p, M, R, restricted=restricted)
-  if(missing(R)) R <- NULL
-  d <- nParams(p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R)
-  if(missing(popsize)) popsize <- 10*d
-  if(missing(ngen)) ngen <- min(400, max(round(0.1*length(data)), 200))
-  if(missing(smartMu)) smartMu <- min(100, round(0.5*ngen))
-  if(missing(nCalls)) {
-    nCalls <- round(10 + 9*log(sum(M)))
-  } else if(nCalls < 1 | nCalls%%1 != 0) {
-    stop("nCalls has to be positive integer")
-  }
-  if(missing(ar0scale)) {
-    avg <- mean(data)
-    T1 <- length(data)
-    c0 <- crossprod(data-avg, data-avg)/T1
-    c1 <- crossprod((data-avg)[1:(T1-1)], (data-avg)[2:T1])/(T1-1)
-    ar0scale <- c(1.5*avg*(1 - c1/c0), max(c0, 4))
-  } else if(length(ar0scale)!=2) {
-    stop("ar0scale is wrong dimension")
-  } else if(ar0scale[2]<=0) {
-    stop("The second element of ar0scale should be larger than zero")
-  }
-  if(missing(sigmascale)) {
-    sigmascale <- 1 + sd(data)
-  } else if(length(sigmascale) != 1) {
-    stop("sigmascale is wrong dimension")
-  } else if(sigmascale <= 0) {
-    stop("sigmascale should be larger than zero")
-  }
-  if(missing(ncores)) {
-    if(multicore==TRUE) {
-      ncores <- min(nCalls, parallel::detectCores())
-    } else {
-      ncores <- 1
-    }
-  } else if(multicore==FALSE) {
-    ncores <- 1
-  } else if(ncores < 1 | ncores%%1 != 0) {
-    stop("ncores has to be positive integer")
-  }
-  if(nCalls < ncores) {
-    ncores <- nCalls
-    message("ncores was set to be larger than the number of estimation rounds")
-  }
-  cat(paste("Using", ncores, "cores for", nCalls, "estimation rounds..."), "\n")
+  if(!is.null(constraints)) checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
+  d <- nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints)
+  dot_params <- list(...)
+  minval <- ifelse(is.null(dot_params$minval), -(10^(ceiling(log10(length(data))) + 1) - 1), dot_params$minval)
+  red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
 
-  #############
-  ## FITTING ##
-  #############
-
-  ### Genetic algorithm ###
-
-  if(multicore==FALSE) {
-    cat("Optimizing with genetic algorithm...\n")
-    GAfit_tmp <- function(round) {
-      ret <- GAfit(data, p, M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, conditional=conditional,
-                  ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale, sigmascale=sigmascale, epsilon=epsilon,
-                  initpop=initpop, minval=minval)
-      cat(paste0(round, "/", nCalls), "\n")
-      return(ret)
-    }
-    GAresults <- lapply(1:nCalls, function(round) GAfit_tmp(round))
-  } else {
-    cl <- parallel::makeCluster(ncores)
-    # parallel::clusterExport(cl, c("data", "p", "M", "ngen", "popsize", "smartMu", "ar0scale", "sigmascale", "conditional",
-    #                               "restricted", "constraints", "R", "initpop", "GAfit", "loglikelihood_int", "isStationary_int",
-    #                               "isIdentifiable", "StMAR", "GStMAR", "sortComponents", "smartIndividual_int", "randomIndividual_int",
-    #                               "checkAndCorrectData", "reformParameters", "parameterChecks", "reformConstrainedPars",
-    #                               "checkConstraintMat", "mixingWeights_int", "extractRegime", "changeRegime", "epsilon",
-    #                               "nParams", "minval", "checkLogicals", "checkPM"), envir = environment())
-    parallel::clusterExport(cl, ls(environment(fitGMAR)), envir = environment(fitGMAR)) # assign all variables from package:uGMAR
-    parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
-
-    cat("Optimizing with genetic algorithm...\n")
-    if(requireNamespace("pbapply", quietly = TRUE)) {
-      parallel::clusterEvalQ(cl, library(pbapply))
-      GAresults <- pbapply::pblapply(1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
-                                                                constraints=constraints, R=R, conditional=conditional,
-                                                                ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale,
-                                                                sigmascale=sigmascale, initpop=initpop, epsilon=epsilon,
-                                                                minval=minval), cl=cl)
-    } else {
-      GAresults <- parallel::parLapply(cl, 1:nCalls, function(x) GAfit(data=data, p=p, M=M, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
-                                                                      constraints=constraints, R=R, conditional=conditional,
-                                                                      ngen=ngen, popsize=popsize, smartMu=smartMu, ar0scale=ar0scale,
-                                                                      sigmascale=sigmascale, initpop=initpop, epsilon=epsilon,
-                                                                      minval=minval))
-    }
-    parallel::stopCluster(cl=cl)
+  if(nCalls < nCores) {
+    nCores <- nCalls
+    message("nCores was set to be larger than the number of estimation rounds: using nCores = nCalls")
   }
-  loks <- sapply(1:nCalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], StMAR=StMAR, GStMAR=GStMAR,
-                                                         restricted=restricted, constraints=constraints, R=R, conditional=conditional,
-                                                         boundaries=TRUE, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval))
-  if(printRes==TRUE) {
+  cat(paste("Using", nCores, "cores for", nCalls, "estimation rounds..."), "\n")
+
+
+  ### Genetic algorithm optimization ###
+
+  cl <- parallel::makeCluster(nCores)
+  parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir = environment(fitGSMAR)) # assign all variables from package:uGMAR
+  parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
+
+  cat("Optimizing with genetic algorithm...\n")
+  GAresults <- pbapply::pblapply(1:nCalls, function(x) GAfit(data=data, p=p, M=M, model=model, restricted=restricted,
+                                                             constraints=constraints, conditional=conditional,
+                                                             parametrization=parametrization, ...), cl=cl)
+  parallel::stopCluster(cl=cl)
+
+
+  loks <- vapply(1:nCalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], model=model,
+                                                          restricted=restricted, constraints=constraints, conditional=conditional,
+                                                          parametrization=parametrization, boundaries=TRUE, checks=FALSE,
+                                                          minval=minval), numeric(1))
+
+  if(printRes == TRUE) {
     cat("Results from genetic algorithm:\n")
     cat(paste("lowest value: ", round(min(loks), 3)), "\n")
     cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
     cat(paste("largest value:", round(max(loks), 3)), "\n")
   }
 
-  ### Quasi-Newton ###
+  ### Variable metric algorithm optimization ###
 
-  # Logarithmize dfs to get them to the same range as other parameters
-  manipulateDFS <- function(M, params, logDFS=TRUE, StMAR) {
-    if(StMAR==TRUE) {
-      M2 <- M
-    } else {  # For G-StMAR models
-      M2 <- M[2]
-    }
-    dfs <- params[(d-M2+1):d]
-    if(logDFS==TRUE) {
-      params[(d-M2+1):d] <- log(dfs) # log dfs
-    } else {
-      params[(d-M2+1):d] <- exp(dfs) # exp dfs (from log to normal)
-    }
-    return(params)
+  # Logarithmize dfs to get them to the same range as other parameters:
+  # this allows the df-parameters to "explode" more sensitively to implicate GMAR-type components.
+  manipulateDFS <- function(M, params, model, FUN) {
+    FUN <- match.fun(FUN)
+    M2 <- ifelse(model == "StMAR", M, M[2])
+    params[(d - M2 + 1):d] <- FUN(params[(d - M2 + 1):d])
+    params
   }
-  if(StMAR==TRUE | GStMAR==TRUE) {
-    GAresults <- lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=GAresults[[i1]], logDFS=TRUE, StMAR=StMAR))
+  if(model == "StMAR" | model == "G-StMAR") {
+    GAresults <- lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=GAresults[[i1]], model=model, FUN=log))
   }
 
   # Function to maximize loglikelihood
   f <- function(params) {
-    if(StMAR==TRUE | GStMAR==TRUE) {
-      params <- manipulateDFS(M=M, params=params, logDFS=FALSE, StMAR=StMAR) # Unlogarithmize dfs
-    }
-    loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
-                      boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
+     if(model == "StMAR" | model == "G-StMAR") {
+       params <- manipulateDFS(M=M, params=params, model=model, FUN=exp) # Unlogarithmize dfs
+     }
+     tryCatch(loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+                                conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE, minval=minval),
+              error=function(e) minval)
   }
 
   # Calculate gradient of the log-likelihood function using central finite difference
   h <- 6e-6
   I <- diag(rep(1, d))
   gr <- function(params) {
-    grad <- numeric(d)
-    for(i1 in 1:d) {
-      grad[i1] <- (f(params+I[i1,]*h)-f(params-I[i1,]*h))/(2*h)
-    }
-    return(grad)
+    vapply(1:d, function(i1) (f(params + I[i1,]*h) - f(params - I[i1,]*h))/(2*h), numeric(1))
   }
 
-  if(multicore==TRUE) {
-    cl <- parallel::makeCluster(ncores)
-    # parallel::clusterExport(cl, c("GAresults", "f", "manipulateDFS", "data", "p", "M", "conditional", "restricted", "constraints",
-    #                               "R", "loglikelihood_int", "isStationary_int", "isIdentifiable", "sortComponents",
-    #                               "checkAndCorrectData", "StMAR", "GStMAR", "checkPM", "checkLogicals", "parameterChecks",
-    #                               "reformParameters", "reformConstrainedPars", "checkConstraintMat", "epsilon", "gr",
-    #                               "minval", "d", "nCalls"), envir = environment())
-    parallel::clusterExport(cl, ls(environment(fitGMAR)), envir = environment(fitGMAR)) # assign all variables from package:uGMAR
-    parallel::clusterEvalQ(cl, c(library(Brobdingnag)))
-
-    cat("Optimizing with quasi-Newton method...\n")
-    if(requireNamespace("pbapply", quietly = TRUE)) {
-      parallel::clusterEvalQ(cl, library(pbapply))
-      NEWTONresults <- pbapply::pblapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
-                                                                     control=list(fnscale=-1)), cl=cl)
-    } else {
-      NEWTONresults <- parallel::parLapply(cl, 1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
-                                                                           control=list(fnscale=-1)))
-    }
-    parallel::stopCluster(cl=cl)
-  } else {
-    cat("Optimizing with quasi-Newton method...\n")
-    NEWTONresults <- lapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"), control=list(fnscale=-1)))
-  }
+  cl <- parallel::makeCluster(nCores)
+  parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir = environment(fitGSMAR)) # assign all variables from package:uGMAR
+  parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
+  cat("Optimizing with variable metric algorithm...\n")
+  NEWTONresults <- pbapply::pblapply(1:nCalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method=c("BFGS"),
+                                                                  control=list(fnscale=-1, maxit=maxit)), cl=cl)
+  parallel::stopCluster(cl=cl)
 
   loks <- vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$value, numeric(1))
-  converged <- vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$convergence==0, logical(1))
-  if(constraints==FALSE) {
-    newtonEstimates <- lapply(1:nCalls, function(i1) sortComponents(p, M, NEWTONresults[[i1]]$par, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted))
-  } else { # To maintain the order of matrices R, models with constraints won't be sorted
+  converged <- vapply(1:nCalls, function(i1) NEWTONresults[[i1]]$convergence == 0, logical(1))
+
+  if(is.null(constraints)) {
+    newtonEstimates <- lapply(1:nCalls, function(i1) sortComponents(p=p, M=M, params=NEWTONresults[[i1]]$par, model=model, restricted=restricted))
+  } else {
     newtonEstimates <- lapply(1:nCalls, function(i1) NEWTONresults[[i1]]$par)
   }
 
   # Unlogarithmize dfs
-  if(StMAR==TRUE | GStMAR==TRUE) {
-    newtonEstimates <- lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], logDFS=FALSE, StMAR=StMAR))
+  if(model == "StMAR" | model == "G-StMAR") {
+    newtonEstimates <- lapply(1:nCalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], model=model, FUN=exp))
   }
 
-  if(printRes==TRUE) {
-    cat("Results from quasi-Newton:\n")
+  if(printRes == TRUE) {
+    cat("Results from variable metric algorithm:\n")
     cat(paste("lowest value: ", round(min(loks), 3)), "\n")
     cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
     cat(paste("largest value:", round(max(loks), 3)), "\n")
@@ -340,126 +270,119 @@ fitGMAR <- function(data, p, M, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, con
   bestind <- which(loks==max(loks))[1]
   bestfit <- NEWTONresults[[bestind]]
   params <- newtonEstimates[[bestind]]
-  if(constraints==FALSE) {
-    params <- sortComponents(p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted) # Sort the parameter vector by alphas
-  }
-  mw <- mixingWeights_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, epsilon=epsilon)
+  mw <- mixingWeights_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+                          parametrization=parametrization, to_return="mw")
 
   # Warnings and notifications
-  if(any(vapply(1:sum(M), function(i1) sum(mw[,i1]>0.05)<0.01*length(data), logical(1)))) {
-    message("At least one of the components in the estimated model seems to be wasted! Consider re-estimating the model for steadier results or re-specify the model.")
+  if(any(vapply(1:sum(M), function(i1) sum(mw[,i1] > red_criteria[1]) < red_criteria[2]*length(data), logical(1)))) {
+    message("At least one of the mixture components in the estimated model seems to be wasted!")
   }
-  if(bestfit$convergence==1) {
-    message("Iteration limit was reached when estimating the best fitting individual!")
-  }
+  if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual!")
 
-  #######################
-  ## TESTS AND WRAP-UP ##
-  #######################
+
+  ### Tests, estimates, standard errors, IC ###
+  tmp_gsmar <- GSMAR(data, p, M, params=params, model=model, restricted=restricted, constraints=constraints,
+                     conditional=conditional, parametrization=parametrization, calc_std_errors=FALSE)
 
   # Quantile residual tests
-  if(runTests==TRUE) {
+  if(runTests == TRUE) {
     cat("Performing quantile residual tests...\n")
-    qrTests <- quantileResidualTests(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
-                                     lagsAC=c(1, 2, 4, 6, 8, 10), lagsCH=c(1, 2, 4, 6, 8, 10), nsimu=2000, printRes=printRes)
+    qr_tests <- quantileResidualTests(tmp_gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=c(1, 2, 5, 10), nsimu=2000, printRes=printRes)
+    if(printRes == TRUE) cat("\n")
+  } else {
+    qr_tests <- NULL
   }
 
   # Information criteria
   obs <- ifelse(conditional, length(data) - p, length(data))
   loglik <- bestfit$value
-#  T0 = length(data) - p
-  AIC <- -2*loglik + 2*d
-  BIC <- -2*loglik + d*log(obs)
-  HQIC <- -2*loglik + 2*d*log(log(obs))
-  IC <- data.frame(AIC, BIC, HQIC)
-  if(printRes==TRUE) {
-    cat(paste("AIC: ", round(AIC)), "\n")
-    cat(paste("HQIC:", round(HQIC)), "\n")
-    cat(paste("BIC: ", round(BIC)), "\n")
-  }
+  IC <- get_IC(loglik=loglik, npars=d, obs=obs)
 
   # Standard errors of the estimates
-  stdErrors <- standardErrors(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted,
-                             constraints=constraints, R=R, conditional=conditional, epsilon=epsilon,
-                             minval=minval)
-  estimates <- data.frame(params, stdErrors)
-  colnames(estimates) <- c("estimate", "stdError")
-  if(printRes==TRUE) {
-    if(all(is.na(stdErrors))) {
-      cat("Unable to calculate approximate standard errors!\n")
-      cat("Estimates:", "\n")
-      cat(round(estimates$estimate, 3), "\n")
-    } else {
-      print(round(estimates, 3))
-    }
-  }
+  std_errors <- standardErrors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+                               constraints=constraints, conditional=conditional, parametrization=parametrization,
+                               minval=minval)
+  if(all(is.na(std_errors))) message("Unable to calculate approximate standard errors")
 
-  # Collect the stuff to be returned
-  results <- list(params, stdErrors, loglik, IC,
-                  quantileResiduals_int(data, p, M, params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R, epsilon=epsilon),
-                  mw, newtonEstimates, loks, converged)
-  names(results) <- c("estimates", "stdErrors", "loglikelihood", "IC", "quantileResiduals", "mixingWeights",
-                     "allEstimates", "allLoglikelihoods", "converged")
-  if(runTests==TRUE) {
-    results[[length(results)+1]] <- qrTests$normality
-    names(results)[length(results)] <- "normality"
-    results[[length(results)+1]] <- qrTests$autocorrelation
-    names(results)[length(results)] <- "autocorrelation"
-    results[[length(results)+1]] <- qrTests$cond.heteroscedasticity
-    names(results)[length(results)] <- "cond.heteroscedasticity"
-  }
-  if(constraints==TRUE) {
-    results[[length(results)+1]] <- reformConstrainedPars(p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, R=R)
-    names(results)[length(results)] <- "unconstrainedEstimates"
-  }
-  return(results)
+
+  ### Wrap up ###
+  qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+                                      parametrization=parametrization)
+
+  ret <- structure(list(data=data,
+                        model=list(p=p,
+                                   M=M,
+                                   model=model,
+                                   restricted=restricted,
+                                   constraints=constraints,
+                                   conditional=conditional,
+                                   parametrization=parametrization),
+                        params=params,
+                        std_errors=std_errors,
+                        mixing_weights=mw,
+                        quantile_residuals=qresiduals,
+                        loglik=structure(loglik,
+                                         class="logLik",
+                                         df=d),
+                        IC=IC,
+                        all_estimates=newtonEstimates,
+                        all_logliks=loks,
+                        which_converged=converged,
+                        qr_tests=qr_tests),
+                   class="gsmar")
+  cat("Finished!\n")
+  ret
 }
 
 
-#' @title Calculate standard errors for estimates of GMAR, StMAR or GStMAR model
+#' @title Maximum likelihood estimation of GMAR, StMAR or G-StMAR model with preliminary estimates
 #'
-#' @description \code{standardErrors} numerically approximates standard errors for the given estimates of GMAR, StMAR or GStMAR model
+#' @description \code{iterate_more} uses variable metric algorithm to finalize maximum likelihood
+#'  estimation of GMAR, StMAR or G-StMAR model (object of class \code{'gsmarar'}) which already has preliminary estimates.
 #'
-#' @inheritParams loglikelihood_int
-#' @return Approximate standard errors of the parameter values
+#' @inheritParams simulateGSMAR
+#' @inheritParams fitGSMAR
+#' @details The main purpose of \code{iterate_more()} is to provide a simple and convenient tool to finalize
+#'   the estimation when the maximum number of iterations is reached when estimating a model with the
+#'   main estimation function \code{fitGSMAR()}. It's just a simple wrapper around function \code{optim()}
+#'   from the package \code{stats} and \code{GSMAR()} from the package \code{uGMAR}.
+#' @return Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
+#'   to work with other functions provided in \code{uGMAR}.
+#' @seealso \code{fitGSMAR()}, \code{GSMAR()}, \code{optim()}
+#' @inherit GSMAR references
+#' @examples
+#' \donttest{
+#' # Estimate GMAR model with only 50 generations of genetic algorithm and
+#' # only 1 iteration in variable metric algorithm
+#' fit12 <- fitGSMAR(VIX, 1, 2, maxit=1, ngen=50)
+#' fit12
+#'
+#' # Iterate more since iteration limit was reached
+#' fit12 <- iterate_more(fit12)
+#' fit12
+#' }
+#' @export
 
-standardErrors <- function(data, p, M, params, StMAR=FALSE, GStMAR=FALSE, restricted=FALSE, constraints=FALSE, R, conditional=TRUE, epsilon, minval) {
+iterate_more <- function(gsmar, maxit=100) {
+  check_gsmar(gsmar)
+  stopifnot(maxit %% 1 == 0 & maxit >= 1)
+  minval <- -(10^(ceiling(log10(length(gsmar$data))) + 1) - 1)
 
-  # Function to derivate
   fn <- function(params) {
-    loglikelihood_int(data=data, p=p, M=M, params=params, StMAR=StMAR, GStMAR=GStMAR, restricted=restricted, constraints=constraints, R=R,
-                  boundaries=TRUE, conditional=conditional, checks=FALSE, returnTerms=FALSE, epsilon=epsilon, minval=minval)
+    tryCatch(loglikelihood_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=params,
+                               model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
+                               conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
+                               boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), error=function(e) minval)
   }
-  h0 <- c(6e-06, 1e-06, 0.001) # Difference
-  d <- length(params)
-  I <- diag(1, ncol=d, nrow=d) # Indicates which parameter is derivated
-
-  for(j1 in 1:length(h0)) {
-    h <- h0[j1]
-    Hess <- matrix(ncol=d, nrow=d)
-
-    # Calculate the second derivatives
-    for(i1 in 1:d) {
-      for(i2 in i1:d) {
-        dr1 <- (fn(params + h*I[i1,] + h*I[i2,]) - fn(params - h*I[i1,] + h*I[i2,]))/(2*h)
-        dr2 <- (fn(params + h*I[i1,] - h*I[i2,]) - fn(params - h*I[i1,] - h*I[i2,]))/(2*h)
-        Hess[i1, i2] <- (dr1 - dr2)/(2*h)
-        Hess[i2, i1] <- Hess[i1, i2] # Take use of symmetry
-      }
-    }
-
-    # Inverse of the observed information matrix
-    invObsInf <- tryCatch(solve(-Hess), error=function(cond) return(matrix(0, ncol=d, nrow=d)))
-
-    # Calculate the standard errors if possible: break loop if all calculated and change the difference if not
-    if(all(diag(invObsInf)>0) | j1==length(h0)) {
-      stdErrors <- sqrt(diag(invObsInf))
-      if(all(stdErrors==0)) {
-        stdErrors <- rep(NA, d)
-      }
-      break;
-    }
+  gr <- function(params) {
+    calc_gradient(x=params, fn=fn)
   }
-  return(stdErrors)
+
+  res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
+  if(res$convergence == 1) message("The maximum number of iterations was reached! Consired iterating more.")
+
+  GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par,
+        restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
+        conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
+        calc_std_errors=TRUE)
 }
-

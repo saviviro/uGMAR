@@ -5,43 +5,43 @@
 \alias{smartIndividual}
 \title{Create somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector}
 \usage{
-randomIndividual(p, M, StMAR = FALSE, GStMAR = FALSE, restricted = FALSE,
-  constraints = FALSE, R, ar0scale, sigmascale)
+randomIndividual(p, M, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL, meanscale, sigmascale)
 
-smartIndividual(p, M, params, StMAR = FALSE, GStMAR = FALSE,
-  restricted = FALSE, constraints = FALSE, R, ar0scale, sigmascale,
-  accuracy, whichRandom)
+smartIndividual(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL, meanscale, sigmascale, accuracy,
+  whichRandom = numeric(0))
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
-\item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
 
-\item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes. Default is \code{FALSE}.}
-
-\item{constraints}{an (optional) logical argument stating whether general linear constraints should be applied to the model. Default is \code{FALSE}.}
-
-\item{R}{Specifies the linear constraints.
+\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
 \describe{
-\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{R_{m}}} of full column rank
-  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
   \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{R}} of full column rank satisfying
-  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
+\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
-This argument is ignored if \code{constraints==FALSE}.}
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
+alway \code{p} for all regimes.
+Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{ar0scale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
-from which the \eqn{\phi_{m,0}} parameters (for random regimes) should be generated.}
+\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
+from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization) parameters (for random regimes) should be generated.}
 
 \item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
 from which the component variance parameters (for random regimes) should be generated.}
@@ -58,7 +58,7 @@ from which the component variance parameters (for random regimes) should be gene
       \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
       \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
-        matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+        matrices \strong{C} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
     }
   }
@@ -71,13 +71,15 @@ from which the component variance parameters (for random regimes) should be gene
       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
       \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
-        \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
+        \strong{\eqn{C}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
     }
   }
 }
 Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
+\eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
+and the rest \code{M2} components are \emph{StMAR-type}.
 Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
@@ -88,38 +90,7 @@ Standard deviation of the normal distribution from which new parameter values ar
 using \code{smartIndividual}. Does not affect on mixing weight parameters. Default in none.}
 }
 \value{
-Returns estimated parameter vector...
- \describe{
-   \item{For \strong{non-restricted} models:}{
-     \describe{
-       \item{For \strong{GMAR} model:}{Size \eqn{(M(p+3)-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-         \eqn{\alpha_{1},...,\alpha_{M-1}}), where \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,
-         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
-       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
-       \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
-       \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vectors \strong{\eqn{\phi_{m}}} replaced with vectors \strong{\eqn{\psi_{m}}}
-         that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
-         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-     }
-   }
-   \item{For \strong{restricted} models:}{
-     \describe{
-       \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
-       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
-       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
-       \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vector \strong{\eqn{\phi}} replaced with vector \strong{\eqn{\psi}}
-         that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
-         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
-     }
-   }
- }
- Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
- freedom parameter.
+Returns estimated parameter vector described in \code{initpop}.
 }
 \description{
 \code{randomIndividual} creates a somewhat random GMAR, StMAR, G-StMAR model compatible parameter vector.
@@ -127,82 +98,79 @@ Returns estimated parameter vector...
 \code{smartIndividual} creates a somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
   Sometimes returns exactly the given parameter vector.
 }
+\details{
+The functions can be used for example to create initial populations for the genetic algorithm.
+}
 \examples{
 # GMAR model parameter vector
-params22 <- randomIndividual(2, 2, ar0scale=c(0, 1), sigmascale=1)
+params22 <- randomIndividual(2, 2, meanscale=c(0, 1), sigmascale=1)
 smart22 <- smartIndividual(2, 2, params22, accuracy=10)
 cbind(params22, smart22)
 
 
 # Restricted GMAR parameter vector
-params12r <- randomIndividual(1, 2, restricted=TRUE, ar0scale=c(-2, 2), sigmascale=2)
+params12r <- randomIndividual(1, 2, restricted=TRUE, meanscale=c(-2, 2), sigmascale=2)
 smart12r <- smartIndividual(1, 2, params12r, restricted=TRUE, accuracy=20)
 cbind(params12r, smart12r)
 
 
 # StMAR parameter vector: first regime is random in the "smart individual"
-params13t <- randomIndividual(1, 3, StMAR=TRUE, ar0scale=c(3, 1), sigmascale=3)
-smart13t <- smartIndividual(1, 3, params13t, StMAR=TRUE, accuracy=15,
-                            ar0scale=c(3, 3), sigmascale=3, whichRandom=1)
+params13t <- randomIndividual(1, 3, model="StMAR", meanscale=c(3, 1), sigmascale=3)
+smart13t <- smartIndividual(1, 3, params13t, model="StMAR", accuracy=15,
+                            meanscale=c(3, 3), sigmascale=3, whichRandom=1)
 cbind(params13t, smart13t)
 
 
 # Restricted StMAR parameter vector
-params22tr <- randomIndividual(2, 2, StMAR=TRUE, restricted=TRUE,
-                               ar0scale=c(3, 2), sigmascale=0.5)
-smart22tr <- smartIndividual(2, 2, params22tr, StMAR=TRUE, restricted=TRUE,
+params22tr <- randomIndividual(2, 2, model="StMAR", restricted=TRUE,
+                               meanscale=c(3, 2), sigmascale=0.5)
+smart22tr <- smartIndividual(2, 2, params22tr, model="StMAR", restricted=TRUE,
                              accuracy=30)
 cbind(params22tr, smart22tr)
 
 
 # G-StMAR parameter vector
-params12gs <- randomIndividual(1, c(1, 1), GStMAR=TRUE, ar0scale=c(0, 1), sigmascale=1)
-smart12gs <- smartIndividual(1, c(1, 1), params12gs, GStMAR=TRUE, accuracy=20)
+params12gs <- randomIndividual(1, c(1, 1), model="G-StMAR", meanscale=c(0, 1),
+                               sigmascale=1)
+smart12gs <- smartIndividual(1, c(1, 1), params12gs, model="G-StMAR", accuracy=20)
 cbind(params12gs, smart12gs)
 
 
 # Restricted G-StMAR parameter vector
-params23gsr <- randomIndividual(2, c(1, 2), GStMAR=TRUE, restricted=TRUE,
-                                ar0scale=c(-1, 1), sigmascale=3)
-smart23gsr <- smartIndividual(2, c(1, 2), params23gsr, GStMAR=TRUE, restricted=TRUE,
-                              ar0scale=c(0, 1), sigmascale=1, accuracy=20, whichRandom=2)
+params23gsr <- randomIndividual(2, c(1, 2), model="G-StMAR", restricted=TRUE,
+                                meanscale=c(-1, 1), sigmascale=3)
+smart23gsr <- smartIndividual(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
+                              meanscale=c(0, 1), sigmascale=1, accuracy=20, whichRandom=2)
 cbind(params23gsr, smart23gsr)
 
 
 # GMAR model as a mixture of AR(2) and AR(1) models
-R <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-params22c <- randomIndividual(2, 2, constraints=TRUE, R=R,
-                              ar0scale=c(1, 1), sigmascale=1)
-smart22c <- smartIndividual(2, 2, params22c, constraints=TRUE, R=R, accuracy=10)
+C <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+params22c <- randomIndividual(2, 2, constraints=C, meanscale=c(1, 1),
+                              sigmascale=1)
+smart22c <- smartIndividual(2, 2, params22c, constraints=C, accuracy=10)
 cbind(params22c, smart22c)
 
 
 # Such constrained StMAR(3, 2) model that the second order AR coefficients
 # are constrained to zero.
-R0 = matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
-R = list(R0, R0)
-params32c <- randomIndividual(3, 2, StMAR=TRUE, constraints=TRUE, R=R,
-                              ar0scale=c(1, 1), sigmascale=1)
-smart32c <- smartIndividual(3, 2, params32c, StMAR=TRUE, constraints=TRUE, R=R, accuracy=10)
+C0 = matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
+C = list(C0, C0)
+params32c <- randomIndividual(3, 2, model="StMAR", constraints=C,
+                              meanscale=c(1, 1), sigmascale=1)
+smart32c <- smartIndividual(3, 2, params32c, model="StMAR", constraints=C, accuracy=10)
 cbind(params32c, smart32c)
 
 
 # Such StMAR(3,2) that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero. Second regime is random in the "smart individual".
-params32trc <- randomIndividual(3, 2, StMAR=TRUE, restricted=TRUE, constraints=TRUE,
-                                R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2), ar0scale=c(-2, 0.5),
-                                sigmascale=4)
-smart32trc <- smartIndividual(3, 2, params32trc, StMAR=TRUE, restricted=TRUE,
-                              constraints=TRUE, R=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-                              ar0scale=c(0, 0.1), sigmascale=0.1, whichRandom=2,
+params32trc <- randomIndividual(3, 2, model="StMAR", restricted=TRUE,
+                                constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
+                                meanscale=c(-2, 0.5), sigmascale=4)
+smart32trc <- smartIndividual(3, 2, params32trc, model="StMAR", restricted=TRUE,
+                              constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
+                              meanscale=c(0, 0.1), sigmascale=0.1, whichRandom=2,
                               accuracy=20)
 cbind(params32trc, smart32trc)
-}
-\references{
-\itemize{
-   \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
-         \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item References regarding the StMAR and G-StMAR models will be updated after they are published.
- }
 }

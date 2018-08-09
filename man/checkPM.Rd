@@ -4,19 +4,22 @@
 \alias{checkPM}
 \title{Check p and M are correctly set}
 \usage{
-checkPM(p, M, GStMAR = FALSE)
+checkPM(p, M, model = c("GMAR", "StMAR", "G-StMAR"))
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 }
 \value{
-Doesn't return anything, but throws and error if something is wrong.
+Doesn't return anything, but throws an informative error if something is wrong.
 }
 \description{
 \code{checkPM} checks that the arguments p and M are correctly set.

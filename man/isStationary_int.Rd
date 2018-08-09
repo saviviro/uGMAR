@@ -3,18 +3,21 @@
 \name{isStationary_int}
 \alias{isStationary_int}
 \alias{isIdentifiable}
-\title{Check the stationary and identification conditions of specified GMAR or StMAR model.}
+\title{Check the stationary and identification conditions of specified GMAR, StMAR or G-StMAR model.}
 \usage{
 isStationary_int(p, M, params, restricted = FALSE)
 
-isIdentifiable(p, M, params, restricted = FALSE, StMAR = FALSE,
-  GStMAR = FALSE)
+isIdentifiable(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -25,6 +28,8 @@ the first element and StMAR-components M2 in the second - then the total number 
         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
+        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
     }
   }
   \item{For \strong{restricted} models:}{
@@ -33,28 +38,42 @@ the first element and StMAR-components M2 in the second - then the total number 
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
+      \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{v} a degrees of
-freedom parameter.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
+freedom parameter. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type} and the rest \code{M2} components
+are \emph{StMAR-type}.
+Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
-\item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes. Default is \code{FALSE}.}
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
 
-\item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
+\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
+\describe{
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+  \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
+\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
+  \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
+}
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
+alway \code{p} for all regimes.
+Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
 Returns \code{TRUE} or \code{FALSE} accordingly.
 }
 \description{
-FOR INTERNAL USE. \code{isStationary_int} checks the stationary condition and \code{isIdentifiable} checks the identification conditions
- of the specified GMAR or StMAR model.
+\code{isStationary_int} checks the stationary condition and \code{isIdentifiable} checks the identification conditions
+ of the specified GMAR, StMAR or G-StMAR model.
 }
 \details{
 These functions don't support models parametrized with general linear constraints.
@@ -66,8 +85,11 @@ These functions don't support models parametrized with general linear constraint
 
 \references{
 \itemize{
-   \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
-         \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item References regarding the StMAR and G-StMAR models will be updated when they are published.
+   \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
+           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
+   \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
+           arXiv:1805.04010 \strong{[econ.EM]}.
+   \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+           theoretical properties similar to GMAR and StMAR models.
  }
 }

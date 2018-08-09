@@ -4,14 +4,17 @@
 \alias{parameterChecks}
 \title{Check the parameter vector is specified correctly}
 \usage{
-parameterChecks(p, M, params, pars, alphas, StMAR = FALSE, GStMAR = FALSE,
-  constraints = FALSE)
+parameterChecks(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -24,25 +27,30 @@ the first element and StMAR-components M2 in the second - then the total number 
     \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
 }}
 
-\item{pars}{a parameter matrix containing parameters \eqn{(\phi_{i,0},...,\phi_{i,p}, \sigma_{i}^2)}
-so that i:th column denotes i:th component.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 
-\item{alphas}{size Mx1 parameter vector containing mixing weights for all components.}
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
 
-\item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
-
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
-
-\item{constraints}{an (optional) logical argument stating whether general linear constraints should be applied to the model. Default is \code{FALSE}.}
+\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
+\describe{
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+  \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
+\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
+  \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
+}
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
+alway \code{p} for all regimes.
+Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Throws an error if any check fails. Doesn't return anything.
+Throws an informative error if any check fails. Doesn't return anything.
 }
 \description{
-\code{parameterChecks} checks dimension, restrictions, stationarity and identifibility of the given parameters
-  of GMAR, StMAR or G-StMAR model. Throws an error if any check fails.
-}
-\details{
-Note that the "params" -parameter vector is assumed to be in the "standard" form for restricted models as well.
+\code{parameterChecks} checks dimension, restrictions and stationarity of the given parameters
+  of GMAR, StMAR or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
+  condition!
 }

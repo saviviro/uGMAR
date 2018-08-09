@@ -7,7 +7,7 @@
 checkAndCorrectData(data, p)
 }
 \arguments{
-\item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
+\item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 
 \item{p}{a positive integer specifying the order of AR coefficients.}
 }

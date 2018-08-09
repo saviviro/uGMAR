@@ -4,57 +4,68 @@
 \alias{GAfit}
 \title{Genetic algorithm for preliminary estimation of GMAR, StMAR or G-StMAR model}
 \usage{
-GAfit(data, p, M, StMAR = FALSE, GStMAR = FALSE, restricted = FALSE,
-  constraints = FALSE, R, conditional = TRUE, ngen, popsize, smartMu,
-  ar0scale, sigmascale, initpop = FALSE, epsilon, minval)
+GAfit(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"), restricted = FALSE,
+  constraints = NULL, parametrization = c("intercept", "mean"),
+  conditional = TRUE, ngen, popsize, smartMu, meanscale, sigmascale,
+  initpop = NULL, regime_force_scale = 1, red_criteria = c(0.05, 0.01),
+  to_return = c("alt_ind", "best_ind"), minval)
 }
 \arguments{
-\item{data}{a numeric vector or column matrix containing the data. \code{NA} values are not supported.}
+\item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
-\item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
 
-\item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes. Default is \code{FALSE}.}
-
-\item{constraints}{an (optional) logical argument stating whether general linear constraints should be applied to the model. Default is \code{FALSE}.}
-
-\item{R}{Specifies the linear constraints.
+\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
 \describe{
-\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{R_{m}}} of full column rank
-  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
   \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{R}} of full column rank satisfying
-  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
+\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is alway \code{p} for all regimes.
-This argument is ignored if \code{constraints==FALSE}.}
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
+alway \code{p} for all regimes.
+Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{conditional}{an (optional) logical argument specifying whether the conditional or exact log-likehood function should be used. Default is \code{TRUE}.}
+\item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
+"means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
-\item{ngen}{an (optional) positive integer specifying the number of generations to be ran through in the genetic algorithm. Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
+\item{conditional}{a logical argument specifying whether the conditional or exact log-likehood function should be used.}
 
-\item{popsize}{an (optional) positive even integer specifying the population size in the genetic algorithm. Default is \code{10*d} where \code{d} is the number of parameters.}
+\item{ngen}{a positive integer specifying the number of generations to be ran through in the genetic algorithm.
+Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
 
-\item{smartMu}{an (optional) positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
-This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far. Default is \code{min(100, round(0.5*ngen))}.}
+\item{popsize}{a positive even integer specifying the population size in the genetic algorithm.
+Default is \code{10*d} where \code{d} is the number of parameters.}
 
-\item{ar0scale}{an (optional) real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
-from which the \eqn{\phi_{m,0}} parameters are generated in random mutations in the genetic algorithm. Default is \code{c(1.5*avg*(1-c1/c0), max(c0, 4))}, where
-avg is sample mean, \code{c1} is the first sample autocovariance and \code{c0} is sample variance.}
+\item{smartMu}{a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
+This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far.
+ Default is \code{min(100, round(0.5*ngen))}.}
 
-\item{sigmascale}{an (optional) positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
-from which the component variance parameters are generated in the random mutations in the genetic algorithm. Default is \code{1+sd(data)}.}
+\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
+Default is \code{c(mean(data), sd(data))}.
+Note that the genetic algorithm optimizes with mean-parametrization even when \code{parametrization=="intercept"}, but
+input (in \code{initpop}) and output (return value) parameter vectors may be intercept-parametrized.}
 
-\item{initpop}{an (optional) list of parameter vectors from which the initial population of the genetic algorithm will be generated from.
+\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
+from which the component variance parameters are generated in the random mutations in the genetic algorithm.
+Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
+
+\item{initpop}{a list of parameter vectors from which the initial population of the genetic algorithm will be generated from.
  The parameter vectors should be of form...
 \describe{
   \item{For \strong{non-restricted} models:}{
@@ -91,64 +102,50 @@ Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
 If not specified (or \code{FALSE} as is default), the initial population will be drawn randomly.}
 
-\item{epsilon}{an (optional) negative real number specifying the logarithm of the smallest positive non-zero number that will be
-handled without external packages. Too small value may lead to a failure or biased results and too large value will make the code
-run significantly slower. Default is \code{round(log(.Machine$double.xmin)+10)} and should not be adjusted too much.}
+\item{regime_force_scale}{a non-negative real number specifying how much should natural selection favour individuals
+with less redundant regimes (see \code{red_criteria}). Set to zero for no favouring or large number
+for heavy favouring. Without any favouring the genetic algorithm gets more often stuck in an area of the parameter space where some
+regimes are wasted, but with too much favouring the best genes might never mix into the population and the algorithm might
+converge poorly. Default is \code{1} and it gives \eqn{2x} larger surviving probabilities for individuals with no wasted
+regimes compared to individuals with one wasted regime. Number \code{2} would give \eqn{3x} larger probabilities etc.}
+
+\item{red_criteria}{a length 2 numeric vector specifying the criteria that is used to determine whether a regime is redundant or not.
+Any regime \code{m} which satisfies \code{sum(mixingWeights[,m] > red_criteria[1]) < red_criteria[2]*n_obs} will be considered "redundant".
+One should be careful when adjusting this argument.}
+
+\item{to_return}{should the genetic algorithm return the best fitting individual which has as much "non-redundant" regimes as possible
+(\code{"alt_ind"}) or the individual which has the highest log-likelihood in general (\code{"best_ind"}), but
+might have more wasted regimes?}
 
 \item{minval}{a real number defining the minimum value of the log-likelihood function that will be considered.
-Values smaller than this will be treated as they were \code{minval} and the corresponding inidividuals will never survive.}
+Values smaller than this will be treated as they were \code{minval} and the corresponding inidividuals will never survive.
+The default is \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}, and one should be very careful if adjusting this.}
 }
 \value{
-Returns estimated parameter vector...
- \describe{
-   \item{For \strong{non-restricted} models:}{
-     \describe{
-       \item{For \strong{GMAR} model:}{Size \eqn{(M(p+3)-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-         \eqn{\alpha_{1},...,\alpha_{M-1}}), where \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,
-         \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
-       \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
-       \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
-       \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vectors \strong{\eqn{\phi_{m}}} replaced with vectors \strong{\eqn{\psi_{m}}}
-         that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
-         \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-     }
-   }
-   \item{For \strong{restricted} models:}{
-     \describe{
-       \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
-       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
-       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
-       \item{With \strong{linear constraints}:}{Parameter vector as descripted above, but vector \strong{\eqn{\phi}} replaced with vector \strong{\eqn{\psi}}
-         that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
-         \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
-     }
-   }
- }
- Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
- freedom parameter.
+Returns estimated parameter vector described in \code{initpop}.
 }
 \description{
 \code{GAfit} estimates specified GMAR, StMAR or G-StMAR model using genetic algorithm. It's designed to find starting values for gradient based methods.
 }
 \details{
-The user should consider adjusting \code{ar0scale} and/or \code{sigmascale} accordingly to the best knowledge about the process.
-
-   The genetic algorithm is mostly based on the description by \emph{Dorsey R. E. ja Mayer W. J. (1995)}.
-    It uses individually adaptive crossover and mutation rates described by \emph{Patnaik L.M. and Srinivas M. (1994)}, with slight modifications.
+The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.
+   It uses (slightly modified) individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)}
+   and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}.
 }
 \references{
 \itemize{
-   \item Kalliovirta L., Meitz M. and Saikkonen P. (2015) Gaussian Mixture Autoregressive model for univariate time series.
+   \item Dorsey R. E. and Mayer W. J. 1995. Genetic algorithms for estimation problems with multiple optima,
+         nondifferentiability, and other irregular features. \emph{Journal of Business & Economic Statistics},
+         \strong{13}, 53-66.
+   \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
          \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item Dorsey R. E. ja Mayer W. J. (1995) Genetic algorithms for estimation problems with multiple optima, nondifferentiability, and other irregular features.
-         \emph{Journal of Business & Economic Statistics}, \strong{13}, 53-66.
-   \item Patnaik L.M. and Srinivas M. (1994) Adaptive Probabilities of Crossover and Mutation in Genetic Algorithms.
+   \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
+         arXiv:1805.04010 \strong{[econ.EM]}.
+   \item Patnaik L.M. and Srinivas M. 1994. Adaptive Probabilities of Crossover and Mutation in Genetic Algorithms.
          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
-   \item References regarding the StMAR and G-StMAR models will be updated after they are published.
+   \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
+         \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
+   \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+         theoretical properties similar to GMAR and StMAR models.
  }
 }

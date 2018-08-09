@@ -12,7 +12,6 @@
 VIX
 }
 \description{
-A dataset containing CBOE Volatility Index from 5th of July 2016 to 4th of July 2017.
-All missing values are simply passed and deleted from the data.
+A dataset containing daily CBOE Volatility Index from 5th of July 2016 to 4th of July 2017.
 }
 \keyword{datasets}

@@ -4,14 +4,17 @@
 \alias{reformParameters}
 \title{Reform any parameter vector into standard form.}
 \usage{
-reformParameters(p, M, params, StMAR = FALSE, GStMAR = FALSE,
+reformParameters(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
 
-\item{M}{a positive integer specifying the number of mixture components. Except for G-StMAR model a size (2x1) vector specifying the number of GMAR-components M1 in
-the first element and StMAR-components M2 in the second - then the total number of components is M=M1+M2.}
+\item{M}{\describe{
+  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
+  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
+   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+}}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -24,9 +27,6 @@ the first element and StMAR-components M2 in the second - then the total number 
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
       \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
         \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
-      \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
-        matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
-        \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
     }
   }
   \item{For \strong{restricted} models:}{
@@ -37,34 +37,30 @@ the first element and StMAR-components M2 in the second - then the total number 
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
-      \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
-        \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
-        \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
     }
   }
 }
 Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-freedom parameter. In the \strong{G-StMAR} model the first M1 components are GMAR-type and the rest M2 components are StMAR-type.
+freedom parameter. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type} and the rest \code{M2} components
+are \emph{StMAR-type}.
 Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
-\item{StMAR}{an (optional) logical argument stating whether StMAR model should be considered instead of GMAR model. Default is \code{FALSE}.}
+\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
+are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 
-\item{GStMAR}{an (optional) logical argument stating whether G-StMAR model should be considered instead of GMAR model. In G-StMAR model the first M1 components
-are GMAR-type and the rest M2 components are StMAR-type. Default is \code{FALSE}.}
-
-\item{restricted}{an (optional) logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes. Default is \code{FALSE}.}
+\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
+to be the same for all regimes.}
 }
 \value{
 Returns a list with...
 \describe{
   \item{\code{$params}}{parameter vector in the standard form.}
   \item{\code{$pars}}{corresponding parameter matrix containing AR coefficients and
-    component variances. Column for each component.}
+    component variances. First row for phi0 or means depending on the parametrization. Column for each component.}
   \item{\code{$alphas}}{numeric vector containing mixing weights for all components (also for the last one).}
   \item{\code{$dfs}}{numeric vector containing degrees of freedom parameters for all components.
-    Returned only if \code{StMAR==TRUE} or \code{GStMAR==TRUE}.}
+    Returned only if \code{model == "StMAR"} or \code{model == "G-StMAR"}.}
  }
 }
 \description{
