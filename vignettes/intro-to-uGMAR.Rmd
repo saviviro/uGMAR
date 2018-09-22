@@ -143,5 +143,5 @@ For multivariate analysis, one is welcome to try the package `gmvarkit`. It cons
 * Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series. _Journal of Time Series Analysis_, __36__, 247-266.
 * Kalliovirta L. 2012. Misspecification tests based on quantile residuals. _The Econometrics Journal_, __15__, 358-393.
 * Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution. arXiv:1805.04010 __[econ.EM]__.
-* There are currently no published references for G-StMAR model, but it's a straight forward generalization with theoretical properties similar to GMAR and StMAR models.
+* There are currently no published references for G-StMAR model, but it's a straightforward generalization with theoretical properties similar to GMAR and StMAR models.
 

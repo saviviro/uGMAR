@@ -125,7 +125,7 @@ Models without data can be created.
 
 \item \code{residuals}: residuals method to extract multivariate quantile residuals
 
-\item \code{summary}: summary method
+\item \code{summary}: summary method, standard errors in brackets
 
 \item \code{plot}: plot method for class 'gsmar'
 
@@ -189,7 +189,7 @@ mixhar
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
            arXiv:1805.04010 \strong{[econ.EM]}.
-   \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+   \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
            theoretical properties similar to GMAR and StMAR models.
  }
 }

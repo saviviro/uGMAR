@@ -2,7 +2,7 @@
 % Please edit documentation in R/pickAndChangeParams.R
 \name{pick_pars}
 \alias{pick_pars}
-\title{Pick \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector}
+\title{Pick \eqn{\phi_0}/\eqn{\mu}, AR-coefficients and variance parameters from parameter vector}
 \usage{
 pick_pars(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL)

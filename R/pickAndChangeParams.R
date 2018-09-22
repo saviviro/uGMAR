@@ -66,7 +66,7 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 }
 
 
-#' @title Pick \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector
+#' @title Pick \eqn{\phi_0}/\eqn{\mu}, AR-coefficients and variance parameters from parameter vector
 #'
 #' @description \code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector
 #'
@@ -171,6 +171,33 @@ get_regime_means <- function(gsmar) {
   }
 
   pick_phi0(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+}
+
+
+#' @title Calculate absolute values of the roots of the AR characteristic polynomials
+#'
+#' @description \code{get_ar_roots} calculates absolute values of the roots of the AR characteristic polynomials
+#'   for each component.
+#'
+#' @inheritParams simulateGSMAR
+#' @return Returns a list with \code{M} elements each containing the absolute values of the roots
+#'  of the AR characteristic polynomial corresponding to each mixture component.
+#' @inherit isStationary references
+#' @examples
+#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
+#' gmar13 <- GSMAR(data=VIX, p=1, M=3, params=params13, model="GMAR")
+#' get_ar_roots(gmar13)
+#' @export
+
+get_ar_roots <- function(gsmar) {
+  check_gsmar(gsmar)
+  p <- gsmar$model$p
+  M <- gsmar$model$M
+  params <- removeAllConstraints(p=p, M=M, params=gsmar$params, model=gsmar$model$model,
+                                 restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
+  M <- sum(M)
+  pars <- matrix(params[1:(M*(p + 2))], ncol=M)
+  lapply(1:M, function(i1) abs(polyroot(c(1, -pars[2:(p + 1), i1]))))
 }
 
 

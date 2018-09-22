@@ -178,3 +178,22 @@ test_that("change_parametrization works correctly for constrained models", {
                pick_phi0(p=2, M=2, params=params22cr_mu, model="StMAR", restricted=TRUE, constraints=R3))
   expect_equal(change_parametrization(p=2, M=2, params=params22cr_mu, model="StMAR", restricted=TRUE, constraints=R3, change_to="intercept"), params22cr)
 })
+
+
+params11t <- c(-2, 0.8, 1, 12) # StMAR
+params23 <- c(2.7, 0.8, -0.06, 0.3, 3.5, 0.8, -0.07, 2.6, 7.2, 0.3, -0.01, 0.1, 0.6, 0.25)
+params23t <- c(1.8, 0.9, -0.06, 0.4, 7.2, 0.3, -0.009, 0.1, 3.1, 0.83, -0.05, 3.7, 0.7, 0.2, 11, 339, 198) # StMAR
+params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20) # M1=2, M2=1
+
+stmar11 <- GSMAR(data=VIX[20:50], p=1, M=1, params=params11t, model="StMAR")
+gmar23 <- GSMAR(data=VIX[120:220], p=2, M=3, params=params23, model="GMAR")
+stmar23 <- GSMAR(data=VIX[120:220], p=2, M=3, params=params23t, model="StMAR")
+gstmar13r <- GSMAR(data=VIX[1:50], p=1, M=c(2, 1), params=params13gsr, model="G-StMAR", restricted=TRUE)
+
+
+test_that("get_ar_roots works correctly", {
+  expect_equal(get_ar_roots(stmar11)[[1]], 1.25, tolerance=1e-5)
+  expect_equal(get_ar_roots(gmar23)[[3]], c(3.81966, 26.18034), tolerance=1e-5)
+  expect_equal(get_ar_roots(stmar23)[[2]], c(3.756722, 29.576611), tolerance=1e-5)
+  expect_equal(get_ar_roots(gstmar13r)[[3]], 1.25, tolerance=1e-5)
+})

@@ -58,6 +58,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   dfs <- pick_dfs(p=p, M=M, params=params, model=model)
 
   if(summary_print == TRUE) {
+    all_ar_roots <- get_ar_roots(gsmar)
     std_errors <- removeAllConstraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
                                        constraints=constraints)
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
@@ -107,6 +108,8 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     }
     cat(paste("Regime", m))
     if(model == "G-StMAR") cat(paste0(" (", regime_type, "-type)"))
+
+    if(summary_print==TRUE) cat(paste("\nModulus of poly roots:", paste0(format_value(all_ar_roots[[m]]), collapse=", ")))
 
     cat(paste("\nMix weight:", format_value(alphas[m])))
     print_err(alphas_err[m])

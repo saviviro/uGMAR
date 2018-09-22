@@ -104,7 +104,7 @@ value for \eqn{alpha_{m,T+1}} (\code{"mw_tplus1"})?}
            \emph{Springer}.
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
            arXiv:1805.04010 \strong{[econ.EM]}.
-   \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+   \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
            theoretical properties similar to GMAR and StMAR models.
  }
 }

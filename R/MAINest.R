@@ -97,7 +97,7 @@
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
 #'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
-#'    \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
+#'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
 #'          theoretical properties similar to GMAR and StMAR models.
 #'  }
 #' @examples

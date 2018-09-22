@@ -28,4 +28,4 @@ References
 
 -   Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series. *Journal of Time Series Analysis*, **36**, 247-266.
 -   Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution. arXiv:1805.04010 **\[econ.EM\]**.
--   There are currently no published references for G-StMAR model, but it's a straight forward generalization with theoretical properties similar to GMAR and StMAR models.
+-   There are currently no published references for G-StMAR model, but it's a straightforward generalization with theoretical properties similar to GMAR and StMAR models.
