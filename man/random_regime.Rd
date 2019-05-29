@@ -4,17 +4,11 @@
 \alias{random_regime}
 \title{Create random regime}
 \usage{
-random_regime(p, M, meanscale, sigmascale, restricted = FALSE,
-  constraints = NULL, m)
+random_regime(p, meanscale, sigmascale, restricted = FALSE,
+  constraints = NULL, m, forcestat = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
-
-\item{M}{\describe{
-  \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
-   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
-}}
 
 \item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
@@ -43,6 +37,9 @@ alway \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{m}{which regime?}
+
+\item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower)?
+Not supported for constrained models.}
 }
 \value{
 \describe{
@@ -54,4 +51,13 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 }
 \description{
 \code{random_regime} generates random regime parameters
+}
+\details{
+if \code{forcestat==TRUE} then the AR coefficients are relatively large, otherwise they are usually relatively small.
+}
+\references{
+\itemize{
+   \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+         \emph{Biometrica} \strong{71}, 403-404.
+ }
 }

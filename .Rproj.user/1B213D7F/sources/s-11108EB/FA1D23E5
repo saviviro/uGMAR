@@ -1,19 +1,21 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1559129626596.000,
+    "created" : 1559141195842.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3529433218",
-    "id" : "8EE31C0C",
+    "hash" : "0",
+    "id" : "FA1D23E5",
     "lastKnownWriteTime" : 1559114840,
     "last_content_update" : 1559114840,
-    "path" : "~/uGMAR/R/pickAndChangeParams.R",
-    "project_path" : "R/pickAndChangeParams.R",
+    "path" : "~/uGMAR/R/loglikelihood.R",
+    "project_path" : "R/loglikelihood.R",
     "properties" : {
+        "cursorPosition" : "101,30",
+        "scrollLine" : "72"
     },
-    "relative_order" : 10,
+    "relative_order" : 6,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

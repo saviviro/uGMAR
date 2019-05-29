@@ -74,7 +74,8 @@
 #' @details
 #'    The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.
 #'    It uses (slightly modified) individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)}
-#'    and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}.
+#'    and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}. Large (in absolute value) but stationary
+#'    AR parameter values are generated with the algorithm proposed by Monahan (1984).
 #' @return Returns estimated parameter vector described in \code{initpop}.
 #' @references
 #'  \itemize{
@@ -89,6 +90,8 @@
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
 #'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
+#'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+#'          \emph{Biometrica} \strong{71}, 403-404.
 #'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
 #'          theoretical properties similar to GMAR and StMAR models.
 #'  }
@@ -333,6 +336,14 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     # Mutate
     mutate_indicator <- rbinom(n=popsize, size=1, prob=muRate)
     mutate <- which(mutate_indicator == 1)
+
+    # How the generate random AR parameters
+    if(!is.null(constraints) | runif(1) > 0.3) { # From normal distribution (the only option if constraints are imposed)
+      forcestat <- FALSE
+    } else { # Use the algorithm by Monahan (1984) to generate stationary the AR parameters (slower)
+      forcestat <- TRUE
+    }
+
     if(length(mutate) >= 1) {
       if(i1 > smartMu) { # Smart mutations
 
@@ -406,11 +417,12 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         H2[,mutate] <- vapply(1:length(mutate), function(x) smartIndividual_int(p=p, M=M_orig, params=ind_to_use, model=model,
                                                                                 restricted=restricted, constraints=constraints,
                                                                                 meanscale=meanscale, sigmascale=sigmascale,
-                                                                                accuracy=accuracy[x], whichRandom=rand_to_use), numeric(d))
+                                                                                accuracy=accuracy[x], whichRandom=rand_to_use,
+                                                                                forcestat=forcestat), numeric(d))
       } else { # Random mutations
         H2[,mutate] <- vapply(1:length(mutate), function(x) randomIndividual_int(p, M_orig, model=model, restricted=restricted,
                                                                                  constraints=constraints, meanscale=meanscale,
-                                                                                 sigmascale=sigmascale), numeric(d))
+                                                                                 sigmascale=sigmascale, forcestat=forcestat), numeric(d))
       }
     }
 
@@ -468,6 +480,8 @@ regime_distance <- function(regime_pars1, regime_pars2) {
 #' @description \code{random_regime} generates random regime parameters
 #'
 #' @inheritParams GAfit
+#' @param forcestat use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower)?
+#'   Not supported for constrained models.
 #' @param m which regime?
 #' @return \describe{
 #'   \item{Regular models:}{\strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,\sigma_{m}^2)}
@@ -475,8 +489,9 @@ regime_distance <- function(regime_pars1, regime_pars2) {
 #'   \item{Restricted models:}{Not supported!}
 #'   \item{Constrained models:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}}.}
 #' }
+#' @inherit random_arcoefs details references
 
-random_regime <- function(p, M, meanscale, sigmascale, restricted=FALSE, constraints=NULL, m) {
+random_regime <- function(p, meanscale, sigmascale, restricted=FALSE, constraints=NULL, m, forcestat=FALSE) {
   stopifnot(restricted == FALSE)
   if(!is.null(constraints)) {
     C0 <- as.matrix(constraints[[m]])
@@ -484,9 +499,43 @@ random_regime <- function(p, M, meanscale, sigmascale, restricted=FALSE, constra
     scale <- sum(abs(C0))
     return(c(rnorm(n=1, mean=meanscale[1], sd=meanscale[2]), rnorm(n=q, mean=0, sd=0.6/scale), abs(rnorm(n=1, mean=0, sd=sigmascale))))
   } else {
-    return(c(rnorm(n=1, mean=meanscale[1], sd=meanscale[2]), rnorm(n=p, mean=0, sd=0.6/p), abs(rnorm(n=1, mean=0, sd=sigmascale))))
+    return(c(rnorm(n=1, mean=meanscale[1], sd=meanscale[2]), random_arcoefs(p=p, forcestat=forcestat, sd=0.6/p), abs(rnorm(n=1, mean=0, sd=sigmascale))))
   }
 }
+
+#' @title Create random AR coefficients
+#'
+#' @description \code{random_arcoefs} generates random AR coefficients
+#'
+#' @inheritParams GAfit
+#' @param forcestat use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower)?
+#' @param sd if \code{forcestat==FALSE} then AR parameters are drawn from zero mean normal distribution with sd given by this parameter
+#' @details if \code{forcestat==TRUE} then the AR coefficients are relatively large, otherwise they are usually relatively small.
+#' @return Returns \eqn{px1} vector containing random AR coefficients.
+#' @references
+#'  \itemize{
+#'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+#'          \emph{Biometrica} \strong{71}, 403-404.
+#'  }
+
+random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
+  if(forcestat == TRUE) { # Algorithm by Mohanan 1984
+    r_p <- runif(p, min=-0.95, max=0.95) # Random partial autocorrelations
+    ymat <- matrix(0, nrow=p, ncol=p) # Column for each loop
+    for(k in 1:p) {
+      if(k > 1) {
+        for(i1 in 1:(k - 1)) {
+          ymat[i1, k] <- ymat[i1, k - 1] + r_p[k]*ymat[k - i1, k - 1]
+        }
+      }
+      ymat[k, k] <- r_p[k]
+    }
+    return(-ymat[,p])
+  } else { # Draw from normal distribution
+    return(rnorm(n=p, mean=0, sd=sd))
+  }
+}
+
 
 
 #' @title Add random dfs to a vector
@@ -503,6 +552,7 @@ add_dfs <- function(x, how_many) {
 }
 
 
+
 #' @title Create random GMAR, StMAR or G-StMAR model compatible parameter vector
 #'
 #' @description \code{randomIndividual_int} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector.
@@ -510,14 +560,15 @@ add_dfs <- function(x, how_many) {
 #' \code{smartIndividual_int} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
 #'
 #' @inheritParams GAfit
+#' @inheritParams random_regime
 #' @param meanscale a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
 #'  from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization) parameters (for random regimes) should be generated.
 #' @param sigmascale a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
 #'  from which the component variance parameters (for random regimes) should be generated.
 #' @inherit GAfit return
-#' @inherit simulateGMAR references
+#' @inherit random_regime references
 
-randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale) {
+randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -527,8 +578,9 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
   }
 
   if(restricted == FALSE) {
-    ind <- unlist(lapply(1:M, function(m) random_regime(p=p, M=M, meanscale=meanscale, sigmascale=sigmascale,
-                                                        restricted=restricted, constraints=constraints, m=m)))
+    ind <- unlist(lapply(1:M, function(m) random_regime(p=p, meanscale=meanscale, sigmascale=sigmascale,
+                                                        restricted=restricted, constraints=constraints,
+                                                        m=m, forcestat=forcestat)))
   } else { # If restricted == TRUE
     if(is.null(constraints)) {
       q <- p
@@ -538,7 +590,7 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
       q <- ncol(C0)
       scale <- sum(abs(C0))
     }
-    ind <- c(rnorm(n=M, mean=meanscale[1], sd=meanscale[2]), rnorm(n=q, mean=0, sd=0.6/scale), abs(rnorm(n=M, mean=0, sd=sigmascale)))
+    ind <- c(rnorm(n=M, mean=meanscale[1], sd=meanscale[2]), random_arcoefs(p=q, forcestat=forcestat, sd=0.6/scale), abs(rnorm(n=M, mean=0, sd=sigmascale)))
   }
 
   if(M > 1) {
@@ -648,7 +700,7 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
 #' cbind(params32trc, smart32trc)
 #' @export
 
-randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale) {
+randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
   checkPM(p=p, M=M, model=model)
@@ -665,7 +717,8 @@ randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restrict
     checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
   for(i1 in 1:42) {
-    ret <- randomIndividual_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, meanscale=meanscale, sigmascale=sigmascale)
+    ret <- randomIndividual_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, meanscale=meanscale,
+                                sigmascale=sigmascale, forcestat=forcestat)
     ret0 <- reformConstrainedPars(p=p, M=M, params=ret, model=model, restricted=restricted, constraints=constraints)
     if(isStationary_int(p=p, M=M, params=ret0, restricted=restricted)) return(ret)
   }
@@ -680,9 +733,12 @@ randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restrict
 #'   Standard deviation of the normal distribution from which new parameter values are drawed from will be corresponding parameter value divided by \code{accuracy}.
 #' @param whichRandom an (optional) numeric vector of max length \code{M} specifying which regimes should be random instead of "smart" when
 #' using \code{smartIndividual}. Does not affect on mixing weight parameters. Default in none.
+#' @param forcestat use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
+#'   Not supported for constrained models.
+#' @inherit random_regime references
 
 smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                                meanscale, sigmascale, accuracy, whichRandom) {
+                                meanscale, sigmascale, accuracy, whichRandom, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -700,8 +756,9 @@ smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
     for(i1 in 1:M) { # Run through components
       q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints[[i1]]))) # p for non-constrained models
       if(any(whichRandom == i1)) { # If regime should be random
-        ind <- c(ind, random_regime(p=p, M=M, meanscale=meanscale, sigmascale=sigmascale,
-                                    restricted=restricted, constraints=constraints, m=i1))
+        ind <- c(ind, random_regime(p=p, meanscale=meanscale, sigmascale=sigmascale,
+                                    restricted=restricted, constraints=constraints,
+                                    m=i1, forcestat=forcestat))
       } else {
         params_m <- params[(j + 1):(j + q + 1)] # no sigma, alphas or dfs
         sigma_m <- params[j + q + 2]
@@ -784,7 +841,7 @@ smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @export
 
 smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                            meanscale, sigmascale, accuracy, whichRandom=numeric(0)) {
+                            meanscale, sigmascale, accuracy, whichRandom=numeric(0), forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
   checkPM(p=p, M=M, model=model)
@@ -810,7 +867,8 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
     checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
   smartIndividual_int(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                      meanscale=meanscale, sigmascale=sigmascale, accuracy=accuracy, whichRandom=whichRandom)
+                      meanscale=meanscale, sigmascale=sigmascale, accuracy=accuracy, whichRandom=whichRandom,
+                      forcestat=forcestat)
 }
 
 

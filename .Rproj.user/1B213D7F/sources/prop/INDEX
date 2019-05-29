@@ -13,6 +13,7 @@
 ~%2FuGMAR%2FR%2FquantileResiduals.R="C16ABEEE"
 ~%2FuGMAR%2FR%2FsimulateGSMAR.R="13D8D04"
 ~%2FuGMAR%2FR%2FuGMAR.R="EBF41E5A"
+~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_GAfunctions.R="265CEB64"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_getOmega.R="30E57BBA"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_loglikelihood.R="77BA7FA8"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_parameterReforms.R="73D030D7"

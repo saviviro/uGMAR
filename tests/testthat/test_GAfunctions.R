@@ -1,5 +1,6 @@
 library(uGMAR)
 context("functions used in the genetic algorithm")
+# Note that functions creating random parameters are not covered
 
 params12 <- c(1.0, 0.9, 0.25, 4.5, 0.7, 3.0, 0.8)
 params22t <- c(1.4, 0.8, 0.05, 0.27, 3.5, 0.9, -0.18, 3.1, 0.7, 203, 3) # StMAR

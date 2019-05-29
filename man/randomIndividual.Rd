@@ -6,11 +6,12 @@
 \title{Create somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector}
 \usage{
 randomIndividual(p, M, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, meanscale, sigmascale)
+  restricted = FALSE, constraints = NULL, meanscale, sigmascale,
+  forcestat = FALSE)
 
 smartIndividual(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, meanscale, sigmascale, accuracy,
-  whichRandom = numeric(0))
+  restricted = FALSE, constraints = NULL, meanscale, sigmascale,
+  accuracy, whichRandom = numeric(0), forcestat = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
@@ -45,6 +46,9 @@ from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desi
 
 \item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
 from which the component variance parameters (for random regimes) should be generated.}
+
+\item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
+Not supported for constrained models.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -173,4 +177,10 @@ smart32trc <- smartIndividual(3, 2, params32trc, model="StMAR", restricted=TRUE,
                               meanscale=c(0, 0.1), sigmascale=0.1, whichRandom=2,
                               accuracy=20)
 cbind(params32trc, smart32trc)
+}
+\references{
+\itemize{
+   \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+         \emph{Biometrica} \strong{71}, 403-404.
+ }
 }

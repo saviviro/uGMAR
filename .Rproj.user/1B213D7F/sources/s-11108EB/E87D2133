@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559142174341.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E87D2133",
+    "lastKnownWriteTime" : 1559142194,
+    "last_content_update" : 1559142194956,
+    "path" : "~/uGMAR/tests/testthat/test_GAfunctions.R",
+    "project_path" : "tests/testthat/test_GAfunctions.R",
+    "properties" : {
+        "cursorPosition" : "2,6",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

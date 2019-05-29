@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "967783722",
     "id" : "946F140F",
-    "lastKnownWriteTime" : 1559129215,
-    "last_content_update" : 1559129215207,
+    "lastKnownWriteTime" : 1559146050,
+    "last_content_update" : 1559146050924,
     "path" : "~/uGMAR/R/MAINest.R",
     "project_path" : "R/MAINest.R",
     "properties" : {
-        "cursorPosition" : "281,3",
-        "scrollLine" : "252"
+        "cursorPosition" : "158,0",
+        "scrollLine" : "122"
     },
     "relative_order" : 1,
     "source_on_save" : false,

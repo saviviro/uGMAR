@@ -6,11 +6,12 @@
 \title{Create random GMAR, StMAR or G-StMAR model compatible parameter vector}
 \usage{
 randomIndividual_int(p, M, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, meanscale, sigmascale)
+  restricted = FALSE, constraints = NULL, meanscale, sigmascale,
+  forcestat = FALSE)
 
 smartIndividual_int(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, meanscale, sigmascale, accuracy,
-  whichRandom)
+  restricted = FALSE, constraints = NULL, meanscale, sigmascale,
+  accuracy, whichRandom, forcestat = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}
@@ -45,6 +46,9 @@ from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desi
 
 \item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
 from which the component variance parameters (for random regimes) should be generated.}
+
+\item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
+Not supported for constrained models.}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -96,4 +100,10 @@ Returns estimated parameter vector described in \code{initpop}.
 \code{randomIndividual_int} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector.
 
 \code{smartIndividual_int} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
+}
+\references{
+\itemize{
+   \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+         \emph{Biometrica} \strong{71}, 403-404.
+ }
 }
