@@ -95,7 +95,7 @@ plot.qrtest <- function(x, ...) {
     levels <- c(0.01, 0.05, 0.10, seq(from=0.20, to=1.00, by=0.20))
     axis(side=2, at=levels, las=1, cex.axis=0.8)
     abline(h=0, lwd=2)
-    abline(h=c(0.01, 0.05, 0.10, 1.00), lty=2, col="red")
+    abline(h=c(0.01, 0.05, 0.10, 1.00), lty=2, col=c("red", "red", "red", "darkgreen"))
     segments(x0=seq_pvals, y0=0, y1=pvals, x1=seq_pvals, ...)
     points(pvals)
   }
@@ -117,7 +117,7 @@ plot.gsmar <- function(x, ...) {
   data <- as.ts(gsmar$data)
   n_obs <- length(data)
   p <- gsmar$model$p
-  M <- gsmar$model$M
+  M <- sum(gsmar$model$M)
   ts_mw <- ts(rbind(matrix(NA, nrow=p, ncol=M), as.matrix(gsmar$mixing_weights)),
               start=start(data), frequency=frequency(data)) # First p observations are starting values
 

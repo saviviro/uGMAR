@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559116049826.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B78D3990",
+    "lastKnownWriteTime" : 1559118331,
+    "last_content_update" : 1559118331199,
+    "path" : "~/uGMAR/R/plotMethods.R",
+    "project_path" : "R/plotMethods.R",
+    "properties" : {
+        "cursorPosition" : "97,79",
+        "scrollLine" : "65"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

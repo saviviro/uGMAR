@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559122086152.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "C8B46AAC",
+    "lastKnownWriteTime" : 1559128315,
+    "last_content_update" : 1559128315775,
+    "path" : "~/uGMAR/R/geneticAlgorithm.R",
+    "project_path" : "R/geneticAlgorithm.R",
+    "properties" : {
+        "cursorPosition" : "35,89",
+        "scrollLine" : "19"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

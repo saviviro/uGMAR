@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559128171965.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3750514580",
+    "id" : "A67CEBA",
+    "lastKnownWriteTime" : 1559114840,
+    "last_content_update" : 1559114840,
+    "path" : "~/uGMAR/R/loglikelihood.R",
+    "project_path" : "R/loglikelihood.R",
+    "properties" : {
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

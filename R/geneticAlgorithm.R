@@ -33,7 +33,7 @@
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
 #'          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
 #'        \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
-#'          matrices \strong{R} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
+#'          matrices \strong{C} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
 #'          \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
 #'      }
 #'    }
@@ -46,7 +46,7 @@
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
 #'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
 #'        \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
-#'          \strong{\eqn{R}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{R\psi}}, where
+#'          \strong{\eqn{C}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where
 #'          \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
 #'      }
 #'    }
@@ -115,16 +115,16 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   if(!is.null(constraints)) {
     checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
     if(restricted == TRUE) {
-      Rquals <- TRUE # States wether all matrices R are equal
+      Cquals <- TRUE # States wether all matrices C are equal
     } else {
       if(length(unique(constraints)) == 1) {
-        Rquals <- TRUE
+        Cquals <- TRUE
       } else {
-        Rquals <- FALSE
+        Cquals <- FALSE
       }
     }
   } else {
-    Rquals <- TRUE # Always true if no constraints
+    Cquals <- TRUE # Always true if no constraints
   }
   d <- nParams(p=p, M=M_orig, model=model, restricted=restricted, constraints=constraints)
 
@@ -352,7 +352,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         # or changes by random, or if considering G-StMAR model. Regime combining is not considered for G-StMAR
         # model because StMAR-regimes might get mixed with GMAR-regimes.
         accuracy <- abs(rnorm(length(mutate), mean=15, sd=10)) # Accuracy
-        if(Rquals == FALSE | model == "G-StMAR" | length(which_redundant) <= length(which_redundant_alt) | runif(1) > 0.5) {
+        if(Cquals == FALSE | model == "G-StMAR" | length(which_redundant) <= length(which_redundant_alt) | runif(1) > 0.5) {
           ind_to_use <- alt_ind
           rand_to_use <- which_redundant_alt
         } else {

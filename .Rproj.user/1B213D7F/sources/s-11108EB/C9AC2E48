@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559121068647.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "167689925",
+    "id" : "C9AC2E48",
+    "lastKnownWriteTime" : 1559128481,
+    "last_content_update" : 1559128481024,
+    "path" : "~/uGMAR/R/argumentChecks.R",
+    "project_path" : "R/argumentChecks.R",
+    "properties" : {
+        "cursorPosition" : "265,58",
+        "scrollLine" : "256"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
