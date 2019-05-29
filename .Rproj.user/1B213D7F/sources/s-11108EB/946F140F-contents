@@ -270,7 +270,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   }
 
   # Obtain the estimates
-  bestind <- which(lok == max(loks))[1]
+  bestind <- which(loks == max(loks))[1]
   bestfit <- NEWTONresults[[bestind]]
   params <- newtonEstimates[[bestind]]
   mw <- mixingWeights_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,

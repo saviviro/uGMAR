@@ -7,11 +7,13 @@
     "folds" : "",
     "hash" : "3498368447",
     "id" : "EE424E67",
-    "lastKnownWriteTime" : 1559114840,
-    "last_content_update" : 1559114840,
+    "lastKnownWriteTime" : 1559129941,
+    "last_content_update" : 1559129941489,
     "path" : "~/uGMAR/R/parameterReforms.R",
     "project_path" : "R/parameterReforms.R",
     "properties" : {
+        "cursorPosition" : "62,34",
+        "scrollLine" : "34"
     },
     "relative_order" : 7,
     "source_on_save" : false,

@@ -265,7 +265,7 @@ checkConstraintMat <- function(p, M, restricted=FALSE, constraints=NULL) {
     M <- sum(M) # For G-StMAR
     if(restricted == TRUE) { # The constraints is a matrix
       if(!is.matrix(constraints)) {
-        stop("The constraint matrix has to be a matrix")
+        stop("The constraint matrix has to be a matrix (not in a list)")
       } else if(nrow(as.matrix(constraints)) != p) {
         stop("The constraint matrix has wrong dimension")
       } else if(ncol(as.matrix(constraints)) > p) {
