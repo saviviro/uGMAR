@@ -52,3 +52,14 @@ test_that("get_regime_vars gives correct values", {
   expect_equal(get_regime_vars(gmar33c), c(1.038961, 2.500000, 3.658537), tolerance=1e-5)
   expect_equal(get_regime_vars(gstmar22cr), c(1.2, 2.4), tolerance=1e-5)
 })
+
+test_that("uncondMoments gives correct values", {
+  expect_equal(uncondMoments(stmar11)$uncond_mean, -10, tolerance=1e-5)
+  expect_equal(uncondMoments(gmar23)$uncond_var, 3.218554, tolerance=1e-5)
+  expect_equal(uncondMoments(stmar23)$autocovs, c(2.685547, 2.352579), tolerance=1e-5)
+  expect_equal(uncondMoments(gstmar13r)$autocors, 0.8500306, tolerance=1e-5)
+  expect_equal(uncondMoments(stmar32c)$uncond_mean, 1.4, tolerance=1e-5)
+  expect_equal(uncondMoments(gmar33c)$uncond_var, 4.719824, tolerance=1e-5)
+  expect_equal(uncondMoments(gstmar22cr)$autocovs, c(1.6, 1.6), tolerance=1e-5)
+  expect_equal(uncondMoments(gstmar22cr)$autocors, c(0.5714286, 0.5714286), tolerance=1e-5)
+})

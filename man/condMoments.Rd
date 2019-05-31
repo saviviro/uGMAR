@@ -153,3 +153,10 @@ rcv32trc <- condMoments(VIX, 3, 2, params32trc, model="StMAR",
            theoretical properties similar to GMAR and StMAR models.
  }
 }
+\seealso{
+Other moment functions: \code{\link{get_regime_autocovs}},
+  \code{\link{get_regime_means}},
+  \code{\link{get_regime_vars}},
+  \code{\link{uncondMoments}}
+}
+\concept{moment functions}

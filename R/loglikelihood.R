@@ -109,8 +109,8 @@
 #'            \emph{Springer}.
 #'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
 #'            arXiv:1805.04010 \strong{[econ.EM]}.
-#'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
-#'            theoretical properties similar to GMAR and StMAR models.
+#'    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
+#'            theoretical properties similar to the GMAR and StMAR models.
 #'  }
 
 loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
@@ -508,6 +508,7 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @param to_return calculate regimewise conditional means (\code{regime_cmeans}), regimewise conditional variances
 #'  (\code{regime_cvars}), total conditional means (\code{total_cmeans}), or total conditional variances (\code{total_cvars})?
 #' @inherit loglikelihood_int references
+#' @family moment functions
 #' @return
 #'  Note that the first p observations are taken as the initial values so the conditional moments
 #'  start form the p+1:th observation (interpreted as t=1).

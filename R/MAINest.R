@@ -88,7 +88,7 @@
 #'  significantly long time without the package "gsl".
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{swap_parametrization}},
 #'  \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}}, \code{\link{diagnosticPlot}},
-#'  , \code{\link{quantileResidualTests}}
+#'  , \code{\link{quantileResidualTests}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
 #' @references
 #'  \itemize{
 #'    \item Dorsey R. E. and Mayer W. J. 1995. Genetic algorithms for estimation problems with multiple optima,
@@ -104,8 +104,8 @@
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
 #'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
 #'          \emph{Biometrica} \strong{71}, 403-404.
-#'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
-#'          theoretical properties similar to GMAR and StMAR models.
+#'    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
+#'          theoretical properties similar to the GMAR and StMAR models.
 #'  }
 #' @examples
 #' \donttest{

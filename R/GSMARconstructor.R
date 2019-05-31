@@ -13,7 +13,7 @@
 #'   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}},
 #'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}},
-#'  \code{\link{predict.gsmar}}
+#'  \code{\link{predict.gsmar}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
 #' @inherit isStationary references
 #' @examples
 #' # GMAR model
@@ -158,6 +158,8 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                   class="logLik",
                                   df=npars),
                  IC=IC,
+                 uncondMoments=uncondMoments_int(p=p, M=M, params=params, model=model, restricted=restricted,
+                                                 constraints=constraints, parametrization=parametrization),
                  all_estimates=NULL,
                  all_logliks=NULL,
                  which_converged=NULL,
