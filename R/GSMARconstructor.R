@@ -3,9 +3,14 @@
 #' @description \code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
-#' @param calc_qresiduals should quantile residuals be calculated? Default is \code{TRUE} if the model contains data.
+#' @param calc_qresiduals should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.
+#' @param calc_cond_moments should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.
 #' @param calc_std_errors should approximate standard errors be calculated?
-#' @details Models without data can be created.
+#' @details Models can be built without data, e.q., in order to simulate from the process, but some elements such as quantile
+#'  residuals and conditional moments can't be calculated without data.
+#' @return Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supllied, the returned object
+#'   contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
+#'   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}},
 #'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}},
 #'  \code{\link{predict.gsmar}}
@@ -37,7 +42,7 @@
 #' params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20)
 #' gstmar13r <- GSMAR(data=VIX, p=1, M=c(2, 1), params=params13gsr,
 #'  model="G-StMAR", restricted=TRUE)
-#' diagnosticPlot(gstmar13r)
+#' gstmar13r
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
@@ -63,7 +68,7 @@
 #' @export
 
 GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
-                  parametrization=c("intercept", "mean"), calc_qresiduals, calc_std_errors=FALSE) {
+                  parametrization=c("intercept", "mean"), calc_qresiduals, calc_cond_moments, calc_std_errors=FALSE) {
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
   check_model(model)
@@ -74,11 +79,17 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
   npars <- length(params)
 
   if(missing(calc_qresiduals)) calc_qresiduals <- ifelse(missing(data), FALSE, TRUE)
+  if(missing(calc_cond_moments)) calc_cond_moments <- ifelse(missing(data), FALSE, TRUE)
   if(missing(data)) {
     if(calc_qresiduals == TRUE) warning("Quantile residuals can't be calculated without data")
+    if(calc_cond_moments == TRUE) warning("Conditional moments can't be calculated without data")
     data <- NULL
     lok_and_mw <- list(loglik=NA, mw=NA)
     qresiduals <- NULL
+    regime_cmeans <- NA
+    regime_cvars <- NA
+    total_cmeans <- NA
+    total_cvars <- NA
     IC <- data.frame(AIC=NA, HQIC=NA, BIC=NA)
   } else {
     data <- checkAndCorrectData(data=data, p=p)
@@ -90,6 +101,20 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                           parametrization=parametrization)
     } else {
       qresiduals <- NULL
+    }
+    if(calc_cond_moments == TRUE) {
+      get_cm <- function(to_return) loglikelihood_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+                                                      conditional=conditional, parametrization=parametrization, boundaries=FALSE,
+                                                      checks=TRUE, to_return=to_return, minval=NA)
+      regime_cmeans <- get_cm("regime_cmeans")
+      regime_cvars <- get_cm("regime_cvars")
+      total_cmeans <- get_cm("total_cmeans")
+      total_cvars <- get_cm("total_cvars")
+    } else {
+      regime_cmeans <- NA
+      regime_cvars <- NA
+      total_cmeans <- NA
+      total_cvars <- NA
     }
 
     obs <- ifelse(conditional, length(data) - p, length(data))
@@ -124,6 +149,10 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                  params=params,
                  std_errors=std_errors,
                  mixing_weights=lok_and_mw$mw,
+                 regime_cmeans=regime_cmeans,
+                 regime_cvars=regime_cvars,
+                 total_cmeans=total_cmeans,
+                 total_cvars=total_cvars,
                  quantile_residuals=qresiduals,
                  loglik=structure(lok_and_mw$loglik,
                                   class="logLik",

@@ -28,7 +28,8 @@
 #'
 #'  The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}. It uses (slightly modified)
 #'  individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)} and employs (50\%)
-#'  fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}.
+#'  fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}. Large (in absolute value) but stationary
+#'  AR parameter values are generated with the algorithm proposed by Monahan (1984).
 #'
 #'  The variable metric algorithm (or quasi-Newton method) used in the second phase is implemented with function the
 #'  \code{optim} from the package \code{stats}.
@@ -38,9 +39,11 @@
 #'  of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture components with large degrees of freedom
 #'  parameter estimates to be GMAR type.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
-#'   empirical mixing weights, quantile residuals and quantile residual test results if the tests were performed. In addition, the returned
-#'   object contains the estimates and log-likelihood values from all the estimation rounds. The estimated parameter vector can be obtained
-#'   at \code{gsmar$params} (and the corresponding approximate standard errors at \code{gsmar$std_errors}) and it is...
+#'   empirical mixing weights, conditional means and variances, quantile residuals, and quantile residual test results if the tests were performed.
+#'   Note that the first p observations are taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation
+#'   (interpreted as t=1). In addition, the returned object contains the estimates and log-likelihood values from all the estimation rounds.
+#'   The estimated parameter vector can be obtained at \code{gsmar$params} (and the corresponding approximate standard errors at \code{gsmar$std_errors})
+#'   and it's...
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
 #'      \describe{
@@ -80,8 +83,8 @@
 #'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
 #'  \code{logLik}, \code{residuals}.
 #' @section Suggested packages:
-#'  For faster evaluation of the quantile residuals of StMAR and G-StMAR models install the suggested package "gsl".
-#'  Note that for large StMAR and G-StMAR models with large data the evaluations for the quantile residual tests may take
+#'  For faster evaluation of the quantile residuals of StMAR and G-StMAR models, install the suggested package "gsl".
+#'  Note that for large StMAR and G-StMAR models with large data the evaluations of the quantile residual tests may take
 #'  significantly long time without the package "gsl".
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{swap_parametrization}},
 #'  \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}}, \code{\link{diagnosticPlot}},
@@ -99,6 +102,8 @@
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
 #'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
+#'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+#'          \emph{Biometrica} \strong{71}, 403-404.
 #'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
 #'          theoretical properties similar to GMAR and StMAR models.
 #'  }
@@ -311,6 +316,9 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ### Wrap up ###
   qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                       parametrization=parametrization)
+  get_cm <- function(to_return) loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+                                                  conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE,
+                                                  to_return=to_return, minval=minval)
 
   ret <- structure(list(data=data,
                         model=list(p=p,
@@ -323,6 +331,10 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
                         params=params,
                         std_errors=std_errors,
                         mixing_weights=mw,
+                        regime_cmeans=get_cm("regime_cmeans"),
+                        regime_cvars=get_cm("regime_cvars"),
+                        total_cmeans=get_cm("total_cmeans"),
+                        total_cvars=get_cm("total_cvars"),
                         quantile_residuals=qresiduals,
                         loglik=structure(loglik,
                                          class="logLik",
@@ -382,7 +394,7 @@ iterate_more <- function(gsmar, maxit=100) {
   }
 
   res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
-  if(res$convergence == 1) message("The maximum number of iterations was reached! Consired iterating more.")
+  if(res$convergence == 1) message("The maximum number of iterations was reached! Consider iterating more.")
 
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
