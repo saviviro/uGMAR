@@ -2,7 +2,7 @@
 % Please edit documentation in R/pickAndChangeParams.R
 \name{pick_pars}
 \alias{pick_pars}
-\title{Pick \eqn{\phi_0}/\eqn{\mu}, AR-coefficients and variance parameters from parameter vector}
+\title{Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients and variance parameters from parameter vector}
 \usage{
 pick_pars(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL)
@@ -73,8 +73,9 @@ alway \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component. First row for \eqn{\phi_0}/\eqn{\mu} depending on the parametrization,
-  second row for \eqn{\phi_1}, second last row for \eqn{\phi_p} and last row for \eqn{\sigma^2}.
+Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component.
+ First row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization,
+ second row for \eqn{\phi_1},..., second last row for \eqn{\phi_p} and last row for \eqn{\sigma^2}.
 }
 \description{
 \code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector

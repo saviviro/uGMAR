@@ -199,7 +199,7 @@ checkAndCorrectData <- function(data, p) {
   }
   if(is.matrix(data)) {
     if(ncol(data) > 1) {
-      stop("Only univariate time series are supported! For multivariate analysis try the package 'gmvarkit'")
+      stop("Only univariate time series are supported! For multivariate analysis, try the package 'gmvarkit'.")
     }
   }
   if(!is.ts(data)) {
@@ -422,7 +422,7 @@ check_params_length <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @inherit check_model return
 
 check_gsmar <- function(object) {
-  if(!any(class(object) == "gsmar")) stop("The argument 'gsmar' has to be object of class 'gsmar' created by fitGSMAR() or GSMAR()")
+  if(!any(class(object) == "gsmar")) stop("The argument 'gsmar' has to be object of class 'gsmar' created with fitGSMAR or GSMAR.")
 }
 
 
@@ -434,6 +434,6 @@ check_gsmar <- function(object) {
 #' @inherit check_gsmar return
 
 check_data <- function(object) {
-  if(is.null(object$data)) stop("The model has to contain data! Data can be added with the function add_data()")
+  if(is.null(object$data)) stop("The model has to contain data! Data can be added with the function add_data.")
 }
 

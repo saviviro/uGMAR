@@ -73,7 +73,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     }
   }
 
-  cat("Model:\n", paste0("p = ", p, ", "))
+  cat("Model:\n", paste0(model, ", p = ", p, ", "))
   if(model == "G-StMAR") {
     cat(paste0("M1 = ", M[1], ", M2 = ", M[2], ", "))
   } else {

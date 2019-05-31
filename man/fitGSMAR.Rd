@@ -62,9 +62,11 @@ Default is that the number of available cores is detected with \code{parallel::d
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
-  empirical mixing weights, quantile residuals and quantile residual test results if the tests were performed. In addition, the returned
-  object contains the estimates and log-likelihood values from all the estimation rounds. The estimated parameter vector can be obtained
-  at \code{gsmar$params} (and the corresponding approximate standard errors at \code{gsmar$std_errors}) and it is...
+  empirical mixing weights, conditional means and variances, quantile residuals, and quantile residual test results if the tests were performed.
+  Note that the first p observations are taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation
+  (interpreted as t=1). In addition, the returned object contains the estimates and log-likelihood values from all the estimation rounds.
+  The estimated parameter vector can be obtained at \code{gsmar$params} (and the corresponding approximate standard errors at \code{gsmar$std_errors})
+  and it's...
  \describe{
    \item{For \strong{non-restricted} models:}{
      \describe{
@@ -119,7 +121,8 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 
  The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}. It uses (slightly modified)
  individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)} and employs (50\%)
- fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}.
+ fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}. Large (in absolute value) but stationary
+ AR parameter values are generated with the algorithm proposed by Monahan (1984).
 
  The variable metric algorithm (or quasi-Newton method) used in the second phase is implemented with function the
  \code{optim} from the package \code{stats}.
@@ -137,8 +140,8 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 
 \section{Suggested packages}{
 
- For faster evaluation of the quantile residuals of StMAR and G-StMAR models install the suggested package "gsl".
- Note that for large StMAR and G-StMAR models with large data the evaluations for the quantile residual tests may take
+ For faster evaluation of the quantile residuals of StMAR and G-StMAR models, install the suggested package "gsl".
+ Note that for large StMAR and G-StMAR models with large data the evaluations of the quantile residual tests may take
  significantly long time without the package "gsl".
 }
 
@@ -211,6 +214,8 @@ fit32trc
          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
+   \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+         \emph{Biometrica} \strong{71}, 403-404.
    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
          theoretical properties similar to GMAR and StMAR models.
  }

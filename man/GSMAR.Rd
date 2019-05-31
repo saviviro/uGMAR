@@ -13,7 +13,7 @@
 GSMAR(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, conditional = TRUE,
   parametrization = c("intercept", "mean"), calc_qresiduals,
-  calc_std_errors = FALSE)
+  calc_cond_moments, calc_std_errors = FALSE)
 
 \method{logLik}{gsmar}(object, ...)
 
@@ -97,7 +97,9 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
-\item{calc_qresiduals}{should quantile residuals be calculated? Default is \code{TRUE} if the model contains data.}
+\item{calc_qresiduals}{should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.}
+
+\item{calc_cond_moments}{should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.}
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 
@@ -113,11 +115,17 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 standard errors, log-likelihood and information criteria values. Supported only for
 models with data.}
 }
+\value{
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supllied, the returned object
+  contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
+  taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
+}
 \description{
 \code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR or G-StMAR model.
 }
 \details{
-Models without data can be created.
+Models can be built without data, e.q., in order to simulate from the process, but some elements such as quantile
+ residuals and conditional moments can't be calculated without data.
 }
 \section{Methods (by generic)}{
 \itemize{
@@ -159,7 +167,7 @@ gstmar12
 params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20)
 gstmar13r <- GSMAR(data=VIX, p=1, M=c(2, 1), params=params13gsr,
  model="G-StMAR", restricted=TRUE)
-diagnosticPlot(gstmar13r)
+gstmar13r
 
 # GMAR model as a mixture of AR(2) and AR(1) models
 constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))

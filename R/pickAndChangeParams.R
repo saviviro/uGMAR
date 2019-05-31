@@ -66,13 +66,14 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 }
 
 
-#' @title Pick \eqn{\phi_0}/\eqn{\mu}, AR-coefficients and variance parameters from parameter vector
+#' @title Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients and variance parameters from parameter vector
 #'
 #' @description \code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component. First row for \eqn{\phi_0}/\eqn{\mu} depending on the parametrization,
-#'   second row for \eqn{\phi_1}, second last row for \eqn{\phi_p} and last row for \eqn{\sigma^2}.
+#' @return Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component.
+#'  First row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization,
+#'  second row for \eqn{\phi_1},..., second last row for \eqn{\phi_p} and last row for \eqn{\sigma^2}.
 
 pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   params <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
@@ -129,49 +130,6 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
   params_orig
 }
 
-
-#' @title Calculate and return regime means \eqn{\mu_{m}}
-#'
-#' @description \code{get_regime_means} calculates regime means \eqn{\mu_{m} =  \phi_{m,0}/(1-\sum\phi_{i,m})}
-#'   for the given GMAR, StMAR or G-StMAR model
-#'
-#' @inheritParams simulateGSMAR
-#' @return Returns a length \code{M} vector containing regime mean \eqn{\mu_{m}} in the m:th column, \eqn{m=1,..,M}.
-#' @inherit isStationary references
-#' @examples
-#' # GMAR model
-#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-#' gmar13 <- GSMAR(data=VIX, p=1, M=3, params=params13, model="GMAR")
-#' get_regime_means(gmar13)
-#'
-#' # StMAR model
-#' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
-#' stmar12t <- GSMAR(data=VIX, p=1, M=2, params=params12t, model="StMAR")
-#' get_regime_means(stmar12t)
-#'
-#' # G-StMAR model (similar to the StMAR model above)
-#' params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
-#' gstmar12 <- GSMAR(data=VIX, p=1, M=c(1, 1), params=params12gs,
-#'  model="G-StMAR")
-#' get_regime_means(gstmar12)
-#' @export
-
-get_regime_means <- function(gsmar) {
-  check_gsmar(gsmar)
-  p <- gsmar$model$p
-  M <- gsmar$model$M
-  params <- gsmar$params
-  model <- gsmar$model$model
-  restricted <- gsmar$model$restricted
-  constraints <- gsmar$model$constraints
-
-  if(gsmar$model$parametrization == "intercept") {
-    params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
-                                     constraints=constraints, change_to="mean")
-  }
-
-  pick_phi0(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-}
 
 
 #' @title Calculate absolute values of the roots of the AR characteristic polynomials
