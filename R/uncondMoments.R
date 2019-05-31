@@ -135,3 +135,19 @@ get_regime_vars <- function(gsmar) {
                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
   colSums(pars[-c(1, p + 2),]*reg_autocovs) + pars[p + 2,]
 }
+
+
+uncondMoments <- function(gsmar) {
+  check_gsmar(gsmar)
+  alphas <- pick_alphas(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model,
+                        restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
+  reg_means <- get_regime_means(gsmar)
+  uncond_mean <- sum(alphas*reg_means)
+  tmp <- sum(alphas*(reg_means - uncond_mean)^2)
+  uncond_var <- sum(alphas*get_regime_vars(gsmar)) + tmp
+  autocovs <- colSums(alphas*t(get_regime_autocovs(gsmar))) + tmp
+  list(uncond_mean=uncond_mean,
+       uncond_var=uncond_var,
+       autocovs=autocovs,
+       autocors=autocovs/uncond_var)
+}
