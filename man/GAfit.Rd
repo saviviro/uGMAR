@@ -131,7 +131,8 @@ Returns estimated parameter vector described in \code{initpop}.
 \details{
 The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.
    It uses (slightly modified) individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)}
-   and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}.
+   and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}. Large (in absolute value) but stationary
+   AR parameter values are generated with the algorithm proposed by Monahan (1984).
 }
 \references{
 \itemize{

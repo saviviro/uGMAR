@@ -1,5 +1,5 @@
 library(uGMAR)
-context("loglikelihood and mixing weights")
+context("loglikelihood, mixing weights and cond moments")
 
 params12 <- c(1.0, 0.9, 0.25, 4.5, 0.7, 3.0, 0.8)
 params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8) # StMAR
@@ -100,32 +100,72 @@ test_that("Loglikelihood gives correct value for constrained models", {
 })
 
 
-test_that("mixingWeights gives correct weights for non-restricted models", {
-  expect_equal(mixingWeights_int(VIX, 1, c(1, 1), params12gs2, model="G-StMAR")[10, 1], 0.1972129, tolerance=1e-3)
+test_that("mixingWeights gives correct values for non-restricted models", {
+  expect_equal(mixingWeights_int(VIX, 1, c(1, 1), params12gs2, model="G-StMAR")[10, ], c(0.1972129, 0.8027871), tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 1, c(1, 1), params12gs, model="G-StMAR")[10, 2], 0.9906132, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 2, c(1, 2), params23gs, model="G-StMAR")[20, 3], 0.2209903, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 1, 2, params12, model="GMAR")[2, 1], 0.0007360931, tolerance=1e-6)
-  expect_equal(mixingWeights_int(VIX, 1, 2, params12t, model="StMAR")[20, 2], 0.14159, tolerance=1e-5)
+  expect_equal(mixingWeights_int(VIX, 1, 2, params12t, model="StMAR")[20, ], c(0.85841, 0.14159), tolerance=1e-5)
   expect_equal(mixingWeights_int(VIX, 2, 2, params22t, model="StMAR")[1, 1], 1.742628e-07, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 2, 3, params23, model="GMAR")[13, 1], 0.2983124, tolerance=1e-6)
 })
 
-test_that("mixingWeights gives correct weights for restricted models", {
+test_that("mixingWeights gives correct values for restricted models", {
   expect_equal(mixingWeights_int(VIX, 1, c(2, 1), params13gsr2, model="G-StMAR", restricted=TRUE)[20, 2], 0.9989134, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE)[40, 1], 0.1064519, tolerance=1e-3)
-  expect_equal(mixingWeights_int(VIX, 1, 2, params12r, model="GMAR", restricted=TRUE)[100, 1], 0.9360905, tolerance=1e-6)
-  expect_equal(mixingWeights_int(VIX, 1, 2, params12tr, model="StMAR", restricted=TRUE)[1, 2], 0.9091443, tolerance=1e-6)
+  expect_equal(mixingWeights_int(VIX, 1, 2, params12r, model="GMAR", restricted=TRUE)[100, ], c(0.93609046, 0.06390954), tolerance=1e-6)
+  expect_equal(mixingWeights_int(VIX, 1, 2, params12tr, model="StMAR", restricted=TRUE)[1, ], c(0.09085567, 0.90914433), tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 2, 3, params23r, model="GMAR", restricted=TRUE)[13, 2], 0.009593899, tolerance=1e-6)
-  expect_equal(mixingWeights_int(VIX, 2, 3, params23tr, model="GMAR", restricted=TRUE)[111, 2], 1.090888e-22, tolerance=1e-6)
+  expect_equal(mixingWeights_int(VIX, 2, 3, params23tr, model="StMAR", restricted=TRUE)[5, 3], 0.9856944, tolerance=1e-6)
 })
 
-test_that("mixingWeights gives correct weights for constrained models", {
+test_that("mixingWeights gives correct values for constrained models", {
   expect_equal(mixingWeights_int(VIX, 3, c(1, 1), params32gsc, model="G-StMAR", constraints=list(R1, R2))[1, 2], 1, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 2, c(1, 1), params22gsrc, model="G-StMAR", restricted=TRUE, constraints=R3)[1, 2], 1, tolerance=1e-3)
   expect_equal(mixingWeights_int(VIX, 3, 2, params32c, model="StMAR", constraints=list(R1, R1))[1, 1], 0.01096221, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 3, 3, params33c, model="GMAR", constraints=list(R2, R2, R1))[113, 3], 0.0001194389, tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 2, 1, params21c, model="StMAR", constraints=list(R3))[200, 1], 1, tolerance=1e-6)
-  expect_equal(mixingWeights_int(VIX, 2, 2, params22c, model="StMAR", constraints=list(R4, R3))[2, 2], 0.956518, tolerance=1e-6)
-  expect_equal(mixingWeights_int(VIX, 2, 2, params22cr, model="StMAR", restricted=TRUE, constraints=R3)[1, 2], 0.9994679, tolerance=1e-6)
+  expect_equal(mixingWeights_int(VIX, 2, 2, params22c, model="StMAR", constraints=list(R4, R3))[2, ], c(0.04348198, 0.95651802), tolerance=1e-6)
+  expect_equal(mixingWeights_int(VIX, 2, 2, params22cr, model="StMAR", restricted=TRUE, constraints=R3)[1, ], c(0.0005321279, 0.9994678721), tolerance=1e-6)
   expect_equal(mixingWeights_int(VIX, 3, 2, params32cr, model="GMAR", restricted=TRUE, constraints=R1)[100, 1], 1.07196e-29, tolerance=1e-6)
+})
+
+test_that("condMoments gives correct values for non-restricted models", {
+  expect_equal(condMoments(VIX, 1, c(1, 1), params12gs2, model="G-StMAR", to_return="regime_cmeans")[10,], c(11.452, 12.852), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, c(1, 1), params12gs2, model="G-StMAR", to_return="regime_cvars")[10,], c(1.500000, 1.313848), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, c(1, 1), params12gs, model="G-StMAR", to_return="total_cmeans")[1:2], c(10.648, 10.276), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, c(1, 1), params12gs, model="G-StMAR", to_return="total_cvars")[111:112], c(28.60574, 21.44942), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 2, c(1, 2), params23gs, model="G-StMAR", to_return="regime_cmeans")[20,], c(3.581, 6.362, 1.579), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 2, c(1, 2), params23gs, model="G-StMAR", to_return="regime_cvars")[20,], c(1.00000, 16.59658, 16.83590), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 2, c(1, 2), params23gs, model="G-StMAR", to_return="total_cvars")[20],12.71109, tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, 2, params12, model="GMAR", to_return="regime_cmeans")[2,], c(14.464, 14.972), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, 2, params12, model="GMAR", to_return="regime_cvars")[21,], c(0.25, 3.00), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 2, 3, params23, model="GMAR", to_return="total_cmeans")[13], 12.02356, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 2, 3, params23, model="GMAR", to_return="total_cvars")[100], 1.52281, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 1, 2, params12t, model="StMAR", to_return="total_cmeans")[1], 15.3907, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 1, 2, params12t, model="StMAR", to_return="total_cvars")[2], 2.553506, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 2, 2, params22t, model="StMAR", to_return="regime_cmeans")[1,], c(14.1470, 14.1596), tolerance=1e-4)
+  expect_equal(condMoments(VIX, 2, 2, params22t, model="StMAR", to_return="regime_cvars")[2,], c(0.3149169, 1.8972241), tolerance=1e-4)
+})
+
+test_that("condMoments gives correct values for restricted models", {
+  expect_equal(condMoments(VIX, 1, c(2, 1), params13gsr2, model="G-StMAR", restricted=TRUE, to_return="regime_cmeans")[30,], c(10.748, 10.448, 10.848), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, c(2, 1), params13gsr2, model="G-StMAR", restricted=TRUE, to_return="regime_cvars")[30,], c(0.4000, 2.000, 0.6278419), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE, to_return="total_cmeans")[40], 12.45592, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE, to_return="total_cvars")[40], 4.287395, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 1, 2, params12r, model="GMAR", restricted=TRUE, to_return="total_cmeans")[100:101], c(12.59456, 12.61224), tolerance=1e-4)
+  expect_equal(condMoments(VIX, 1, 2, params12tr, model="StMAR", restricted=TRUE, to_return="total_cvars")[11:12], c(3.497628, 3.233370), tolerance=1e-6)
+  expect_equal(condMoments(VIX, 2, 3, params23r, model="GMAR", restricted=TRUE, to_return="regime_cmeans")[13,], c(10.679, 10.879, 11.079), tolerance=1e-6)
+  expect_equal(condMoments(VIX, 2, 3, params23tr, model="StMAR", restricted=TRUE, to_return="regime_cvars")[111,], c(0.7578044, 0.1547692, 3.8815157), tolerance=1e-6)
+})
+
+test_that("condMoments gives correct values for constrained models", {
+  expect_equal(condMoments(VIX, 3, c(1, 1), params32gsc, model="G-StMAR", constraints=list(R1, R2), to_return="total_cmeans")[1], 11.06, tolerance=1e-2)
+  expect_equal(condMoments(VIX, 2, c(1, 1), params22gsrc, model="G-StMAR", restricted=TRUE, constraints=R3, to_return="total_cvars")[1], 17.50064, tolerance=1e-4)
+  expect_equal(condMoments(VIX, 3, 2, params32c, model="StMAR", constraints=list(R1, R1), to_return="regime_cmeans")[1,], c(0.918, 1.836), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 3, 3, params33c, model="GMAR", constraints=list(R2, R2, R1), to_return="total_cvars")[113], 1.995004, tolerance=1e-6)
+  expect_equal(condMoments(VIX, 2, 1, params21c, model="StMAR", constraints=list(R3), to_return="regime_cvars")[200,], 2.472818, tolerance=1e-6)
+  expect_equal(condMoments(VIX, 2, 2, params22c, model="StMAR", constraints=list(R4, R3), to_return="regime_cmeans")[2, ], c(0.980, 4.972), tolerance=1e-3)
+  expect_equal(condMoments(VIX, 2, 2, params22cr, model="StMAR", restricted=TRUE, constraints=R3, to_return="total_cmeans")[10:11], c(11.76299, 11.49476), tolerance=1e-6)
+  expect_equal(condMoments(VIX, 3, 2, params32cr, model="GMAR", restricted=TRUE, constraints=R1, to_return="total_cvars")[200], 2, tolerance=1e-6)
 })

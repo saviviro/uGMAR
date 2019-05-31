@@ -78,19 +78,26 @@
 #' @param checks an (optional) logical argument defining whether argument checks are made. If \code{FALSE} then no argument checks
 #' such as stationary checks etc are made. The default is \code{TRUE}.
 #' @param to_return should the returned object be the log-likelihood value, mixing weights, mixing weights including
-#'   value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights or the terms \eqn{l_{t}: t=1,..,T}
-#'   in the log-likelihood function (see \emph{KMS 2015, eq.(13)})?
+#'   value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights, the terms \eqn{l_{t}: t=1,..,T}
+#'   in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), regimewise conditional means, regimewise conditional variances,
+#'   total conditional means or total conditional variances?
 #'   Default is the log-likelihood value (\code{"loglik"}).
 #' @param minval this will be returned when the parameter vector is outside the parameter space.
 #' @return
+#'  Note that the first p observations are taken as the initial values so
+#'  mixing weights and conditional moments start from the p+1:th observation (interpreted as t=1).
 #'  \describe{
 #'   \item{By default:}{log-likelihood value of the specified model,}
 #'   \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in m:th column.}
 #'   \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in m:th column.
-#'     The last row is for \eqn{\alpha_{m,T+1}}}.
-#'   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
+#'     The last row is for \eqn{\alpha_{m,T+1}}.}
 #'   \item{if \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
 #'     second element contains the mixing weights.}
+#'   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
+#'   \item{if \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
+#'   \item{if \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
+#'   \item{if \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
+#'   \item{if \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
 #'  }
 #' @references
 #'  \itemize{
@@ -108,7 +115,8 @@
 
 loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               conditional=TRUE, parametrization=c("intercept", "mean"), boundaries=TRUE, checks=TRUE,
-                              to_return=c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms"), minval) {
+                              to_return=c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "regime_cmeans", "regime_cvars",
+                                          "total_cmeans", "total_cvars"), minval) {
   epsilon <- round(log(.Machine$double.xmin) + 10)
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
@@ -174,7 +182,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       Sigma <- as.matrix(sigmas[i1])
       VecGamma <- solve(1 - kronecker(A, A), Sigma)
       invG[, , i1] <- as.matrix(1/VecGamma)
-      matProd[, i1] <- (Y - mu[i1])*invG[,,i1]*(Y - mu[i1])
+      matProd[, i1] <- (Y - mu[i1])*invG[, , i1]*(Y - mu[i1])
     }
   } else { # Inverse formula by Galbraith, R., Galbraith, J., (1974)
     for(i1 in 1:M) {
@@ -259,6 +267,13 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     mu_mt <- vapply(1:M, function(i1) rep(pars[1, i1], nrow(Y) - 1) + colSums(pars[2:(p + 1),i1]*t(Y[1:(nrow(Y) - 1),])), numeric(n_obs - p))
   }
 
+  # Calculate/return conditional means
+  if(to_return == "regime_cmeans") {
+    return(mu_mt)
+  } else if(to_return == "total_cmeans") {
+    return(rowSums(alpha_mt*mu_mt))
+  }
+
   # Calculate "the second term" of the log-likelihood (Kalliovirta 2015, s.254 eq.(12)-(13) )
   Y2 <- Y[2:nrow(Y), 1] # Only first column and rows 2...T are needed
   if(model == "GMAR") {
@@ -298,6 +313,24 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     lt_tmp <- cbind(lt_tmpM1, lt_tmpM2)
   }
   l_t <- rowSums(lt_tmp)
+
+  # Calculate/return conditional variances
+  if(to_return == "regime_cvars" | to_return == "total_cvars") {
+    if(model == "GMAR") {
+      sigma_mt <- matrix(rep(sigmas, n_obs - p), ncol=M, byrow=TRUE)
+    } else if(model == "StMAR") {
+      sigma_mt <- as.matrix(sigma_mt)
+    } else if(model == "G-StMAR") {
+      sigma_mt1 <- matrix(rep(sigmas[1:M1], n_obs - p), ncol=M1, byrow=TRUE)
+      sigma_mt <- cbind(sigma_mt1, sigma_mt)
+      colnames(sigma_mt) <- NULL
+    }
+    if(to_return == "regime_cvars") {
+      return(sigma_mt)
+    } else { # Calculate and return total conditional variances
+      return(rowSums(alpha_mt*sigma_mt) - rowSums(alpha_mt*(mu_mt - rowSums(alpha_mt*mu_mt))^2))
+    }
+  }
 
   if(to_return == "terms") {
     ret <- log(l_t)
@@ -463,6 +496,87 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
                     constraints=constraints, parametrization=parametrization, checks=TRUE, to_return="mw")
 }
 
+
+#' @import stats
+#'
+#' @title Calculate conditional moments of GMAR, StMAR or G-StMAR model
+#'
+#' @description \code{condMoments} calculates the regime specific conditional means and variances and total
+#'  conditional means and variances of the specified GMAR, StMAR or G-StMAR model.
+#'
+#' @inheritParams loglikelihood_int
+#' @param to_return calculate regimewise conditional means (\code{regime_cmeans}), regimewise conditional variances
+#'  (\code{regime_cvars}), total conditional means (\code{total_cmeans}), or total conditional variances (\code{total_cvars})?
+#' @inherit loglikelihood_int references
+#' @return
+#'  Note that the first p observations are taken as the initial values so the conditional moments
+#'  start form the p+1:th observation (interpreted as t=1).
+#'  \describe{
+#'   \item{if \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
+#'   \item{if \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
+#'   \item{if \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
+#'   \item{if \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
+#'  }
+#' @examples
+#' # GMAR model
+#' params12 <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8)
+#' rcm12 <- condMoments(VIX, 1, 2, params12, to_return="regime_cmeans")
+#' rcv12 <- condMoments(VIX, 1, 2, params12, to_return="regime_cvars")
+#' tcm12 <- condMoments(VIX, 1, 2, params12, to_return="total_cmeans")
+#' tcv12 <- condMoments(VIX, 1, 2, params12, to_return="total_cvars")
+#'
+#' # StMAR model
+#' params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8)
+#' rcm12t <- condMoments(VIX, 1, 2, params12t, model="StMAR",
+#'  to_return="regime_cmeans")
+#' rcv12t <- condMoments(VIX, 1, 2, params12t, model="StMAR",
+#'  to_return="regime_cvars")
+#'
+#' # G-StMAR model
+#' params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
+#' rcv12gs <- condMoments(VIX, 1, c(1,1), params12gs, model="G-StMAR",
+#'  to_return="regime_cvars")
+#' tcv12gs <- condMoments(VIX, 1, c(1,1), params12gs, model="G-StMAR",
+#'  to_return="total_cvars")
+#'
+#' # Restricted G-StMAR model
+#' params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20)
+#' tcm13gsr <- condMoments(VIX, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE,
+#'  to_return="total_cmeans")
+#'
+#' # GMAR model as a mixture of AR(2) and AR(1) models
+#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+#' params22c <- c(1.2, 0.8, 0.1, 0.3, 3.3, 0.8, 2.8, 0.8)
+#' rcm22c <- condMoments(VIX, 2, 2, params22c, constraints=constraints,
+#'  to_return="regime_cmeans")
+#'
+#' # Such StMAR(3,2) that the AR coefficients are restricted to be
+#' # the same for both regimes and that the second AR coefficients are
+#' # constrained to zero.
+#' params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
+#' rcv32trc <- condMoments(VIX, 3, 2, params32trc, model="StMAR",
+#'                          restricted=TRUE,
+#'                          constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
+#'                          to_return="regime_cvars")
+#' @export
+condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+                        parametrization=c("intercept", "mean"), to_return=c("regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars")) {
+  model <- match.arg(model)
+  check_model(model)
+  parametrization <- match.arg(parametrization)
+  stopifnot(parametrization %in% c("intercept", "mean"))
+  checkPM(p=p, M=M, model=model)
+  check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+  loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+                    conditional=conditional, parametrization=parametrization, boundaries=FALSE, checks=TRUE,
+                    to_return=to_return)
+}
+
+uncondMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+                          parametrization=c("intercept", "mean"), to_return=c("mean", "autocovs", "autocors", "regime_means",
+                                                                              "regime_autocovs", "regime_autocors")) {
+  NULL
+}
 
 
 #' @title Calculate AIC, HQIC and BIC

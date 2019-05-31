@@ -170,27 +170,27 @@ fit12t
 fit12tr <- fitGSMAR(VIX, 1, 2, model="StMAR", restricted=TRUE)
 fit12tr
 
-# G-StMAR model, 20 estimation rounds
-fit12gs <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR", ncalls=20)
+# G-StMAR model with one GMAR type and one StMAR type regime
+fit12gs <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR")
 fit12gs
 
-# Restricted G-StMAR model (implied by the previous StMAR and G-StMAR models)
+# Restricted G-StMAR model (implied by the previous G-StMAR model)
 fit12gsr <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR", restricted=TRUE)
 fit12gsr
 
-# Fit GMAR model that is a mixture of AR(1) and such AR(3) model that the
+# GMAR model that is a mixture of AR(1) and such AR(3) that the
 # second AR coeffiecient is constrained to zero.
 constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
 fit32c <- fitGSMAR(VIX, 3, 2, constraints=constraints)
 fit32c
 
-# Fit such constrained StMAR(3, 1) model that the second order AR coefficient
+# Such constrained StMAR(3, 1) model that the second order AR coefficient
 # is constrained to zero.
 constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 fit31tc <- fitGSMAR(VIX, 3, 1, model="StMAR", constraints=constraints)
 fit31tc
 
-# Fit such StMAR(3,2) model that the AR coefficients are restricted to be
+# Such StMAR(3,2) model that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
 fit32trc <- fitGSMAR(VIX, 3, 2, model="StMAR", restricted=TRUE,
