@@ -35,10 +35,10 @@ test_that("get_regime_means gives correct values", {
 
 test_that("get_regime_autocovs gives correct values", {
   expect_equal(get_regime_autocovs(stmar11)[1,], 2.222222, tolerance=1e-5)
-  expect_equal(get_regime_autocovs(gmar23)[2,], c(-57.500000, -581.904762, -4.705882), tolerance=1e-5)
-  expect_equal(get_regime_autocovs(stmar23)[1,], c(-200.000000, 0.209468, 310.924370), tolerance=1e-5)
+  expect_equal(get_regime_autocovs(gmar23)[2,], c(0.380391743, 3.129034388, 0.008677247), tolerance=1e-5)
+  expect_equal(get_regime_autocovs(stmar23)[1,], c(1.22123317, 0.03261833, 7.81584037), tolerance=1e-5)
   expect_equal(get_regime_autocovs(gstmar13r)[1,], c(0.8888889, 4.444444, 0.4444444), tolerance=1e-5)
-  expect_equal(get_regime_autocovs(stmar32c)[3,], c(-8.75000, -56.66667), tolerance=1e-4)
-  expect_equal(get_regime_autocovs(gmar33c)[3,], c(-1.919192, -3.750000, 97.500000), tolerance=1e-5)
-  expect_equal(get_regime_autocovs(gstmar22cr)[2,], c(-0.8, -1.6), tolerance=1e-5)
+  expect_equal(get_regime_autocovs(stmar32c)[3,], c(-0.1020408, -0.4347826), tolerance=1e-4)
+  expect_equal(get_regime_autocovs(gmar33c)[3,], c(0.1298701, 0.8333333, -1.0975610), tolerance=1e-5)
+  expect_equal(get_regime_autocovs(gstmar22cr)[2,], c(0.4, 0.8), tolerance=1e-5)
 })
