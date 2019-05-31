@@ -3,14 +3,14 @@
 #' @description \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
 #'  of the given function at the given point using central difference numerical approximation.
 #'  \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
-#'  log-likelihood function at the parameter estimates of class \code{'gsmar'} object.
+#'  log-likelihood function at the parameter values of class \code{'gsmar'} object.
 #'
 #' @inheritParams simulateGSMAR
 #' @param x a numeric vector specifying the point where the gradient or Hessian should be calculated.
 #' @param fn a function that takes in argument \code{x} as the \strong{first} argument.
 #' @param h difference used to approximate the derivates.
 #' @param ... other arguments passed to \code{fn}
-#' @details Especially the functions \code{get_gradient()} or \code{get_hessian()} can be used to check whether
+#' @details Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether
 #'  the found estimates denote a (local) maximum point, a saddle point or something else.
 #' @return Gradient functions return numerical approximation of the gradient, and Hessian functions return
 #'  numerical approximation of the Hessian.
