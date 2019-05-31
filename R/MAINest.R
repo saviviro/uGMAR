@@ -307,44 +307,52 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   IC <- get_IC(loglik=loglik, npars=d, obs=obs)
 
   # Standard errors of the estimates
-  std_errors <- standardErrors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
-                               constraints=constraints, conditional=conditional, parametrization=parametrization,
-                               minval=minval)
-  if(all(is.na(std_errors))) message("Unable to calculate approximate standard errors")
+  # std_errors <- standardErrors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+  #                              constraints=constraints, conditional=conditional, parametrization=parametrization,
+  #                              minval=minval)
+  # if(all(is.na(std_errors))) message("Unable to calculate approximate standard errors")
 
 
   ### Wrap up ###
-  qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
-                                      parametrization=parametrization)
-  get_cm <- function(to_return) loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                                                  conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE,
-                                                  to_return=to_return, minval=minval)
+  # qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+  #                                     parametrization=parametrization)
+  # get_cm <- function(to_return) loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+  #                                                 conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE,
+  #                                                 to_return=to_return, minval=minval)
+  #
+  # ret <- structure(list(data=data,
+  #                       model=list(p=p,
+  #                                  M=M,
+  #                                  model=model,
+  #                                  restricted=restricted,
+  #                                  constraints=constraints,
+  #                                  conditional=conditional,
+  #                                  parametrization=parametrization),
+  #                       params=params,
+  #                       std_errors=std_errors,
+  #                       mixing_weights=mw,
+  #                       regime_cmeans=get_cm("regime_cmeans"),
+  #                       regime_cvars=get_cm("regime_cvars"),
+  #                       total_cmeans=get_cm("total_cmeans"),
+  #                       total_cvars=get_cm("total_cvars"),
+  #                       quantile_residuals=qresiduals,
+  #                       loglik=structure(loglik,
+  #                                        class="logLik",
+  #                                        df=d),
+  #                       IC=IC,
+  #                       all_estimates=newtonEstimates,
+  #                       all_logliks=loks,
+  #                       which_converged=converged,
+  #                       qr_tests=qr_tests),
+  #                  class="gsmar")
+  ret <- GSMAR(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+               conditional=conditional, parametrization=parametrization, calc_qresiduals=TRUE,
+               calc_cond_moments=TRUE, calc_std_errors=TRUE)
+  ret$all_estimates <- newtonEstimates
+  ret$all_logliks <- loks
+  ret$which_converger <- converged
+  ret$qrtests <- qr_tests
 
-  ret <- structure(list(data=data,
-                        model=list(p=p,
-                                   M=M,
-                                   model=model,
-                                   restricted=restricted,
-                                   constraints=constraints,
-                                   conditional=conditional,
-                                   parametrization=parametrization),
-                        params=params,
-                        std_errors=std_errors,
-                        mixing_weights=mw,
-                        regime_cmeans=get_cm("regime_cmeans"),
-                        regime_cvars=get_cm("regime_cvars"),
-                        total_cmeans=get_cm("total_cmeans"),
-                        total_cvars=get_cm("total_cvars"),
-                        quantile_residuals=qresiduals,
-                        loglik=structure(loglik,
-                                         class="logLik",
-                                         df=d),
-                        IC=IC,
-                        all_estimates=newtonEstimates,
-                        all_logliks=loks,
-                        which_converged=converged,
-                        qr_tests=qr_tests),
-                   class="gsmar")
   cat("Finished!\n")
   ret
 }

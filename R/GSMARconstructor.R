@@ -158,7 +158,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                   class="logLik",
                                   df=npars),
                  IC=IC,
-                 uncondMoments=uncondMoments_int(p=p, M=M, params=params, model=model, restricted=restricted,
+                 uncond_moments=uncondMoments_int(p=p, M=M, params=params, model=model, restricted=restricted,
                                                  constraints=constraints, parametrization=parametrization),
                  all_estimates=NULL,
                  all_logliks=NULL,
@@ -171,7 +171,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' @title Add data to object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model
 #'
 #' @description \code{add_data} adds or updates data to object of class '\code{gsmar}' that defines a GMAR, StMAR or G-StMAR
-#'  model based on the given object. Also calculates mixing weights and quantile residuals accordingly.
+#'  model. Also calculates mixing weights and quantile residuals accordingly.
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams loglikelihood_int
