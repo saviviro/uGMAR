@@ -573,7 +573,7 @@ condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 #' @description \code{get_IC} calculates AIC, HQIC and BIC
 #'
 #' @param loglik log-likelihood value
-#' @param npars number of (freely estimated) parameters in the model
+#' @param npars number of (freely estimated) parameters in the model.
 #' @param obs numbers of observations with starting values excluded for conditional models.
 #' @return Returns a data frame containing the information criteria values.
 
