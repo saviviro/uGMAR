@@ -34,10 +34,10 @@ Gradient functions return numerical approximation of the gradient, and Hessian f
 \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
  of the given function at the given point using central difference numerical approximation.
  \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
- log-likelihood function at the parameter estimates of class \code{'gsmar'} object.
+ log-likelihood function at the parameter values of class \code{'gsmar'} object.
 }
 \details{
-Especially the functions \code{get_gradient()} or \code{get_hessian()} can be used to check whether
+Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether
  the found estimates denote a (local) maximum point, a saddle point or something else.
 }
 \section{Warning}{

@@ -216,8 +216,8 @@ fit32trc
          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
          \emph{Biometrica} \strong{71}, 403-404.
-   \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
-         theoretical properties similar to GMAR and StMAR models.
+   \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
+         theoretical properties similar to the GMAR and StMAR models.
  }
 }
 \seealso{

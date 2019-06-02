@@ -162,7 +162,6 @@ uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
                                      model=model,
                                      restricted=restricted,
                                      constraints=constraints,
-                                     conditional=conditional,
                                      parametrization=parametrization),
                           params=params),
                      class="gsmar")

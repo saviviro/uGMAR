@@ -564,14 +564,7 @@ condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
   checkPM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                    conditional=conditional, parametrization=parametrization, boundaries=FALSE, checks=TRUE,
-                    to_return=to_return)
-}
-
-uncondMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                          parametrization=c("intercept", "mean"), to_return=c("mean", "autocovs", "autocors", "regime_means",
-                                                                              "regime_autocovs", "regime_autocors")) {
-  NULL
+                    conditional=TRUE, parametrization=parametrization, boundaries=FALSE, checks=TRUE, to_return=to_return)
 }
 
 

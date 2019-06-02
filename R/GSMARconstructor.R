@@ -159,7 +159,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                   df=npars),
                  IC=IC,
                  uncond_moments=uncondMoments_int(p=p, M=M, params=params, model=model, restricted=restricted,
-                                                 constraints=constraints, parametrization=parametrization),
+                                                  constraints=constraints, parametrization=parametrization),
                  all_estimates=NULL,
                  all_logliks=NULL,
                  which_converged=NULL,
