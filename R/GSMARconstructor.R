@@ -177,7 +177,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' @inheritParams loglikelihood_int
 #' @inheritParams GSMAR
 #' @return Returns an object of class 'gsmar' defining the GMAR, StMAR or G-StMAR model with the data added to the model.
-#'   If the object already contained data, the data will be updated.
+#'   If the object already contained data, the data will be updated. Does not modify the 'gsmar' object given as argument!
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{get_gradient}},
 #'  \code{\link{get_regime_means}}
 #' @inherit isStationary references
@@ -192,11 +192,13 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' gmar13
 #' @export
 
-add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_std_errors=FALSE) {
+add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=FALSE) {
   check_gsmar(gsmar)
+  checkAndCorrectData(data=data, p=gsmar$model$p)
   GSMAR(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
+        calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments,
         calc_std_errors=calc_std_errors)
 }
 

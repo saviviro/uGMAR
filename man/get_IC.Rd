@@ -9,7 +9,7 @@ get_IC(loglik, npars, obs)
 \arguments{
 \item{loglik}{log-likelihood value}
 
-\item{npars}{number of (freely estimated) parameters in the model}
+\item{npars}{number of (freely estimated) parameters in the model.}
 
 \item{obs}{numbers of observations with starting values excluded for conditional models.}
 }

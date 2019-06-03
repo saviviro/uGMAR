@@ -45,7 +45,7 @@ test_that("quantile residual test for normality works", {
   expect_equal(qrt11t$norm_res$testStat, 42.01667, tolerance=1e-3)
   expect_equal(qrt12$norm_res$testStat, 32.09423, tolerance=1e-3)
   expect_equal(qrt23$norm_res$testStat, 63.89753, tolerance=1e-3)
- # expect_equal(qrt23t$norm_res$testStat, 4.525679, tolerance=1e-3)
+  expect_equal(qrt23t$norm_res$testStat, 4.525679, tolerance=1e-3)
   expect_equal(qrt12r$norm_res$testStat, 1.574353, tolerance=1e-3)
 })
 
