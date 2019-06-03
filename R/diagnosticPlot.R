@@ -30,7 +30,7 @@
 #'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
 #'   For large StMAR and G-StMAR models with large data the calculations to obtain the individual statistics
 #'   may take a significantly long time without the package "gsl".
-#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{predict.gsmar}}
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
 #' # GMAR model
@@ -83,17 +83,14 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
   if(!all_pos_ints(c(nlags, nsimu))) stop("The arguments nlags and nsimu have to be a strictly positive integers")
   check_gsmar(gsmar)
   check_data(gsmar)
-  data <- gsmar$data
-  p <- gsmar$model$p
-  M <- gsmar$model$M
-  params <- gsmar$params
-  model <- gsmar$model$model
-  restricted <- gsmar$model$restricted
-  constraints <- gsmar$model$constraints
-  parametrization <- gsmar$model$parametrization
   nsimu <- max(nsimu, length(data))
-  qresiduals <- quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
-                                      constraints=constraints, parametrization=parametrization)
+  if(is.null(gsmar$quantile_residuals)) {
+    qresiduals <- quantileResiduals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
+                                        model=gsmar$model$mode, restricted=gsmar$model$restricted,
+                                        constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
+  } else {
+    qresiduals <- gsmar$quantile_residuals
+  }
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   if(plot_indstats == TRUE) {
@@ -153,4 +150,68 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
     plot_inds("ac_res")
     plot_inds("ch_res")
   }
+}
+
+
+#' @import stats
+#' @import graphics
+#' @importFrom grDevices rgb
+#'
+#' @title Ploy quantile residual time series and kernel density
+#'
+#' @description \code{quantileResidualsPlot} plots quantile residual time series and Gaussian kernel density.
+#'
+#' @inheritParams simulateGSMAR
+#' @details The kernel density estimates are calculated with function \code{density} in the package \code{stats}
+#'  using the default settings.
+#' @return  Only plots to a graphical device and doesn't return anything.
+#' @inherit quantileResiduals
+#' @seealso \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+#' @examples
+#' \donttest{
+#' # GMAR model
+#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
+#' gmar13 <- GSMAR(data=VIX, p=1, M=3, params=params13, model="GMAR")
+#' quantileResidualPlot(gmar13)
+#'
+#' # StMAR model
+#' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
+#' stmar12 <- GSMAR(data=VIX, p=1, M=2, params=params12t, model="StMAR")
+#' quantileResidualPlot(stmar12)
+#'
+#' # Restricted G-StMAR-model
+#' params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20)
+#' gstmar13r <- GSMAR(data=VIX, p=1, M=c(2, 1), params=params13gsr,
+#'  model="G-StMAR", restricted=TRUE)
+#' quantileResidualPlot(gstmar13r)
+#'
+#' # GMAR model as a mixture of AR(2) and AR(1) models
+#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+#' params22c <- c(1.2, 0.85, 0.04, 0.3, 3.3, 0.77, 2.8, 0.77)
+#' gmar22c <- GSMAR(data=VIX, p=2, M=2, params=params22c,
+#'  model="GMAR", constraints=constraints)
+#' quantileResidualPlot(gmar22c)
+#' }
+#' @export
+#'
+quantileResidualPlot <- function(gsmar) {
+  check_gsmar(gsmar)
+  check_data(gsmar)
+  nsimu <- max(nsimu, length(data))
+  if(is.null(gsmar$quantile_residuals)) {
+    qresiduals <- quantileResiduals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
+                                        model=gsmar$model$mode, restricted=gsmar$model$restricted,
+                                        constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
+  } else {
+    qresiduals <- gsmar$quantile_residuals
+  }
+  old_par <- par(no.readonly = TRUE) # Save old settings
+  on.exit(par(old_par)) # Restore the settings before quitting
+  par(mfrow=c(2, 1), mar=c(2.6, 2.6, 2.1, 1.6))
+  plot(qresiduals, type="l", ylab="", xlab="", main="Quantile residuals")
+  abline(h=c(-1.96, 0, 1.96), lty=2, col="red")
+  kd <- density(qresiduals, kernel="gaussian")
+  plot(kd, ylab="", xlab="", main="Gaussian kernel density")
+  xc <- seq(from=min(kd$x), to=max(kd$x), length.out=500)
+  lines(x=xc, y=dnorm(xc), lty=2, col="red")
 }

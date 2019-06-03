@@ -11,9 +11,9 @@ simulateGSMAR(gsmar, nsimu, initvalues, ntimes = 1, drop = TRUE)
 
 \item{nsimu}{a positive integer specifying how many values will be simulated.}
 
-\item{initvalues}{a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last} element will be used as the
-initial value for the first lag, the second last element will be initial value for the second lag, etc. If not specified, initial
-values will be simulated from the process's stationary distribution.}
+\item{initvalues}{a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
+element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
+If not specified, initial values will be simulated from the process's stationary distribution.}
 
 \item{ntimes}{a positive integer specifying how many sets of simulations should be performed.}
 
@@ -33,11 +33,13 @@ If \code{drop==TRUE} and \code{ntimes=1} (default): \code{$sample} and \code{$co
   }
 }
 \description{
-\code{simulateGSMAR} simulates values from the specified GMAR, StMAR or G-StMAR process.
+\code{simulateGSMAR} simulates values from the specified GMAR, StMAR or G-StMAR process. Can be used for
+ forecasting future values of the process.
 }
 \details{
-The argument \code{ntimes} is intended for forecasting. One can easily perform a large number simulations and calculate the
- sample quantiles from the simulated values to obtain prediction intervals (see the examples).
+The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating it's possible future values.
+ One can easily perform a large number simulations and calculate the sample quantiles from the simulated values to obtain prediction
+ intervals (see the forecasting example).
 }
 \examples{
  \donttest{
@@ -50,7 +52,7 @@ The argument \code{ntimes} is intended for forecasting. One can easily perform a
  ts.plot(sim13$mixing_weights, col=rainbow(3), lty=2)
 
  # FORECASTING EXAMPLE:
- # Restricted GMAR model, 1000 sets of simulations and aggregate results
+ # Restricted GMAR model, 10000 sets of simulations with initial values 6 and 6.2.
  params22r <- c(1.4, 1.8, 0.8, -0.1, 0.29, 3.18, 0.84)
  gmar22r <- GSMAR(p=2, M=2, params=params22r, model="GMAR",
   restricted=TRUE)

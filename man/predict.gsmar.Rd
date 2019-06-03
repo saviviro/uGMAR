@@ -92,6 +92,18 @@ stmar32rc <- GSMAR(data=VIX, p=3, M=2, params=params32trc, model="StMAR",
 predict(stmar32rc, n_ahead=3, ci_type="lower")
 }
 }
+\references{
+\itemize{
+   \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising
+           in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
+   \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
+           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
+   \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
+           arXiv:1805.04010 \strong{[econ.EM]}.
+   \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
+           theoretical properties similar to the GMAR and StMAR models.
+ }
+}
 \seealso{
 \code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
  \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}

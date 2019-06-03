@@ -109,5 +109,5 @@ diagnosticPlot(stmar32rc)
  }
 }
 \seealso{
-\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{predict.gsmar}}
+\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}
 }

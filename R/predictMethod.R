@@ -26,7 +26,7 @@
 #'
 #' @return Returns a data frame containing the empirical best predicton and confidence intervals accordingly to \code{ci}.
 #'   Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
-#' @inherit simulateGMAR references
+#' @inherit simulateGSMAR references
 #' @seealso \code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
 #'  \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}
 #' @examples
