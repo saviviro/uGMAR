@@ -17,8 +17,6 @@
 #'            \emph{The Econometrics Journal}, \strong{15}, 358-393.
 #'    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
 #'            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-#'    \item Lutkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
-#'            \emph{Springer}.
 #'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
 #'            arXiv:1805.04010 \strong{[econ.EM]}.
 #'    \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
@@ -67,15 +65,11 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
   # Calculate inverse Gamma_m and calculate the matrix products in mv normal and t-distribution (Galbraith and Galbraith 1974)
   matProd <- matrix(nrow=n_obs - p + 1, ncol = M)
   invG <- array(dim=c(p, p, M))
-  if(p == 1) { # Lutkepohl (2005), s.15-29
+  if(p == 1) { # Galbraith, R., Galbraith, J. (1974)
     for(i1 in 1:M) {
-      A <- pars[p + 1, i1]
-      Sigma <- as.matrix(sigmas[i1])
-      VecGamma <- solve(1 - kronecker(A, A), Sigma)
-      invG[, , i1] <- as.matrix(1/VecGamma)
-      matProd[,i1] <- (Y - mu[i1])*invG[, , i1]*(Y - mu[i1])
-    }
-  } else { # Galbraith, R., Galbraith, J., (1974)
+      invG[, , i1] <- (1 - pars[p + 1, i1]^2)/sigmas[i1]
+      matProd[, i1] <- (Y - mu[i1])*invG[, , i1]*(Y - mu[i1])  }
+  } else {
     for(i1 in 1:M) {
       ARcoefs <- pars[2:(p + 1), i1]
       U <- diag(1, nrow=p, ncol=p)
