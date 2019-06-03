@@ -193,7 +193,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
 #' quantileResidualPlot(gmar22c)
 #' }
 #' @export
-#'
+
 quantileResidualPlot <- function(gsmar) {
   check_gsmar(gsmar)
   check_data(gsmar)

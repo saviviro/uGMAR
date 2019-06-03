@@ -8,8 +8,9 @@
 #' @param g a function specifying the transformation.
 #' @param dim_g output dimension of the transformation \code{g}.
 #' @details This function is used for quantile residuals tests in \code{quantileResidualTests}.
+#' @seealso \code{\link{quantileResidualTests}}
 #' @return Returns size (\code{dim_g}x\code{dim_g}) covariance matrix Omega.
-#' @inherit quantileResiduals_int references
+#' @inherit quantileResidualTests references
 
 getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                      parametrization=c("intercept", "mean"), g, dim_g) {

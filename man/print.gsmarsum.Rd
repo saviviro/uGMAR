@@ -14,8 +14,8 @@
 \item{digits}{number of digits to be printed}
 }
 \description{
-\code{print.gsmarsum} is a print method for object \code{'gsmarsum'} generated
-  by \code{summary.gsmar}. Approximate tandard errors are printed in brackets.
+\code{print.gsmarsum} is a print method for object \code{'gsmarsum'} created
+ with \code{summary.gsmar}. Approximate tandard errors are printed in brackets.
 }
 \examples{
 \donttest{

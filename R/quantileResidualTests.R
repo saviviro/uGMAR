@@ -8,8 +8,8 @@
 #' @inheritParams simulateGSMAR
 #' @param lagsAC a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
 #' @param lagsCH a numeric vector of positive integers specifying the lags for which conditional heteroscedasticy is tested.
-#' @param nsimu a positive integer specifying to how many simulated observations the covariance matrix Omega should be based on.
-#'  If smaller than data size, then omega will be based on the given data.
+#' @param nsimu a positive integer specifying to how many simulated observations the covariance matrix Omega
+#'  (see Kalliovirta (2012)) should be based on. If smaller than data size, then omega will be based on the given data.
 #' @param printRes a logical argument defining whether results should be printed or not.
 #' @details For details about the quantile residual tests see the cited article by \emph{Kalliovirta (2012)}.
 #' @return Returns an object of class \code{'qrtest'} containing the test results in data frames. In the cases
@@ -22,6 +22,7 @@
 #'   the package "gsl".
 #' @inherit quantileResiduals_int references
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}}, \code{\link{predict.gsmar}},
+#'  \code{\link{getOmega}},
 #' @examples
 #' \donttest{
 #' # GMAR model
@@ -40,13 +41,14 @@
 #' # StMAR model
 #' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
 #' stmar12 <- GSMAR(data=VIX, p=1, M=2, params=params12t, model="StMAR")
-#' quantileResidualTests(stmar12, lagsAC=c(1, 2, 5), nsimu=1)
+#' quantileResidualTests(stmar12, lagsAC=c(1, 2, 5), nsimu=1, printRes=FALSE)
 #'
 #' # G-StMAR model
 #' params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
 #' gstmar12 <- GSMAR(data=VIX, p=1, M=c(1, 1), params=params12gs,
 #'  model="G-StMAR")
-#' quantileResidualTests(gstmar12, lagsAC=c(1, 3), lagsCH=1:2, nsimu=1)
+#' quantileResidualTests(gstmar12, lagsAC=c(1, 3), lagsCH=1:2,
+#'  nsimu=1, printRes=FALSE)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
@@ -54,7 +56,7 @@
 #' params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
 #' stmar32rc <- GSMAR(data=VIX, p=3, M=2, params=params32trc, model="StMAR",
 #'  restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' quantileResidualTests(stmar32rc, lagsAC=c(1, 3), nsimu=1)
+#' quantileResidualTests(stmar32rc, lagsAC=c(1, 3), nsimu=1, printRes=FALSE)
 #' }
 #' @export
 

@@ -99,11 +99,12 @@ This function is used for quantile residuals tests in \code{quantileResidualTest
            \emph{The Econometrics Journal}, \strong{15}, 358-393.
    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item Lutkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
-           \emph{Springer}.
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
            arXiv:1805.04010 \strong{[econ.EM]}.
    \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
            theoretical properties similar to GMAR and StMAR models.
  }
+}
+\seealso{
+\code{\link{quantileResidualTests}}
 }

@@ -14,7 +14,7 @@
 \item{digits}{number of decimals to print}
 }
 \description{
-\code{print.gsmarpred} is print method for object generated
+\code{print.gsmarpred} is print method for object created
  by \code{predict.gsmar}.
 }
 \examples{

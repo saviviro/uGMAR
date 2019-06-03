@@ -171,7 +171,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' @title Add data to object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model
 #'
 #' @description \code{add_data} adds or updates data to object of class '\code{gsmar}' that defines a GMAR, StMAR or G-StMAR
-#'  model. Also calculates mixing weights and quantile residuals accordingly.
+#'  model. Also calculates mixing weights, conditional moments and quantile residuals accordingly.
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams loglikelihood_int
@@ -210,7 +210,7 @@ add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, 
 #'  to \code{"mean"} if the currect parametrization is \code{"intercept"}, and vice versa.
 #'
 #' @inheritParams add_data
-#' @details \code{swap_parametrization()} is convenient tool if you have estimated the model in
+#' @details \code{swap_parametrization} is convenient tool if you have estimated the model in
 #'  "intercept"-parametrization, but wish to work with "mean"-parametrization in the future, or vice versa.
 #'  In \code{gsmarkit}, for example the approximate standard errors are only available for
 #'  parametrized parameters.
