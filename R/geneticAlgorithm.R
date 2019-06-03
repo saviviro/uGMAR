@@ -86,12 +86,12 @@
 #'          \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
 #'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
 #'          arXiv:1805.04010 \strong{[econ.EM]}.
+#'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
+#'          \emph{Biometrica} \strong{71}, 403-404.
 #'    \item Patnaik L.M. and Srinivas M. 1994. Adaptive Probabilities of Crossover and Mutation in Genetic Algorithms.
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
 #'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
-#'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
-#'          \emph{Biometrica} \strong{71}, 403-404.
 #'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
 #'          theoretical properties similar to GMAR and StMAR models.
 #'  }
