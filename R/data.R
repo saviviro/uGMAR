@@ -9,6 +9,16 @@
 
 #' CBOE Volatility Index: VIX
 #'
+#' A dataset containing daily CBOE Volatility Index from 1th of January 2014
+#'  to 31th of December 2018.
+#'
+#' @format A numeric vector containing 1258 values.
+#'
+#' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
+"VIX5"
+
+#' CBOE Volatility Index: VIX
+#'
 #' A dataset containing daily CBOE Volatility Index from 1th of January 2009
 #'  to 31th of December 2018.
 #'
