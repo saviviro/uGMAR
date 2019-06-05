@@ -165,7 +165,13 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
               alpha_mt[i2, i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
                 (1 + ((y_t-mu_mt[i2, i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
             }
-            res0[i2, i1] <- integrate(f_mt, lower=-Inf, upper=Y2[i2])$value # Integrate PDF numerically
+            res0[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
+                                     error=function(e) {
+                                       warning("Couldn't numerically integrate all quantile residuals.")
+                                       warning("Here is the error message:")
+                                       warning(e)
+                                       return(NA)
+                                     })
           }
         }
       }
@@ -177,7 +183,13 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
             alpha_mt[i2, i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
               (1 + ((y_t - mu_mt[i2, i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
           }
-          res0[i2, i1] <- integrate(f_mt, lower=-Inf, upper=Y2[i2])$value # Integrate PDF numerically
+          res0[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
+                                   error=function(e) {
+                                     warning("Couldn't numerically integrate all quantile residuals.")
+                                     warning("Here is the error message:")
+                                     warning(e)
+                                     return(NA)
+                                   })
         }
       }
     }
@@ -217,7 +229,13 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
               alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
                 (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
             }
-            resM2[i2, i1] <- integrate(f_mt, lower=-Inf, upper=Y2[i2])$value # Integrate PDF numerically
+            resM2[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
+                                      error=function(e) {
+                                        warning("Couldn't numerically integrate all quantile residuals.")
+                                        warning("Here is the error message:")
+                                        warning(e)
+                                        return(NA)
+                                      })
           }
         }
       }
@@ -229,11 +247,17 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
             alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
               (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
           }
-          resM2[i2, i1] <- integrate(f_mt, lower=-Inf, upper=Y2[i2])$value # Integrate PDF numerically
+          resM2[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
+                                       error=function(e) {
+                                         warning("Couldn't numerically integrate all quantile residuals.")
+                                         warning("Here is the error message:")
+                                         warning(e)
+                                         return(NA)
+                                       })
         }
       }
     }
-    res0 = rowSums(cbind(resM1, resM2))
+    res0 <- rowSums(cbind(resM1, resM2))
   }
   # To prevent problems with numerical approximations
   res0[which(res0 >= 1)] <- 1 - 2e-16

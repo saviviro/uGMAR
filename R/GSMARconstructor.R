@@ -131,7 +131,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                             minval=-(10^(ceiling(log10(length(data))) + 1) - 1)),
                              error=function(e) {
                                warning("Approximate standard errors can't be calculated")
-                               std_errors=rep(NA, npars)
+                               rep(NA, npars)
                              })
     }
   } else {

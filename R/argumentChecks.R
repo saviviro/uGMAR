@@ -305,7 +305,7 @@ checkPM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
     if(length(M) != 2 | !all_pos_ints(M)) {
       stop("For G-StMAR model the argument M should be length 2 a positive integer vector")
     }
-  } else if(!all_pos_ints(M)) {
+  } else if(!all_pos_ints(M) | length(M) != 1) {
       stop("Argument M has to be positive integer")
   }
   if(!all_pos_ints(p)) {

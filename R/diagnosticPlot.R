@@ -197,7 +197,6 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
 quantileResidualPlot <- function(gsmar) {
   check_gsmar(gsmar)
   check_data(gsmar)
-  nsimu <- max(nsimu, length(data))
   if(is.null(gsmar$quantile_residuals)) {
     qresiduals <- quantileResiduals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                         model=gsmar$model$mode, restricted=gsmar$model$restricted,

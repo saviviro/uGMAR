@@ -287,7 +287,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1] > red_criteria[1]) < red_criteria[2]*length(data), logical(1)))) {
     message("At least one of the mixture components in the estimated model seems to be wasted!")
   }
-  if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual!")
+  if(bestfit$convergence == 1) print("Iteration limit was reached when estimating the best fitting individual!")
 
 
   ### Tests, estimates, standard errors, IC ###
@@ -366,10 +366,10 @@ iterate_more <- function(gsmar, maxit=100) {
   }
 
   res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
-  if(res$convergence == 1) message("The maximum number of iterations was reached! Consider iterating more.")
+  if(res$convergence == 1) print("The maximum number of iterations was reached! Consider iterating more.")
 
-  GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par,
+  GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
-        calc_std_errors=TRUE)
+        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE)
 }
