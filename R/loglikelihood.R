@@ -148,7 +148,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       return(minval)
     }
     if(model == "StMAR" | model == "G-StMAR") {
-      if(any(dfs <= 2 + 1e-8 | dfs > 1e+9)) return(minval)
+      if(any(dfs <= 2 + 1e-8 | dfs > 1e+6)) return(minval)
     }
   }
 
