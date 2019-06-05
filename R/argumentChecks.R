@@ -239,6 +239,11 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
   if(model == "StMAR" | model == "G-StMAR") {
     if(any(dfs <= 2)) {
       stop("The degrees of freedom parameters have to be larger than 2")
+    } else if(any(dfs > 1e+6)) {
+      stop("We have set an upper bound of 1e+6 for the degrees of freedom parameters
+           in order ensure numerical stability. This is not, however, restrictive
+           since t distribution with dfs higher than 1 million strongly resembles
+           the Gaussian distribution by its shape.")
     }
   }
 
