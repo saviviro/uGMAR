@@ -5,7 +5,7 @@
 #' @format A numeric vector containing 252 values.
 #'
 #' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
-NULL
+"VIX"
 
 #' CBOE Volatility Index: VIX5
 #'
@@ -15,7 +15,7 @@ NULL
 #' @format A numeric vector containing 1258 values.
 #'
 #' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
-NULL
+"VIX5"
 
 #' CBOE Volatility Index: VIX10
 #'
@@ -25,14 +25,14 @@ NULL
 #' @format A numeric vector containing 2516 values.
 #'
 #' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
-NULL
+"VIX10"
 
-#' CBOE Volatility Index: VIX29
-#'
-#' A dataset containing daily CBOE Volatility Index from 1th of January 1990
-#'  to 31th of December 2018.
-#'
-#' @format A numeric vector containing 7304 values.
-#'
-#' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
-NULL
+#' #' CBOE Volatility Index: VIX29
+#' #'
+#' #' A dataset containing daily CBOE Volatility Index from 1th of January 1990
+#' #'  to 31th of December 2018.
+#' #'
+#' #' @format A numeric vector containing 7304 values.
+#' #'
+#' #' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
+#' "VIX29"
