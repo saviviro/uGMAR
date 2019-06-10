@@ -27,12 +27,12 @@
 #' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
 "VIX10"
 
-#' #' CBOE Volatility Index: VIX29
-#' #'
-#' #' A dataset containing daily CBOE Volatility Index from 1th of January 1990
-#' #'  to 31th of December 2018.
-#' #'
-#' #' @format A numeric vector containing 7304 values.
-#' #'
-#' #' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
-#' "VIX29"
+#' CBOE Volatility Index: VIX29
+#'
+#' A dataset containing daily CBOE Volatility Index from 1th of January 1990
+#'  to 31th of December 2018.
+#'
+#' @format A numeric vector containing 7304 values.
+#'
+#' @source \url{https://fred.stlouisfed.org/series/VIXCLS}
+"VIX29"
