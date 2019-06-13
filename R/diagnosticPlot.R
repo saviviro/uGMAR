@@ -92,6 +92,11 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
   } else {
     qresiduals <- gsmar$quantile_residuals
   }
+  if(anyNA(qresiduals)) {
+    n_na <- sum(is.na(qresiduals))
+    qresiduals <- qresiduals[!is.na(qresiduals)]
+    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, gradient, high dfs)?"))
+  }
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   if(plot_indstats == TRUE) {
@@ -204,6 +209,11 @@ quantileResidualPlot <- function(gsmar) {
                                         constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
   } else {
     qresiduals <- gsmar$quantile_residuals
+  }
+  if(anyNA(qresiduals)) {
+    n_na <- sum(is.na(qresiduals))
+    qresiduals <- qresiduals[!is.na(qresiduals)]
+    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, gradient, high dfs)?"))
   }
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting

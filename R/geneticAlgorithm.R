@@ -362,7 +362,6 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         # Smart mutate the best_ind if there are no redundant regimes or if alternative individual is not found,
         # or changes by random, or if considering G-StMAR model. Regime combining is not considered for G-StMAR
         # model because StMAR-regimes might get mixed with GMAR-regimes.
-        accuracy <- abs(rnorm(length(mutate), mean=15, sd=10)) # Accuracy
         if(Cquals == FALSE | model == "G-StMAR" | length(which_redundant) <= length(which_redundant_alt) | runif(1) > 0.5) {
           ind_to_use <- alt_ind
           rand_to_use <- which_redundant_alt
@@ -404,13 +403,13 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           }
 
           # Which alt_ind regime, i.e. column should be used? Choose the one that with largest distance to avoid dublicating similar regimes
-          reg_to_use <- alt_ind_nonRedRegimes[,which(colMeans(dist_to_regime) == max(colMeans(dist_to_regime)))]
+          reg_to_use <- alt_ind_nonRedRegimes[,which(colMeans(dist_to_regime) == max(colMeans(dist_to_regime)))[1]]
 
           # Combine the regimes to a complete parameter vector
           ind_to_use <- changeRegime(p=p, M=M_orig, params=best_ind, model=model, restricted=restricted, constraints=constraints,
                                      regimeParams=reg_to_use, regime=which_to_change)
 
-          # Shouls some regimes still be random?
+          # Should some regimes still be random?
           rand_to_use <- which_redundant[-which_to_change]
         }
         # Do smart mutations with ind_to_use and rand_to_use

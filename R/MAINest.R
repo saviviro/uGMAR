@@ -11,7 +11,7 @@
 #'  The estimation results may vary from round to round because of multimodality of the log-likelihood function
 #'  and randomness associated with the genetic algorithm.
 #' @param ncores a positive integer specifying the number of cores to be used in the estimation process.
-#'  Default is that the number of available cores is detected with \code{parallel::detectCores()} and all of them are used.
+#'  Default is that the number of available cores is detected with \code{parallel::detectCores} and all of them are used.
 #' @param maxit maximum number of iterations in the variable metric algorithm.
 #' @param printRes should the estimation results be printed?
 #' @param runTests should quantile residuals tests be performed after the estimation?
@@ -167,7 +167,7 @@
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=min(ncalls, parallel::detectCores()),
-                     maxit=100, printRes=TRUE, runTests=FALSE, ...) {
+                     maxit=300, printRes=TRUE, runTests=FALSE, ...) {
   on.exit(closeAllConnections())
   model <- match.arg(model)
   check_model(model)
