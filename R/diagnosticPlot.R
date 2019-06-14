@@ -85,6 +85,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
   check_data(gsmar)
   nsimu <- max(nsimu, length(data))
   data <- gsmar$data
+  n_obs <- ifelse(gsmar$model$conditional, length(data) - gsmar$model$p, length(data))
   if(is.null(gsmar$quantile_residuals)) {
     qresiduals <- quantileResiduals_int(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                         model=gsmar$model$mode, restricted=gsmar$model$restricted,
@@ -95,7 +96,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
   if(anyNA(qresiduals)) {
     n_na <- sum(is.na(qresiduals))
     qresiduals <- qresiduals[!is.na(qresiduals)]
-    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, gradient, high dfs)?"))
+    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
   }
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
@@ -130,7 +131,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
     abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
     segments(x0=1:nlags, y0=rep(0, nlags), x1=1:nlags, y1=vals_to_plot)
     points(1:nlags, vals_to_plot, pch=20, col="blue")
-    abline(h=c(-1.96*length(data)^{-1/2}, 1.96*length(data)^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
+    abline(h=c(-1.96*n_obs^{-1/2}, 1.96*n_obs^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
   }
 
   plot_qr_acf(qr_acf, main="Qres ACF")
@@ -213,7 +214,7 @@ quantileResidualPlot <- function(gsmar) {
   if(anyNA(qresiduals)) {
     n_na <- sum(is.na(qresiduals))
     qresiduals <- qresiduals[!is.na(qresiduals)]
-    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, gradient, high dfs)?"))
+    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
   }
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting

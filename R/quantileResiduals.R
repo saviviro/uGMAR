@@ -168,7 +168,6 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
             res0[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
                                      error=function(e) {
                                        warning("Couldn't numerically integrate all quantile residuals.")
-                                       warning("Here is the error message:")
                                        warning(e)
                                        return(NA)
                                      })
@@ -186,7 +185,6 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
           res0[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
                                    error=function(e) {
                                      warning("Couldn't numerically integrate all quantile residuals.")
-                                     warning("Here is the error message:")
                                      warning(e)
                                      return(NA)
                                    })
@@ -232,7 +230,6 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
             resM2[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
                                       error=function(e) {
                                         warning("Couldn't numerically integrate all quantile residuals.")
-                                        warning("Here is the error message:")
                                         warning(e)
                                         return(NA)
                                       })
@@ -250,7 +247,6 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
           resM2[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
                                        error=function(e) {
                                          warning("Couldn't numerically integrate all quantile residuals.")
-                                         warning("Here is the error message:")
                                          warning(e)
                                          return(NA)
                                        })
