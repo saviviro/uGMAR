@@ -3,7 +3,8 @@
 #' @description \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
 #'  of the given function at the given point using central difference numerical approximation.
 #'  \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
-#'  log-likelihood function at the parameter values of class \code{'gsmar'} object.
+#'  log-likelihood function at the parameter values of class \code{'gsmar'} object. \code{get_soc}
+#'  returns eigen values of the Hessian matrix.
 #'
 #' @inheritParams simulateGSMAR
 #' @param x a numeric vector specifying the point where the gradient or Hessian should be calculated.
@@ -32,6 +33,7 @@
 #'  gmar12 <- GSMAR(VIX, 1, 2, params12)
 #'  get_gradient(gmar12)
 #'  get_hessian(gmar12)
+#'  get_soc(gmar12)
 #' @export
 
 calc_gradient <- function(x, fn, h=6e-06, ...) {
@@ -87,3 +89,8 @@ get_hessian <- function(gsmar, h=6e-06) {
   calc_hessian(x=gsmar$params, fn=foo, h=h)
 }
 
+#' @rdname calc_gradient
+#' @export
+get_soc <- function(gsmar, h=6e-06) {
+  eigen(get_hessian(gsmar, h))$value
+}

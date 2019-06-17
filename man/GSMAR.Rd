@@ -19,7 +19,7 @@ GSMAR(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
 
 \method{residuals}{gsmar}(object, ...)
 
-\method{summary}{gsmar}(object, ...)
+\method{summary}{gsmar}(object, ..., digits = 2)
 
 \method{plot}{gsmar}(x, ...)
 
@@ -107,9 +107,9 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 
 \item{...}{graphical parameters passed to \code{ts.plot}.}
 
-\item{x}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
+\item{digits}{number of digits to be printed (max 20)}
 
-\item{digits}{number of digits to be printed}
+\item{x}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
 
 \item{summary_print}{if set to \code{TRUE} then the print will include approximate
 standard errors, log-likelihood and information criteria values. Supported only for

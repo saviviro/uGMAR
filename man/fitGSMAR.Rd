@@ -8,7 +8,7 @@ fitGSMAR(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, conditional = TRUE,
   parametrization = c("intercept", "mean"), ncalls = round(10 + 9 *
   log(sum(M))), ncores = min(ncalls, parallel::detectCores()),
-  maxit = 100, printRes = TRUE, runTests = FALSE, ...)
+  maxit = 300, printRes = TRUE, runTests = FALSE, ...)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -50,7 +50,7 @@ The estimation results may vary from round to round because of multimodality of 
 and randomness associated with the genetic algorithm.}
 
 \item{ncores}{a positive integer specifying the number of cores to be used in the estimation process.
-Default is that the number of available cores is detected with \code{parallel::detectCores()} and all of them are used.}
+Default is that the number of available cores is detected with \code{parallel::detectCores} and all of them are used.}
 
 \item{maxit}{maximum number of iterations in the variable metric algorithm.}
 
@@ -150,53 +150,52 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 # These are long running examples and use parallel computing
 
 # GMAR model
-fit12 <- fitGSMAR(VIX, 1, 2, runTests=TRUE)
+fit12 <- fitGSMAR(data=logVIX, p=1, M=2, runTests=TRUE)
 fit12
 summary(fit12)
 plot(fit12)
 
 # Restricted GMAR model
-fit12r <- fitGSMAR(VIX, 1, 2, restricted=TRUE,
+fit12r <- fitGSMAR(logVIX, 1, 2, restricted=TRUE,
  parametrization="mean", ncalls=10)
 fit12r
 summary(fit12r)
 
 # Non-mixture version of StMAR model
-fit11t <- fitGSMAR(VIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
+fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
 fit11t
 
-# StMAR model, 30 estimations rounds
-fit12t <- fitGSMAR(VIX, 1, 2, model="StMAR", ncalls=30)
+# StMAR model, 50 estimation rounds
+fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=50)
 fit12t
 
-# Restricted StMAR model (implied by the StMAR(1,2) model)
-fit12tr <- fitGSMAR(VIX, 1, 2, model="StMAR", restricted=TRUE)
-fit12tr
-
 # G-StMAR model with one GMAR type and one StMAR type regime
-fit12gs <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR")
+fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR", ncalls=50)
 fit12gs
 
-# Restricted G-StMAR model (implied by the previous G-StMAR model)
-fit12gsr <- fitGSMAR(VIX, 1, c(1, 1), model="G-StMAR", restricted=TRUE)
+# Restricted G-StMAR model
+fit12gsr <- fitGSMAR(logVIX, 1, c(1, 1), model="G-StMAR", restricted=TRUE)
 fit12gsr
+
+# The following three examples demonstrate how to apply linear constraints
+# to the AR parameters.
 
 # GMAR model that is a mixture of AR(1) and such AR(3) that the
 # second AR coeffiecient is constrained to zero.
 constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
-fit32c <- fitGSMAR(VIX, 3, 2, constraints=constraints)
+fit32c <- fitGSMAR(logVIX, 3, 2, constraints=constraints)
 fit32c
 
 # Such constrained StMAR(3, 1) model that the second order AR coefficient
 # is constrained to zero.
 constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-fit31tc <- fitGSMAR(VIX, 3, 1, model="StMAR", constraints=constraints)
+fit31tc <- fitGSMAR(logVIX, 3, 1, model="StMAR", constraints=constraints)
 fit31tc
 
-# Such StMAR(3,2) model that the AR coefficients are restricted to be
+# Such StMAR(3, 2) model that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
-fit32trc <- fitGSMAR(VIX, 3, 2, model="StMAR", restricted=TRUE,
+fit32trc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
                      constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 fit32trc
 }

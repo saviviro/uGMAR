@@ -5,6 +5,7 @@
 \alias{calc_hessian}
 \alias{get_gradient}
 \alias{get_hessian}
+\alias{get_soc}
 \title{Calculate gradient or Hessian matrix}
 \usage{
 calc_gradient(x, fn, h = 6e-06, ...)
@@ -14,6 +15,8 @@ calc_hessian(x, fn, h = 6e-06, ...)
 get_gradient(gsmar, h = 6e-06)
 
 get_hessian(gsmar, h = 6e-06)
+
+get_soc(gsmar, h = 6e-06)
 }
 \arguments{
 \item{x}{a numeric vector specifying the point where the gradient or Hessian should be calculated.}
@@ -34,7 +37,8 @@ Gradient functions return numerical approximation of the gradient, and Hessian f
 \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
  of the given function at the given point using central difference numerical approximation.
  \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
- log-likelihood function at the parameter values of class \code{'gsmar'} object.
+ log-likelihood function at the parameter values of class \code{'gsmar'} object. \code{get_soc}
+ returns eigen values of the Hessian matrix.
 }
 \details{
 Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether
@@ -61,4 +65,5 @@ Especially the functions \code{get_gradient} or \code{get_hessian} can be used t
  gmar12 <- GSMAR(VIX, 1, 2, params12)
  get_gradient(gmar12)
  get_hessian(gmar12)
+ get_soc(gmar12)
 }
