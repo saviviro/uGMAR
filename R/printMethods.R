@@ -134,14 +134,14 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 
     for(i1 in seq_len(p)) {
       cat(paste0(" + [", format_value(pars[1 + i1, m]), "]Y.", i1))
-      nspaces <- ifelse(i1 == 1, 3, 7)
+      nspaces <- ifelse(i1 == 1, 3, 6)
       add_string(const_spaces=nspaces, pars[1 + i1, m], pars_err[1 + i1, m])
     }
     cat(" + ")
 
     if(regime_type == "GMAR") {
       cat(paste0("[sqrt(", format_value(pars[nrow(pars), m]), ")]eps"))
-      add_string(const_spaces=12, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
+      add_string(const_spaces=11, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
     } else {
       cat("[cond_sd]eps")
     }
