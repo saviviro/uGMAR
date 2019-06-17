@@ -69,9 +69,9 @@ So one will have to work with different kind of parameter vectors depending on w
 ### Applying linear constraints and how it affects the parameter vector
 __uGMAR__ makes it easy to apply linear constraints to the autoregressive parameters of GSMAR models. Considering _non-restricted_ models, each mixture component has its own constraint matrix. __uGMAR__ considers constraints of the form 
 $$\boldsymbol{\phi_{m}}=\boldsymbol{C_{m}\psi_{m}}, \enspace m=1,...,M,$$
-where $\boldsymbol{C_{m}}$ is a known size $(pxq_{m})$ constraint matrix of full column rank and $\boldsymbol{\psi_{m}}$ is a size $(q_{m}x1)$ parameter vector. Observe that this particular specification for linear constraints is not the most general one. However, it keeps the constraint matrices small and simple, and it's convenient for applying the most typical constraints such as contraining some of the AR coefficients to be zero. 
+where $\boldsymbol{C_{m}}$ is a known size $(pxq_{m})$ constraint matrix of full column rank and $\boldsymbol{\psi_{m}}$ is a size $(q_{m}x1)$ parameter vector. Observe that this particular specification for linear constraints is not the most general one. However, it keeps the constraint matrices small and simple, and it's convenient for applying the most typical constraints such as contraining some of the AR coefficients to be zero. For instance, in order to constraint the second AR coefficient of the second regime to zero in a model with `p=2` and `M=2`, the constraint matrix for the first regime is `diag(2)` implying no constraints, while the constraint matrix for the second regime is simply `matrix(1:0)`.  
 
-For illustration, consider the following special case of linear constraints. We obtain a mixture version of the Heterogenious Autoregressive (HAR) model by setting 
+For further illustration, consider the following special case of linear constraints. We obtain a mixture version of the Heterogenious Autoregressive model (see Corsi 2009 for the original version) by setting 
 $$\boldsymbol{C_{m}}=\left[{\begin{array}{ccc}
    \boldsymbol{\iota}_{5} & \frac{1}{5}\boldsymbol{1}_{5} & \frac{1}{22}\boldsymbol{1}_{5} \\
    0_{17} & 0_{17} & \frac{1}{22}\boldsymbol{1}_{17} \\
@@ -139,6 +139,7 @@ For analysing multivariate versions of the model, you are welcome to try the pac
 
 
 ## References
+* Corsi F. 2009. A Simple Approximate Long-Memory Model of Realized Volatility. _Jounal of Financial Econometrics_, __7__, 174-196. 
 * Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series. _Journal of Time Series Analysis_, __36__, 247-266.
 * Kalliovirta L. 2012. Misspecification tests based on quantile residuals. _The Econometrics Journal_, __15__, 358-393.
 * Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution. arXiv:1805.04010 __[econ.EM]__.

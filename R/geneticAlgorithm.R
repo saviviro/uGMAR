@@ -831,7 +831,7 @@ smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
   if(isStationary_int(p=p, M=M, params=ind_stand, restricted=restricted)) {
     return(ind)
   } else {
-    return(params) # Return the best given individual if smart mutation is not stationary
+    return(params) # Return the given individual if smart mutation is not stationary
   }
 }
 
