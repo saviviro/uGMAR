@@ -166,11 +166,9 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
 #'
 #' @title Ploy quantile residual time series and kernel density
 #'
-#' @description \code{quantileResidualsPlot} plots quantile residual time series and Gaussian kernel density.
+#' @description \code{quantileResidualsPlot} plots quantile residual time series and histogram.
 #'
 #' @inheritParams simulateGSMAR
-#' @details The kernel density estimates are calculated with function \code{density} in the package \code{stats}
-#'  using the default settings.
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit quantileResiduals
 #' @seealso \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
@@ -221,8 +219,7 @@ quantileResidualPlot <- function(gsmar) {
   par(mfrow=c(2, 1), mar=c(2.6, 2.6, 2.1, 1.6))
   plot(qresiduals, type="l", ylab="", xlab="", main="Quantile residuals")
   abline(h=c(-1.96, 0, 1.96), lty=2, col="red")
-  kd <- density(qresiduals, kernel="gaussian")
-  plot(kd, ylab="", xlab="", main="Gaussian kernel density")
-  xc <- seq(from=min(kd$x), to=max(kd$x), length.out=500)
+  hs <- hist(qresiduals, breaks="Scott", probability=TRUE, col="skyblue", plot=TRUE)
+  xc <- seq(from=min(hs$breaks), to=max(hs$breaks), length.out=500)
   lines(x=xc, y=dnorm(xc), lty=2, col="red")
 }
