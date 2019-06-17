@@ -313,7 +313,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
                calc_cond_moments=TRUE, calc_std_errors=TRUE)
   ret$all_estimates <- newtonEstimates
   ret$all_logliks <- loks
-  ret$which_converger <- converged
+  ret$which_converged <- converged
   ret$qrtests <- qr_tests
 
   cat("Finished!\n")
