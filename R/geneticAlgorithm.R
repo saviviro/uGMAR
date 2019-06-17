@@ -616,11 +616,11 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
 }
 
 
-#' @title Create somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector
+#' @title Create random GMAR, StMAR or G-StMAR model compatible parameter vector
 #'
-#' @description \code{randomIndividual} creates a somewhat random GMAR, StMAR, G-StMAR model compatible parameter vector.
+#' @description \code{randomIndividual} creates a random GMAR, StMAR, G-StMAR model compatible parameter vector.
 #'
-#' \code{smartIndividual} creates a somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
+#' \code{smartIndividual} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
 #'   Sometimes returns exactly the given parameter vector.
 #'
 #' @inheritParams randomIndividual_int
