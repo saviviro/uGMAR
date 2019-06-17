@@ -95,6 +95,7 @@
 #'    \item There are currently no published references for G-StMAR model, but it's a straightforward generalization with
 #'          theoretical properties similar to GMAR and StMAR models.
 #'  }
+#' @export
 
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),
                   conditional=TRUE, ngen, popsize, smartMu, meanscale, sigmascale, initpop=NULL, regime_force_scale=1,
