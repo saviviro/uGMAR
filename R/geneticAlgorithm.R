@@ -618,14 +618,15 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
 
 #' @title Create random GMAR, StMAR or G-StMAR model compatible parameter vector
 #'
-#' @description \code{randomIndividual} creates a random GMAR, StMAR, G-StMAR model compatible parameter vector.
+#' @description \code{randomIndividual} creates a random GMAR, StMAR, G-StMAR model compatible mean-parametrized parameter vector.
 #'
 #' \code{smartIndividual} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
 #'   Sometimes returns exactly the given parameter vector.
 #'
 #' @inheritParams randomIndividual_int
 #' @inherit randomIndividual_int return references
-#' @details The functions can be used for example to create initial populations for the genetic algorithm.
+#' @details The functions can be used for example to create initial populations for the genetic algorithm. Mean-parametrization
+#'   (instead of intercept terms \eqn{\phi_{m,0}}) is assumed.
 #' @examples
 #' # GMAR model parameter vector
 #' params22 <- randomIndividual(2, 2, meanscale=c(0, 1), sigmascale=1)
