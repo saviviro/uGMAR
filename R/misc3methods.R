@@ -14,11 +14,12 @@ residuals.gsmar <- function(object, ...) object$quantile_residuals
 #' @describeIn GSMAR summary method, standard errors in brackets
 #' @inheritParams logLik.gsmar
 #' @export
-summary.gsmar <- function(object, ...) {
+summary.gsmar <- function(object, ..., digits=2) {
   gsmar <- object
   check_data(gsmar)
   structure(list(gsmar=gsmar,
                  regime_means=get_regime_means(gsmar),
-                 abs_ar_roots=get_ar_roots(gsmar)),
+                 abs_ar_roots=get_ar_roots(gsmar),
+                 digits=digits),
             class="gsmarsum")
 }

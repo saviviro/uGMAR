@@ -15,7 +15,7 @@ format_valuef <- function(digits) {
 
 #' @describeIn GSMAR print method
 #' @inheritParams plot.gsmar
-#' @param digits number of digits to be printed
+#' @param digits number of digits to be printed (max 20)
 #' @param summary_print if set to \code{TRUE} then the print will include approximate
 #'  standard errors, log-likelihood and information criteria values. Supported only for
 #'  models with data.
@@ -178,7 +178,8 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 #' }
 #' @export
 
-print.gsmarsum <- function(x, ..., digits=2) {
+print.gsmarsum <- function(x, ..., digits) {
+  if(missing(digits)) digits <- x$digits
   print.gsmar(x$gsmar, digits=digits, summary_print=TRUE)
 }
 
