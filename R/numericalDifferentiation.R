@@ -63,10 +63,12 @@ calc_hessian <- function(x, fn, h=6e-06, ...) {
 }
 
 
+
 #' @rdname calc_gradient
 #' @export
 get_gradient <- function(gsmar, h=6e-06) {
   check_gsmar(gsmar)
+  warn_dfs(gsmar, warn_about="derivs")
   foo <- function(x) {
     loglikelihood(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=x, model=gsmar$model$model,
                   restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
@@ -80,6 +82,7 @@ get_gradient <- function(gsmar, h=6e-06) {
 #' @export
 get_hessian <- function(gsmar, h=6e-06) {
   check_gsmar(gsmar)
+  warn_dfs(gsmar, warn_about="derivs")
   foo <- function(x) {
     loglikelihood(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=x, model=gsmar$model$model,
                   restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,

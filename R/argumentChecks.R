@@ -241,7 +241,7 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
       stop("The degrees of freedom parameters have to be larger than 2")
     } else if(any(dfs > 1e+6)) {
       stop("We have set an upper bound of 1e+6 for the degrees of freedom parameters
-           in order ensure numerical stability. This is not, however, restrictive
+           in order gain better numerical stability. This is not, however, restrictive
            since t distribution with dfs higher than million strongly resembles
            the Gaussian distribution by its shape.")
     }
@@ -442,3 +442,23 @@ check_data <- function(object) {
   if(is.null(object$data)) stop("The model has to contain data! Data can be added with the function add_data.")
 }
 
+
+
+#' @title Warn about large degrees of freedom paramater values
+#'
+#' @description \code{warn_dfs} warns if the model contains large degrees of freedom paramater values
+#'   possibly indicating unrealible numerical derivatives.
+#'
+#' @inheritParams check_gsmar
+#' @param warn_about warn about inaccurate derivatives or standard errors?
+#' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
+#'   larger than 1000.
+
+warn_dfs <- function(object, warn_about=c("derivs", "errors")) {
+  if(object$model$model %in% c("StMAR", "G-StMAR")) {
+    dfs <- pick_dfs(p=object$model$p, M=object$model$M, params=object$params, model=object$model$model)
+    mystring <- ifelse(warn_about == "derivs", "derivatives", "standard errors")
+    if(any(dfs > 1000)) warning(paste("Numerically approximated", mystring, "may be biased because of numerical error caused by high degrees of freedom parameter value(s).",
+                                      "Consider switching the corresponding regimes to GMAR type using the G-StMAR model."))
+  }
+}
