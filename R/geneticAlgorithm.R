@@ -520,7 +520,7 @@ random_regime <- function(p, meanscale, sigmascale, restricted=FALSE, constraint
 
 random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
   if(forcestat == TRUE) { # Algorithm by Mohanan 1984
-    r_p <- runif(p, min=-0.95, max=0.95) # Random partial autocorrelations
+    r_p <- runif(p, min=-0.90, max=0.90) # Random partial autocorrelations
     ymat <- matrix(0, nrow=p, ncol=p) # Column for each loop
     for(k in 1:p) {
       if(k > 1) {
@@ -548,7 +548,7 @@ random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
 #' @return Returns \code{c(ind, dfs)} with \code{how_many} dfs-elements.
 
 add_dfs <- function(x, how_many) {
-  c(x, 2 + rgamma(how_many, shape=0.7, rate=0.008))
+  c(x, 2 + rgamma(how_many, shape=0.3, rate=0.007))
 }
 
 

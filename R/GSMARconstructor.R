@@ -80,7 +80,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 
   if(missing(calc_qresiduals)) calc_qresiduals <- ifelse(missing(data), FALSE, TRUE)
   if(missing(calc_cond_moments)) calc_cond_moments <- ifelse(missing(data), FALSE, TRUE)
-  if(missing(data)) {
+  if(missing(data) || is.null(data)) {
     if(calc_qresiduals == TRUE) warning("Quantile residuals can't be calculated without data")
     if(calc_cond_moments == TRUE) warning("Conditional moments can't be calculated without data")
     data <- NULL
@@ -229,6 +229,10 @@ add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, 
 
 swap_parametrization <- function(gsmar, calc_std_errors=TRUE) {
   check_gsmar(gsmar)
+  if(is.null(gsmar$data) & calc_std_errors == TRUE) {
+    warning("Can't calculate standard errors without data.")
+    calc_std_errors <- FALSE
+  }
   change_to <- ifelse(gsmar$model$parametrization == "intercept", "mean", "intercept")
   new_params <- change_parametrization(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                        restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
