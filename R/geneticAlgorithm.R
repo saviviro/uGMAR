@@ -362,7 +362,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
         # Smart mutate the best_ind if there are no redundant regimes or if alternative individual is not found,
         # or changes by random, or if considering G-StMAR model. Regime combining is not considered for G-StMAR
-        # model because StMAR regimes with large dfs parameter values might get mixed with GMAR regimes.
+        # model for simplicity because one already has initial estimates from the corresponding StMAR model.
         if(Cquals == FALSE | model == "G-StMAR" | length(which_redundant) <= length(which_redundant_alt) | runif(1) > 0.5) {
           ind_to_use <- alt_ind
           rand_to_use <- which_redundant_alt
