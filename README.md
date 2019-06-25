@@ -1,31 +1,61 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 uGMAR
 =====
 
-The goal of uGMAR is to provide tools to work with Gaussian Mixture Autoregressive (GMAR), Student's t Mixture Autoregressive (StMAR) and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models. G-StMAR is such model that some of its mixture components are similar to the ones that GMAR model uses and some similar to the ones that StMAR model uses. Most importantly uGMAR provides function `fitGSMAR` for two phase maximum likelihood estimation, but it also contains tools for quantile residual based model diagnostics, forecasting and simulations for example. With uGMAR it's easy to apply general linear constraints to the autoregressive parameters or to restrict them to be the same for regimes.
+<!-- badges: start -->
+<!-- badges: end -->
+The goal of uGMAR is to provide tools for analysing Gaussian mixture autoregressive (GMAR), Student's t mixture Autoregressive (StMAR) and Gaussian and Student's t mixture autoregressive (G-StMAR) models. uGMAR provides functions for unconstrained and constrained maximum likelihood estimation of the model parameters, quantile residual based model diagnostics, simulation from the processes, and forecasting.
+
+Installation
+------------
+
+You can install the released version of uGMAR from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("uGMAR")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("saviviro/uGMAR")
+```
 
 Example
 -------
 
-This is a basic example how to estimate a GMAR, StMAR or G-StMAR model to data. The data "VIX", that is used in this example, comes with the package (for details see ?VIX). The estimation process is computationally heavy and uses parallel computing.
+This is a basic example how to estimate a GMAR model to data. For details about the example data "logVIX" see ?logVIX. The estimation process is computationally heavy and takes advantage of parallel computing. After estimating the model, it's by simple examples how to conduct some further analysis.
 
 ``` r
-## Estimate GMAR(1, 2) model to VIX data
-fit12 <- fitGSMAR(data=VIX, p=1, M=2)
-fit12
+## Estimate a GMAR(1, 2) model to logarithmized VIX data
+data(logVIX, package="uGMAR")
+fit <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
+fit
+summary(fit) # Approximate standard errors in brackets
+plot(fit)
 
-## Estimate StMAR(1, 1) model to VIX data
-fit11t <- fitGSMAR(data=VIX, p=1, M=1, model="StMAR")
-fit11t
+get_gradient(fit) # The first order condition
+get_soc(fit) # The second order condition (eigen values of approximated Hessian)
 
-## Estimate G-StMAR(1, 1, 1) model to VIX data
-fit12gs <- fitGSMAR(data=VIX, p=1, M=c(1, 1), model="G-StMAR")
-fit12gs
+## Quantile residual diagnostics
+quantileResidualPlot(fit)
+diagnosticPlot(fit)
+qrt <- quantileResidualTests(fit)
+
+## Simulate a sample path from the estimated process
+sim <- simulateGSMAR(fit, nsimu=10)
+
+## Forecast future values of the process
+predict(fit, n_ahead=10)
 ```
 
 References
 ----------
 
 -   Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series. *Journal of Time Series Analysis*, **36**, 247-266.
--   Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution. arXiv:1805.04010 **\[econ.EM\]**.
--   There are currently no published references for G-StMAR model, but it's a straightforward generalization with theoretical properties similar to GMAR and StMAR models.
+-   Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution. arXiv:1805.04010 **
+    *e**c**o**n*.*E**M*
+    **
+-   There are currently no published references for the G-StMAR model, but it's a straightforward generalization with theoretical properties similar to the GMAR and StMAR models.

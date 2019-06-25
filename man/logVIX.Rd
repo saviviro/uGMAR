@@ -12,7 +12,7 @@
 logVIX
 }
 \description{
-A dataset containing natural logarithm of daily CBOE Volatility Index from 1th of January 2014
-to 31th of December 2018.
+A dataset containing natural logarithm of daily CBOE Volatility Index from 5th of July 2016
+ to 4th of July 2017.
 }
 \keyword{datasets}

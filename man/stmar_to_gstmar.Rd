@@ -4,7 +4,8 @@
 \alias{stmar_to_gstmar}
 \title{Swap the parametrization of object of class 'gsmar' defining a gsmar model}
 \usage{
-stmar_to_gstmar(gsmar, maxdf = 100, estimate, calc_std_errors)
+stmar_to_gstmar(gsmar, maxdf = 100, estimate, calc_std_errors,
+  maxit = 100)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
@@ -17,6 +18,8 @@ parameters as the initial values. By default \code{TRUE} iff the model contains 
 
 \item{calc_std_errors}{set \code{TRUE} if the approximate standard errors should be calculated.
 By default \code{TRUE} iff the model contains data.}
+
+\item{maxit}{the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate == FALSE}.}
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supllied, the returned object
@@ -28,10 +31,18 @@ Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or 
  to \code{"mean"} if the currect parametrization is \code{"intercept"}, and vice versa.
 }
 \details{
-\code{stmar_to_gstmar} FILL IN
+If a StMAR model contains large estimates for the degrees of freedom parameters
+  one should consider switching to the corresponding G-StMAR model that lets the corresponding regimes to be GMAR type.
+  \code{stmar_to_gstmar}  makes it convenient to do this switch.
 }
 \examples{
-FILL in
+\donttest{
+ # These are long running examples and use parallel computing
+ fit13tr <- fitGSMAR(logVIX, 1, 3, model="StMAR", restricted=TRUE)
+ fit13tr
+ fit13gsr <- stmar_to_gstmar(fit13tr)
+ fit13gsr
+}
 }
 \references{
 \itemize{

@@ -74,9 +74,11 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 GMAR type.}
 }
 \value{
-Returns a list with two elements: \code{$params} contains the corresponding G-StMAR model
- parameter vector, and \code{$reg_order} contains the permutation that was applied to the regimes
- (GMAR type components first, and decreasing ordering by mixign weight parameters)
+Returns a list with three elements: \code{$params} contains the corresponding G-StMAR model
+ parameter vector, \code{$reg_order} contains the permutation that was applied to the regimes
+ (GMAR type components first, and decreasing ordering by mixign weight parameters), and
+ \code{$M} a vector of length two containing the number of GMAR type regimes in the first element
+ and the number of StMAR type components in the second.
 }
 \description{
 \code{stmarpars_to_gstmar} transforms a StMAR model parameter vector to a corresponding
@@ -84,5 +86,5 @@ Returns a list with two elements: \code{$params} contains the corresponding G-St
 }
 \examples{
  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)
- stmarpars_to_gstmar(1, 2, params12, maxdf=10)
+ stmarpars_to_gstmar(1, 2, params12, maxdf=100)
 }

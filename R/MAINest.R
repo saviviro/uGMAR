@@ -114,13 +114,13 @@
 #' # These are long running examples and use parallel computing
 #'
 #' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2)
+#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
 #' fit12
 #' summary(fit12)
 #' plot(fit12)
 #'
 #' # Restricted GMAR model
-#' fit12r <- fitGSMAR(logVIX, 1, 2, restricted=TRUE,
+#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE,
 #'  parametrization="mean", ncalls=10)
 #' fit12r
 #' summary(fit12r)

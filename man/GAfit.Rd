@@ -9,7 +9,7 @@ GAfit(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
   parametrization = c("intercept", "mean"), conditional = TRUE, ngen,
   popsize, smartMu, meanscale, sigmascale, initpop = NULL,
   regime_force_scale = 1, red_criteria = c(0.05, 0.01),
-  to_return = c("alt_ind", "best_ind"), minval)
+  to_return = c("alt_ind", "best_ind"), minval, ...)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -121,6 +121,8 @@ might have more wasted regimes?}
 \item{minval}{a real number defining the minimum value of the log-likelihood function that will be considered.
 Values smaller than this will be treated as they were \code{minval} and the corresponding inidividuals will never survive.
 The default is \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}, and one should be very careful if adjusting this.}
+
+\item{...}{Not in use. Exists for a techinal reason only.}
 }
 \value{
 Returns estimated parameter vector described in \code{initpop}.

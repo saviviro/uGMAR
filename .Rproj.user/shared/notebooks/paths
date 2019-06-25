@@ -1,3 +1,4 @@
+//ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/DESCRIPTION="30E8399E"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/R/GSMARconstructor.R="5F080977"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/R/argumentChecks.R="8CAF850C"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/R/data.R="4F0F58B6"
@@ -15,6 +16,8 @@
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/R/simulateGSMAR.R="912181DD"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/R/standardErrors.R="535B3147"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/R/uncondMoments.R="BB125D86"
+//ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/README.Rmd="7A143B55"
+//ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/README.md="A05D2632"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/tests/testthat/test_GAfunctions.R="F8063D53"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/tests/testthat/test_numericalDifferentiation.R="3DBA6154"
 //ad.helsinki.fi/home/s/saviviro/Documents/uGMAR/tests/testthat/test_pickAndChangeParams.R="26A90F5A"
