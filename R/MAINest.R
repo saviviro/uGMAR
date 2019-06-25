@@ -296,7 +296,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1] > red_criteria[1]) < red_criteria[2]*length(data), logical(1)))) {
     message("At least one of the mixture components in the estimated model seems to be wasted!")
   }
-  if(bestfit$convergence == 1) print("Iteration limit was reached when estimating the best fitting individual!")
+  if(bestfit$convergence == 1) cat("Iteration limit was reached when estimating the best fitting individual!\n")
 
 
   ### Tests, estimates, standard errors, IC ###
@@ -350,7 +350,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' \donttest{
 #' # Estimate GMAR model with only 50 generations of genetic algorithm and
 #' # only 1 iteration in variable metric algorithm
-#' fit12 <- fitGSMAR(VIX, 1, 2, maxit=1, ngen=50)
+#' fit12 <- fitGSMAR(logVIX, 1, 2, maxit=1, ngen=50)
 #' fit12
 #'
 #' # Iterate more since iteration limit was reached
