@@ -2,7 +2,7 @@
 % Please edit documentation in R/parameterReforms.R
 \name{removeAllConstraints}
 \alias{removeAllConstraints}
-\title{Transform constrainted and restricted parameter vector into the regular form}
+\title{Transform constraited and restricted parameter vector into the regular form}
 \usage{
 removeAllConstraints(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL)
@@ -73,9 +73,9 @@ alway \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Returns such parameter vector corresponding to the input vector that is the form describted in \code{params}
+Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 for non-restricted and non-constrained models.
 }
 \description{
-\code{removeAllConstraints} transforms constrainted and restricted parameter vector into the regular form.
+\code{removeAllConstraints} transforms constraited and restricted parameter vector into the regular form.
 }

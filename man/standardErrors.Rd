@@ -75,7 +75,7 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 alway \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{conditional}{a logical argument specifying whether the conditional or exact log-likehood function should be used.}
+\item{conditional}{a logical argument specifying whether the conditional or exact log-likelihood function should be used.}
 
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}

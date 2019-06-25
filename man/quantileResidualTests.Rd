@@ -26,7 +26,7 @@ Currectly not used in \code{print.qrtest}}
 
 \item{lagsAC}{a numeric vector of positive integers specifying the lags for which autocorrelation is tested.}
 
-\item{lagsCH}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticy is tested.}
+\item{lagsCH}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity is tested.}
 
 \item{nsimu}{a positive integer specifying to how many simulated observations the covariance matrix Omega
 (see Kalliovirta (2012)) should be based on. If smaller than data size, then omega will be based on the given data.}
@@ -41,7 +41,7 @@ Returns an object of class \code{'qrtest'} containing the test results in data f
 }
 \description{
 \code{quantileResidualTests} performs quantile residual tests for GMAR, StMAR or G-StMAR model,
- testing normality, autocorrelation and conditional heteroscedasticy.
+ testing normality, autocorrelation and conditional heteroscedasticity.
 }
 \details{
 For details about the quantile residual tests see the cited article by \emph{Kalliovirta (2012)}.

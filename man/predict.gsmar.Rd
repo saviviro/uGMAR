@@ -29,10 +29,10 @@ won't be calculated if conditional mean is used.}
 \item{nt}{a positive integer specifying the number of observations to be plotted
 along with the prediction. Default is \code{round(length(data)*0.2)}.}
 
-\item{plotRes}{a logical argument defining wether the forecast should be plotted or not.}
+\item{plotRes}{a logical argument defining whether the forecast should be plotted or not.}
 }
 \value{
-Returns a data frame containing the empirical best predicton and confidence intervals accordingly to \code{ci}.
+Returns a data frame containing the empirical best prediction and confidence intervals accordingly to \code{ci}.
   Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
 }
 \description{

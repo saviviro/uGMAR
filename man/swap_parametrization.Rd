@@ -12,13 +12,13 @@ swap_parametrization(gsmar, calc_std_errors = TRUE)
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supllied, the returned object
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object
   contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
 }
 \description{
 \code{swap_parametrization} swaps the parametrization of object of class '\code{gsmar}'
- to \code{"mean"} if the currect parametrization is \code{"intercept"}, and vice versa.
+ to \code{"mean"} if the current parametrization is \code{"intercept"}, and vice versa.
 }
 \details{
 \code{swap_parametrization} is convenient tool if you have estimated the model in

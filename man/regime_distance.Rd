@@ -9,7 +9,7 @@ regime_distance(regime_pars1, regime_pars2)
 \arguments{
 \item{regime_pars1}{a numeric vector representing a regime.}
 
-\item{regime_pars2}{a numeric vector representing ananother regime, same length as \code{regime_pars1}}
+\item{regime_pars2}{a numeric vector representing another regime, same length as \code{regime_pars1}}
 }
 \value{
 Returns "distance" between \code{regime_pars1} and \code{regime_pars2}. Values are scaled

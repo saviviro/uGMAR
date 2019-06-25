@@ -35,5 +35,5 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 Doesn't return anything, but throws an informative error if finds out that something is wrong.
 }
 \description{
-\code{checkConstraintMat} ckecks for some parts that the constraint matrices are correctly set.
+\code{checkConstraintMat} checks for some parts that the constraint matrices are correctly set.
 }

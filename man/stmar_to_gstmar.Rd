@@ -22,7 +22,7 @@ By default \code{TRUE} iff the model contains data.}
 \item{maxit}{the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate == FALSE}.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supllied, the returned object
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object
   contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
 }

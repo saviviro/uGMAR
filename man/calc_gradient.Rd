@@ -23,7 +23,7 @@ get_soc(gsmar, h = 6e-06)
 
 \item{fn}{a function that takes in argument \code{x} as the \strong{first} argument.}
 
-\item{h}{difference used to approximate the derivates.}
+\item{h}{difference used to approximate the derivatives.}
 
 \item{...}{other arguments passed to \code{fn}}
 
@@ -38,7 +38,7 @@ Gradient functions return numerical approximation of the gradient, and Hessian f
  of the given function at the given point using central difference numerical approximation.
  \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
  log-likelihood function at the parameter values of class \code{'gsmar'} object. \code{get_soc}
- returns eigen values of the Hessian matrix.
+ returns eigenvalues of the Hessian matrix.
 }
 \details{
 Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether

@@ -44,7 +44,7 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
-\item{conditional}{a logical argument specifying whether the conditional or exact log-likehood function should be used.}
+\item{conditional}{a logical argument specifying whether the conditional or exact log-likelihood function should be used.}
 
 \item{ngen}{a positive integer specifying the number of generations to be ran through in the genetic algorithm.
 Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
@@ -119,10 +119,10 @@ One should be careful when adjusting this argument.}
 might have more wasted regimes?}
 
 \item{minval}{a real number defining the minimum value of the log-likelihood function that will be considered.
-Values smaller than this will be treated as they were \code{minval} and the corresponding inidividuals will never survive.
+Values smaller than this will be treated as they were \code{minval} and the corresponding individuals will never survive.
 The default is \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}, and one should be very careful if adjusting this.}
 
-\item{...}{Not in use. Exists for a techinal reason only.}
+\item{...}{Not in use. Exists for a technical reason only.}
 }
 \value{
 Returns estimated parameter vector described in \code{initpop}.
