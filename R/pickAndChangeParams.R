@@ -7,26 +7,28 @@
 #' @inheritParams loglikelihood_int
 #' @param maxdf regimes with degrees of freedom parameter value large than this will be turned into
 #'  GMAR type.
-#' @return Returns a list with two elements: \code{$params} contains the corresponding G-StMAR model
-#'  parameter vector, and \code{$reg_order} contains the permutation that was applied to the regimes
-#'  (GMAR type components first, and decreasing ordering by mixign weight parameters)
+#' @return Returns a list with three elements: \code{$params} contains the corresponding G-StMAR model
+#'  parameter vector, \code{$reg_order} contains the permutation that was applied to the regimes
+#'  (GMAR type components first, and decreasing ordering by mixign weight parameters), and
+#'  \code{$M} a vector of length two containing the number of GMAR type regimes in the first element
+#'  and the number of StMAR type components in the second.
 #' @examples
 #'  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)
-#'  stmarpars_to_gstmar(1, 2, params12)
+#'  stmarpars_to_gstmar(1, 2, params12, maxdf=100)
 #' @export
 
 stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL, maxdf=100) {
   checkPM(p, M, model="StMAR")
-  if(M == 1) stop("The G-StMAR model must have at least two regimes!")
   check_params_length(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
   checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
 
   dfs <- pick_dfs(p, M, params, model="StMAR")
   if(!any(dfs > maxdf)) {
-    warning("No degrees of freedom parameter is larger than 'maxdf'.")
-    return(list(params=params, reg_order=1:M))
+    warning("No degrees of freedom parameter is larger than 'maxdf'. The original model is returned.")
+    return(list(params=params, reg_order=1:M, M=c(0, M)))
   }
   regs_to_change <- which(dfs > maxdf)
+  if(length(regs_to_change) == M) message("All regimes are changed to GMAR type. Thus the result is a GMAR model and not a G-StMAR model.")
   alphas <- pick_alphas(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
   all_regs <- lapply(1:M, function(i1) {
     reg <- extractRegime(p, M, params, model="StMAR", restricted=restricted,
@@ -46,10 +48,13 @@ stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL
                   params[(M + 1):(M + q)],
                   tmp_pars[seq(from=2, to=2*M, by=2)])
   }
-  pars <- c(tmp_pars,
-            alphas[reg_order][-M],
-            dfs[-regs_to_change][order(reg_order[(length(regs_to_change) + 1):M], decreasing=FALSE)])
-  return(list(params=pars, reg_order=reg_order))
+  if(length(regs_to_change) == M) {
+    new_dfs <- numeric(0)
+  } else {
+    new_dfs <- dfs[-regs_to_change][order(reg_order[(length(regs_to_change) + 1):M], decreasing=FALSE)]
+  }
+  pars <- c(tmp_pars, alphas[reg_order][-M], new_dfs)
+  return(list(params=pars, reg_order=reg_order, M=c(length(regs_to_change), M - length(regs_to_change))))
 }
 
 

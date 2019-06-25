@@ -20,10 +20,10 @@ Returns an object of class \code{'gsmar'} defining the estimated model. Can be u
  estimation of GMAR, StMAR or G-StMAR model (object of class \code{'gsmarar'}) which already has preliminary estimates.
 }
 \details{
-The main purpose of \code{iterate_more()} is to provide a simple and convenient tool to finalize
+The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
   the estimation when the maximum number of iterations is reached when estimating a model with the
-  main estimation function \code{fitGSMAR()}. It's just a simple wrapper around function \code{optim()}
-  from the package \code{stats} and \code{GSMAR()} from the package \code{uGMAR}.
+  main estimation function \code{fitGSMAR}. It's just a simple wrapper around function \code{optim}
+  from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
 }
 \examples{
 \donttest{
@@ -48,5 +48,5 @@ fit12
  }
 }
 \seealso{
-\code{fitGSMAR()}, \code{GSMAR()}, \code{optim()}
+\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
 }

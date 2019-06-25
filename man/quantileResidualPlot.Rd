@@ -13,11 +13,7 @@ quantileResidualPlot(gsmar)
 Only plots to a graphical device and doesn't return anything.
 }
 \description{
-\code{quantileResidualsPlot} plots quantile residual time series and Gaussian kernel density.
-}
-\details{
-The kernel density estimates are calculated with function \code{density} in the package \code{stats}
- using the default settings.
+\code{quantileResidualsPlot} plots quantile residual time series and histogram.
 }
 \section{Suggested packages}{
 

@@ -3,7 +3,7 @@
 \name{randomIndividual}
 \alias{randomIndividual}
 \alias{smartIndividual}
-\title{Create somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector}
+\title{Create random GMAR, StMAR or G-StMAR model compatible parameter vector}
 \usage{
 randomIndividual(p, M, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, meanscale, sigmascale,
@@ -97,13 +97,14 @@ using \code{smartIndividual}. Does not affect on mixing weight parameters. Defau
 Returns estimated parameter vector described in \code{initpop}.
 }
 \description{
-\code{randomIndividual} creates a somewhat random GMAR, StMAR, G-StMAR model compatible parameter vector.
+\code{randomIndividual} creates a random GMAR, StMAR, G-StMAR model compatible mean-parametrized parameter vector.
 
-\code{smartIndividual} creates a somewhat random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
+\code{smartIndividual} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
   Sometimes returns exactly the given parameter vector.
 }
 \details{
-The functions can be used for example to create initial populations for the genetic algorithm.
+The functions can be used for example to create initial populations for the genetic algorithm. Mean-parametrization
+  (instead of intercept terms \eqn{\phi_{m,0}}) is assumed.
 }
 \examples{
 # GMAR model parameter vector

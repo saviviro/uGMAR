@@ -48,5 +48,5 @@ gmar13
 }
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{get_gradient}},
- \code{\link{get_regime_means}}
+ \code{\link{get_regime_means}}, \code{\link{swap_parametrization}}, \code{\link{stmar_to_gstmar}}
 }

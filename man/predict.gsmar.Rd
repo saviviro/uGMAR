@@ -4,8 +4,8 @@
 \alias{predict.gsmar}
 \title{Forecast GMAR, StMAR or G-StMAR process}
 \usage{
-\method{predict}{gsmar}(object, ..., n_ahead, nsimu = 5000,
-  ci = c(0.95, 0.8), pred_type = c("mean", "median", "cond_mean"),
+\method{predict}{gsmar}(object, ..., n_ahead, nsimu = 10000,
+  ci = c(0.95, 0.8), pred_type = c("median", "mean", "cond_mean"),
   ci_type = c("two-sided", "upper", "lower", "none"), nt,
   plotRes = TRUE)
 }

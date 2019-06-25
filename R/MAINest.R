@@ -86,9 +86,9 @@
 #'  For faster evaluation of the quantile residuals of StMAR and G-StMAR models, install the suggested package "gsl".
 #'  Note that for large StMAR and G-StMAR models with large data the evaluations of the quantile residual tests may take
 #'  significantly long time without the package "gsl".
-#' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{swap_parametrization}},
-#'  \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}}, \code{\link{diagnosticPlot}},
-#'  , \code{\link{quantileResidualTests}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
+#' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
+#'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
+#'   \code{\link{diagnosticPlot}}, \code{\link{quantileResidualTests}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
 #' @references
 #'  \itemize{
 #'    \item Dorsey R. E. and Mayer W. J. 1995. Genetic algorithms for estimation problems with multiple optima,
@@ -114,7 +114,7 @@
 #' # These are long running examples and use parallel computing
 #'
 #' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, runTests=TRUE)
+#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2)
 #' fit12
 #' summary(fit12)
 #' plot(fit12)
@@ -179,8 +179,18 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   if(!is.null(constraints)) checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
   d <- nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints)
   dot_params <- list(...)
-  if(!is.null(dot_params$nCalls)) stop("Argument 'nCalls' changed to 'ncalls' for consistency.")
-  if(!is.null(dot_params$nCores)) stop("Argument 'nCores' changed to 'ncores' for consistency.")
+
+  if(!is.null(dot_params$nCalls)) {
+    ncalls <- dot_params$nCalls
+    message("The argument 'nCalls' has been changed to 'ncalls' for consistency.")
+  }
+  if(!is.null(dot_params$nCores)) {
+    ncores <- dot_params$nCores
+    message("The argument 'nCores' has been changed to 'ncores' for consistency.")
+  }
+  extra_args <- names(dot_params)[!names(dot_params) %in% names(formals(GAfit))]
+  if(length(extra_args) > 0) message(paste0("The following arguments are passed to the genetic algorithm but are unused: ", toString(extra_args), "."))
+
   minval <- ifelse(is.null(dot_params$minval), -(10^(ceiling(log10(length(data))) + 1) - 1), dot_params$minval)
   red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
 
@@ -328,13 +338,13 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams fitGSMAR
-#' @details The main purpose of \code{iterate_more()} is to provide a simple and convenient tool to finalize
+#' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
 #'   the estimation when the maximum number of iterations is reached when estimating a model with the
-#'   main estimation function \code{fitGSMAR()}. It's just a simple wrapper around function \code{optim()}
-#'   from the package \code{stats} and \code{GSMAR()} from the package \code{uGMAR}.
+#'   main estimation function \code{fitGSMAR}. It's just a simple wrapper around function \code{optim}
+#'   from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
 #'   to work with other functions provided in \code{uGMAR}.
-#' @seealso \code{fitGSMAR()}, \code{GSMAR()}, \code{optim()}
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
 #' @inherit GSMAR references
 #' @examples
 #' \donttest{
