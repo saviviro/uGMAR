@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1561486796113.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1516151442",
+    "id" : "EBE33BB7",
+    "lastKnownWriteTime" : 1561486821,
+    "last_content_update" : 1561486821157,
+    "path" : "~/Documents/uGMAR/R/quantileResidualTests.R",
+    "project_path" : "R/quantileResidualTests.R",
+    "properties" : {
+        "cursorPosition" : "21,23",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

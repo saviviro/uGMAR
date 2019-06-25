@@ -3,11 +3,11 @@
 #' @title Quantile residual tests for GMAR, StMAR or G-StMAR model
 #'
 #' @description \code{quantileResidualTests} performs quantile residual tests for GMAR, StMAR or G-StMAR model,
-#'  testing normality, autocorrelation and conditional heteroscedasticity.
+#'  testing normality, autocorrelation and conditional heteroscedasticy.
 #'
 #' @inheritParams simulateGSMAR
 #' @param lagsAC a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
-#' @param lagsCH a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity is tested.
+#' @param lagsCH a numeric vector of positive integers specifying the lags for which conditional heteroscedasticy is tested.
 #' @param nsimu a positive integer specifying to how many simulated observations the covariance matrix Omega
 #'  (see Kalliovirta (2012)) should be based on. If smaller than data size, then omega will be based on the given data.
 #' @param printRes a logical argument defining whether results should be printed or not.

@@ -1,24 +1,24 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1561482720131.000,
+    "created" : 1561486516181.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
     "hash" : "0",
-    "id" : "A0A66879",
-    "lastKnownWriteTime" : 1561487044,
-    "last_content_update" : 1561487044343,
-    "path" : "~/Documents/uGMAR/R/GSMARconstructor.R",
-    "project_path" : "R/GSMARconstructor.R",
+    "id" : "EB0FAED4",
+    "lastKnownWriteTime" : 1561486658,
+    "last_content_update" : 1561486658520,
+    "path" : "~/Documents/uGMAR/R/numericalDifferentiation.R",
+    "project_path" : "R/numericalDifferentiation.R",
     "properties" : {
-        "cursorPosition" : "10,121",
+        "cursorPosition" : "6,17",
         "scrollLine" : "0"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 3,
+    "relative_order" : 8,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

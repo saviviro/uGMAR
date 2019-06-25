@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1561486977273.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4355BA6C",
+    "lastKnownWriteTime" : 1561487165,
+    "last_content_update" : 1561487165938,
+    "path" : "~/Documents/uGMAR/R/predictMethod.R",
+    "project_path" : "R/predictMethod.R",
+    "properties" : {
+        "cursorPosition" : "18,48",
+        "scrollLine" : "5"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 13,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

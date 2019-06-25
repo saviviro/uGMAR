@@ -261,7 +261,7 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 
 #' @title Check the constraint matrices
 #'
-#' @description \code{checkConstraintMat} ckecks for some parts that the constraint matrices are correctly set.
+#' @description \code{checkConstraintMat} checks for some parts that the constraint matrices are correctly set.
 #' @inheritParams loglikelihood_int
 #' @return Doesn't return anything, but throws an informative error if finds out that something is wrong.
 

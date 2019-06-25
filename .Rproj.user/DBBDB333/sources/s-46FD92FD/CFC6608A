@@ -1,19 +1,19 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1561482802988.000,
+    "created" : 1561486167693.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
     "hash" : "0",
-    "id" : "FEBF653F",
-    "lastKnownWriteTime" : 1561486370,
-    "last_content_update" : 1561486370986,
-    "path" : "~/Documents/uGMAR/R/argumentChecks.R",
-    "project_path" : "R/argumentChecks.R",
+    "id" : "CFC6608A",
+    "lastKnownWriteTime" : 1561482454,
+    "last_content_update" : 1561482454,
+    "path" : "~/Documents/uGMAR/R/pickAndChangeParams.R",
+    "project_path" : "R/pickAndChangeParams.R",
     "properties" : {
-        "cursorPosition" : "263,47",
-        "scrollLine" : "251"
+        "cursorPosition" : "75,10",
+        "scrollLine" : "3"
     },
     "read_only" : false,
     "read_only_alternatives" : [

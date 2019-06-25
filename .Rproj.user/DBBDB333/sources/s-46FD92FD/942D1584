@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1561486438059.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "942D1584",
+    "lastKnownWriteTime" : 1561487083,
+    "last_content_update" : 1561487083994,
+    "path" : "~/Documents/uGMAR/R/printMethods.R",
+    "project_path" : "R/printMethods.R",
+    "properties" : {
+        "cursorPosition" : "165,44",
+        "scrollLine" : "153"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
