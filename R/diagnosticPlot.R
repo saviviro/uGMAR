@@ -34,16 +34,13 @@
 #' @examples
 #' \donttest{
 #' # GMAR model
-#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-#' gmar13 <- GSMAR(data=VIX, p=1, M=3, params=params13, model="GMAR")
-#' diagnosticPlot(gmar13)
+#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
+#' diagnosticPlot(fit12)
 #'
 #' # Restricted GMAR model: plot also the individual statistics with
 #' # their approximate critical bounds using the given data
-#' params12r <- c(1.4, 1.8, 0.88, 0.29, 3.18, 0.84)
-#' gmar12r <- GSMAR(data=VIX, p=1, M=2, params=params12r, model="GMAR",
-#'  restricted=TRUE)
-#' diagnosticPlot(gmar12r, nlags=10, nsimu=1, plot_indstats=TRUE)
+#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
+#' diagnosticPlot(fit12r, nlags=10, nsimu=1, plot_indstats=TRUE)
 #'
 #' # StMAR model
 #' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
@@ -146,7 +143,9 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
       inds_normalized <- res$indStat/res$stdError
       plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags + 0.1), ylim=c(-3, 3), xlab="", ylab="",
            main=ifelse(which_ones == "ac_res", "Autocovariance statistics", "Cond. h.sked. statistics"))
+      abline(h=c(-3:3), col=rgb(0.1, 0.1, 0.1, 0.2))
       abline(h=0, lty=1)
+      abline(v=seq(0, nlags, by=5), col=rgb(0.1, 0.1, 0.1, 0.2))
       abline(h=1.96, col=rgb(0, 0, 1, 0.8), lty=2)
       abline(h=-1.96, col=rgb(0, 0, 1, 0.8), lty=2)
       segments(x0=1:nlags, y0=rep(0, nlags), x1=1:nlags, y1=inds_normalized)
