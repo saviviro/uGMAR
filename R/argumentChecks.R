@@ -450,15 +450,25 @@ check_data <- function(object) {
 #'   possibly indicating unrealible numerical derivatives.
 #'
 #' @inheritParams check_gsmar
+#' @inheritParams loglikelihood_int
 #' @param warn_about warn about inaccurate derivatives or standard errors?
+#' @detail Either provide a class 'gsmar' object or specify the model by hand.
 #' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
 #'   larger than 1000.
 
-warn_dfs <- function(object, warn_about=c("derivs", "errors")) {
-  if(object$model$model %in% c("StMAR", "G-StMAR")) {
-    pars <- removeAllConstraints(p=object$model$p, M=object$model$M, params=object$params, model=object$model$model,
-                                 restricted=object$model$restricted, constraints=object$model$constraints)
-    dfs <- pick_dfs(p=object$model$p, M=object$model$M, params=pars, model=object$model$model)
+warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, warn_about=c("derivs", "errors")) {
+
+  if(!missing(object)) {
+    p <- object$model$p
+    M <- object$model$M
+    params <- object$params
+    model <- object$model$model
+    restricted <- object$model$restricted
+    constraints <- object$model$constraints
+  }
+  if(model %in% c("StMAR", "G-StMAR")) {
+    pars <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+    dfs <- pick_dfs(p=p, M=M, params=pars, model=model)
     mystring <- ifelse(warn_about == "derivs", "derivatives", "standard errors")
     if(any(dfs > 1000)) warning(paste("Numerically approximated", mystring, "may be biased because of numerical error caused by very degrees of freedom parameter values.",
                                       "Consider switching to G-StMAR model by setting the corresponding regimes to GMAR type with the function 'stmar_to_gstmar'."))

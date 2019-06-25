@@ -28,13 +28,13 @@ Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or 
 }
 \examples{
 # GMAR model with intercept parametrization
-params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-gmar13 <- GSMAR(data=VIX, p=1, M=3, params=params13, model="GMAR")
-gmar13
+params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
+gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR")
+gmar12
 
 # Swap to mean parametrization
-gmar13 <- swap_parametrization(gmar13)
-gmar13
+gmar12 <- swap_parametrization(gmar12)
+gmar12
 }
 \references{
 \itemize{

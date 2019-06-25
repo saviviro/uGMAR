@@ -63,7 +63,6 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=quantile,
   probs=c(0.025, 0.975)) # mix.weight 95\% intervals
 
-
  # G-StMAR model, with initial values
  params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
  gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
@@ -72,17 +71,6 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
  ts.plot(sim12gs$sample)
  ts.plot(sim12gs$component)
  ts.plot(sim12gs$mixing_weights, col=rainbow(3), lty=2)
-
- # Such StMAR(3,2) that the AR coefficients are restricted to be
- # the same for both regimes and that the second AR coefficients are
- # constrained to zero.
- params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
- stmar32rc <- GSMAR(data=VIX, p=3, M=2, params=params32trc, model="StMAR",
-  restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
- sim32trc <- simulateGSMAR(stmar32rc, nsimu=500)
- ts.plot(sim32trc$sample)
- ts.plot(sim32trc$component)
- ts.plot(sim32trc$mixing_weights, col=rainbow(3), lty=2)
 
  # Mixture version of Heterogenuous Autoregressive (HAR) model (without data)
  paramsHAR <- c(1, 0.1, 0.2, 0.3, 1, 1, 0.15, 0.25, 0.35, 1, 0.55)

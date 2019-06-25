@@ -165,12 +165,12 @@ summary(fit12r)
 fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
 fit11t
 
-# StMAR model, 50 estimation rounds
-fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=50)
+# StMAR model
+fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR")
 fit12t
 
 # G-StMAR model with one GMAR type and one StMAR type regime
-fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR", ncalls=50)
+fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
 fit12gs
 
 # Restricted G-StMAR model

@@ -25,9 +25,9 @@ This method is used plot forecasts of gsmar processes
 \examples{
  \donttest{
  # GMAR-model
- params12 <- c(1.12321, 0.90557, 0.29288, 4.53131,
-               0.70309, 3.21154, 0.83888)
- gmar12 <- GSMAR(VIX, 1, 2, params12)
+ params12 <- c(0.18281409, 0.92657275, 0.00214552,
+  0.85725129, 0.68210294, 0.01900299, 0.88342018)
+ gmar12 <- GSMAR(logVIX, 1, 2, params12)
  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE)
  plot(pred, nt=50)
  }

@@ -125,7 +125,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
       warning("Approximate standard errors can't be calculated without data")
       std_errors <- rep(NA, npars)
     } else {
-      warn_dfs(gsmar, warn_about="error")
+      warn_dfs(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints, warn_about="errors")
       std_errors <- tryCatch(standardErrors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                                             constraints=constraints, parametrization=parametrization, conditional=conditional,
                                             minval=-(10^(ceiling(log10(length(data))) + 1) - 1)),

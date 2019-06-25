@@ -99,45 +99,25 @@ Note that the first p observations are taken as the initial values so the condit
 }
 \examples{
 # GMAR model
-params12 <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8)
-rcm12 <- condMoments(VIX, 1, 2, params12, to_return="regime_cmeans")
-rcv12 <- condMoments(VIX, 1, 2, params12, to_return="regime_cvars")
-tcm12 <- condMoments(VIX, 1, 2, params12, to_return="total_cmeans")
-tcv12 <- condMoments(VIX, 1, 2, params12, to_return="total_cvars")
+params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
+rcm12 <- condMoments(logVIX, 1, 2, params12, to_return="regime_cmeans")
+rcv12 <- condMoments(logVIX, 1, 2, params12, to_return="regime_cvars")
+tcm12 <- condMoments(logVIX, 1, 2, params12, to_return="total_cmeans")
+tcv12 <- condMoments(logVIX, 1, 2, params12, to_return="total_cvars")
 
 # StMAR model
-params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8)
-rcm12t <- condMoments(VIX, 1, 2, params12t, model="StMAR",
+params12t <- c(0.17,  0.93, 0.01, 4.87, -0.90, 0.01, 0.98, 4.22, 1000)
+rcm12t <- condMoments(logVIX, 1, 2, params12t, model="StMAR",
  to_return="regime_cmeans")
-rcv12t <- condMoments(VIX, 1, 2, params12t, model="StMAR",
+rcv12t <- condMoments(logVIX, 1, 2, params12t, model="StMAR",
  to_return="regime_cvars")
 
 # G-StMAR model
-params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
-rcv12gs <- condMoments(VIX, 1, c(1,1), params12gs, model="G-StMAR",
+params12gs <- c(0.86, 0.68, 0.02, 0.18, 0.93, 0.01, 0.11, 44)
+rcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
  to_return="regime_cvars")
-tcv12gs <- condMoments(VIX, 1, c(1,1), params12gs, model="G-StMAR",
+tcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
  to_return="total_cvars")
-
-# Restricted G-StMAR model
-params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20)
-tcm13gsr <- condMoments(VIX, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE,
- to_return="total_cmeans")
-
-# GMAR model as a mixture of AR(2) and AR(1) models
-constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-params22c <- c(1.2, 0.8, 0.1, 0.3, 3.3, 0.8, 2.8, 0.8)
-rcm22c <- condMoments(VIX, 2, 2, params22c, constraints=constraints,
- to_return="regime_cmeans")
-
-# Such StMAR(3,2) that the AR coefficients are restricted to be
-# the same for both regimes and that the second AR coefficients are
-# constrained to zero.
-params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
-rcv32trc <- condMoments(VIX, 3, 2, params32trc, model="StMAR",
-                         restricted=TRUE,
-                         constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-                         to_return="regime_cvars")
 }
 \references{
 \itemize{
