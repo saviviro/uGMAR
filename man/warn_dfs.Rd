@@ -85,3 +85,6 @@ Doesn't return anything but throws a warning if any degrees of freedom parameter
 \code{warn_dfs} warns if the model contains large degrees of freedom paramater values
   possibly indicating unrealible numerical derivatives.
 }
+\details{
+Either provide a class 'gsmar' object or specify the model by hand.
+}

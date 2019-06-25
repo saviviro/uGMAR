@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1561482720131.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A0A66879",
+    "lastKnownWriteTime" : 1561483842,
+    "last_content_update" : 1561483842362,
+    "path" : "~/Documents/uGMAR/R/GSMARconstructor.R",
+    "project_path" : "R/GSMARconstructor.R",
+    "properties" : {
+        "cursorPosition" : "266,0",
+        "scrollLine" : "252"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
