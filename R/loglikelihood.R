@@ -355,39 +355,36 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #'  \code{\link{mixingWeights}}, \code{\link{calc_gradient}}
 #' @examples
 #' # GMAR model
-#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-#' loglikelihood(VIX, 1, 3, params13)
+#' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
+#' loglikelihood(logVIX, 1, 2, params12)
 #'
 #' # Restricted GMAR model, outside parameter space
-#' params12r <- c(1.4, 1.8, 1.88, 0.29, 3.18, 0.84)
-#' loglikelihood(VIX, 1, 2, params12r, restricted=TRUE, minval=-9999)
-#'
-#' # StMAR model
-#' params12t <- c(1.9, 0.85, 1.16, 1.22, 0.89, 0.13, 0.64, 3.1, 7.0)
-#' loglikelihood(VIX, 1, 2, params12t, model="StMAR")
+#' params12r <- c(0.21, 0.23, 0.92, 0.01, 0.02, 0.86)
+#' loglikelihood(logVIX, 1, 2, params12r, restricted=TRUE)
 #'
 #' # Non-mixture version of StMAR model, outside parameter space
-#' params11t <- c(0.76, 0.93, 1.35, 1.9)
-#' loglikelihood(VIX, 1, 1, params11t, model="StMAR", minval="Hello")
+#' params11t <- c(0.16, 0.93, 0.00, 3.01)
+#' loglikelihood(logVIX, 1, 1, params11t, model="StMAR", minval="Hello")
 #'
 #' # G-StMAR model
-#' params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
-#' loglikelihood(VIX, 1, c(1,1), params12gs, model="G-StMAR")
+#' params12gs <- c(0.86, 0.68, 0.02, 0.18, 0.93, 0.01, 0.11, 44.36)
+#' loglikelihood(logVIX, 1, c(1, 1), params12gs, model="G-StMAR")
 #'
 #' # Restricted G-StMAR model
-#' params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20)
-#' loglikelihood(VIX, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE)
+#' params12gsr <- c(0.31, 0.33, 0.88, 0.01, 0.02, 0.77, 2.72)
+#' loglikelihood(logVIX, 1, c(1, 1), params12gsr, model="G-StMAR",
+#'  restricted=TRUE)
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(1.2, 0.85, 0.04, 0.3, 3.3, 0.77, 2.8, 0.77)
-#' loglikelihood(VIX, 2, 2, params22c, constraints=constraints)
+#' params22c <- c(0.61, 0.83, -0.06, 0.02, 0.21, 0.91, 0.01, 0.16)
+#' loglikelihood(logVIX, 2, 2, params22c, constraints=constraints)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
-#' loglikelihood(VIX, 3, 2, params32trc, model="StMAR", restricted=TRUE,
+#' params32trc <- c(0.35, 0.33, 0.88, -0.02, 0.01, 0.01, 0.36, 4.53, 1000)
+#' loglikelihood(logVIX, 3, 2, params32trc, model="StMAR", restricted=TRUE,
 #'               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' @export
 
@@ -442,41 +439,36 @@ mixingWeights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #' @inherit mixingWeights_int return references
 #' @examples
 #' # GMAR model
-#' params12 <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8)
-#' mw12 <- mixingWeights(VIX, 1, 2, params12)
+#' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
+#' mixingWeights(logVIX, 1, 2, params12)
 #'
-#' # Restricted GMAR model
-#' params12r <- c(1.4, 1.8, 0.9, 0.3, 3.2, 0.8)
-#' mw12r <- mixingWeights(VIX, 1, 2, params12r, restricted=TRUE)
+#' # Restricted GMAR model, outside parameter space
+#' params12r <- c(0.21, 0.23, 0.92, 0.01, 0.02, 0.86)
+#' mixingWeights(logVIX, 1, 2, params12r, restricted=TRUE)
 #'
-#' # StMAR model
-#' params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8)
-#' mw12t <- mixingWeights(VIX, 1, 2, params12t, model="StMAR")
-#'
-#' # Non-mixture version of StMAR model
-#' params11t <- c(0.76, 0.93, 1.35, 2.4)
-#' mw11t <- mixingWeights(VIX, 1, 1, params11t, model="StMAR")
+#' # Non-mixture version of StMAR model, outside parameter space
+#' params11t <- c(0.16, 0.93, 0.01, 3.01)
+#' mixingWeights(logVIX, 1, 1, params11t, model="StMAR")
 #'
 #' # G-StMAR model
-#' params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
-#' mw12gs <- mixingWeights(VIX, 1, c(1,1), params12gs, model="G-StMAR")
+#' params12gs <- c(0.86, 0.68, 0.02, 0.18, 0.93, 0.01, 0.11, 44.36)
+#' mixingWeights(logVIX, 1, c(1, 1), params12gs, model="G-StMAR")
 #'
 #' # Restricted G-StMAR model
-#' params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20)
-#' mw13gsr <- mixingWeights(VIX, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE)
+#' params12gsr <- c(0.31, 0.33, 0.88, 0.01, 0.02, 0.77, 2.72)
+#' mixingWeights(logVIX, 1, c(1, 1), params12gsr, model="G-StMAR", restricted=TRUE)
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(1.2, 0.8, 0.1, 0.3, 3.3, 0.8, 2.8, 0.8)
-#' mw22c <- mixingWeights(VIX, 2, 2, params22c, constraints=constraints)
+#' params22c <- c(0.61, 0.83, -0.06, 0.02, 0.21, 0.91, 0.01, 0.16)
+#' mixingWeights(logVIX, 2, 2, params22c, constraints=constraints)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
-#' mw32trc <- mixingWeights(VIX, 3, 2, params32trc, model="StMAR",
-#'                          restricted=TRUE,
-#'                          constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' params32trc <- c(0.35, 0.33, 0.88, -0.02, 0.01, 0.01, 0.36, 4.53, 1000)
+#' mixingWeights(logVIX, 3, 2, params32trc, model="StMAR", restricted=TRUE,
+#'               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' @export
 
 mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
@@ -515,45 +507,25 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #'  }
 #' @examples
 #' # GMAR model
-#' params12 <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8)
-#' rcm12 <- condMoments(VIX, 1, 2, params12, to_return="regime_cmeans")
-#' rcv12 <- condMoments(VIX, 1, 2, params12, to_return="regime_cvars")
-#' tcm12 <- condMoments(VIX, 1, 2, params12, to_return="total_cmeans")
-#' tcv12 <- condMoments(VIX, 1, 2, params12, to_return="total_cvars")
+#' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
+#' rcm12 <- condMoments(logVIX, 1, 2, params12, to_return="regime_cmeans")
+#' rcv12 <- condMoments(logVIX, 1, 2, params12, to_return="regime_cvars")
+#' tcm12 <- condMoments(logVIX, 1, 2, params12, to_return="total_cmeans")
+#' tcv12 <- condMoments(logVIX, 1, 2, params12, to_return="total_cvars")
 #'
 #' # StMAR model
-#' params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8)
-#' rcm12t <- condMoments(VIX, 1, 2, params12t, model="StMAR",
+#' params12t <- c(0.17,  0.93, 0.01, 4.87, -0.90, 0.01, 0.98, 4.22, 1000)
+#' rcm12t <- condMoments(logVIX, 1, 2, params12t, model="StMAR",
 #'  to_return="regime_cmeans")
-#' rcv12t <- condMoments(VIX, 1, 2, params12t, model="StMAR",
+#' rcv12t <- condMoments(logVIX, 1, 2, params12t, model="StMAR",
 #'  to_return="regime_cvars")
 #'
 #' # G-StMAR model
-#' params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3)
-#' rcv12gs <- condMoments(VIX, 1, c(1,1), params12gs, model="G-StMAR",
+#' params12gs <- c(0.86, 0.68, 0.02, 0.18, 0.93, 0.01, 0.11, 44)
+#' rcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
 #'  to_return="regime_cvars")
-#' tcv12gs <- condMoments(VIX, 1, c(1,1), params12gs, model="G-StMAR",
+#' tcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
 #'  to_return="total_cvars")
-#'
-#' # Restricted G-StMAR model
-#' params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20)
-#' tcm13gsr <- condMoments(VIX, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE,
-#'  to_return="total_cmeans")
-#'
-#' # GMAR model as a mixture of AR(2) and AR(1) models
-#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(1.2, 0.8, 0.1, 0.3, 3.3, 0.8, 2.8, 0.8)
-#' rcm22c <- condMoments(VIX, 2, 2, params22c, constraints=constraints,
-#'  to_return="regime_cmeans")
-#'
-#' # Such StMAR(3,2) that the AR coefficients are restricted to be
-#' # the same for both regimes and that the second AR coefficients are
-#' # constrained to zero.
-#' params32trc <- c(2.2, 1.8, 0.88, -0.03, 2.4, 0.27, 0.40, 3.9, 1000)
-#' rcv32trc <- condMoments(VIX, 3, 2, params32trc, model="StMAR",
-#'                          restricted=TRUE,
-#'                          constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                          to_return="regime_cvars")
 #' @export
 condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                         parametrization=c("intercept", "mean"), to_return=c("regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars")) {
