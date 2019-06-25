@@ -1,3 +1,58 @@
+#' @title Transform a StMAR model parameter vector to a corresponding G-StMAR model parameter vector
+#'  with large dfs parameters reduced.
+#'
+#' @description \code{stmarpars_to_gstmar} transforms a StMAR model parameter vector to a corresponding
+#'  G-StMAR model parameter vector with large dfs parameters reduced by turning the related regimes GMAR type.
+#'
+#' @inheritParams loglikelihood_int
+#' @param maxdf regimes with degrees of freedom parameter value large than this will be turned into
+#'  GMAR type.
+#' @return Returns a list with two elements: \code{$params} contains the corresponding G-StMAR model
+#'  parameter vector, and \code{$reg_order} contains the permutation that was applied to the regimes
+#'  (GMAR type components first, and decreasing ordering by mixign weight parameters)
+#' @examples
+#'  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)
+#'  stmarpars_to_gstmar(1, 2, params12)
+#' @export
+
+stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL, maxdf=100) {
+  checkPM(p, M, model="StMAR")
+  if(M == 1) stop("The G-StMAR model must have at least two regimes!")
+  check_params_length(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
+  checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
+
+  dfs <- pick_dfs(p, M, params, model="StMAR")
+  if(!any(dfs > maxdf)) {
+    warning("No degrees of freedom parameter is larger than 'maxdf'.")
+    return(list(params=params, reg_order=1:M))
+  }
+  regs_to_change <- which(dfs > maxdf)
+  alphas <- pick_alphas(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
+  all_regs <- lapply(1:M, function(i1) {
+    reg <- extractRegime(p, M, params, model="StMAR", restricted=restricted,
+                         constraints=constraints, regime=i1)
+    reg[-length(reg)]
+    })
+  reg_order <- c(regs_to_change[order(alphas[regs_to_change], decreasing=TRUE)], # GMAR type regimes
+    (1:M)[-regs_to_change][order(alphas[-regs_to_change], decreasing=TRUE)]) # StMAR type regimes
+  tmp_pars <- unlist(all_regs[reg_order])
+
+  if(!is.null(constraints) & any(reg_order != 1:M)) {
+    message(paste0("Order of the constraint matrices for was changed to ", toString(reg_order), "."))
+  }
+  if(restricted == TRUE) { # Add the missing AR parameters
+    q <- ifelse(is.null(constraints), p, ncol(constraints))
+    tmp_pars <- c(tmp_pars[seq(from=1, to=2*M, by=2)],
+                  params[(M + 1):(M + q)],
+                  tmp_pars[seq(from=2, to=2*M, by=2)])
+  }
+  pars <- c(tmp_pars,
+            alphas[reg_order][-M],
+            dfs[-regs_to_change][order(reg_order[(length(regs_to_change) + 1):M], decreasing=FALSE)])
+  return(list(params=pars, reg_order=reg_order))
+}
+
+
 #' @title Pick phi0 or mean parameters from parameter vector
 #'
 #' @description \code{pick_phi0} picks and returns the phi0 or mean parameters from parameter vector.

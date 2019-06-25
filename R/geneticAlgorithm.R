@@ -895,7 +895,7 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 #'        \item{For \strong{GMAR} model:}{Size \eqn{(2x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
 #'        \item{For \strong{StMAR} model:}{Size \eqn{(3x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
 #'        \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR-components and same as StMAR for StMAR-components.}
-#'        \item{With \strong{linear constraints}:}{Parameter vector as descripted above.}
+#'        \item{With \strong{linear constraints}:}{Parameter vector as described above.}
 #'      }
 #'    }
 #'  }

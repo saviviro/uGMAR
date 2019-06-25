@@ -26,6 +26,7 @@
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_loglikelihood.R="77BA7FA8"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_numericalDifferentiation.R="9D05A62E"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_parameterReforms.R="73D030D7"
+~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_pickAndChangeParams.R="5238BF6A"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_predictMethod.R="D7336C0D"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_quantileResidualTests.R="18B022C0"
 ~%2FuGMAR%2Ftests%2Ftestthat%2Ftest_quantileResiduals.R="AD1DA406"
