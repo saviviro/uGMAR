@@ -271,12 +271,12 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
   if(gsmar$model$model != "StMAR") stop("Only StMAR models are supported as input")
   if(missing(estimate)) estimate <- ifelse(is.null(gsmar$data), FALSE, TRUE)
   if(missing(calc_std_errors)) calc_std_errors <- ifelse(is.null(gsmar$data), FALSE, TRUE)
-  if(estimate == TRUE & is.null(data)) stop("Can't estimate the model without data")
+  if(estimate == TRUE & is.null(gsmar$data)) stop("Can't estimate the model without data")
 
   new_params <- stmarpars_to_gstmar(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                                     maxdf=maxdf)
-  if(is.null(constraints) || gsmar$model$restricted == TRUE) {
+  if(is.null(gsmar$model$constraints) || gsmar$model$restricted == TRUE) {
     new_constraints <- gsmar$model$constraints
   } else {
     new_constraints <- gsmar$model$constraints[new_params$reg_order]

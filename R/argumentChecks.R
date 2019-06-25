@@ -452,7 +452,7 @@ check_data <- function(object) {
 #' @inheritParams check_gsmar
 #' @inheritParams loglikelihood_int
 #' @param warn_about warn about inaccurate derivatives or standard errors?
-#' @detail Either provide a class 'gsmar' object or specify the model by hand.
+#' @details Either provide a class 'gsmar' object or specify the model by hand.
 #' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
 #'   larger than 1000.
 
