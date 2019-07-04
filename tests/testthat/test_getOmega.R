@@ -1,10 +1,10 @@
 library(uGMAR)
 context("getOmega")
 
-# Omegas are very sensitive to even very small changes in the quantile residuals. The quantile residuals are
-# calculated only with numerical integration if package "gsl" is not available, which will cause these very
-# small differences (in 1e-6 or 1e-8 tolerance for eample) that will then accumulate to "big" differences in Omega.
-# This is why these tests are commented out (and used only for development). (Also the tests are computationally slow to conduct)
+# The results slightly differ depending on whether numerical integration (without the package "gsl")
+# or hypergeometric function is used to calculate the quantile residuals. Also very small differences
+# in machine accuracy etc. might accumulate to differences notable enough. As the tests are moreover
+# computationally demanding, they are commented out and used for development only.
 test_that("quantileResiduals works", {
   expect_equal(quantileResiduals_int(VIX, 1, 1, c(-2, 0.8, 1, 12), model="StMAR")[13], 0.9494652, tolerance=1e-3)
 })

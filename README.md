@@ -26,7 +26,7 @@ devtools::install_github("saviviro/uGMAR")
 Example
 -------
 
-This is a basic example how to estimate a GMAR model to data. For details about the example data "logVIX" see ?logVIX. The estimation process is computationally heavy and takes advantage of parallel computing. After estimating the model, it's by simple examples how to conduct some further analysis.
+This is a basic example how to estimate a GMAR model to data. For details about the example data "logVIX" see ?logVIX. The estimation process is computationally demanding and takes advantage of parallel computing. After estimating the model, it's shown by simple examples how to conduct some further analysis.
 
 ``` r
 ## Estimate a GMAR(1, 2) model to logarithmized VIX data
@@ -37,7 +37,7 @@ summary(fit) # Approximate standard errors in brackets
 plot(fit)
 
 get_gradient(fit) # The first order condition
-get_soc(fit) # The second order condition (eigen values of approximated Hessian)
+get_soc(fit) # The second order condition (eigenvalues of approximated Hessian)
 
 ## Quantile residual diagnostics
 quantileResidualPlot(fit)

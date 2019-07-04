@@ -111,7 +111,7 @@
 #'  }
 #' @examples
 #' \donttest{
-#' # These are long running examples and use parallel computing
+#' # These are long running examples that use parallel computing
 #'
 #' # GMAR model
 #' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
@@ -297,24 +297,16 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   }
   if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual!")
 
-
-  ### Tests, estimates, standard errors, IC ###
-  tmp_gsmar <- GSMAR(data, p, M, params=params, model=model, restricted=restricted, constraints=constraints,
-                     conditional=conditional, parametrization=parametrization, calc_std_errors=FALSE)
-
   # Quantile residual tests
   if(runTests == TRUE) {
     cat("Performing quantile residual tests...\n")
+    tmp_gsmar <- GSMAR(data, p, M, params=params, model=model, restricted=restricted, constraints=constraints,
+                       conditional=conditional, parametrization=parametrization, calc_std_errors=FALSE)
     qr_tests <- quantileResidualTests(tmp_gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=c(1, 2, 5, 10), nsimu=2000, printRes=printRes)
     if(printRes == TRUE) cat("\n")
   } else {
     qr_tests <- NULL
   }
-
-  # Information criteria
-  obs <- ifelse(conditional, length(data) - p, length(data))
-  loglik <- bestfit$value
-  IC <- get_IC(loglik=loglik, npars=d, obs=obs)
 
   ### Wrap up ###
   ret <- GSMAR(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,

@@ -12,12 +12,12 @@
 #'  element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
 #'  If not specified, initial values will be simulated from the process's stationary distribution.
 #' @param ntimes a positive integer specifying how many sets of simulations should be performed.
-#' @param drop if \code{TRUE} (default) then the components of the returned list are coerced to the lowest possible dimension, i.e, for
-#'  \code{ntimes=1}, \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.
+#' @param drop if \code{TRUE} (default) then the components of the returned list are coerced to lower dimension if \code{ntimes==1},
+#'   i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.
 #' @details The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating it's possible future values.
 #'  One can easily perform a large number simulations and calculate the sample quantiles from the simulated values to obtain prediction
 #'  intervals (see the forecasting example).
-#' @return If \code{drop==TRUE} and \code{ntimes=1} (default): \code{$sample} and \code{$component} are vectors
+#' @return If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
 #'  and is \code{$mixing_weights} is matrix. Otherwise, returns a list with...
 #'   \describe{
 #'     \item{\code{$sample}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
@@ -158,7 +158,7 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
         if(m <= M1) { # p-dimensional Gaussian samples
           Gamma_m <- solve(invG[, , m])
           L <- t(chol(Gamma_m))
-          mv_samples = mu_mp[,m] + L%*%rnorm(p)
+          mv_samples <- mu_mp[,m] + L%*%rnorm(p)
         } else { # p-dimensional Student samples
           Gamma_m <- solve(invG[, , m])
           L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m))

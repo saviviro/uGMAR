@@ -1,12 +1,10 @@
 library(uGMAR)
 context("quantileResidualTests")
 
-# Covariance matrices omegas seem to be very sensitive to even minimal changes in the quantile residuals.
-# The quantile residuals are calculated only with numerical integration if package "gsl" is not available,
-# which will cause these very small differences (in 1e-6 or 1e-8 tolerance for eample) that will then
-# accumulate to "big" differences in Omega. Also machine precision might also affect it in some cases.
-# Difference in Omega will cause a large enough differences for the test results to fail, so these tests
-# are commented out and used only for development.
+# The results slightly differ depending on whether numerical integration (without the package "gsl")
+# or hypergeometric function is used to calculate the quantile residuals. Also very small differences
+# in machine accuracy etc. might accumulate to differences notable enough. As the tests are moreover
+# computationally demanding, they are commented out and used for development only.
 test_that("quantileResiduals works", {
   expect_equal(quantileResiduals_int(VIX, 1, 1, c(-3, 0.9, 2), model="GMAR")[13], 2.513058, tolerance=1e-3)
 })

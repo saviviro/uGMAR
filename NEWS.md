@@ -10,3 +10,7 @@
 * Updates on documentation
 * Added inflation expectation data (IE)
 
+# uGMAR 3.1.1
+
+* In the predict method arguments "ci" and "ci_type" were changed to "pi" and "pi_type" to signify "prediction interval"" as it's more correct expression than "confidence interval". Also the default prediction method is now median, and not mean.
+* Fixed typos etc. in documentation.
