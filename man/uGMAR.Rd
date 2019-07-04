@@ -12,6 +12,6 @@
   general linear constraints to the autoregressive parameters, or restricting them to be the same for all regimes
   is supported.
 
-  Many of the functions documented are not exported but for internal use only. The vignette
-  is a good place to start.
+  Many of the functions documented are not exported but for internal use only. The readme file is a good place to start,
+  and the vignette might be useful too.
 }

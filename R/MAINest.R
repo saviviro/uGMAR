@@ -329,6 +329,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams fitGSMAR
+#' @inheritParams GSMAR
 #' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
 #'   the estimation when the maximum number of iterations is reached when estimating a model with the
 #'   main estimation function \code{fitGSMAR}. It's just a simple wrapper around function \code{optim}
@@ -350,7 +351,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' }
 #' @export
 
-iterate_more <- function(gsmar, maxit=100) {
+iterate_more <- function(gsmar, maxit=100, calc_std_errors=TRUE) {
   check_gsmar(gsmar)
   stopifnot(maxit %% 1 == 0 & maxit >= 1)
   minval <- -(10^(ceiling(log10(length(gsmar$data))) + 1) - 1)
@@ -371,5 +372,5 @@ iterate_more <- function(gsmar, maxit=100) {
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
-        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE)
+        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors)
 }

@@ -147,7 +147,7 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 
 \examples{
 \donttest{
-# These are long running examples and use parallel computing
+# These are long running examples that use parallel computing
 
 # GMAR model
 fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")

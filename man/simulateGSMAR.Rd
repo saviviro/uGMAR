@@ -17,11 +17,11 @@ If not specified, initial values will be simulated from the process's stationary
 
 \item{ntimes}{a positive integer specifying how many sets of simulations should be performed.}
 
-\item{drop}{if \code{TRUE} (default) then the components of the returned list are coerced to the lowest possible dimension, i.e, for
-\code{ntimes=1}, \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.}
+\item{drop}{if \code{TRUE} (default) then the components of the returned list are coerced to lower dimension if \code{ntimes==1},
+i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.}
 }
 \value{
-If \code{drop==TRUE} and \code{ntimes=1} (default): \code{$sample} and \code{$component} are vectors
+If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
  and is \code{$mixing_weights} is matrix. Otherwise, returns a list with...
   \describe{
     \item{\code{$sample}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
