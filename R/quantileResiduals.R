@@ -312,7 +312,6 @@ quantileResiduals <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
-  stopifnot(parametrization %in% c("intercept", "mean"))
   checkPM(p, M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,

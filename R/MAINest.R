@@ -172,7 +172,6 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
-  stopifnot(parametrization %in% c("intercept", "mean"))
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   checkPM(p, M, model=model)
   data <- checkAndCorrectData(data, p)

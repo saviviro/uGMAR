@@ -109,9 +109,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   check_model(model)
   checkPM(p=p, M=M, model=model)
   parametrization <- match.arg(parametrization)
-  stopifnot(parametrization %in% c("intercept", "mean"))
   to_return <- match.arg(to_return)
-  stopifnot(to_return %in% c("alt_ind", "best_ind"))
   data <- checkAndCorrectData(data, p)
   n_obs <- length(data)
   M_orig <- M
