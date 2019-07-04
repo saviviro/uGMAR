@@ -77,6 +77,12 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
   parameterChecks(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   npars <- length(params)
 
+  qresiduals <- NULL
+  regime_cmeans <- NA
+  regime_cvars <- NA
+  total_cmeans <- NA
+  total_cvars <- NA
+
   if(missing(calc_qresiduals)) calc_qresiduals <- ifelse(missing(data), FALSE, TRUE)
   if(missing(calc_cond_moments)) calc_cond_moments <- ifelse(missing(data), FALSE, TRUE)
   if(missing(data) || is.null(data)) {
@@ -84,11 +90,6 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
     if(calc_cond_moments == TRUE) warning("Conditional moments can't be calculated without data")
     data <- NULL
     lok_and_mw <- list(loglik=NA, mw=NA)
-    qresiduals <- NULL
-    regime_cmeans <- NA
-    regime_cvars <- NA
-    total_cmeans <- NA
-    total_cvars <- NA
     IC <- data.frame(AIC=NA, HQIC=NA, BIC=NA)
   } else {
     data <- checkAndCorrectData(data=data, p=p)
@@ -98,9 +99,8 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
     if(calc_qresiduals == TRUE) {
       qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                           parametrization=parametrization)
-    } else {
-      qresiduals <- NULL
     }
+
     if(calc_cond_moments == TRUE) {
       get_cm <- function(to_return) loglikelihood_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                                       conditional=conditional, parametrization=parametrization, boundaries=FALSE,
@@ -109,11 +109,6 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
       regime_cvars <- get_cm("regime_cvars")
       total_cmeans <- get_cm("total_cmeans")
       total_cvars <- get_cm("total_cvars")
-    } else {
-      regime_cmeans <- NA
-      regime_cvars <- NA
-      total_cmeans <- NA
-      total_cvars <- NA
     }
 
     obs <- ifelse(conditional, length(data) - p, length(data))
