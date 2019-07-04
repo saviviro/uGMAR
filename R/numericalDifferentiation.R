@@ -10,11 +10,11 @@
 #' @param x a numeric vector specifying the point where the gradient or Hessian should be calculated.
 #' @param fn a function that takes in argument \code{x} as the \strong{first} argument.
 #' @param h difference used to approximate the derivatives.
-#' @param ... other arguments passed to \code{fn}
+#' @param ... other arguments passed to \code{fn}.
 #' @details Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether
 #'  the found estimates denote a (local) maximum point, a saddle point or something else.
 #' @return Gradient functions return numerical approximation of the gradient, and Hessian functions return
-#'  numerical approximation of the Hessian.
+#'  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix.
 #' @section Warning:
 #'  No argument checks!
 #' @examples

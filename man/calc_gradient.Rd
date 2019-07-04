@@ -25,13 +25,13 @@ get_soc(gsmar, h = 6e-06)
 
 \item{h}{difference used to approximate the derivatives.}
 
-\item{...}{other arguments passed to \code{fn}}
+\item{...}{other arguments passed to \code{fn}.}
 
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 }
 \value{
 Gradient functions return numerical approximation of the gradient, and Hessian functions return
- numerical approximation of the Hessian.
+ numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix.
 }
 \description{
 \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix

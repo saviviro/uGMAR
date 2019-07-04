@@ -5,8 +5,8 @@
 \title{Forecast GMAR, StMAR or G-StMAR process}
 \usage{
 \method{predict}{gsmar}(object, ..., n_ahead, nsimu = 10000,
-  ci = c(0.95, 0.8), pred_type = c("median", "mean", "cond_mean"),
-  ci_type = c("two-sided", "upper", "lower", "none"), nt,
+  pi = c(0.95, 0.8), pred_type = c("median", "mean", "cond_mean"),
+  pi_type = c("two-sided", "upper", "lower", "none"), nt,
   plotRes = TRUE)
 }
 \arguments{
@@ -18,13 +18,13 @@
 
 \item{nsimu}{a positive integer specifying to how many simulations the forecast should be based on.}
 
-\item{ci}{a numeric vector specifying the confidence levels of the confidence intervals.}
+\item{pi}{a numeric vector specifying the confidence levels of the prediction intervals.}
 
 \item{pred_type}{should the prediction be based on sample "mean" or "median"? Or should it
-be one-step-ahead forecast based on conditional mean (\code{"cond_mean"})? Confidence intervals
+be one-step-ahead forecast based on conditional mean (\code{"cond_mean"})? prediction intervals
 won't be calculated if conditional mean is used.}
 
-\item{ci_type}{should the confidence intervals be "two-sided", "upper" or "lower"?}
+\item{pi_type}{should the prediction intervals be "two-sided", "upper" or "lower"?}
 
 \item{nt}{a positive integer specifying the number of observations to be plotted
 along with the prediction. Default is \code{round(length(data)*0.2)}.}
@@ -32,7 +32,7 @@ along with the prediction. Default is \code{round(length(data)*0.2)}.}
 \item{plotRes}{a logical argument defining whether the forecast should be plotted or not.}
 }
 \value{
-Returns a data frame containing the empirical best prediction and confidence intervals accordingly to \code{ci}.
+Returns a data frame containing the empirical point prediction and prediction intervals accordingly to \code{pi}.
   Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
 }
 \description{
@@ -41,8 +41,8 @@ Returns a data frame containing the empirical best prediction and confidence int
 }
 \details{
 \code{predict.gsmar} uses the last \code{p} values of the data to simulate \code{nsimu} possible
- future values for each step. The best prediction is then obtained by calculating the sample median (or mean)
- of each step and the confidence intervals are obtained from the empirical fractiles.
+ future values for each step. The point prediction is then obtained by calculating the sample median (or mean)
+ of each step and the prediction intervals are obtained from the empirical fractiles.
 
  We encourage directly using the function \code{simulateGSMAR} for quantile based forecasting. With \code{simulateGSMAR}
  it's easy to forecast the mixing weights too.
@@ -59,14 +59,14 @@ fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
 pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
 pred12r
 
-# Non-mixture StMAR model, upper confidence intervals
+# Non-mixture StMAR model, upper prediction intervals
 fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-predict(fit11t, n_ahead=10, ci_type="upper", ci=c(0.99, 0.95, 0.9))
+predict(fit11t, n_ahead=10, pi_type="upper", pi=c(0.99, 0.95, 0.9))
 
-# G-StMAR model, no confidence intervals
+# G-StMAR model, no prediction intervals
 fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
 pred12gs <- predict(fit12gs, n_ahead=10, pred_type="median",
- ci_type="none", plotRes=FALSE)
+ pi_type="none", plotRes=FALSE)
 pred12gs
 plot(pred12gs)
 
@@ -75,7 +75,7 @@ plot(pred12gs)
 # constrained to zero.
 fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-predict(fit32rc, n_ahead=3, ci_type="lower")
+predict(fit32rc, n_ahead=3, pi_type="lower")
 }
 }
 \references{
