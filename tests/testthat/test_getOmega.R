@@ -3,13 +3,13 @@ context("getOmega")
 
 # The results slightly differ depending on whether numerical integration (without the package "gsl")
 # or hypergeometric function is used to calculate the quantile residuals. Also very small differences
-# in machine accuracy etc. might accumulate to differences notable enough. As the tests are moreover
-# computationally demanding, they are commented out and used for development only.
+# in machine accuracy etc. might accumulate to differences big enough for the tests to fail. As the
+# tests are moreover computationally demanding, they are commented out and used for development only.
 test_that("quantileResiduals works", {
   expect_equal(quantileResiduals_int(VIX, 1, 1, c(-2, 0.8, 1, 12), model="StMAR")[13], 0.9494652, tolerance=1e-3)
 })
 
-# getOmega calls other functions to deal with constraints, so they are not tested separately
+# # getOmega calls other functions to deal with constraints, so they are not tested separately
 # params11t <- c(-2, 0.8, 1, 12)
 # params12 <- c(1.1, 0.9, 0.29, 4.5, 0.7, 3.2, 0.8)
 # params23t <- c(1.8, 0.9, -0.06, 0.4, 7.2, 0.3, -0.009, 0.1, 3.1, 0.83, -0.05, 3.7, 0.7, 0.2, 11, 339, 198)

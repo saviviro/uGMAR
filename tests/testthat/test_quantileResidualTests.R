@@ -1,15 +1,15 @@
 library(uGMAR)
 context("quantileResidualTests")
 
-# The results slightly differ depending on whether numerical integration (without the package "gsl")
+## The results slightly differ depending on whether numerical integration (without the package "gsl")
 # or hypergeometric function is used to calculate the quantile residuals. Also very small differences
-# in machine accuracy etc. might accumulate to differences notable enough. As the tests are moreover
-# computationally demanding, they are commented out and used for development only.
+# in machine accuracy etc. might accumulate to differences big enough for the tests to fail. As the
+# tests are moreover computationally demanding, they are commented out and used for development only.
 test_that("quantileResiduals works", {
   expect_equal(quantileResiduals_int(VIX, 1, 1, c(-3, 0.9, 2), model="GMAR")[13], 2.513058, tolerance=1e-3)
 })
 
-# quantileResidualTests calls other functions to deal with constraints so they are not considered here
+# # quantileResidualTests calls other functions to deal with constraints so they are not considered here
 # params11t <- c(-2, 0.8, 1, 12) # StMAR
 # params12 <- c(1.0, 0.9, 0.25, 4.5, 0.7, 3.0, 0.8)
 # params23 <- c(2.7, 0.8, -0.06, 0.3, 3.5, 0.8, -0.07, 2.6, 7.2, 0.3, -0.01, 0.1, 0.6, 0.25)
@@ -43,7 +43,7 @@ test_that("quantileResiduals works", {
 #   expect_equal(qrt11t$norm_res$testStat, 42.01667, tolerance=1e-3)
 #   expect_equal(qrt12$norm_res$testStat, 32.09423, tolerance=1e-3)
 #   expect_equal(qrt23$norm_res$testStat, 63.89753, tolerance=1e-3)
-#  # expect_equal(qrt23t$norm_res$testStat, 4.525679, tolerance=1e-3)
+#   expect_equal(qrt23t$norm_res$testStat, 4.525679, tolerance=1e-1)
 #   expect_equal(qrt12r$norm_res$testStat, 1.574353, tolerance=1e-3)
 # })
 #
