@@ -208,7 +208,7 @@ quantileResidualPlot <- function(gsmar) {
   par(mfrow=c(2, 1), mar=c(2.6, 2.6, 2.1, 1.6))
   plot(qresiduals, type="l", ylab="", xlab="", main="Quantile residuals")
   abline(h=c(-1.96, 0, 1.96), lty=2, col="red")
-  hs <- hist(qresiduals, breaks="Scott", probability=TRUE, col="skyblue", plot=TRUE)
+  hs <- hist(qresiduals, breaks="Scott", probability=TRUE, col="skyblue", plot=TRUE, ylim=c(0, 0.5))
   xc <- seq(from=min(hs$breaks), to=max(hs$breaks), length.out=500)
   lines(x=xc, y=dnorm(xc), lty=2, col="red")
 }
