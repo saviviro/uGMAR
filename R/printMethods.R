@@ -210,29 +210,29 @@ print.gsmarpred <- function(x, ..., digits=2) {
   format_value <- format_valuef(digits)
 
   if(gsmarpred$pred_type == "cond_mean") {
-    cat("One-step-ahead prediction by exact conditional mean, no confidence intervals\n")
+    cat("One-step-ahead prediction by exact conditional mean, no prediction intervals\n")
     cat("Forecast:", paste0(format_value(gsmarpred$pred), collapse=", "), "\n")
 
-  } else if(gsmarpred$ci_type == "none") {
-    cat(paste0("Prediction by ", gsmarpred$pred_type, ", no confidence intervals"), "\n")
+  } else if(gsmarpred$pi_type == "none") {
+    cat(paste0("Prediction by ", gsmarpred$pred_type, ", no prediction intervals"), "\n")
     cat(paste0("Forecast ", gsmarpred$n_ahead, " steps ahead, based on ", gsmarpred$n_simu, " simulations\n"))
     print(data.frame(pred=gsmarpred$pred))
 
   } else {
-    cat(paste0("Prediction by ", gsmarpred$pred_type, ", ", gsmarpred$ci_type,
-               " confidence intervals with levels ", paste(gsmarpred$ci, collapse=", "), ""), "\n")
+    cat(paste0("Prediction by ", gsmarpred$pred_type, ", ", gsmarpred$pi_type,
+               " prediction intervals with levels ", paste(gsmarpred$pi, collapse=", "), ""), "\n")
     cat(paste0("Forecast ", gsmarpred$n_ahead, " steps ahead, based on ", gsmarpred$nsimu, " simulations\n"))
 
     cat("\n")
     q <- gsmarpred$q
-    conf_ints <- gsmarpred$conf_ints
+    pred_ints <- gsmarpred$pred_ints
     pred_type <- gsmarpred$pred_type
-    df <- as.data.frame(lapply(1:ncol(conf_ints), function(i1) format_value(conf_ints[,i1])))
+    df <- as.data.frame(lapply(1:ncol(pred_ints), function(i1) format_value(pred_ints[,i1])))
     names(df) <- q
     df[, pred_type] <- format_value(gsmarpred$pred)
-    if(gsmarpred$ci_type == "two-sided") {
+    if(gsmarpred$pi_type == "two-sided") {
       new_order <- as.character(c(q[1:(length(q)/2)], pred_type, q[(length(q)/2 + 1):length(q)]))
-    } else if(gsmarpred$ci_type == "upper") {
+    } else if(gsmarpred$pi_type == "upper") {
        new_order <- as.character(c(pred_type, q))
      } else {
       new_order <- names(df)

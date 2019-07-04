@@ -19,11 +19,11 @@ stmar22c <- GSMAR(data=VIX, p=2, M=2, params=params22c, model="StMAR", constrain
 gmar32cr <- GSMAR(data=VIX, p=3, M=2, params=params32cr, model="GMAR", restricted=TRUE, constraints=R1)
 
 set.seed(1); pred12 <- predict.gsmar(gmar12, n_ahead=1, nsimu=50, plotRes=FALSE, pred_type="mean")
-set.seed(2); pred23 <- predict.gsmar(gmar23, n_ahead=3, nsimu=50, ci=c(0.99, 0.90, 0.60), plotRes=FALSE, pred_type="median")
-set.seed(3); pred12r <- predict.gsmar(gmar12r, n_ahead=3, nsimu=50, ci=c(0.999, 0.001), plotRes=FALSE, pred_type="median")
-set.seed(4); pred23r <- predict.gsmar(gmar23r, n_ahead=1, nsimu=50, ci=c(0.5), plotRes=FALSE, pred_type="mean")
-set.seed(5); pred22c <- predict.gsmar(stmar22c, n_ahead=1, nsimu=20, ci=c(0.99, 0.90, 0.60), plotRes=FALSE, pred_type="median")
-set.seed(6); pred32cr <- predict.gsmar(gmar32cr, n_ahead=1, nsimu=10, ci=c(0.90), plotRes=FALSE, pred_type="mean")
+set.seed(2); pred23 <- predict.gsmar(gmar23, n_ahead=3, nsimu=50, pi=c(0.99, 0.90, 0.60), plotRes=FALSE, pred_type="median")
+set.seed(3); pred12r <- predict.gsmar(gmar12r, n_ahead=3, nsimu=50, pi=c(0.999, 0.001), plotRes=FALSE, pred_type="median")
+set.seed(4); pred23r <- predict.gsmar(gmar23r, n_ahead=1, nsimu=50, pi=c(0.5), plotRes=FALSE, pred_type="mean")
+set.seed(5); pred22c <- predict.gsmar(stmar22c, n_ahead=1, nsimu=20, pi=c(0.99, 0.90, 0.60), plotRes=FALSE, pred_type="median")
+set.seed(6); pred32cr <- predict.gsmar(gmar32cr, n_ahead=1, nsimu=10, pi=c(0.90), plotRes=FALSE, pred_type="mean")
 
 test_that("predict.gsmar gives correct prediction", {
   expect_equal(pred12$pred, 11.15113, tolerance=1e-3)
@@ -34,16 +34,16 @@ test_that("predict.gsmar gives correct prediction", {
   expect_equal(pred32cr$pred, 2.112541, tolerance=1e-3)
 })
 
-test_that("predict.gsmar gives correct confidence intervals", {
-  expect_equal(pred12$conf_ints[1], 10.1512, tolerance=1e-3)
-  expect_equal(pred12$conf_ints[3], 11.69211, tolerance=1e-3)
-  expect_equal(pred23$conf_ints[3], 9.144938, tolerance=1e-3)
-  expect_equal(pred23$conf_ints[11], 11.56006, tolerance=1e-3)
-  expect_equal(pred12r$conf_ints[3], 8.716014, tolerance=1e-3)
-  expect_equal(pred12r$conf_ints[7], 11.58921, tolerance=1e-3)
-  expect_equal(pred23r$conf_ints[2], 11.14477, tolerance=1e-3)
-  expect_equal(pred22c$conf_ints[3], 2.971152, tolerance=1e-3)
-  expect_equal(pred32cr$conf_ints[2], 3.680976, tolerance=1e-3)
+test_that("predict.gsmar gives correct prediction intervals", {
+  expect_equal(pred12$pred_ints[1], 10.1512, tolerance=1e-3)
+  expect_equal(pred12$pred_ints[3], 11.69211, tolerance=1e-3)
+  expect_equal(pred23$pred_ints[3], 9.144938, tolerance=1e-3)
+  expect_equal(pred23$pred_ints[11], 11.56006, tolerance=1e-3)
+  expect_equal(pred12r$pred_ints[3], 8.716014, tolerance=1e-3)
+  expect_equal(pred12r$pred_ints[7], 11.58921, tolerance=1e-3)
+  expect_equal(pred23r$pred_ints[2], 11.14477, tolerance=1e-3)
+  expect_equal(pred22c$pred_ints[3], 2.971152, tolerance=1e-3)
+  expect_equal(pred32cr$pred_ints[2], 3.680976, tolerance=1e-3)
 })
 
 params12gs <- c(3.98, 0.68, 0.36, 0.70, 0.94, 11.75, 0.25, 2.03) # M = c(1, 1)

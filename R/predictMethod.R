@@ -9,22 +9,22 @@
 #' @param ... additional arguments passed to \code{grid} (ignored if \code{plot_res==FALSE}).
 #' @param n_ahead a positive integer specifying how many steps in the future should be forecasted.
 #' @param nsimu a positive integer specifying to how many simulations the forecast should be based on.
-#' @param ci a numeric vector specifying the confidence levels of the confidence intervals.
+#' @param pi a numeric vector specifying the confidence levels of the prediction intervals.
 #' @param pred_type should the prediction be based on sample "mean" or "median"? Or should it
-#'   be one-step-ahead forecast based on conditional mean (\code{"cond_mean"})? Confidence intervals
+#'   be one-step-ahead forecast based on conditional mean (\code{"cond_mean"})? prediction intervals
 #'   won't be calculated if conditional mean is used.
-#' @param ci_type should the confidence intervals be "two-sided", "upper" or "lower"?
+#' @param pi_type should the prediction intervals be "two-sided", "upper" or "lower"?
 #' @param nt a positive integer specifying the number of observations to be plotted
 #'   along with the prediction. Default is \code{round(length(data)*0.2)}.
 #' @param plotRes a logical argument defining whether the forecast should be plotted or not.
 #' @details \code{predict.gsmar} uses the last \code{p} values of the data to simulate \code{nsimu} possible
-#'  future values for each step. The best prediction is then obtained by calculating the sample median (or mean)
-#'  of each step and the confidence intervals are obtained from the empirical fractiles.
+#'  future values for each step. The point prediction is then obtained by calculating the sample median (or mean)
+#'  of each step and the prediction intervals are obtained from the empirical fractiles.
 #'
 #'  We encourage directly using the function \code{simulateGSMAR} for quantile based forecasting. With \code{simulateGSMAR}
 #'  it's easy to forecast the mixing weights too.
 #'
-#' @return Returns a data frame containing the empirical best prediction and confidence intervals accordingly to \code{ci}.
+#' @return Returns a data frame containing the empirical point prediction and prediction intervals accordingly to \code{pi}.
 #'   Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
 #' @inherit simulateGSMAR references
 #' @seealso \code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
@@ -41,14 +41,14 @@
 #' pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
 #' pred12r
 #'
-#' # Non-mixture StMAR model, upper confidence intervals
+#' # Non-mixture StMAR model, upper prediction intervals
 #' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' predict(fit11t, n_ahead=10, ci_type="upper", ci=c(0.99, 0.95, 0.9))
+#' predict(fit11t, n_ahead=10, pi_type="upper", pi=c(0.99, 0.95, 0.9))
 #'
-#' # G-StMAR model, no confidence intervals
+#' # G-StMAR model, no prediction intervals
 #' fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
 #' pred12gs <- predict(fit12gs, n_ahead=10, pred_type="median",
-#'  ci_type="none", plotRes=FALSE)
+#'  pi_type="none", plotRes=FALSE)
 #' pred12gs
 #' plot(pred12gs)
 #'
@@ -57,17 +57,17 @@
 #' # constrained to zero.
 #' fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
 #'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' predict(fit32rc, n_ahead=3, ci_type="lower")
+#' predict(fit32rc, n_ahead=3, pi_type="lower")
 #' }
 #' @export
 
-predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, ci=c(0.95, 0.8), pred_type=c("median", "mean", "cond_mean"),
-                         ci_type=c("two-sided", "upper", "lower", "none"), nt, plotRes=TRUE) {
+predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pred_type=c("median", "mean", "cond_mean"),
+                         pi_type=c("two-sided", "upper", "lower", "none"), nt, plotRes=TRUE) {
   gsmar <- object
   pred_type <- match.arg(pred_type)
-  ci_type <- match.arg(ci_type)
+  pi_type <- match.arg(pi_type)
   stopifnot(pred_type %in% c("mean", "median", "cond_mean"))
-  stopifnot(ci_type %in% c("two-sided", "upper", "lower", "none"))
+  stopifnot(pi_type %in% c("two-sided", "upper", "lower", "none"))
   check_gsmar(gsmar)
   check_data(gsmar)
   data <- gsmar$data
@@ -98,7 +98,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, ci=c(0.95, 0.8), pr
     }
   }
   if(!all_pos_ints(c(n_ahead, nsimu))) stop("Arguments n_ahead and nsimu must be positive integers")
-  if(any(ci >= 1) | any(ci <= 0)) stop("Each confidence level has to be in the open interval (0, 1)")
+  if(any(pi >= 1) | any(pi <= 0)) stop("Each confidence level has to be in the open interval (0, 1)")
   if(!is.null(constraints)) checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
 
   # Simulate future values of the process
@@ -115,9 +115,9 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, ci=c(0.95, 0.8), pr
 
     # Calculate the conditional mean
     pred <- sum(mw[nrow(mw),]*(pars[1,] + t(rev(data[(n_obs - p + 1):n_obs]))%*%pars[2:(2 + p - 1),]))
-    conf_ints <- NULL
-    ci <- NULL
-    ci_type <- "none"
+    pred_ints <- NULL
+    pi <- NULL
+    pi_type <- "none"
     q_tocalc <- numeric(0)
   } else {
 
@@ -131,35 +131,35 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, ci=c(0.95, 0.8), pr
       pred <- vapply(1:n_ahead, function(i1) median(res[i1,]), numeric(1))
     }
 
-    # Confidence intercals
-    if(ci_type == "upper") {
-      q_tocalc <- ci
-    } else if(ci_type == "lower") {
-      q_tocalc <- 1 - ci
-    } else if(ci_type == "two-sided") {
-      lower <- (1 - ci)/2
+    # Prediction intervals
+    if(pi_type == "upper") {
+      q_tocalc <- pi
+    } else if(pi_type == "lower") {
+      q_tocalc <- 1 - pi
+    } else if(pi_type == "two-sided") {
+      lower <- (1 - pi)/2
       upper <- rev(1 - lower)
       q_tocalc <- c(lower, upper)
-    } else {  # If ci_type == "none"
+    } else {  # If pi_type == "none"
       q_tocalc <- numeric(0)
-      ci <- NULL
+      pi <- NULL
     }
     q_tocalc <- sort(q_tocalc, decreasing=FALSE)
 
     if(is.vector(res)) {
-      conf_ints <- as.matrix(quantile(res, probs=q_tocalc))
+      pred_ints <- as.matrix(quantile(res, probs=q_tocalc))
     } else {
-      conf_ints <- t(vapply(1:n_ahead, function(i1) quantile(res[i1,], probs=q_tocalc), numeric(length(q_tocalc))))
+      pred_ints <- t(vapply(1:n_ahead, function(i1) quantile(res[i1,], probs=q_tocalc), numeric(length(q_tocalc))))
     }
   }
 
   ret <- structure(list(gsmar=gsmar,
                         pred=pred,
-                        conf_ints=conf_ints,
+                        pred_ints=pred_ints,
                         n_ahead=n_ahead,
                         nsimu=nsimu,
-                        ci=ci,
-                        ci_type=ci_type,
+                        pi=pi,
+                        pi_type=pi_type,
                         pred_type=pred_type,
                         q=q_tocalc),
                    class="gsmarpred")

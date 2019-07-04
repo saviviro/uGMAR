@@ -39,20 +39,20 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
   ts_pred <- make_ts(gsmarpred$pred)
   ts_dat <- ts(data[(n_obs - nt + 1):n_obs], start=time(data)[n_obs - nt + 1], frequency=frequency(data))
   t0 = time(ts_pred)
-  all_val <- c(ts_dat, ts_pred, gsmarpred$conf_ints)
+  all_val <- c(ts_dat, ts_pred, gsmarpred$pred_ints)
 
-  if(gsmarpred$ci_type == "two-sided") {
-    ts_lowers <- lapply(1:(length(q)/2), function(i1) make_ts(gsmarpred$conf_ints[,i1]))
-    ts_uppers <- lapply((length(q)/2 + 1):length(q), function(i1) make_ts(gsmarpred$conf_ints[,i1]))
+  if(gsmarpred$pi_type == "two-sided") {
+    ts_lowers <- lapply(1:(length(q)/2), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
+    ts_uppers <- lapply((length(q)/2 + 1):length(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
 
-  } else if(gsmarpred$ci_type == "upper") {
+  } else if(gsmarpred$pi_type == "upper") {
     ts_min <- rep(round(min(all_val)) - 3, times=length(ts_pred))
     ts_lowers <- lapply(seq_along(q), function(i1) make_ts(ts_min)[-1])
-    ts_uppers <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$conf_ints[,i1]))
+    ts_uppers <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
 
-  } else if(gsmarpred$ci_type == "lower") {
+  } else if(gsmarpred$pi_type == "lower") {
     ts_max <- rep(round(max(all_val)) + 3, times=length(ts_pred))
-    ts_lowers <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$conf_ints[,i1]))
+    ts_lowers <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
     ts_uppers <- lapply(seq_along(q), function(i1) make_ts(ts_max)[-1])
   }
 
@@ -62,8 +62,8 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
                                       main=paste("Forecast", gsmarpred$n_ahead, "steps ahead")))
   if(add_grid == TRUE) grid(...)
 
-  if(gsmarpred$ci_type %in% c("two-sided", "upper", "lower")) {
-    for(i1 in 1:length(gsmarpred$ci)) {
+  if(gsmarpred$pi_type %in% c("two-sided", "upper", "lower")) {
+    for(i1 in 1:length(gsmarpred$pi)) {
       polygon(x=c(t0, rev(t0)), y=c(ts_lowers[[i1]], rev(ts_pred)), col=grDevices::rgb(0, 0, 1, 0.2), border=NA)
       polygon(x=c(t0, rev(t0)), y=c(ts_uppers[[i1]], rev(ts_pred)), col=grDevices::rgb(0, 0, 1, 0.2), border=NA)
     }
