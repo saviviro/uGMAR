@@ -43,7 +43,8 @@
 #'  model="G-StMAR", restricted=TRUE)
 #' gstmar12r
 #'
-#' # GMAR model as a mixture of AR(2) and AR(1) models
+#' # GMAR(p=2, M=2) model such that the second AR coefficient of the
+#' # second regime is constrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' params22c <- c(0.61, 0.83, -0.06, 0.02, 0.21, 0.91, 0.01, 0.16)
 #' gmar22c <- GSMAR(logVIX, p=2, M=2, params=params22c,

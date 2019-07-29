@@ -7,8 +7,9 @@
 fitGSMAR(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, conditional = TRUE,
   parametrization = c("intercept", "mean"), ncalls = round(10 + 9 *
-  log(sum(M))), ncores = min(ncalls, parallel::detectCores()),
-  maxit = 300, printRes = TRUE, runTests = FALSE, ...)
+  log(sum(M))), ncores = min(2, ncalls, parallel::detectCores()),
+  maxit = 300, seeds = NULL, printRes = TRUE, runTests = FALSE,
+  ...)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -49,10 +50,12 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 The estimation results may vary from round to round because of multimodality of the log-likelihood function
 and randomness associated with the genetic algorithm.}
 
-\item{ncores}{a positive integer specifying the number of cores to be used in the estimation process.
-Default is that the number of available cores is detected with \code{parallel::detectCores} and all of them are used.}
+\item{ncores}{the number of cores to be used in the estimation process.}
 
 \item{maxit}{maximum number of iterations in the variable metric algorithm.}
+
+\item{seeds}{a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
+or \code{NULL} for not initializing the seed. Exists for creating reproducable results.}
 
 \item{printRes}{should the estimation results be printed?}
 
@@ -165,8 +168,9 @@ summary(fit12r)
 fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
 fit11t
 
-# StMAR model
-fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR")
+# StMAR model, seeds for reproducability
+fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=10,
+  seeds=1:10)
 fit12t
 
 # G-StMAR model with one GMAR type and one StMAR type regime
@@ -180,8 +184,9 @@ fit12gsr
 # The following three examples demonstrate how to apply linear constraints
 # to the AR parameters.
 
-# GMAR model that is a mixture of AR(1) and such AR(3) that the
-# second AR coeffiecient is constrained to zero.
+# GMAR(p=3, M=2) model that the second and third AR coefficients are constrained
+# to zero in the first regime, and the second AR coefficient is constrained to
+# zero in the second regime.
 constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
 fit32c <- fitGSMAR(logVIX, 3, 2, constraints=constraints)
 fit32c

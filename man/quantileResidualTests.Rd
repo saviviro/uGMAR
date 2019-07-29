@@ -82,7 +82,8 @@ fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
 quantileResidualTests(fit12gs, lagsAC=c(1, 3), lagsCH=1:2,
  nsimu=1, printRes=FALSE)
 
-# GMAR model as a mixture of AR(2) and AR(1) models
+# GMAR(p=2, M=2) model such that the second AR coefficient of the
+# second regime is constrained to zero.
 constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 fit22c <- fitGSMAR(logVIX, 2, 2, constraints=constraints)
 quantileResidualTests(fit22c, lagsAC=c(1, 3), nsimu=1, printRes=FALSE)

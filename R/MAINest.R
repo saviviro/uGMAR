@@ -146,8 +146,9 @@
 #' # The following three examples demonstrate how to apply linear constraints
 #' # to the AR parameters.
 #'
-#' # GMAR model that is a mixture of AR(1) and such AR(3) that the
-#' # second AR coeffiecient is constrained to zero.
+#' # GMAR(p=3, M=2) model that the second and third AR coefficients are constrained
+#' # to zero in the first regime, and the second AR coefficient is constrained to
+#' # zero in the second regime.
 #' constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
 #' fit32c <- fitGSMAR(logVIX, 3, 2, constraints=constraints)
 #' fit32c
