@@ -12,6 +12,8 @@
 #'  and randomness associated with the genetic algorithm.
 #' @param ncores the number of cores to be used in the estimation process.
 #' @param maxit maximum number of iterations in the variable metric algorithm.
+#' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
+#'   or \code{NULL} for not initializing the seed. Exists for creating reproducable results.
 #' @param printRes should the estimation results be printed?
 #' @param runTests should quantile residuals tests be performed after the estimation?
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
@@ -128,8 +130,9 @@
 #' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
 #' fit11t
 #'
-#' # StMAR model
-#' fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR")
+#' # StMAR model, seeds for reproducability
+#' fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=10,
+#'   seeds=1:10)
 #' fit12t
 #'
 #' # G-StMAR model with one GMAR type and one StMAR type regime
@@ -166,8 +169,9 @@
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=min(2, ncalls, parallel::detectCores()),
-                     maxit=300, printRes=TRUE, runTests=FALSE, ...) {
+                     maxit=300, seeds=NULL, printRes=TRUE, runTests=FALSE, ...) {
   on.exit(closeAllConnections())
+  if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
@@ -206,9 +210,9 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
 
   cat("Optimizing with the genetic algorithm...\n")
-  GAresults <- pbapply::pblapply(1:ncalls, function(x) GAfit(data=data, p=p, M=M, model=model, restricted=restricted,
+  GAresults <- pbapply::pblapply(1:ncalls, function(i1) GAfit(data=data, p=p, M=M, model=model, restricted=restricted,
                                                              constraints=constraints, conditional=conditional,
-                                                             parametrization=parametrization, ...), cl=cl)
+                                                             parametrization=parametrization, seed=seeds[i1], ...), cl=cl)
   parallel::stopCluster(cl=cl)
 
   loks <- vapply(1:ncalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], model=model,
