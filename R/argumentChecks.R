@@ -470,7 +470,7 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
     pars <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
     dfs <- pick_dfs(p=p, M=M, params=pars, model=model)
     mystring <- ifelse(warn_about == "derivs", "derivatives", "standard errors")
-    if(any(dfs > 1000)) warning(paste("Numerically approximated", mystring, "may be biased because of numerical error caused by very degrees of freedom parameter values.",
+    if(any(dfs > 1000)) warning(paste("Numerically approximated", mystring, "may be biased because of numerical error caused by very large degrees of freedom parameter values.",
                                       "Consider switching to G-StMAR model by setting the corresponding regimes to GMAR type with the function 'stmar_to_gstmar'."))
   }
 }
