@@ -236,10 +236,10 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE) {
 }
 
 
-#' @title Swap the parametrization of object of class 'gsmar' defining a gsmar model
+#' @title Estimate a G-StMAR model based on StMAR model with large degrees of freedom parameters
 #'
-#' @description \code{swap_parametrization} swaps the parametrization of object of class '\code{gsmar}'
-#'  to \code{"mean"} if the currect parametrization is \code{"intercept"}, and vice versa.
+#' @description \code{stmar_to_gstmar} estimates a G-StMAR model based on StMAR model with large degrees
+#'  of freedom parameterss
 #'
 #' @inheritParams add_data
 #' @inheritParams stmarpars_to_gstmar
@@ -303,4 +303,34 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
                      parametrization=gsmar$model$parametrization, calc_std_errors=calc_std_errors)
   }
   new_mod
+}
+
+
+#' @title Construct a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}
+#'
+#' @description \code{alt_gsmar} constructs a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}.
+#'
+#' @inheritParams simulateGSMAR
+#' @param which_round based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.
+#' @details It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
+#'   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an returned by \code{fitGSMAR}.
+#' @inherit GSMAR references return
+#' @inherit add_data seealso
+#' @examples
+#' \donttest{
+#'  # These are long running examples and use parallel computing
+#'  fit12t <- fitGSMAR(IE, 1, 2, model="StMAR", ncalls=2, seeds=1:2)
+#'  fit12t
+#'  fit12t2 <- alt_gsmar(fit12t, which_round=2)
+#'  fit12t2
+#' }
+#' @export
+
+alt_gsmar <- function(gsmar, which_round=1) {
+  stopifnot(!is.null(gsmar$all_estimates))
+  stopifnot(which_round >= 1 || which_round <= length(gsmar$all_estimates))
+  GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$all_estimates[[which_round]],
+        model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
+        conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
+        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE)
 }
