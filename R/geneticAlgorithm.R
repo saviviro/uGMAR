@@ -6,7 +6,6 @@
 #'
 #' @inheritParams loglikelihood_int
 #' @param ngen a positive integer specifying the number of generations to be ran through in the genetic algorithm.
-#'  Default is \code{min(400, max(round(0.1*length(data)), 200))}.
 #' @param popsize a positive even integer specifying the population size in the genetic algorithm.
 #'  Default is \code{10*d} where \code{d} is the number of parameters.
 #' @param smartMu a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
@@ -105,7 +104,7 @@
 #' @export
 
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),
-                  conditional=TRUE, ngen, popsize, smartMu, meanscale, sigmascale, initpop=NULL, regime_force_scale=1,
+                  conditional=TRUE, ngen=200, popsize, smartMu, meanscale, sigmascale, initpop=NULL, regime_force_scale=1,
                   red_criteria=c(0.05, 0.01), to_return=c("alt_ind", "best_ind"), minval, seed=NULL, ...) {
   set.seed(seed)
   model <- match.arg(model)
@@ -140,7 +139,6 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
   # Default settings
   if(missing(popsize)) popsize <- 10*d
-  if(missing(ngen)) ngen <- min(400, max(round(0.1*length(data)), 200))
   if(missing(smartMu)) smartMu <-  min(100, round(0.5*ngen))
   if(missing(meanscale)) meanscale <- c(mean(data), sd(data))
   if(missing(sigmascale)) sigmascale <- var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)

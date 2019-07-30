@@ -6,8 +6,8 @@
 \usage{
 GAfit(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL,
-  parametrization = c("intercept", "mean"), conditional = TRUE, ngen,
-  popsize, smartMu, meanscale, sigmascale, initpop = NULL,
+  parametrization = c("intercept", "mean"), conditional = TRUE,
+  ngen = 200, popsize, smartMu, meanscale, sigmascale, initpop = NULL,
   regime_force_scale = 1, red_criteria = c(0.05, 0.01),
   to_return = c("alt_ind", "best_ind"), minval, seed = NULL, ...)
 }
@@ -46,8 +46,7 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 
 \item{conditional}{a logical argument specifying whether the conditional or exact log-likelihood function should be used.}
 
-\item{ngen}{a positive integer specifying the number of generations to be ran through in the genetic algorithm.
-Default is \code{min(400, max(round(0.1*length(data)), 200))}.}
+\item{ngen}{a positive integer specifying the number of generations to be ran through in the genetic algorithm.}
 
 \item{popsize}{a positive even integer specifying the population size in the genetic algorithm.
 Default is \code{10*d} where \code{d} is the number of parameters.}
