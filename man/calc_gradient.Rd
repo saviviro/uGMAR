@@ -4,6 +4,7 @@
 \alias{calc_gradient}
 \alias{calc_hessian}
 \alias{get_gradient}
+\alias{get_foc}
 \alias{get_hessian}
 \alias{get_soc}
 \title{Calculate gradient or Hessian matrix}
@@ -13,6 +14,8 @@ calc_gradient(x, fn, h = 6e-06, ...)
 calc_hessian(x, fn, h = 6e-06, ...)
 
 get_gradient(gsmar, h = 6e-06)
+
+get_foc(gsmar, h = 6e-06)
 
 get_hessian(gsmar, h = 6e-06)
 
@@ -31,7 +34,8 @@ get_soc(gsmar, h = 6e-06)
 }
 \value{
 Gradient functions return numerical approximation of the gradient, and Hessian functions return
- numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix.
+ numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix, \code{get_foc}
+ is the same as \code{get_gradient} named conveniently.
 }
 \description{
 \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
@@ -41,7 +45,7 @@ Gradient functions return numerical approximation of the gradient, and Hessian f
  returns eigenvalues of the Hessian matrix.
 }
 \details{
-Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether
+Especially the functions \code{get_foc} or \code{get_soc} can be used to check whether
  the found estimates denote a (local) maximum point, a saddle point or something else.
 }
 \section{Warning}{
@@ -64,6 +68,7 @@ Especially the functions \code{get_gradient} or \code{get_hessian} can be used t
   0.85725129, 0.68210294, 0.01900299, 0.88342018)
  gmar12 <- GSMAR(logVIX, 1, 2, params12)
  get_gradient(gmar12)
+ get_foc(gmar12)
  get_hessian(gmar12)
  get_soc(gmar12)
 }

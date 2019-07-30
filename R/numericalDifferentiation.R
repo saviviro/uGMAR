@@ -11,10 +11,11 @@
 #' @param fn a function that takes in argument \code{x} as the \strong{first} argument.
 #' @param h difference used to approximate the derivatives.
 #' @param ... other arguments passed to \code{fn}.
-#' @details Especially the functions \code{get_gradient} or \code{get_hessian} can be used to check whether
+#' @details Especially the functions \code{get_foc} or \code{get_soc} can be used to check whether
 #'  the found estimates denote a (local) maximum point, a saddle point or something else.
 #' @return Gradient functions return numerical approximation of the gradient, and Hessian functions return
-#'  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix.
+#'  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix, \code{get_foc}
+#'  is the same as \code{get_gradient} named conveniently.
 #' @section Warning:
 #'  No argument checks!
 #' @examples
@@ -32,6 +33,7 @@
 #'   0.85725129, 0.68210294, 0.01900299, 0.88342018)
 #'  gmar12 <- GSMAR(logVIX, 1, 2, params12)
 #'  get_gradient(gmar12)
+#'  get_foc(gmar12)
 #'  get_hessian(gmar12)
 #'  get_soc(gmar12)
 #' @export
@@ -76,6 +78,12 @@ get_gradient <- function(gsmar, h=6e-06) {
                   minval = NA)
   }
   calc_gradient(x=gsmar$params, fn=foo, h=h)
+}
+
+#' @rdname calc_gradient
+#' @export
+get_foc <- function(gsmar, h=6e-06) {
+  get_gradient(gsmar=gsmar, h=h)
 }
 
 #' @rdname calc_gradient
