@@ -333,5 +333,5 @@ alt_gsmar <- function(gsmar, which_round=1, calc_qresiduals=TRUE, calc_cond_mome
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$all_estimates[[which_round]],
         model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
-        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors)
+        calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments, calc_std_errors=calc_std_errors)
 }
