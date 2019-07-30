@@ -327,7 +327,7 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' }
 #' @export
 
-alt_gsmar <- function(gsmar, which_round=1, calc_std_errors=TRUE) {
+alt_gsmar <- function(gsmar, which_round=1, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE) {
   stopifnot(!is.null(gsmar$all_estimates))
   stopifnot(which_round >= 1 || which_round <= length(gsmar$all_estimates))
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$all_estimates[[which_round]],
