@@ -4,12 +4,14 @@
 \alias{alt_gsmar}
 \title{Construct a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}}
 \usage{
-alt_gsmar(gsmar, which_round = 1)
+alt_gsmar(gsmar, which_round = 1, calc_std_errors = TRUE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
 \item{which_round}{based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.}
+
+\item{calc_std_errors}{should approximate standard errors be calculated?}
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object
