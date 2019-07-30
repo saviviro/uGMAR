@@ -16,5 +16,5 @@
 * Changed the default number of CPU cores employed by the estimation function fitGSMAR to be at most two due to CRAN policy.
 * Added the argument "seeds" to fitGSMAR allowing one to set the random number generator seed for each call to the genetic algorithm.
 * New exported function alt_gsmar that conveniently constructs a GSMAR model based on an arbitrary estimation round of fitGSMAR.
-* New exported function get_soc which is the same as get_gradient but with convenient name.
+* New exported function get_foc which is the same as get_gradient but with convenient name.
 * Fixed typos etc. in documentation.

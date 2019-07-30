@@ -35,7 +35,7 @@ get_soc(gsmar, h = 6e-06)
 \value{
 Gradient functions return numerical approximation of the gradient, and Hessian functions return
  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix, \code{get_foc}
- is the same as \code{get_gradient} named conveniently.
+ is the same as \code{get_gradient} but named conveniently.
 }
 \description{
 \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
