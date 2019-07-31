@@ -18,4 +18,5 @@
 * New exported function alt_gsmar that conveniently constructs a GSMAR model based on an arbitrary estimation round of fitGSMAR.
 * New exported function get_foc which is the same as get_gradient but with convenient name.
 * The default number of generations in the genetic algorithm is now 200 (was min(400, max(round(0.1*length(data)), 200)) before). 
+* User may now adjust the difference 'h' used in the finite difference approximation for the gradient of the log-likelihood. 
 * Fixed typos etc. in documentation.
