@@ -5,7 +5,7 @@
 \title{Estimate a G-StMAR model based on StMAR model with large degrees of freedom parameters}
 \usage{
 stmar_to_gstmar(gsmar, maxdf = 100, estimate, calc_std_errors,
-  maxit = 100)
+  maxit = 100, h = 6e-06)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
@@ -19,7 +19,10 @@ parameters as the initial values. By default \code{TRUE} iff the model contains 
 \item{calc_std_errors}{set \code{TRUE} if the approximate standard errors should be calculated.
 By default \code{TRUE} iff the model contains data.}
 
-\item{maxit}{the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate == FALSE}.}
+\item{maxit}{the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate==FALSE}.}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object

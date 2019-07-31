@@ -6,7 +6,7 @@
 \usage{
 standardErrors(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, conditional = TRUE,
-  parametrization = c("intercept", "mean"), minval)
+  parametrization = c("intercept", "mean"), h = 6e-06, minval)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -79,6 +79,9 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 
 \item{minval}{this will be returned when the parameter vector is outside the parameter space.}
 }

@@ -5,7 +5,7 @@
 \title{Construct a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}}
 \usage{
 alt_gsmar(gsmar, which_round = 1, calc_qresiduals = TRUE,
-  calc_cond_moments = TRUE, calc_std_errors = TRUE)
+  calc_cond_moments = TRUE, calc_std_errors = TRUE, h = 6e-06)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
@@ -17,6 +17,9 @@ alt_gsmar(gsmar, which_round = 1, calc_qresiduals = TRUE,
 \item{calc_cond_moments}{should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.}
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object

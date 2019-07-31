@@ -2,6 +2,7 @@
 #'
 #' @description \code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR or G-StMAR model.
 #'
+#' @inheritParams fitGSMAR
 #' @inheritParams loglikelihood_int
 #' @param calc_qresiduals should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.
 #' @param calc_cond_moments should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.
@@ -68,7 +69,7 @@
 #' @export
 
 GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
-                  parametrization=c("intercept", "mean"), calc_qresiduals, calc_cond_moments, calc_std_errors=FALSE) {
+                  parametrization=c("intercept", "mean"), calc_qresiduals, calc_cond_moments, calc_std_errors=FALSE, h=6e-6) {
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
   check_model(model)
@@ -188,14 +189,14 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' gmar12
 #' @export
 
-add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=FALSE) {
+add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=FALSE, h=6e-6) {
   check_gsmar(gsmar)
   checkAndCorrectData(data=data, p=gsmar$model$p)
   GSMAR(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
         calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments,
-        calc_std_errors=calc_std_errors)
+        calc_std_errors=calc_std_errors, h=h)
 }
 
 
@@ -223,7 +224,7 @@ add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, 
 #' gmar12
 #' @export
 
-swap_parametrization <- function(gsmar, calc_std_errors=TRUE) {
+swap_parametrization <- function(gsmar, calc_std_errors=TRUE, h=6e-6) {
   check_gsmar(gsmar)
   change_to <- ifelse(gsmar$model$parametrization == "intercept", "mean", "intercept")
   new_params <- change_parametrization(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
@@ -232,7 +233,7 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE) {
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=new_params,
         model=gsmar$model$model, restricted=gsmar$model$restricted,
         constraints=gsmar$model$constraints, conditional=gsmar$model$conditional,
-        parametrization=change_to, calc_std_errors=calc_std_errors)
+        parametrization=change_to, calc_std_errors=calc_std_errors, h=h)
 }
 
 
@@ -241,13 +242,14 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE) {
 #' @description \code{stmar_to_gstmar} estimates a G-StMAR model based on StMAR model with large degrees
 #'  of freedom parameterss
 #'
+#' @inheritParams GSMAR
 #' @inheritParams add_data
 #' @inheritParams stmarpars_to_gstmar
 #' @param estimate set \code{TRUE} if the new model should be estimated with variable metric algorithm using the StMAR model
 #'   parameters as the initial values. By default \code{TRUE} iff the model contains data.
 #' @param calc_std_errors set \code{TRUE} if the approximate standard errors should be calculated.
 #'  By default \code{TRUE} iff the model contains data.
-#'@param maxit the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate == FALSE}.
+#'@param maxit the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate==FALSE}.
 #' @details If a StMAR model contains large estimates for the degrees of freedom parameters
 #'   one should consider switching to the corresponding G-StMAR model that lets the corresponding regimes to be GMAR type.
 #'   \code{stmar_to_gstmar}  makes it convenient to do this switch.
@@ -263,7 +265,7 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE) {
 #' }
 #' @export
 
-stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=100) {
+stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=100, h=6e-6) {
   if(gsmar$model$model != "StMAR") stop("Only StMAR models are supported as input")
   if(missing(estimate)) estimate <- ifelse(is.null(gsmar$data), FALSE, TRUE)
   if(missing(calc_std_errors)) calc_std_errors <- ifelse(is.null(gsmar$data), FALSE, TRUE)
@@ -294,13 +296,13 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
                      model=new_model, restricted=gsmar$model$restricted,
                      constraints=new_constraints, conditional=gsmar$model$conditional,
                      parametrization=gsmar$model$parametrization, calc_qresiduals=FALSE,
-                     calc_cond_moments=FALSE, calc_std_errors=FALSE)
-    new_mod <- iterate_more(tmp_mod, maxit=maxit)
+                     calc_cond_moments=FALSE, calc_std_errors=FALSE, h=h)
+    new_mod <- iterate_more(tmp_mod, maxit=maxit, h=h)
   } else {
     new_mod <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=new_M, params=new_params$params,
                      model=new_model, restricted=gsmar$model$restricted,
                      constraints=new_constraints, conditional=gsmar$model$conditional,
-                     parametrization=gsmar$model$parametrization, calc_std_errors=calc_std_errors)
+                     parametrization=gsmar$model$parametrization, calc_std_errors=calc_std_errors, h=h)
   }
   new_mod
 }
@@ -327,11 +329,11 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' }
 #' @export
 
-alt_gsmar <- function(gsmar, which_round=1, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE) {
+alt_gsmar <- function(gsmar, which_round=1, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE, h=6e-6) {
   stopifnot(!is.null(gsmar$all_estimates))
   stopifnot(which_round >= 1 || which_round <= length(gsmar$all_estimates))
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$all_estimates[[which_round]],
         model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
-        calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments, calc_std_errors=calc_std_errors)
+        calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments, calc_std_errors=calc_std_errors, h=h)
 }

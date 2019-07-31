@@ -4,12 +4,15 @@
 \alias{iterate_more}
 \title{Maximum likelihood estimation of GMAR, StMAR or G-StMAR model with preliminary estimates}
 \usage{
-iterate_more(gsmar, maxit = 100, calc_std_errors = TRUE)
+iterate_more(gsmar, maxit = 100, h = 6e-06, calc_std_errors = TRUE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
 \item{maxit}{maximum number of iterations in the variable metric algorithm.}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 }

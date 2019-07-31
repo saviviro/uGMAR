@@ -5,7 +5,7 @@
 \title{Add data to object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model}
 \usage{
 add_data(data, gsmar, calc_qresiduals = TRUE, calc_cond_moments = TRUE,
-  calc_std_errors = FALSE)
+  calc_std_errors = FALSE, h = 6e-06)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -17,6 +17,9 @@ add_data(data, gsmar, calc_qresiduals = TRUE, calc_cond_moments = TRUE,
 \item{calc_cond_moments}{should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.}
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 }
 \value{
 Returns an object of class 'gsmar' defining the GMAR, StMAR or G-StMAR model with the data added to the model.

@@ -13,7 +13,7 @@
 GSMAR(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, conditional = TRUE,
   parametrization = c("intercept", "mean"), calc_qresiduals,
-  calc_cond_moments, calc_std_errors = FALSE)
+  calc_cond_moments, calc_std_errors = FALSE, h = 6e-06)
 
 \method{logLik}{gsmar}(object, ...)
 
@@ -102,6 +102,9 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{calc_cond_moments}{should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.}
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 
 \item{object}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
 

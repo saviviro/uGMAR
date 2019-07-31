@@ -8,8 +8,8 @@ fitGSMAR(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, conditional = TRUE,
   parametrization = c("intercept", "mean"), ncalls = round(10 + 9 *
   log(sum(M))), ncores = min(2, ncalls, parallel::detectCores()),
-  maxit = 300, seeds = NULL, printRes = TRUE, runTests = FALSE,
-  ...)
+  maxit = 300, seeds = NULL, h = 6e-06, printRes = TRUE,
+  runTests = FALSE, ...)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -56,6 +56,9 @@ and randomness associated with the genetic algorithm.}
 
 \item{seeds}{a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 or \code{NULL} for not initializing the seed. Exists for creating reproducable results.}
+
+\item{h}{the difference used in central difference approximation for the gradient of the log-likelihood function.
+Be careful when using other the default value.}
 
 \item{printRes}{should the estimation results be printed?}
 
