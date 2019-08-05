@@ -103,5 +103,7 @@ get_hessian <- function(gsmar, h=6e-06) {
 #' @rdname calc_gradient
 #' @export
 get_soc <- function(gsmar, h=6e-06) {
+  hess <- get_hessian(gsmar, h)
+  if(anyNA(hess)) stop("Missing values in the Hessian matrix. Are estimates at the border of the parameter space?")
   eigen(get_hessian(gsmar, h))$value
 }
