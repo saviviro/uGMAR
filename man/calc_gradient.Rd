@@ -9,17 +9,17 @@
 \alias{get_soc}
 \title{Calculate gradient or Hessian matrix}
 \usage{
-calc_gradient(x, fn, h = 6e-06, ...)
+calc_gradient(x, fn, h = 6e-06, varying_h = NULL, ...)
 
-calc_hessian(x, fn, h = 6e-06, ...)
+calc_hessian(x, fn, h = 6e-06, varying_h = NULL, ...)
 
-get_gradient(gsmar, h = 6e-06)
+get_gradient(gsmar, custom_h = NULL)
 
-get_foc(gsmar, h = 6e-06)
+get_foc(gsmar, custom_h = NULL)
 
-get_hessian(gsmar, h = 6e-06)
+get_hessian(gsmar, custom_h = NULL)
 
-get_soc(gsmar, h = 6e-06)
+get_soc(gsmar, custom_h = NULL)
 }
 \arguments{
 \item{x}{a numeric vector specifying the point where the gradient or Hessian should be calculated.}
@@ -28,9 +28,17 @@ get_soc(gsmar, h = 6e-06)
 
 \item{h}{difference used to approximate the derivatives.}
 
+\item{varying_h}{a numeric vector with the same length as \code{x} specifying the difference \code{h}
+for each dimension separetely. If \code{NULL} (default), then the difference given as parameter \code{h}
+will be used for all dimensions.}
+
 \item{...}{other arguments passed to \code{fn}.}
 
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
+
+\item{custom_h}{same as \code{varying_h} but if \code{NULL} (default), then the difference \code{h} used for differentiating
+overly large degrees of freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other
+parameters.}
 }
 \value{
 Gradient functions return numerical approximation of the gradient, and Hessian functions return
@@ -58,10 +66,12 @@ Especially the functions \code{get_foc} or \code{get_soc} can be used to check w
  foo <- function(x) x^2 + x
  calc_gradient(x=1, fn=foo)
  calc_gradient(x=-0.5, fn=foo)
+ calc_hessian(x=c(1, 2), fn=foo)
 
  # More complicated function
  foo <- function(x, a, b) a*x[1]^2 - b*x[2]^2
  calc_gradient(x=c(1, 2), fn=foo, a=0.3, b=0.1)
+ calc_hessian(x=c(1, 2), fn=foo, a=0.3, b=0.1)
 
  # GMAR model:
  params12 <- c(0.18281409, 0.92657275, 0.00214552,

@@ -14,8 +14,6 @@
 #' @param maxit maximum number of iterations in the variable metric algorithm.
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 #'   or \code{NULL} for not initializing the seed. Exists for creating reproducable results.
-#' @param h the difference used in central difference approximation for the gradient of the log-likelihood function.
-#'   Be careful when using other the default value.
 #' @param printRes should the estimation results be printed?
 #' @param runTests should quantile residuals tests be performed after the estimation?
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
@@ -172,7 +170,7 @@
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=min(2, ncalls, parallel::detectCores()),
-                     maxit=300, seeds=NULL, h=6e-6, printRes=TRUE, runTests=FALSE, ...) {
+                     maxit=300, seeds=NULL, printRes=TRUE, runTests=FALSE, ...) {
   on.exit(closeAllConnections())
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
   model <- match.arg(model)
@@ -232,8 +230,9 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   ### Optimization with the variable metric algorithm ###
 
-  # Logarithmize dfs to get them to the same range as other parameters: this allows
-  # the df-parameters to "explode" more sensitively to implicate GMAR-type components.
+  # Logarithmize dfs to get overly large dfs values to the same range as other parameters.
+  # This adjusts the difference 'h' larger for larger dfs parameters in non-log scale, and
+  # also allows the dfs estimates to 'explode' more sensitively.
   manipulateDFS <- function(M, params, model, FUN) {
     FUN <- match.fun(FUN)
     M2 <- ifelse(model == "StMAR", M, M[2])
@@ -256,6 +255,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   # Calculate gradient of the log-likelihood function using central finite difference
   I <- diag(rep(1, d))
+  h <- 6e-6
   gr <- function(params) {
     vapply(1:d, function(i1) (f(params + I[i1,]*h) - f(params - I[i1,]*h))/(2*h), numeric(1))
   }
@@ -316,7 +316,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ### Wrap up ###
   ret <- GSMAR(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                conditional=conditional, parametrization=parametrization, calc_qresiduals=TRUE,
-               calc_cond_moments=TRUE, calc_std_errors=TRUE, h=h)
+               calc_cond_moments=TRUE, calc_std_errors=TRUE)
   ret$all_estimates <- newtonEstimates
   ret$all_logliks <- loks
   ret$which_converged <- converged
@@ -356,9 +356,10 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' }
 #' @export
 
-iterate_more <- function(gsmar, maxit=100, h=6e-6, calc_std_errors=TRUE) {
+iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) {
   check_gsmar(gsmar)
   stopifnot(maxit %% 1 == 0 & maxit >= 1)
+  if(!is.null(custom_h)) stopifnot(length(custom_h) == length(gsmar$params))
   minval <- -(10^(ceiling(log10(length(gsmar$data))) + 1) - 1)
 
   fn <- function(params) {
@@ -368,7 +369,12 @@ iterate_more <- function(gsmar, maxit=100, h=6e-6, calc_std_errors=TRUE) {
                                boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), error=function(e) minval)
   }
   gr <- function(params) {
-    calc_gradient(x=params, fn=fn, h=h)
+    if(is.null(custom_h)) {
+      varying_h <- get_varying_h(p=p, M=M, params=params, model=model)
+    } else {
+      varying_h <- custom_h
+    }
+    calc_gradient(x=params, fn=fn, varying_h=varying_h)
   }
 
   res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
@@ -377,5 +383,5 @@ iterate_more <- function(gsmar, maxit=100, h=6e-6, calc_std_errors=TRUE) {
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
-        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, h=h)
+        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, custom_h=custom_h)
 }
