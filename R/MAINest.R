@@ -370,7 +370,7 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
   }
   gr <- function(params) {
     if(is.null(custom_h)) {
-      varying_h <- get_varying_h(p=p, M=M, params=params, model=model)
+      varying_h <- get_varying_h(p=gsmar$model$p, M=gsmar$model$M, params=params, model=gsmar$model$model)
     } else {
       varying_h <- custom_h
     }

@@ -14,6 +14,8 @@
 
 getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                      parametrization=c("intercept", "mean"), g, dim_g) {
+  model <- match.arg(model)
+  parametrization <- match.arg(parametrization)
 
   # Function for calculating gradient of g
   f <- function(params) {
@@ -27,8 +29,8 @@ getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
                       parametrization=parametrization, checks=FALSE, to_return="terms")
   }
 
-  diff <- 6e-06 # Difference for numerical derivates
   npars <- length(params) # Dimension of the parameter vector
+  h <- get_varying_h(p=p, M=M, params=params, model=model) # Differences for numerical derivates: adjust for overly large dfs parameters to avoid numerical problems
 
   # Compute the gradient of g: (v)x(npars)x(T)
   gres <- f(params)
@@ -37,11 +39,11 @@ getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
   I <- diag(rep(1, npars))
   dg <- array(dim=c(dim_g, npars, T0))  # row per g_i, column per derivative and slice per t=1,..,T.
   for(i1 in 1:npars) {
-    dg[,i1,] <- t((f(params + I[i1,]*diff) - f(params - I[i1,]*diff))/(2*diff))
+    dg[,i1,] <- t((f(params + I[i1,]*h[i1]) - f(params - I[i1,]*h[i1]))/(2*h[i1]))
   }
 
   # Compute gradient of the log-likelihood: (T)x(npars)
-  dl <- vapply(1:npars, function(i1) (l(params + I[,i1]*diff) - l(params - I[,i1]*diff))/(2*diff), numeric(length(data) - p)) # NOTE: "returnTerms" in loglik is TRUE
+  dl <- vapply(1:npars, function(i1) (l(params + I[,i1]*h[i1]) - l(params - I[,i1]*h[i1]))/(2*h[i1]), numeric(length(data) - p)) # NOTE: "returnTerms" in loglik is TRUE
 
   # Estimate Fisher's information matrix
   FisInf <- crossprod(dl, dl)/nrow(dl)

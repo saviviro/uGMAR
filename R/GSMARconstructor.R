@@ -127,7 +127,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
       warning("Approximate standard errors can't be calculated without data")
       std_errors <- rep(NA, npars)
     } else {
-      warn_dfs(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints, warn_about="errors")
+      warn_dfs(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
       std_errors <- tryCatch(standardErrors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                                             constraints=constraints, parametrization=parametrization, conditional=conditional,
                                             custom_h=custom_h, minval=-(10^(ceiling(log10(length(data))) + 1) - 1)),
@@ -263,7 +263,8 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
 #' @examples
 #' \donttest{
 #'  # These are long running examples and use parallel computing
-#'  fit13tr <- fitGSMAR(logVIX, 1, 3, model="StMAR", restricted=TRUE)
+#'  fit13tr <- fitGSMAR(logVIX, 1, 3, model="StMAR", restricted=TRUE,
+#'   ncalls=1, seeds=1)
 #'  fit13tr
 #'  fit13gsr <- stmar_to_gstmar(fit13tr)
 #'  fit13gsr

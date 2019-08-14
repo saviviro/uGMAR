@@ -15,8 +15,10 @@
 * In the predict method arguments "ci" and "ci_type" were changed to "pi" and "pi_type" to signify "prediction interval"" as it's more correct expression than "confidence interval". Also the default prediction method is now median, and not mean.
 * Changed the default number of CPU cores employed by the estimation function fitGSMAR to be at most two due to CRAN policy.
 * Added the argument "seeds" to fitGSMAR allowing one to set the random number generator seed for each call to the genetic algorithm.
+* Finite difference approximations for differentials regarding overly large degrees of freedom parameters now give reasonable approximation instead of numerical error.
+* The maximum value for degrees of freedom parameters is now 1e5. 
 * New exported function alt_gsmar that conveniently constructs a GSMAR model based on an arbitrary estimation round of fitGSMAR.
 * New exported function get_foc which is the same as get_gradient but with convenient name.
 * The default number of generations in the genetic algorithm is now 200 (was min(400, max(round(0.1*length(data)), 200)) before). 
-* User may now adjust the difference 'h' used in the finite difference approximation for the gradient of the log-likelihood. 
+* In various functions, user may now adjust the difference 'h' used in the finite difference approximations for differentials of the log-likelihood. 
 * Fixed typos etc. in documentation.
