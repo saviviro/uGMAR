@@ -63,6 +63,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
                                        constraints=constraints)
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err <- pick_alphas(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
+    alphas_err[sum(M)] <- NA
     dfs_err <- pick_dfs(p=p, M=M, params=std_errors, model=model)
     if(gsmar$model$parametrization == "mean") {
       mu_err <- pick_phi0(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)

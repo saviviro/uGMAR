@@ -21,4 +21,5 @@
 * New exported function get_foc which is the same as get_gradient but with convenient name.
 * The default number of generations in the genetic algorithm is now 200 (was min(400, max(round(0.1*length(data)), 200)) before). 
 * In various functions, user may now adjust the difference 'h' used in the finite difference approximations for differentials of the log-likelihood. 
+* Bug fix: the summary print for gsmar objects falsely displayed standard error for the non-parametrized mixing weight
 * Fixed typos etc. in documentation.
