@@ -32,7 +32,7 @@ reformParameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #'   to the "standard form" so that it's comparable with non-constrained models.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns such parameter vector corresponding to the input vector that is the form describted in \code{params}
+#' @return Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 #' for non-restricted or restricted models (for non-constrained models), and can hence be used just as the
 #' parameter vectors of non-constrained models.
 
@@ -101,7 +101,7 @@ reformRestrictedPars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR
 }
 
 
-#' @title Transform constraited and restricted parameter vector into the regular form
+#' @title Transform constrained and restricted parameter vector into the regular form
 #'
 #' @description \code{removeAllConstraints} transforms constraited and restricted parameter vector into the regular form.
 #'

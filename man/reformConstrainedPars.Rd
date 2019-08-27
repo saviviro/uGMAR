@@ -73,7 +73,7 @@ alway \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Returns such parameter vector corresponding to the input vector that is the form describted in \code{params}
+Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 for non-restricted or restricted models (for non-constrained models), and can hence be used just as the
 parameter vectors of non-constrained models.
 }

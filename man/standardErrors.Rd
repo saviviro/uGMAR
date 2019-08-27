@@ -81,7 +81,7 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
 \item{custom_h}{a numeric vector with the same length as \code{params} specifying the difference 'h' used in finite difference approximation
-for each parameter separetely. If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom
+for each parameter separately. If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom
 parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
 
 \item{minval}{this will be returned when the parameter vector is outside the parameter space.}

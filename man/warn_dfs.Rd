@@ -2,7 +2,7 @@
 % Please edit documentation in R/argumentChecks.R
 \name{warn_dfs}
 \alias{warn_dfs}
-\title{Warn about large degrees of freedom paramater values}
+\title{Warn about large degrees of freedom parameter values}
 \usage{
 warn_dfs(object, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE, constraints = NULL, warn_about = c("derivs",

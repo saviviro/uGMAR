@@ -148,7 +148,7 @@ get_regime_vars <- function(gsmar) {
 #' @inheritParams loglikelihood_int
 #' @details Differs from the function \code{uncondMoments} in arguments. This functions exists for technical
 #'  reasons only.
-#' @return Returns a list contaiting the unconditional mean, variance, first p autocovariances and
+#' @return Returns a list containing the unconditional mean, variance, first p autocovariances and
 #'  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
 #'  but is given in the \code{uncond_variance} component separately.
 #' @inherit get_regime_autocovs references

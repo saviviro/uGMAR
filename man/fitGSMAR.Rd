@@ -55,7 +55,7 @@ and randomness associated with the genetic algorithm.}
 \item{maxit}{maximum number of iterations in the variable metric algorithm.}
 
 \item{seeds}{a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
-or \code{NULL} for not initializing the seed. Exists for creating reproducable results.}
+or \code{NULL} for not initializing the seed. Exists for creating reproducible results.}
 
 \item{printRes}{should the estimation results be printed?}
 

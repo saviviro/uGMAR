@@ -77,7 +77,7 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 }
 \value{
-Returns a list contaiting the unconditional mean, variance, first p autocovariances and
+Returns a list containing the unconditional mean, variance, first p autocovariances and
  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
  but is given in the \code{uncond_variance} component separately.
 }

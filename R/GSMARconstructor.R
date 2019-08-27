@@ -13,7 +13,7 @@
 #'   freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.
 #' @details Models can be built without data, e.q., in order to simulate from the process, but some elements such as quantile
 #'  residuals and conditional moments can't be calculated without data.
-#' @return Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object
+#' @return Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
 #'   contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
 #'   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{stmar_to_gstmar}},
@@ -244,8 +244,8 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
 
 #' @title Estimate a G-StMAR model based on StMAR model with large degrees of freedom parameters
 #'
-#' @description \code{stmar_to_gstmar} estimates a G-StMAR model based on StMAR model with large degrees
-#'  of freedom parameterss
+#' @description \code{stmar_to_gstmar} estimates a G-StMAR model based on StMAR model with large degree
+#'  of freedom parameters
 #'
 #' @inheritParams GSMAR
 #' @inheritParams add_data

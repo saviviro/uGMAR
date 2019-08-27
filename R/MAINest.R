@@ -13,7 +13,7 @@
 #' @param ncores the number of cores to be used in the estimation process.
 #' @param maxit maximum number of iterations in the variable metric algorithm.
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
-#'   or \code{NULL} for not initializing the seed. Exists for creating reproducable results.
+#'   or \code{NULL} for not initializing the seed. Exists for creating reproducible results.
 #' @param printRes should the estimation results be printed?
 #' @param runTests should quantile residuals tests be performed after the estimation?
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.

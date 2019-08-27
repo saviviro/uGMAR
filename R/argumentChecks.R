@@ -444,7 +444,7 @@ check_data <- function(object) {
 
 
 
-#' @title Warn about large degrees of freedom paramater values
+#' @title Warn about large degrees of freedom parameter values
 #'
 #' @description \code{warn_dfs} warns if the model contains large degrees of freedom paramater values
 #'   possibly indicating unrealible numerical derivatives.

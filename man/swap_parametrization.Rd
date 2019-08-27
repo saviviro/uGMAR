@@ -17,7 +17,7 @@ for the i:th parameter. If \code{NULL} (default), then the difference used for d
 freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is suplied, the returned object
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
   contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
 }

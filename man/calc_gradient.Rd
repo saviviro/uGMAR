@@ -29,7 +29,7 @@ get_soc(gsmar, custom_h = NULL)
 \item{h}{difference used to approximate the derivatives.}
 
 \item{varying_h}{a numeric vector with the same length as \code{x} specifying the difference \code{h}
-for each dimension separetely. If \code{NULL} (default), then the difference given as parameter \code{h}
+for each dimension separately. If \code{NULL} (default), then the difference given as parameter \code{h}
 will be used for all dimensions.}
 
 \item{...}{other arguments passed to \code{fn}.}

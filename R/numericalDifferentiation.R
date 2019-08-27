@@ -11,7 +11,7 @@
 #' @param fn a function that takes in argument \code{x} as the \strong{first} argument.
 #' @param h difference used to approximate the derivatives.
 #' @param varying_h a numeric vector with the same length as \code{x} specifying the difference \code{h}
-#'  for each dimension separetely. If \code{NULL} (default), then the difference given as parameter \code{h}
+#'  for each dimension separately. If \code{NULL} (default), then the difference given as parameter \code{h}
 #'  will be used for all dimensions.
 #' @param custom_h same as \code{varying_h} but if \code{NULL} (default), then the difference \code{h} used for differentiating
 #'   overly large degrees of freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other
