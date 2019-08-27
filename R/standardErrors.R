@@ -32,7 +32,7 @@ standardErrors <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR
   Hess <- calc_hessian(x=params, fn=fn, varying_h=varying_h)
 
   # Inverse of the observed information matrix
-  inv_obs_inf <- tryCatch(solve(-Hess), error=function(cond) return(matrix(NA, ncol=d, nrow=d)))
+  inv_obs_inf <- tryCatch(solve(-Hess), error=function(cond) return(matrix(NA, ncol=length(params), nrow=length(params))))
 
   # Calculate the standard errors if possible: break loop if all calculated and change the difference if not
   diag_inv_obs_inf <- diag(inv_obs_inf)

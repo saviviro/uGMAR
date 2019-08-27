@@ -66,7 +66,7 @@ Especially the functions \code{get_foc} or \code{get_soc} can be used to check w
  foo <- function(x) x^2 + x
  calc_gradient(x=1, fn=foo)
  calc_gradient(x=-0.5, fn=foo)
- calc_hessian(x=c(1, 2), fn=foo)
+ calc_hessian(x=2, fn=foo)
 
  # More complicated function
  foo <- function(x, a, b) a*x[1]^2 - b*x[2]^2

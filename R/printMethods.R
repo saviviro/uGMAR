@@ -45,6 +45,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   restricted <- gsmar$model$restricted
   constraints <- gsmar$model$constraints
   all_mu <- round(get_regime_means(gsmar), digits)
+  #all_vars <- round(get_regime_vars(gsmar), digits) uncomment to print regime variances
 
   if(gsmar$model$parametrization == "mean") {
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
@@ -114,9 +115,9 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 
     cat(paste("\nMix weight:", format_value(alphas[m])))
     print_err(alphas_err[m])
-
     cat("\nReg mean:", format_value(all_mu[m]))
     print_err(mu_err[m])
+    #cat("\nReg var:", format_value(all_vars[m])) # Uncomment to print regime variances
     cat("\n")
 
     if(regime_type == "StMAR") {
