@@ -238,7 +238,7 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
     }
   }
 
-  if(ntimes == 1 & drop == TRUE) {
+  if(ntimes == 1 & drop) {
     sample <- as.vector(sample)
     component <- as.vector(component)
     mixing_weights <- matrix(mixing_weights, ncol=M, nrow=nsimu, byrow=FALSE)

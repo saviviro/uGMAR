@@ -42,7 +42,7 @@ stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL
   if(!is.null(constraints) & any(reg_order != 1:M)) {
     message(paste0("Order of the constraint matrices for was changed to ", toString(reg_order), "."))
   }
-  if(restricted == TRUE) { # Add the missing AR parameters
+  if(restricted) { # Add the missing AR parameters
     q <- ifelse(is.null(constraints), p, ncol(constraints))
     tmp_pars <- c(tmp_pars[seq(from=1, to=2*M, by=2)],
                   params[(M + 1):(M + q)],

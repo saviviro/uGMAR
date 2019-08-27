@@ -221,7 +221,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
                                                           parametrization=parametrization, boundaries=TRUE, checks=FALSE,
                                                           minval=minval), numeric(1))
 
-  if(printRes == TRUE) {
+  if(printRes) {
     cat("Results from the genetic algorithm:\n")
     cat(paste("lowest value: ", round(min(loks), 3)), "\n")
     cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
@@ -282,7 +282,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     newtonEstimates <- lapply(1:ncalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], model=model, FUN=exp))
   }
 
-  if(printRes == TRUE) {
+  if(printRes) {
     cat("Results from the variable metric algorithm:\n")
     cat(paste("lowest value: ", round(min(loks), 3)), "\n")
     cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
@@ -303,12 +303,12 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual!")
 
   # Quantile residual tests
-  if(runTests == TRUE) {
+  if(runTests) {
     cat("Performing quantile residual tests...\n")
     tmp_gsmar <- GSMAR(data, p, M, params=params, model=model, restricted=restricted, constraints=constraints,
                        conditional=conditional, parametrization=parametrization, calc_std_errors=FALSE)
     qr_tests <- quantileResidualTests(tmp_gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=c(1, 2, 5, 10), nsimu=2000, printRes=printRes)
-    if(printRes == TRUE) cat("\n")
+    if(printRes) cat("\n")
   } else {
     qr_tests <- NULL
   }

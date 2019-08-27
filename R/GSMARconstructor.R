@@ -93,8 +93,8 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
   if(missing(calc_qresiduals)) calc_qresiduals <- ifelse(missing(data), FALSE, TRUE)
   if(missing(calc_cond_moments)) calc_cond_moments <- ifelse(missing(data), FALSE, TRUE)
   if(missing(data) || is.null(data)) {
-    if(calc_qresiduals == TRUE) warning("Quantile residuals can't be calculated without data")
-    if(calc_cond_moments == TRUE) warning("Conditional moments can't be calculated without data")
+    if(calc_qresiduals) warning("Quantile residuals can't be calculated without data")
+    if(calc_cond_moments) warning("Conditional moments can't be calculated without data")
     data <- NULL
     lok_and_mw <- list(loglik=NA, mw=NA)
     IC <- data.frame(AIC=NA, HQIC=NA, BIC=NA)
@@ -103,12 +103,12 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
     lok_and_mw <- loglikelihood_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                     conditional=conditional, parametrization=parametrization, boundaries=FALSE,
                                     checks=TRUE, to_return="loglik_and_mw", minval=NA)
-    if(calc_qresiduals == TRUE) {
+    if(calc_qresiduals) {
       qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                           parametrization=parametrization)
     }
 
-    if(calc_cond_moments == TRUE) {
+    if(calc_cond_moments) {
       get_cm <- function(to_return) loglikelihood_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                                       conditional=conditional, parametrization=parametrization, boundaries=FALSE,
                                                       checks=TRUE, to_return=to_return, minval=NA)
@@ -122,7 +122,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
     IC <- get_IC(loglik=lok_and_mw$loglik, npars=npars, obs=obs)
   }
 
-  if(calc_std_errors == TRUE) {
+  if(calc_std_errors) {
     if(is.null(data)) {
       warning("Approximate standard errors can't be calculated without data")
       std_errors <- rep(NA, npars)
@@ -275,12 +275,12 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
   if(gsmar$model$model != "StMAR") stop("Only StMAR models are supported as input")
   if(missing(estimate)) estimate <- ifelse(is.null(gsmar$data), FALSE, TRUE)
   if(missing(calc_std_errors)) calc_std_errors <- ifelse(is.null(gsmar$data), FALSE, TRUE)
-  if(estimate == TRUE & is.null(gsmar$data)) stop("Can't estimate the model without data")
+  if(estimate & is.null(gsmar$data)) stop("Can't estimate the model without data")
 
   new_params <- stmarpars_to_gstmar(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                                     maxdf=maxdf)
-  if(is.null(gsmar$model$constraints) || gsmar$model$restricted == TRUE) {
+  if(is.null(gsmar$model$constraints) || gsmar$model$restricted) {
     new_constraints <- gsmar$model$constraints
   } else {
     new_constraints <- gsmar$model$constraints[new_params$reg_order]
@@ -297,7 +297,7 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
     new_M <- new_params$M
   }
 
-  if(estimate == TRUE) {
+  if(estimate) {
     tmp_mod <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=new_M, params=new_params$params,
                      model=new_model, restricted=gsmar$model$restricted,
                      constraints=new_constraints, conditional=gsmar$model$conditional,

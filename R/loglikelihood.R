@@ -127,7 +127,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
 
   # Reform parameters to the "standard form" and collect them
-  if(checks == TRUE) {
+  if(checks) {
     checkConstraintMat(p=p, M=M_orig, restricted=restricted, constraints=constraints)
   }
   params <- removeAllConstraints(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
@@ -137,7 +137,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   sigmas <- pars[p + 2,]
 
   # Return minval if parameters are out of their boundaries.
-  if(boundaries == TRUE) {
+  if(boundaries) {
     if(any(pars[p + 2,] <= 0)) {
       return(minval)
     } else if(M >= 2 & sum(alphas[-M]) >= 1) {
@@ -152,7 +152,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
-  if(checks == TRUE) {
+  if(checks) {
     data <- checkAndCorrectData(data=data, p=p)
     parameterChecks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   }

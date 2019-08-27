@@ -24,16 +24,16 @@ format_valuef <- function(digits) {
 print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   gsmar <- x
   stopifnot(digits >= 0 & digits %% 1 == 0)
-  if(summary_print == TRUE) check_data(gsmar)
+  if(summary_print) check_data(gsmar)
 
   # Help functions
   format_value <- format_valuef(digits)
   print_err <- function(val) {
-    if(summary_print == TRUE) cat(paste0(" (", format_value(val),")"))
+    if(summary_print) cat(paste0(" (", format_value(val),")"))
   }
   make_string <- function(n_spaces, val) paste0(c(rep(" ", n_spaces), paste0("(", format_value(val), ")")), collapse="")
   add_string <- function(const_spaces, val1, val2) {
-    if(summary_print == TRUE) {
+    if(summary_print) {
       err_string[length(err_string) + 1] <<- make_string(const_spaces + nchar(format_value(val1)) - nchar(format_value(val2)), val2)
     }
   }
@@ -57,7 +57,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M, params=params, model=model)
 
-  if(summary_print == TRUE) {
+  if(summary_print) {
     all_ar_roots <- get_ar_roots(gsmar)
     std_errors <- removeAllConstraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
                                        constraints=constraints)
@@ -85,7 +85,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
       ifelse(restricted, "AR parameters restricted,", "not restricted,"),
       ifelse(is.null(constraints), "no constraints", "linear constraints imposed"), "\n")
 
-  if(summary_print == TRUE) {
+  if(summary_print) {
     IC <- gsmar$IC
     cat(paste("\nlog-likelihood:", format_value(gsmar$loglik)), "\n")
     cat(paste("AIC: ", format_value(IC$AIC)), "\n")
@@ -110,7 +110,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     cat(paste("Regime", m))
     if(model == "G-StMAR") cat(paste0(" (", regime_type, " type)"))
 
-    if(summary_print == TRUE) cat(paste("\nModulus of poly roots:", paste0(format_value(all_ar_roots[[m]]), collapse=", ")))
+    if(summary_print) cat(paste("\nModulus of poly roots:", paste0(format_value(all_ar_roots[[m]]), collapse=", ")))
 
     cat(paste("\nMix weight:", format_value(alphas[m])))
     print_err(alphas_err[m])
@@ -147,10 +147,10 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
       cat("[cond_sd]eps")
     }
     cat("\n")
-    if(summary_print == TRUE) cat(paste0(err_string, collapse=""), '\n')
+    if(summary_print) cat(paste0(err_string, collapse=""), '\n')
   }
 
-  if(summary_print == TRUE) {
+  if(summary_print) {
     um <- gsmar$uncond_moments
     cat("\nProcess mean:", format_value(um$uncond_mean), "\n")
     cat("Process var: ", format_value(um$uncond_var), "\n")

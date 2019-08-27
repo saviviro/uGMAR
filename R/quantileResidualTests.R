@@ -144,7 +144,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
   pvalue <- 1 - pchisq(N, df=dim_g)
 
   # Results
-  if(printRes == TRUE) cat(paste0("Normality test p-value: ", format_value3(pvalue)), "\n\n")
+  if(printRes) cat(paste0("Normality test p-value: ", format_value3(pvalue)), "\n\n")
   norm_res <- data.frame(testStat=N, df=dim_g, pvalue=pvalue, row.names=NULL)
 
   ##########################
@@ -166,7 +166,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
     }
   } # Returns (T - lag x lag) matrix (lag = dim_g)
 
-  if(printRes == TRUE) cat("Autocorrelation tests:\nlags | p-value\n")
+  if(printRes) cat("Autocorrelation tests:\nlags | p-value\n")
   j1 <- 1
   for(lag in lagsAC) {
     g <- get_g(lag, FUN=function(r, i1, i2) r[i1]*r[i1 - i2])
@@ -182,7 +182,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
     pvalue <- 1 - pchisq(A, df=lag)
 
     # Results
-    if(printRes == TRUE) print_resf(lag=lag, p_val=pvalue)
+    if(printRes) print_resf(lag=lag, p_val=pvalue)
     ac_res$testStat[j1] <- A
     ac_res$df[j1] <- lag
     ac_res$pvalue[j1] <- pvalue
@@ -198,7 +198,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
   ch_res <- data.frame(lags=lagsCH, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
 
   # Calculate c-heteroskedasticity statistics FUN = (r[i1]^2 - 1)*r[i1 - i2]^2
-  if(printRes == TRUE) cat("\nConditional heteroskedasticity tests:\nlags | p-value\n")
+  if(printRes) cat("\nConditional heteroskedasticity tests:\nlags | p-value\n")
   j1 <- 1
   for(lag in lagsCH) {
     g <- get_g(lag, FUN=function(r, i1, i2) (r[i1]^2 - 1)*r[i1 - i2]^2)
@@ -214,7 +214,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
     pvalue <- 1 - pchisq(H, df=lag)
 
     # Results
-    if(printRes == TRUE) print_resf(lag=lag, p_val=pvalue)
+    if(printRes) print_resf(lag=lag, p_val=pvalue)
     ch_res$testStat[j1] <- H
     ch_res$df[j1] <- lag
     ch_res$pvalue[j1] <- pvalue

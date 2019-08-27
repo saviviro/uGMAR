@@ -60,7 +60,7 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
                                       ylim=c(round(min(all_val)) - 1,
                                              round(max(all_val)) + 1),
                                       main=paste("Forecast", gsmarpred$n_ahead, "steps ahead")))
-  if(add_grid == TRUE) grid(...)
+  if(add_grid) grid(...)
 
   if(gsmarpred$pi_type %in% c("two-sided", "upper", "lower")) {
     for(i1 in 1:length(gsmarpred$pi)) {

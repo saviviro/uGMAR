@@ -90,7 +90,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
   }
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
-  if(plot_indstats == TRUE) {
+  if(plot_indstats) {
     par(mfrow=c(3, 2), mar=c(2.1, 2.1, 2.1, 0.8))
   } else {
     par(mfrow=c(2, 2), mar=c(2.1, 2.1, 2.1, 0.8))
@@ -127,7 +127,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
   plot_qr_acf(qr_acf, main="Qres ACF")
   plot_qr_acf(qrsquare_acf, main="Qres^2 ACF")
 
-  if(plot_indstats == TRUE) {
+  if(plot_indstats) {
     # Obtain tests statistics
     qrtest <- quantileResidualTests(gsmar, lagsAC=1:nlags, lagsCH=1:nlags, nsimu=nsimu, printRes=FALSE)
 

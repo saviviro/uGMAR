@@ -163,7 +163,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
                         pred_type=pred_type,
                         q=q_tocalc),
                    class="gsmarpred")
-  if(plotRes == TRUE) plot.gsmarpred(x=ret, nt=nt, ...)
+  if(plotRes) plot.gsmarpred(x=ret, nt=nt, ...)
   ret
 }
 

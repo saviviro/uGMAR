@@ -123,7 +123,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   # Check constraint matrices
   if(!is.null(constraints)) {
     checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
-    if(restricted == TRUE) {
+    if(restricted) {
       Cquals <- TRUE # States wether all matrices C are equal
     } else {
       if(length(unique(constraints)) == 1) {
@@ -755,7 +755,7 @@ smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
     whichRandom <- numeric(0)
   }
 
-  if(restricted==FALSE) {
+  if(restricted == FALSE) {
     ind <- c()
     j <- 0
     for(i1 in 1:M) { # Run through components
