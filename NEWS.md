@@ -23,3 +23,7 @@
 * In various functions, user may now adjust the difference 'h' used in the finite difference approximations for differentials of the log-likelihood. 
 * Bug fix: the summary print for gsmar objects falsely displayed standard error for the non-parametrized mixing weight
 * Fixed typos etc. in documentation.
+
+# uGMAR 3.2.1
+
+* Fixed 'additional issue' in CRAN checks
