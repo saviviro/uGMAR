@@ -27,3 +27,7 @@
 # uGMAR 3.2.1
 
 * Fixed 'additional issue' in CRAN checks
+
+# uGMAT 3.2.2
+
+* Typos corrected in documentation

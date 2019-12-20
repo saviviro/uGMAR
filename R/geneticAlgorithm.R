@@ -735,7 +735,7 @@ randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restrict
 #' @rdname randomIndividual_int
 #' @inheritParams loglikelihood
 #' @param accuracy a real number larger than zero specifying how close to \code{params} the generated parameter vector should be.
-#'   Standard deviation of the normal distribution from which new parameter values are drawed from will be corresponding parameter value divided by \code{accuracy}.
+#'   Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter value divided by \code{accuracy}.
 #' @param whichRandom an (optional) numeric vector of max length \code{M} specifying which regimes should be random instead of "smart" when
 #' using \code{smartIndividual}. Does not affect on mixing weight parameters. Default in none.
 #' @param forcestat use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?

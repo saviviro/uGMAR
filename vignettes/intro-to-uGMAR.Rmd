@@ -71,7 +71,7 @@ __uGMAR__ makes it easy to apply linear constraints to the autoregressive parame
 $$\boldsymbol{\phi_{m}}=\boldsymbol{C_{m}\psi_{m}}, \enspace m=1,...,M,$$
 where $\boldsymbol{C_{m}}$ is a known size $(pxq_{m})$ constraint matrix of full column rank and $\boldsymbol{\psi_{m}}$ is a size $(q_{m}x1)$ parameter vector. Observe that this particular specification for linear constraints is not the most general one. However, it keeps the constraint matrices small and simple, and it's convenient for applying the most typical constraints such as constraining some of the AR coefficients to be zero. For instance, in order to constraint the second AR coefficient of the second regime to zero in a model with `p=2` and `M=2`, the constraint matrix for the first regime is `diag(2)` implying no constraints, while the constraint matrix for the second regime is simply `matrix(1:0)`.  
 
-For further illustration, consider the following special case of linear constraints. We obtain a mixture version of the Heterogenous Autoregressive model (see Corsi 2009 for the original version) by setting 
+For further illustration, consider the following special case of linear constraints. We obtain a mixture version of the Heterogeneous Autoregressive model (see Corsi 2009 for the original version) by setting 
 $$\boldsymbol{C_{m}}=\left[{\begin{array}{ccc}
    \boldsymbol{\iota}_{5} & \frac{1}{5}\boldsymbol{1}_{5} & \frac{1}{22}\boldsymbol{1}_{5} \\
    0_{17} & 0_{17} & \frac{1}{22}\boldsymbol{1}_{17} \\

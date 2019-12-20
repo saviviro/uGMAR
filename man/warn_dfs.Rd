@@ -72,7 +72,7 @@ to be the same for all regimes.}
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
 Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
-alway \code{p} for all regimes.
+always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{warn_about}{warn about inaccurate derivatives or standard errors?}
@@ -83,7 +83,7 @@ Doesn't return anything but throws a warning if any degrees of freedom parameter
 }
 \description{
 \code{warn_dfs} warns if the model contains large degrees of freedom paramater values
-  possibly indicating unrealible numerical derivatives.
+  possibly indicating unrealiable numerical derivatives.
 }
 \details{
 Either provide a class 'gsmar' object or specify the model by hand.

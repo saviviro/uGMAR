@@ -38,7 +38,7 @@ to be the same for all regimes.}
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
 Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
-alway \code{p} for all regimes.
+always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
@@ -88,7 +88,7 @@ Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{accuracy}{a real number larger than zero specifying how close to \code{params} the generated parameter vector should be.
-Standard deviation of the normal distribution from which new parameter values are drawed from will be corresponding parameter value divided by \code{accuracy}.}
+Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter value divided by \code{accuracy}.}
 
 \item{whichRandom}{an (optional) numeric vector of max length \code{M} specifying which regimes should be random instead of "smart" when
 using \code{smartIndividual}. Does not affect on mixing weight parameters. Default in none.}

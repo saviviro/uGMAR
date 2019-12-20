@@ -186,7 +186,7 @@ uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 #'  autocorrelations of the GSMAR process.
 #'
 #' @inheritParams simulateGSMAR
-#' @return Returns a list contaiting the unconditional mean, variance, first p autocovariances and
+#' @return Returns a list containing the unconditional mean, variance, first p autocovariances and
 #'  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
 #'  but is given in the \code{uncond_variance} component separately.
 #' @inherit get_regime_autocovs references

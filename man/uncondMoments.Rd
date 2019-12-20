@@ -10,7 +10,7 @@ uncondMoments(gsmar)
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 }
 \value{
-Returns a list contaiting the unconditional mean, variance, first p autocovariances and
+Returns a list containing the unconditional mean, variance, first p autocovariances and
  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
  but is given in the \code{uncond_variance} component separately.
 }
