@@ -211,10 +211,14 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
                                                           minval=minval), numeric(1))
 
   if(printRes) {
+    printloks <- function() {
+        printfun <- function(txt, FUN) cat(paste(txt, round(FUN(loks), 3)), "\n")
+        printfun("The lowest loglik: ", min)
+        printfun("The mean loglik:   ", mean)
+        printfun("The largest loglik:", max)
+    }
     cat("Results from the genetic algorithm:\n")
-    cat(paste("lowest value: ", round(min(loks), 3)), "\n")
-    cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
-    cat(paste("largest value:", round(max(loks), 3)), "\n")
+    printloks()
   }
 
   ### Optimization with the variable metric algorithm ###
@@ -273,9 +277,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   if(printRes) {
     cat("Results from the variable metric algorithm:\n")
-    cat(paste("lowest value: ", round(min(loks), 3)), "\n")
-    cat(paste("mean value:   ", round(mean(loks), 3)), "\n")
-    cat(paste("largest value:", round(max(loks), 3)), "\n")
+    printloks()
   }
 
   # Obtain the estimates
