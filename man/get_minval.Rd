@@ -10,40 +10,15 @@ get_minval(data)
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
-  to work with other functions provided in \code{uGMAR}.
+Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 }
 \description{
-\code{get_minval} Returns the default smallest allowed log-likelihood for given data.
-}
-\details{
-The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
-  the estimation when the maximum number of iterations is reached when estimating a model with the
-  main estimation function \code{fitGSMAR}. \code{iterate_more} is essentially a wrapper for the functions
-  \code{optim} from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
+\code{get_minval} returns the default smallest allowed log-likelihood for given data.
 }
 \examples{
-\donttest{
-# Estimate GMAR model with only 50 generations of genetic algorithm and
-# only 1 iteration in variable metric algorithm
-fit12 <- fitGSMAR(logVIX, 1, 2, maxit=1, ngen=50, ncalls=1, seeds=1)
-fit12
-
-# Iterate more since iteration limit was reached
-fit12 <- iterate_more(fit12)
-fit12
-}
-}
-\references{
-\itemize{
-   \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
-           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
-           arXiv:1805.04010 \strong{[econ.EM]}.
-   \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
-           theoretical properties similar to the GMAR and StMAR models.
- }
+set.seed(1)
+get_minval(rnorm(1000))
 }
 \seealso{
-\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
+\code{\link{fitGSMAR}}, \code{\link{GAfit}}
 }

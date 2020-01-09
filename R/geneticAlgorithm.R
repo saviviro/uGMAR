@@ -143,7 +143,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   if(missing(meanscale)) meanscale <- c(mean(data), sd(data))
   if(missing(sigmascale)) sigmascale <- var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)
   if(missing(minval)) {
-    minval <- -(10^(ceiling(log10(n_obs)) + 1) - 1)
+    minval <- get_minval(data)
   } else if(!is.numeric(minval)) {
     stop("Argument minval must be numeric")
   }

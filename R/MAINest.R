@@ -183,7 +183,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   d <- nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints)
   dot_params <- list(...)
 
-  minval <- ifelse(is.null(dot_params$minval), -(10^(ceiling(log10(length(data))) + 1) - 1), dot_params$minval)
+  minval <- ifelse(is.null(dot_params$minval), get_minval(data), dot_params$minval)
   red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
 
   if(ncalls < ncores) {
@@ -351,7 +351,7 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
   check_gsmar(gsmar)
   stopifnot(maxit %% 1 == 0 & maxit >= 1)
   if(!is.null(custom_h)) stopifnot(length(custom_h) == length(gsmar$params))
-  minval <- -(10^(ceiling(log10(length(gsmar$data))) + 1) - 1)
+  minval <- get_minval(gsmar$data)
 
   fn <- function(params) {
     tryCatch(loglikelihood_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=params,
@@ -381,30 +381,14 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
 
 #' @title Returns the default smallest allowed log-likelihood for given data.
 #'
-#' @description \code{get_minval} Returns the default smallest allowed log-likelihood for given data.
+#' @description \code{get_minval} returns the default smallest allowed log-likelihood for given data.
 #'
-#' @inheritParams simulateGSMAR
-#' @inheritParams fitGSMAR
-#' @inheritParams GSMAR
-#' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
-#'   the estimation when the maximum number of iterations is reached when estimating a model with the
-#'   main estimation function \code{fitGSMAR}. \code{iterate_more} is essentially a wrapper for the functions
-#'   \code{optim} from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
-#' @return Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
-#'   to work with other functions provided in \code{uGMAR}.
-#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
-#' @inherit GSMAR references
+#' @inheritParams GAfit
+#' @return Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GAfit}}
 #' @examples
-#' \donttest{
-#' # Estimate GMAR model with only 50 generations of genetic algorithm and
-#' # only 1 iteration in variable metric algorithm
-#' fit12 <- fitGSMAR(logVIX, 1, 2, maxit=1, ngen=50, ncalls=1, seeds=1)
-#' fit12
-#'
-#' # Iterate more since iteration limit was reached
-#' fit12 <- iterate_more(fit12)
-#' fit12
-#' }
+#' set.seed(1)
+#' get_minval(rnorm(1000))
 
 get_minval <- function(data) {
   -(10^(ceiling(log10(length(data))) + 1) - 1)
