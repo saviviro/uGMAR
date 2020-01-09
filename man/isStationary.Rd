@@ -4,8 +4,14 @@
 \alias{isStationary}
 \title{Check the stationary condition of specified GMAR, StMAR or G-StMAR model.}
 \usage{
-isStationary(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL)
+isStationary(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}

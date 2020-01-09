@@ -183,17 +183,6 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   d <- nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints)
   dot_params <- list(...)
 
-  if(!is.null(dot_params$nCalls)) {
-    ncalls <- dot_params$nCalls
-    message("The argument 'nCalls' has been changed to 'ncalls' for consistency.")
-  }
-  if(!is.null(dot_params$nCores)) {
-    ncores <- dot_params$nCores
-    message("The argument 'nCores' has been changed to 'ncores' for consistency.")
-  }
-  extra_args <- names(dot_params)[!names(dot_params) %in% names(formals(GAfit))]
-  if(length(extra_args) > 0) message(paste0("The following arguments are passed to the genetic algorithm but are unused: ", toString(extra_args), "."))
-
   minval <- ifelse(is.null(dot_params$minval), -(10^(ceiling(log10(length(data))) + 1) - 1), dot_params$minval)
   red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
 
@@ -207,7 +196,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ### Optimization with the genetic algorithm ###
 
   cl <- parallel::makeCluster(ncores)
-  parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir = environment(fitGSMAR)) # assign all variables from package:uGMAR
+  parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir=environment(fitGSMAR)) # assign all variables from package:uGMAR
   parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
 
   cat("Optimizing with the genetic algorithm...\n")

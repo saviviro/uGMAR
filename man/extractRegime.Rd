@@ -4,8 +4,15 @@
 \alias{extractRegime}
 \title{Extract regime from a parameter vector}
 \usage{
-extractRegime(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, regime)
+extractRegime(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  regime
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}

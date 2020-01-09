@@ -4,8 +4,15 @@
 \alias{random_regime}
 \title{Create random regime}
 \usage{
-random_regime(p, meanscale, sigmascale, restricted = FALSE,
-  constraints = NULL, m, forcestat = FALSE)
+random_regime(
+  p,
+  meanscale,
+  sigmascale,
+  restricted = FALSE,
+  constraints = NULL,
+  m,
+  forcestat = FALSE
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}

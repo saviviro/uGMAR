@@ -10,10 +10,21 @@
 \alias{print.gsmar}
 \title{Create object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model}
 \usage{
-GSMAR(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, conditional = TRUE,
-  parametrization = c("intercept", "mean"), calc_qresiduals,
-  calc_cond_moments, calc_std_errors = FALSE, custom_h = NULL)
+GSMAR(
+  data,
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  conditional = TRUE,
+  parametrization = c("intercept", "mean"),
+  calc_qresiduals,
+  calc_cond_moments,
+  calc_std_errors = FALSE,
+  custom_h = NULL
+)
 
 \method{logLik}{gsmar}(object, ...)
 

@@ -72,7 +72,6 @@
 #'   The default is \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}, and one should be very careful if adjusting this.
 #' @param seed a single value, interpreted as an integer, or NULL, that sets seed for the random number generator in the beginning of
 #'   the function call. If calling \code{GAfit} from \code{fitGSMAR}, use the argument \code{seeds} instead of passing the argument \code{seed}.
-#' @param ... Currently not in use. Exists for a technical reason only.
 #' @details
 #'    The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.
 #'    It uses (slightly modified) individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)}
@@ -105,7 +104,7 @@
 
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),
                   conditional=TRUE, ngen=200, popsize, smartMu, meanscale, sigmascale, initpop=NULL, regime_force_scale=1,
-                  red_criteria=c(0.05, 0.01), to_return=c("alt_ind", "best_ind"), minval, seed=NULL, ...) {
+                  red_criteria=c(0.05, 0.01), to_return=c("alt_ind", "best_ind"), minval, seed=NULL) {
   set.seed(seed)
   model <- match.arg(model)
   check_model(model)

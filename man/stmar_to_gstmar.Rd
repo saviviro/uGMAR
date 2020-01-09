@@ -4,8 +4,14 @@
 \alias{stmar_to_gstmar}
 \title{Estimate a G-StMAR model based on StMAR model with large degrees of freedom parameters}
 \usage{
-stmar_to_gstmar(gsmar, maxdf = 100, estimate, calc_std_errors,
-  maxit = 100, custom_h = NULL)
+stmar_to_gstmar(
+  gsmar,
+  maxdf = 100,
+  estimate,
+  calc_std_errors,
+  maxit = 100,
+  custom_h = NULL
+)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}

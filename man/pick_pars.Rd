@@ -4,8 +4,14 @@
 \alias{pick_pars}
 \title{Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients and variance parameters from parameter vector}
 \usage{
-pick_pars(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL)
+pick_pars(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}

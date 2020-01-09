@@ -4,9 +4,15 @@
 \alias{uncondMoments_int}
 \title{Calculate unconditional mean, variance, first p autocovariances and autocorrelations of the GSMAR process.}
 \usage{
-uncondMoments_int(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL,
-  parametrization = c("intercept", "mean"))
+uncondMoments_int(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  parametrization = c("intercept", "mean")
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}

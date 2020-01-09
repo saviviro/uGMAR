@@ -4,11 +4,17 @@
 \alias{condMoments}
 \title{Calculate conditional moments of GMAR, StMAR or G-StMAR model}
 \usage{
-condMoments(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL,
+condMoments(
+  data,
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
   parametrization = c("intercept", "mean"),
-  to_return = c("regime_cmeans", "regime_cvars", "total_cmeans",
-  "total_cvars"))
+  to_return = c("regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars")
+)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
@@ -132,9 +138,10 @@ tcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
  }
 }
 \seealso{
-Other moment functions: \code{\link{get_regime_autocovs}},
-  \code{\link{get_regime_means}},
-  \code{\link{get_regime_vars}},
-  \code{\link{uncondMoments}}
+Other moment functions: 
+\code{\link{get_regime_autocovs}()},
+\code{\link{get_regime_means}()},
+\code{\link{get_regime_vars}()},
+\code{\link{uncondMoments}()}
 }
 \concept{moment functions}

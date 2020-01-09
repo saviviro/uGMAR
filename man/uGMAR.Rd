@@ -3,7 +3,6 @@
 \docType{package}
 \name{uGMAR}
 \alias{uGMAR}
-\alias{uGMAR-package}
 \title{uGMAR: Estimate Univariate Gaussian or Student's t Mixture Autoregressive Model}
 \description{
 \code{uGMAR} is a package for estimating univariate Gaussian Mixture Autoregressive (GMAR),

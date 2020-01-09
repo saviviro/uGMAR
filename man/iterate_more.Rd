@@ -4,8 +4,7 @@
 \alias{iterate_more}
 \title{Maximum likelihood estimation of GMAR, StMAR or G-StMAR model with preliminary estimates}
 \usage{
-iterate_more(gsmar, maxit = 100, custom_h = NULL,
-  calc_std_errors = TRUE)
+iterate_more(gsmar, maxit = 100, custom_h = NULL, calc_std_errors = TRUE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}

@@ -5,13 +5,30 @@
 \alias{smartIndividual}
 \title{Create random GMAR, StMAR or G-StMAR model compatible parameter vector}
 \usage{
-randomIndividual(p, M, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, meanscale, sigmascale,
-  forcestat = FALSE)
+randomIndividual(
+  p,
+  M,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  meanscale,
+  sigmascale,
+  forcestat = FALSE
+)
 
-smartIndividual(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, meanscale, sigmascale,
-  accuracy, whichRandom = numeric(0), forcestat = FALSE)
+smartIndividual(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  meanscale,
+  sigmascale,
+  accuracy,
+  whichRandom = numeric(0),
+  forcestat = FALSE
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the order of AR coefficients.}

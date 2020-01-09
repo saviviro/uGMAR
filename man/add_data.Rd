@@ -4,8 +4,14 @@
 \alias{add_data}
 \title{Add data to object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model}
 \usage{
-add_data(data, gsmar, calc_qresiduals = TRUE, calc_cond_moments = TRUE,
-  calc_std_errors = FALSE, custom_h = NULL)
+add_data(
+  data,
+  gsmar,
+  calc_qresiduals = TRUE,
+  calc_cond_moments = TRUE,
+  calc_std_errors = FALSE,
+  custom_h = NULL
+)
 }
 \arguments{
 \item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
