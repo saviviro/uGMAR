@@ -11,7 +11,7 @@
 #'  Default is \code{10*d} where \code{d} is the number of parameters.
 #' @param smartMu a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
 #'  This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far.
-#'   Default is \code{min(100, round(0.5*ngen))}.
+#'  Default is \code{min(100, round(0.5*ngen))}.
 #' @param meanscale a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 #'  of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
 #'  Default is \code{c(mean(data), sd(data))}.
@@ -124,13 +124,9 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   if(!is.null(constraints)) {
     checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
     if(restricted) {
-      Cquals <- TRUE # States wether all matrices C are equal
+      Cquals <- TRUE # States whether all matrices C are equal
     } else {
-      if(length(unique(constraints)) == 1) {
-        Cquals <- TRUE
-      } else {
-        Cquals <- FALSE
-      }
+      Cquals <- length(unique(constraints)) == 1
     }
   } else {
     Cquals <- TRUE # Always true if no constraints
@@ -142,36 +138,33 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   if(missing(smartMu)) smartMu <-  min(100, round(0.5*ngen))
   if(missing(meanscale)) meanscale <- c(mean(data), sd(data))
   if(missing(sigmascale)) sigmascale <- var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)
-  if(missing(minval)) {
-    minval <- get_minval(data)
-  } else if(!is.numeric(minval)) {
-    stop("Argument minval must be numeric")
-  }
+  if(missing(minval)) minval <- get_minval(data)
 
   # Argument checks
   stopifnot(is.numeric(red_criteria) & length(red_criteria) == 2)
-  if(ngen < 1) {
-    stop("The number of generations can't be less than one")
-  } else if(ngen%%1 != 0) {
-    stop("The number of generations has to be positive integer")
-  } else if(popsize%%2 != 0) {
-    stop("The size of population has to be EVEN positive integer")
-  } else if(popsize < 2) {
-    stop("Population size can't be smaller than two")
-  } else if(smartMu%%1 != 0) {
-    stop("smartMu has to be (positive) integer")
-  }
-  if(length(regime_force_scale) != 1 | regime_force_scale < 0) {
+  if(!all_pos_ints(c(ngen, smartMu))) {
+    stop("The arguments 'ngen' and 'smartMu' should be strictly positive integers")
+  } else if(popsize%%2 != 0 | popsize < 2) {
+    stop("The population size has to be EVEN positive integer")
+  } else if(length(regime_force_scale) != 1 | regime_force_scale < 0) {
     stop("regime_force_scale should be non-negative real number")
   }
 
   # Initial population
   stopifnot(is.list(initpop) | is.null(initpop))
   if(is.null(initpop)) {
-    G <- replicate(popsize, randomIndividual_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
-                                                 meanscale=meanscale, sigmascale=sigmascale), numeric(d))
+    nattempts <- 100
+    for(i1 in 1:nattempts) {
+      G <- replicate(popsize, randomIndividual_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
+                                                   meanscale=meanscale, sigmascale=sigmascale), numeric(d))
+      init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
+                                                                    constraints=constraints, conditional=conditional, parametrization="mean",
+                                                                    boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), numeric(1))
+      if(any(init_loks > minval)) break
+      if(i1 == nattempts) stop("Failed to create initial population with good enough individuals. Consider setting up the initial population by hand using the argument 'initpop' of the function 'GAfit'.")
+    }
   } else {
-    # If the initial individuals are set by the user: check it and create the initial generation matrix G.
+    # If the initial individuals are set by the user: check them and create the initial generation matrix G.
     n_inds <- length(initpop)
     for(i1 in 1:n_inds) {
       params <- initpop[[i1]]
@@ -194,7 +187,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
       if(!isStationary_int(p, M, params=pars_tmp$params, restricted=restricted)) {
         stop(paste("The individual", i1, "in the initial population is not stationary"))
       } else if(any(pars_tmp$pars[p + 2,] <= 0)) {
-        stop(paste("The individual", i1, "in the initial population has variance parameter that not larger than zero"))
+        stop(paste("The individual", i1, "in the initial population has variance parameter that is not larger than zero"))
       } else if(sum(pars_tmp$alphas) > 1 + 1e-10) {
         stop(paste("The mixing weights of the individual", i1," in the initial population don't sum to one"))
       } else if(is.null(constraints)) { # Sort components in the initial population so that alpha_1>...>alpha_M
@@ -202,6 +195,10 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
       }
     }
     G <- replicate(popsize, initpop[[sample.int(length(initpop), size=1)]])
+    init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
+                                                                  constraints=constraints, conditional=conditional, parametrization="mean",
+                                                                  boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), numeric(1))
+    if(!any(init_loks > minval)) stop("The initial population does not contain good enough individuals. Check the log-likelihoods of the individuals with the function 'loglikelihood'.")
   }
 
 
@@ -243,14 +240,14 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
       }
 
       # survivor_liks holds the parents' loglikelihood values: for odd number they are (index, index+1) and for even (index-1, index)
-      if(length(inherit) >= 1 & abs(maxLiks - avgLiks) > abs(0.03*avgLiks)) { # If massive mutations: no fitness inheritance
+      if(length(inherit) >= 1 & abs(maxLik - meanLik) > abs(0.03*meanLik)) { # If massive mutations: no fitness inheritance
         for(i2 in inherit) {
           if(i2 %% 2 == 0) {
             logliks[i1, i2] <- ((d - I2[i2])/d)*survivor_liks[i2 - 1] + (I2[i2]/d)*survivor_liks[i2]
-            redundants[i1, i2] <- max(c(survivor_redundants[i2-1], survivor_redundants[i2]))
+            redundants[i1, i2] <- max(c(survivor_redundants[i2 - 1], survivor_redundants[i2]))
           } else {
             logliks[i1, i2] <- (I2[i2]/d)*survivor_liks[i2] + ((d - I2[i2])/d)*survivor_liks[i2 + 1]
-            redundants[i1, i2] <- max(c(survivor_redundants[i2], survivor_redundants[i2+1]))
+            redundants[i1, i2] <- max(c(survivor_redundants[i2], survivor_redundants[i2 + 1]))
           }
         }
         noinherit <- (1:popsize)[-inherit]
@@ -280,30 +277,30 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     redundants[i1, which(logliks[i1,] <= minval)] <- M
 
     # Create the reproduction pool
-    if(length(unique(logliks[i1,])) == 1) { # If all individuals are the same, the surviving probability is 1.
+    if(length(unique(logliks[i1,])) == 1) { # If all individuals are the same, the surviving probability weight is 1.
       surviveProbs <- rep(1, popsize)
     } else {
       T_values <- logliks[i1,] + abs(min(logliks[i1,])) # Function T as described by Dorsey R. E. ja Mayer W. J., 1995
-      T_values <- T_values/(1 + regime_force_scale*redundants[i1,]) # Favor individuals with least number of redundant regimes
-      surviveProbs <- T_values/sum(T_values) # The surviving probabilities
+      T_values <- T_values/(1 + regime_force_scale*redundants[i1,]) # Favour individuals with the least number of redundant regimes
+      surviveProbs <- T_values/sum(T_values) # The surviving probability weights
     }
     survivors <- sample(1:popsize, size=popsize, replace=TRUE, prob=surviveProbs)
     H <- G[,survivors] # Save the survivors in reproduction pool H
 
-    # Calculate avg, min and max of loglikelihoods of the survivors
+    # Calculate mean, min, and max log-likelihoods of the survivors
     survivor_liks <- logliks[i1, survivors]
     survivor_redundants <- redundants[i1, survivors]
-    avgLiks <- mean(survivor_liks)
-    maxLiks <- max(survivor_liks)
-    if(maxLiks == avgLiks) avgLiks <- avgLiks + 0.5
+    meanLik <- mean(survivor_liks)
+    maxLik <- max(survivor_liks)
+    if(maxLik == meanLik) meanLik <- meanLik + 0.1 # We avoid dividing by zero when all the individuals are the same
 
-    # Individually adaptive cross-over rate as described by  M. Srinivas L.M. Patnaik (1994)
+    # Individually adaptive cross-over rate as described by  M. Srinivas L.M. Patnaik (1994) with the modification of setting crossover rate to be at least 0.4.
     indeces <- seq(1, popsize - 1, by=2)
     parentLiks <- vapply(indeces, function(i2) max(survivor_liks[i2], survivor_liks[i2 + 1]), numeric(1)) # Max of parents
-    coRate <- vapply(1:length(indeces), function(i2) max(min(1, (maxLiks - parentLiks[i2])/(maxLiks - avgLiks)), 0.4), numeric(1)) # The best genes should mix the the population too
+    coRate <- vapply(1:length(indeces), function(i2) max(min(1, (maxLik - parentLiks[i2])/(maxLik - meanLik)), 0.4), numeric(1)) # The best genes should mix the the population too
 
-    # For each pair of individuals draw from bernoulli wether crossover is to be made or not. If yes, do it.
-    which_co <- rbinom(popsize/2, 1, coRate) # 1 = do crossover, 0 = no cross-over
+    # For each pair of individuals draw from Bernoulli whether crossover is to be made or not. If yes, do it.
+    which_co <- rbinom(popsize/2, 1, coRate) # 1 = do crossover, 0 = do not crossover
     I <- round(runif(popsize/2, min=0.5 + 1e-16, max=nrow(H) - 0.5 - 1e-16)) # Break points
     indeces <- seq(1, popsize - 1, by=2)
     H2 <- as.vector(vapply(1:(popsize/2), function(i2) {
@@ -318,37 +315,39 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
     # Get the best individual so far and check for reduntant regimes
     best_index0 <- which(logliks == max(logliks), arr.ind = TRUE)
-    best_index <- best_index0[order(best_index0[,1], decreasing=FALSE)[1],] # First generation when the best loglik occured (because of fitness inheritance)
+    best_index <- best_index0[order(best_index0[,1], decreasing=FALSE)[1],] # First generation when the best loglik occurred (take the first because of fitness inheritance)
     best_ind <- generations[, best_index[2], best_index[1]]
     best_mw <- mixingWeights_int(data=data, p=p, M=M_orig, params=best_ind, model=model, restricted=restricted,
-                            constraints=constraints, parametrization="mean", checks=FALSE, to_return="mw")
+                                 constraints=constraints, parametrization="mean", checks=FALSE, to_return="mw")
     which_redundant <- which((vapply(1:M, function(i2) sum(best_mw[,i2] > red_criteria[1]) < red_criteria[2]*length(data), logical(1))))
 
-    # Keep track of "alternative best individual" that has less reduntant regimes than the current one (after the algorithm finds one)
+    # Keep track of "alternative best individual" that has less reduntant regimes than the current best one (after the algorithm finds one)
     if(length(which_redundant) <= length(which_redundant_alt)) {
       alt_ind <- best_ind
       which_redundant_alt <- which_redundant
     }
 
-    # Individually adaptive mutation rates, Patnaik and Srinivas (1994)
+    # Mutation rates
     which_not_co <- rep(1 - which_co, each=2)
-    if(abs(maxLiks - avgLiks) <= abs(0.03*avgLiks)) {
+    if(abs(maxLik - meanLik) <= abs(0.03*meanLik)) {
       muRate <- rep(0.7, popsize) # Massive mutations if converging
     } else {
-      muRate <- 0.5*vapply(1:popsize, function(i2) min(which_not_co[i2], (maxLiks - survivor_liks[i2])/(maxLiks - avgLiks)), numeric(1))
+      # Individually adaptive mutation rates, Patnaik and Srinivas (1994)
+      muRate <- 0.5*vapply(1:popsize, function(i2) min(which_not_co[i2], (maxLik - survivor_liks[i2])/(maxLik - meanLik)), numeric(1))
     }
 
-    # Mutate
+    # Which individuals to mutate
     mutate_indicator <- rbinom(n=popsize, size=1, prob=muRate)
     mutate <- which(mutate_indicator == 1)
 
     # How the generate random AR parameters
     if(!is.null(constraints) | runif(1) > 0.3) { # From normal distribution (the only option if constraints are imposed)
       forcestat <- FALSE
-    } else { # Use the algorithm by Monahan (1984) to generate stationary the AR parameters (slower)
+    } else { # Use the algorithm by Monahan (1984) to generate stationary AR parameters (slower)
       forcestat <- TRUE
     }
 
+    # Mutate
     if(length(mutate) >= 1) {
       if(i1 > smartMu) { # Smart mutations
 

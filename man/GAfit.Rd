@@ -68,7 +68,7 @@ Default is \code{10*d} where \code{d} is the number of parameters.}
 
 \item{smartMu}{a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
 This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far.
- Default is \code{min(100, round(0.5*ngen))}.}
+Default is \code{min(100, round(0.5*ngen))}.}
 
 \item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
