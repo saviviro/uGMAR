@@ -320,16 +320,16 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
 #' @title Maximum likelihood estimation of GMAR, StMAR or G-StMAR model with preliminary estimates
 #'
-#' @description \code{iterate_more} uses variable metric algorithm to finalize maximum likelihood
-#'  estimation of GMAR, StMAR or G-StMAR model (object of class \code{'gsmarar'}) which already has preliminary estimates.
+#' @description \code{iterate_more} uses a variable metric algorithm to finalize maximum likelihood
+#'  estimation of GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has preliminary estimates.
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams fitGSMAR
 #' @inheritParams GSMAR
 #' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
 #'   the estimation when the maximum number of iterations is reached when estimating a model with the
-#'   main estimation function \code{fitGSMAR}. It's just a simple wrapper around function \code{optim}
-#'   from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
+#'   main estimation function \code{fitGSMAR}. \code{iterate_more} is essentially a wrapper for the functions
+#'   \code{optim} from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
 #'   to work with other functions provided in \code{uGMAR}.
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
@@ -375,4 +375,37 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
         calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, custom_h=custom_h)
+}
+
+
+
+#' @title Returns the default smallest allowed log-likelihood for given data.
+#'
+#' @description \code{get_minval} Returns the default smallest allowed log-likelihood for given data.
+#'
+#' @inheritParams simulateGSMAR
+#' @inheritParams fitGSMAR
+#' @inheritParams GSMAR
+#' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
+#'   the estimation when the maximum number of iterations is reached when estimating a model with the
+#'   main estimation function \code{fitGSMAR}. \code{iterate_more} is essentially a wrapper for the functions
+#'   \code{optim} from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
+#' @return Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
+#'   to work with other functions provided in \code{uGMAR}.
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
+#' @inherit GSMAR references
+#' @examples
+#' \donttest{
+#' # Estimate GMAR model with only 50 generations of genetic algorithm and
+#' # only 1 iteration in variable metric algorithm
+#' fit12 <- fitGSMAR(logVIX, 1, 2, maxit=1, ngen=50, ncalls=1, seeds=1)
+#' fit12
+#'
+#' # Iterate more since iteration limit was reached
+#' fit12 <- iterate_more(fit12)
+#' fit12
+#' }
+
+get_minval <- function(data) {
+  -(10^(ceiling(log10(length(data))) + 1) - 1)
 }
