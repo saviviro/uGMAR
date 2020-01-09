@@ -143,7 +143,8 @@ the function call. If calling \code{GAfit} from \code{fitGSMAR}, use the argumen
 Returns estimated parameter vector described in \code{initpop}.
 }
 \description{
-\code{GAfit} estimates specified GMAR, StMAR or G-StMAR model using genetic algorithm. It's designed to find starting values for gradient based methods.
+\code{GAfit} estimates specified GMAR, StMAR or G-StMAR model using a genetic algorithm.
+ It's designed to find starting values for gradient based methods.
 }
 \details{
 The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.

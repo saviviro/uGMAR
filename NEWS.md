@@ -31,3 +31,4 @@
 # uGMAT 3.2.2
 
 * Typos corrected in documentation
+* Disabled camelCase compatibility for arguments 'ncalls' and 'ncores' in fitGMAR.

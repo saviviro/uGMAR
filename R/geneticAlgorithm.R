@@ -2,7 +2,8 @@
 #'
 #' @title Genetic algorithm for preliminary estimation of GMAR, StMAR or G-StMAR model
 #'
-#' @description \code{GAfit} estimates specified GMAR, StMAR or G-StMAR model using genetic algorithm. It's designed to find starting values for gradient based methods.
+#' @description \code{GAfit} estimates specified GMAR, StMAR or G-StMAR model using a genetic algorithm.
+#'  It's designed to find starting values for gradient based methods.
 #'
 #' @inheritParams loglikelihood_int
 #' @param ngen a positive integer specifying the number of generations to be ran through in the genetic algorithm.
