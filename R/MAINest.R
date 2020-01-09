@@ -172,14 +172,14 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=min(2, ncalls, parallel::detectCores()),
                      maxit=300, seeds=NULL, printRes=TRUE, runTests=FALSE, ...) {
   on.exit(closeAllConnections())
+  if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
-  if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   checkPM(p, M, model=model)
   data <- checkAndCorrectData(data, p)
-  if(!is.null(constraints)) checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
+  checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
   d <- nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints)
   dot_params <- list(...)
 
@@ -239,14 +239,14 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   # Function to maximize loglikelihood
   f <- function(params) {
      if(model == "StMAR" | model == "G-StMAR") {
-       params <- manipulateDFS(M=M, params=params, model=model, FUN=exp) # Unlogarithmize dfs
+       params <- manipulateDFS(M=M, params=params, model=model, FUN=exp) # Unlogarithmize dfs for calculating log-likelihood
      }
      tryCatch(loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                                 conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE, minval=minval),
               error=function(e) minval)
   }
 
-  # Calculate gradient of the log-likelihood function using central finite difference
+  # Calculate gradient of the log-likelihood function using central finite difference approximation
   I <- diag(rep(1, d))
   h <- 6e-6
   gr <- function(params) {
@@ -291,7 +291,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1] > red_criteria[1]) < red_criteria[2]*length(data), logical(1)))) {
     message("At least one of the mixture components in the estimated model seems to be wasted!")
   }
-  if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual!")
+  if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual! Iterate more with the function 'iterate_more'.")
 
   # Quantile residual tests
   if(runTests) {
