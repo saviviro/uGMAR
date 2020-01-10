@@ -225,10 +225,10 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   }
 
   ### Run through generations ###
-  for(i1 in 1:197) {
+  for(i1 in 1:ngen) {
     generations[, , i1] <- G # Save the generation's population to the container.
 
-    # Compute log-likelihoods
+    ## Compute the log-likelihoods ##
     if(i1 > 1) {
       # Fitness inheritance: individual has 50% changes to inherit fitness if it's a result from crossover.
       I2 <- rep(I, each=2)
@@ -276,7 +276,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     logliks[i1, which(logliks[i1,] < minval)] <- minval
     redundants[i1, which(logliks[i1,] <= minval)] <- M
 
-    # Create the reproduction pool
+    ## Create the reproduction pool ##
     if(length(unique(logliks[i1,])) == 1) { # If all individuals are the same, the surviving probability weight is 1.
       surviveProbs <- rep(1, popsize)
     } else {
@@ -294,6 +294,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     maxLik <- max(survivor_liks)
     if(maxLik == meanLik) meanLik <- meanLik + 0.1 # We avoid dividing by zero when all the individuals are the same
 
+    ## Cross-overs ##
     # Individually adaptive cross-over rate as described by  M. Srinivas L.M. Patnaik (1994) with the modification of setting crossover rate to be at least 0.4.
     indeces <- seq(1, popsize - 1, by=2)
     parentLiks <- vapply(indeces, function(i2) max(survivor_liks[i2], survivor_liks[i2 + 1]), numeric(1)) # Max of parents
@@ -313,6 +314,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     }, numeric(2*d)))
     H2 <- matrix(H2, ncol=popsize)
 
+
     # Get the best individual so far and check for reduntant regimes
     best_index0 <- which(logliks == max(logliks), arr.ind = TRUE)
     best_index <- best_index0[order(best_index0[,1], decreasing=FALSE)[1],] # First generation when the best loglik occurred (take the first because of fitness inheritance)
@@ -327,6 +329,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
       which_redundant_alt <- which_redundant
     }
 
+    ## Mutations ##
     # Mutation rates
     which_not_co <- rep(1 - which_co, each=2)
     if(abs(maxLik - meanLik) <= abs(0.03*meanLik)) {
@@ -364,127 +367,172 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         accuracy <- abs(rnorm(length(mutate), mean=15, sd=10))
 
         # "Smart mutation": mutate close to a well fitting individual.
-        # Smart mutate the best_ind if there does not exists alternative individual with less redundant
-        # regimes than in the best_ind, or changes by random. Redudant regimes are obviously not smart
-        # mutated but drawn at random.
+        # Smart mutate to best_ind if there does not exists alternative individual with less redundant
+        # regimes than in the best_ind, and changes by random. Redundant regimes are obviously not smart
+        # mutated but drawn at random. Smart mutate to alternative individual if there exists such with
+        # less redundant regimes than the best individual.
         # Alternatively, if there exists alternative individual with less redundant regimes than in the
         # best_ind, a "regime combining" might take place: take a redundant regime of the best_ind and
         # replace it with a nonredundant regime taken from the alt_ind. Then do smart mutation close to
         # this new individual. For simplicity, regime combining is not considered for models imposing
         # linear constraints if the constraints are not the same for all the regimes.
 
-        # Can regime combining be done? If combining takes place, which regime should be changed?
-         if(length(which_redundant) <= length(which_redundant_alt)) {
-           # Can't combine regimes if alt_ind does not have strictly less redundant regimes since then alt_ind == best_ind
-           cant_comb <- TRUE
-         } else {
-           # Can combine regimes since alt_ind has strictly less redundant GMAR or StMAR type regimes
-           cant_comb <- FALSE
-           if(model == "G-StMAR") {
-             if(sum(which_redundant <= M1) > sum(which_redundant_alt <= M1)) { # More GMAR type redundants in best_ind than in alt_ind?
-               # Choose GMAR type regime to change
-               which_to_change <- which_redundant[which_redundant <= M1][1]
-             } else { # If not, then there must be more StMAR type redundants in best_ind than in alt_ind.
-               # Choose StMAR type regime to change
-               which_to_change <- which_redundant[which_redundant > M1][1]
-             }
-           } else { # model == "GMAR" or "StMAR"; all regimes are the same type.
-             which_to_change <- which_redundant[1]
-           }
-         }
+        ## IN THE CURRENT VERSION ANY REGIME CAN BE CHANGED
+        # # Can regime combining be done? If combining takes place, which regime should be changed?
+        #  if(length(which_redundant) <= length(which_redundant_alt)) {
+        #    # Can't combine regimes if alt_ind does not have strictly less redundant regimes since then alt_ind == best_ind
+        #    cant_comb <- TRUE
+        #  } else {
+        #    # Can combine regimes since alt_ind has strictly less redundant GMAR or StMAR type regimes
+        #    cant_comb <- FALSE
+        #    if(model == "G-StMAR") {
+        #      if(sum(which_redundant <= M1) > sum(which_redundant_alt <= M1)) { # More GMAR type redundants in best_ind than in alt_ind?
+        #        # Choose GMAR type regime to change
+        #        which_to_change <- which_redundant[which_redundant <= M1][1]
+        #      } else { # If not, then there must be more StMAR type redundants in best_ind than in alt_ind.
+        #        # Choose StMAR type regime to change
+        #        which_to_change <- which_redundant[which_redundant > M1][1]
+        #      }
+        #    } else { # model == "GMAR" or "StMAR"; all regimes are the same type.
+        #      which_to_change <- which_redundant[1]
+        #    }
+        #  }
 
    #     if(Cquals == FALSE | model == "G-StMAR" | length(which_redundant) <= length(which_redundant_alt) | runif(1) > 0.5) {
-         if(Cquals == FALSE | cant_comb | runif(1) > 0.5) {
+        ## "Smart mutation": mutate close to a well fitting individual. Redundant regimes are obviously not smart
+        # mutated but drawn at random.
+        if(Cquals == FALSE | length(which_redundant) <= length(which_redundant_alt) | runif(1) > 0.5) {
+          # Smart mutate to alt_ind which is the best fitting individual with the least redundant regimes.
+          # Note that best_ind == smart_ind when length(which_redundant) <= length(which_redundant_alt).
           ind_to_use <- alt_ind
           rand_to_use <- which_redundant_alt
         } else {
+          # Alternatively, if there exists alternative individual with less redundant regimes than in the
+          # best_ind, a "regime combining" might take place: take a redundant regime of the best_ind and
+          # replace it with a nonredundant regime taken from the alt_ind. Then do smart mutation close to
+          # this new individual. For simplicity, regime combining is not considered for models imposing
+          # linear constraints if the constraints are not the same for all the regimes.
+
           # Change a redundant regime of best_ind to be a non-redundant regime of alt_ind to form the individual to be used in smart mutations.
 
           # Choose regime of best_ind to be changed
           # which_to_change <- which_redundant[1]
 
-          # Pick non-redundant regimes of the best_ind and alt_ind.
-          # We only take regimes of the same type (GMAR or StMAR) as the regime to be changed.
-          if(model == "G-StMAR") {
-            if(which_to_change <= M1) {
-              which_bestind_nonred <- (1:M1)[-which_redundant[which_redundant <= M1]]
-              which_redundant_alt2 <- which_redundant_alt[which_redundant_alt <= M1]
-              if(length(which_redundant_alt2) == 0) { # Special case for techinal reason
-                which_altind_nonred <- 1:M1
-              } else {
-                which_altind_nonred <- (1:M1)[-which_redundant_alt2]
-              }
-            } else { # which_to_change > M1
-              which_bestind_nonred <- (1:M)[-c(1:M1, which_redundant[which_redundant > M1])]
-              which_redundant_alt2 <- which_redundant_alt[which_redundant_alt > M1]
-              if(length(which_redundant_alt2) == 0) { # Special case for technical reason
-                which_altind_nonred <- (M1 + 1):M
-              } else {
-                which_altind_nonred <- ((M1 + 1):M)[-which_redundant_alt2]
-              }
-            }
-          } else { # model == "GMAR" or "StMAR"
-            which_bestind_nonred <- (1:M)[-which_redundant]
-            if(length(which_redundant_alt) == 0) { # Special case for technical reason
-              which_altind_nonred <- 1:M
-            } else {
-              which_altind_nonred <- (1:M)[-which_redundant_alt]
-            }
-          }
-
-          best_ind_nonRedRegimes <- sapply(which_bestind_nonred, function(i2) extractRegime(p=p, M=M_orig, params=best_ind, model=model,
-                                                                                            restricted=restricted, constraints=constraints,
-                                                                                            regime=i2))
-          alt_ind_nonRedRegimes <- sapply(which_altind_nonred, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
-                                                                                          restricted=restricted, constraints=constraints,
-                                                                                          regime=i2))
-          # if(length(which_redundant_alt) == 0) {
-          #   alt_ind_nonRedRegimes <- sapply(1:M, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
-          #                                                                   restricted=restricted, constraints=constraints,
-          #                                                                   regime=i2))
-          # } else {
-          #   alt_ind_nonRedRegimes <- sapply((1:M)[-which_redundant_alt], function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
-          #                                                                                           restricted=restricted, constraints=constraints,
-          #                                                                                           regime=i2))
+          # Pick the non-redundant regimes of the best_ind and alt_ind.
+          # # We only take regimes of the same type (GMAR or StMAR) as the regime to be changed.
+          # if(model == "G-StMAR") {
+          #   if(which_to_change <= M1) {
+          #     which_bestind_nonred <- (1:M1)[-which_redundant[which_redundant <= M1]] # TÄSSÄ BUGI KOSKA EI YHTÄÄN EI-REDUNDANTTIA REGIIMIÄ
+          #     which_redundant_alt2 <- which_redundant_alt[which_redundant_alt <= M1]  # REGIIMIKOMBINOINTI VOIDAAN TEHDÄ
+          #     if(length(which_redundant_alt2) == 0) { # Special case for techinal reason
+          #       which_altind_nonred <- 1:M1
+          #     } else {
+          #       which_altind_nonred <- (1:M1)[-which_redundant_alt2]
+          #     }
+          #   } else { # which_to_change > M1
+          #     which_bestind_nonred <- (1:M)[-c(1:M1, which_redundant[which_redundant > M1])]
+          #     which_redundant_alt2 <- which_redundant_alt[which_redundant_alt > M1]
+          #     if(length(which_redundant_alt2) == 0) { # Special case for technical reason
+          #       which_altind_nonred <- (M1 + 1):M
+          #     } else {
+          #       which_altind_nonred <- ((M1 + 1):M)[-which_redundant_alt2]
+          #     }
+          #   }
+          # } else { # model == "GMAR" or "StMAR"
+          #   which_bestind_nonred <- (1:M)[-which_redundant]
+          #   if(length(which_redundant_alt) == 0) { # Special case for technical reason
+          #     which_altind_nonred <- 1:M
+          #   } else {
+          #     which_altind_nonred <- (1:M)[-which_redundant_alt]
+          #   }
           # }
 
-          # Remove df-parameters from distance comparison if there are dfs larger than 25, since then their affect in the
-          # distance comparison may easily be larger than their effect to fit.
-          cond <- any(best_ind_nonRedRegimes[nrow(best_ind_nonRedRegimes),] >= 25) | any(alt_ind_nonRedRegimes[nrow(alt_ind_nonRedRegimes),] >= 25)
-          GStMARcond <- model == "G-StMAR" & which_to_change > M1 # If StMAR type regime is to be changed
-          if((model == "StMAR" | GStMARcond) & cond) {
-            best_ind_regimes0 <- as.matrix(best_ind_nonRedRegimes[1:(nrow(best_ind_nonRedRegimes) - 1),])
-            alt_ind_regimes0 <- as.matrix(alt_ind_nonRedRegimes[1:(nrow(alt_ind_nonRedRegimes) - 1),])
+          # We take a redundant regime of the best_ind (which_to_change) and replace it with a nonredundant regime taken
+          # from the alt_ind. We want to take such nonredundant regime of alt_ind that is not similar to the nonredundant regimes
+          # of best_ind. In order to choose such regime, we do a trade-off: we remove the degrees of freedom parameters
+          # from all StMAR type regimes and compare all the nonredundant regimes of best_ind to all nonredundant regimes of alt_ind
+          # without accounting for the degree of freedom parameters (and we do cross-type comparisons for G-StMAR model). After
+          # choosing the regime from alt_ind, we add the dfs parameter if a StMAR type regime is to be changed. This way
+          # we avoid the problem that similar regimes with degree of freedom parameters, say, 2000 and 5000, look like non-similar
+          # regimes in numerical distance comparison. By doing cross-type comparisons we also avoid the problem in the G-StMAR model
+          # that a StMAR type regime with large dfs parameter would be inserted to parameter vector with similar GMAR type regime.
+          # We loose in the trade-off reliability of the comparisons between regimes that are otherwise similar but have different dfs.
+
+          # The first redundant regime of best_ind is to be replaced with a regime from alt_ind
+          which_to_change <- which_redundant[1]
+
+          # All non-redundant regimes of best_ind
+          best_ind_nonRedRegimes <- vapply((1:M)[-which_redundant], function(i2) extractRegime(p=p, M=M_orig, params=best_ind, model=model,
+                                                                                               restricted=restricted, constraints=constraints,
+                                                                                               regime=i2, with_dfs=FALSE), numeric(p + 2))
+          # All non-redundant regimes of the considered type of alt_ind
+          if(length(which_redundant_alt) == 0) { # Special case for techinal reason
+            nonred_altind <- 1:M
           } else {
-            best_ind_regimes0 <- as.matrix(best_ind_nonRedRegimes)
-            alt_ind_regimes0 <- as.matrix(alt_ind_nonRedRegimes)
+            nonred_altind <- (1:M)[-which_redundant_alt]
           }
+          alt_ind_nonRedRegimes <- vapply(nonred_altind, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
+                                                                                    restricted=restricted, constraints=constraints,
+                                                                                    regime=i2, with_dfs=FALSE), numeric(p + 2))
+
+          ## THIS IS NOT NEEDED IN THE CURRECT VERSION
+          # # Remove df-parameters from distance comparison if there are dfs larger than 25, since then their affect in the
+          # # distance comparison may easily be larger than their effect to fit.
+          # cond <- any(best_ind_nonRedRegimes[nrow(best_ind_nonRedRegimes),] >= 25) | any(alt_ind_nonRedRegimes[nrow(alt_ind_nonRedRegimes),] >= 25)
+          # GStMARcond <- model == "G-StMAR" & which_to_change > M1 # If StMAR type regime is to be changed
+          # if((model == "StMAR" | GStMARcond) & cond) {
+          #   best_ind_regimes0 <- as.matrix(best_ind_nonRedRegimes[1:(nrow(best_ind_nonRedRegimes) - 1),])
+          #   alt_ind_regimes0 <- as.matrix(alt_ind_nonRedRegimes[1:(nrow(alt_ind_nonRedRegimes) - 1),])
+          # } else {
+          #   best_ind_regimes0 <- as.matrix(best_ind_nonRedRegimes)
+          #   alt_ind_regimes0 <- as.matrix(alt_ind_nonRedRegimes)
+          # }
+
 
           # Calculate "distances" between alt_ind regimes and best_ind non redundant regimes
-          dist_to_regime <- matrix(nrow=ncol(best_ind_regimes0), ncol=ncol(alt_ind_regimes0)) # Row for each nonred-regime and column for each alt_ind regime
+          # Row for each non-redundant best_ind regime and column for each non-redundant alt_ind regime
+          dist_to_regime <- matrix(nrow=ncol(best_ind_nonRedRegimes), ncol=ncol(alt_ind_nonRedRegimes))
           for(i2 in 1:nrow(dist_to_regime)) {
-            dist_to_regime[i2,] <- vapply(1:ncol(dist_to_regime), function(i3) regime_distance(regime_pars1=best_ind_regimes0[,i2],
-                                                                                               regime_pars2=alt_ind_regimes0[,i3]), numeric(1))
+            dist_to_regime[i2,] <- vapply(1:ncol(dist_to_regime), function(i3) regime_distance(regime_pars1=best_ind_nonRedRegimes[,i2],
+                                                                                               regime_pars2=alt_ind_nonRedRegimes[,i3]), numeric(1))
           }
 
-          # Which alt_ind regime, i.e. column should be used? Choose the one that with largest 'distance' to avoid dublicating similar regimes
-          reg_to_use <- alt_ind_nonRedRegimes[,which(colMeans(dist_to_regime) == max(colMeans(dist_to_regime)))[1]]
+          # Which alt_ind regime, i.e. column should be used? Choose the one with the largest 'distance' to the closest regime
+          # to avoid dublicating similar regimes.
+          which_reg_to_use <- which(apply(dist_to_regime, 2, min) == max(apply(dist_to_regime, 2, min)))[1]
+          reg_to_use <- alt_ind_nonRedRegimes[,]
+
+          if(model %in% c("StMAR", "GMAR")) {
+            reg_to_use <- extractRegime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
+                                        regime=which_reg_to_use, with_dfs=TRUE)
+          } else { # model == "G-StMAR"
+            if(which_to_change <= M1) { # No dfs
+              reg_to_use <- alt_ind_nonRedRegimes[,which_reg_to_use]
+            } else { # which_to_change > M1, so we need dfs
+              if(which_reg_to_use <= M1) { # We need to create new dfs
+                reg_to_use <- c(alt_ind_nonRedRegimes[,which_reg_to_use], runif(n=1, min=2+1e-6, max=30))
+              } else { # The original regime contains dfs
+                reg_to_use <- extractRegime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
+                                            regime=which_reg_to_use, with_dfs=TRUE)
+              }
+            }
+          }
 
           # Combine the regimes to a complete parameter vector
           ind_to_use <- changeRegime(p=p, M=M_orig, params=best_ind, model=model, restricted=restricted, constraints=constraints,
                                      regimeParams=reg_to_use, regime=which_to_change)
 
-          # Should some regimes still be random?
-          rand_to_use <- which_redundant[-which_to_change]
+          # If there are redundant regimes left, they should be random mutated and not smart mutated
+          rand_to_use <- which_redundant[which_redundant != which_to_change]
         }
         # Do smart mutations with ind_to_use and rand_to_use
-        H2[,mutate] <- vapply(1:length(mutate), function(x) smartIndividual_int(p=p, M=M_orig, params=ind_to_use, model=model,
+        H2[,mutate] <- vapply(1:length(mutate), function(i3) smartIndividual_int(p=p, M=M_orig, params=ind_to_use, model=model,
                                                                                 restricted=restricted, constraints=constraints,
                                                                                 meanscale=meanscale, sigmascale=sigmascale,
-                                                                                accuracy=accuracy[x], whichRandom=rand_to_use,
+                                                                                accuracy=accuracy[i3], whichRandom=rand_to_use,
                                                                                 forcestat=forcestat), numeric(d))
       } else { # Random mutations
-        H2[,mutate] <- vapply(1:length(mutate), function(x) randomIndividual_int(p, M_orig, model=model, restricted=restricted,
+        H2[,mutate] <- vapply(1:length(mutate), function(i3) randomIndividual_int(p, M_orig, model=model, restricted=restricted,
                                                                                  constraints=constraints, meanscale=meanscale,
                                                                                  sigmascale=sigmascale, forcestat=forcestat), numeric(d))
       }
@@ -943,6 +991,7 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 #'  Doesn't extract mixing weight parameter alpha.
 #' @inheritParams loglikelihood
 #' @param regime a positive integer in the interval [1, M] defining which regime should be extracted.
+#' @param with_dfs Should the degrees of freedom parameter (if any) be included?
 #' @return Returns a numeric vector corresponding to the regime with...
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
@@ -964,7 +1013,8 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 #'    }
 #'  }
 
-extractRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, regime) {
+extractRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+                          regime, with_dfs=TRUE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -985,27 +1035,23 @@ extractRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
       }
       j <- j + q + 2
     }
-    if(model == "StMAR") {
+    if(model == "StMAR" & with_dfs) {
       params0 <- c(params0, params[j + M - 1 + regime]) # dfs
-    } else if(model == "G-StMAR") {
-        if(regime > M1) {
-          params0 <- c(params0, params[j + M - 1 + regime - M1]) # dfs
-        }
+    } else if(model == "G-StMAR" & with_dfs & regime > M1) {
+      params0 <- c(params0, params[j + M - 1 + regime - M1]) # dfs
     }
     return(params0)
-  } else { # If restricted==TRUE
+  } else { # If restricted == TRUE
     if(!is.null(constraints)) {
       q <- ncol(as.matrix(constraints))
     } else {
       q <- p
     }
     params0 <- c(params[regime], params[M + q + regime])
-    if(model == "StMAR") {
-      params0 <- c(params0, params[3*M + q - 1 + regime])
-    } else if(model == "G-StMAR") {
-       if(regime > M1) {
-         params0 <- c(params0, params[3*M + q - 1 + regime - M1])
-       }
+    if(model == "StMAR" & with_dfs) {
+      params0 <- c(params0, params[3*M + q - 1 + regime]) # dfs
+    } else if(model == "G-StMAR" & with_dfs & regime > M1) {
+      params0 <- c(params0, params[3*M + q - 1 + regime - M1]) # dfs
     }
     return(params0)
   }
