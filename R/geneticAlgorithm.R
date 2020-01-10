@@ -351,7 +351,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     if(length(mutate) >= 1) {
       if(i1 > smartMu) { # Smart mutations
 
-        # Mutate more if there are wasted regimes
+        # Mutate more if there are redundant (wasted) regimes
         if(length(which_redundant) > 0) {
           muRate <- vapply(1:popsize, function(i2) which_not_co[i2]*max(0.1, muRate[i2]), numeric(1))
           mutate0 <- which(rbinom(n=popsize, size=1, prob=muRate) == 1)
@@ -363,31 +363,32 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         # Mutating accuracy
         accuracy <- abs(rnorm(length(mutate), mean=15, sd=10))
 
-        # Smart mutate the best_ind if there are no redundant regimes or if alternative individual is not found,
-        # or changes by random, or if considering G-StMAR model. !!!!!!!!!!Regime combining is not considered for G-StMAR
-        # model for simplicity because one already has initial estimates from the corresponding StMAR model.!!!!!!!!!!!!!
-        # Regime combining is not considered for models imposing linear constraints if the constraints are not
-        # the same for all the regimes.
+        # "Smart mutation": mutate close to a well fitting individual.
+        # Smart mutate the best_ind if there does not exists alternative individual with less redundant
+        # regimes than in the best_ind, or changes by random. Redudant regimes are obviously not smart
+        # mutated but drawn at random.
+        # Alternatively, if there exists alternative individual with less redundant regimes than in the
+        # best_ind, a "regime combining" might take place: take a redundant regime of the best_ind and
+        # replace it with a nonredundant regime taken from the alt_ind. Then do smart mutation close to
+        # this new individual. For simplicity, regime combining is not considered for models imposing
+        # linear constraints if the constraints are not the same for all the regimes.
 
         # Can regime combining be done? If combining takes place, which regime should be changed?
          if(length(which_redundant) <= length(which_redundant_alt)) {
            # Can't combine regimes if alt_ind does not have strictly less redundant regimes since then alt_ind == best_ind
            cant_comb <- TRUE
          } else {
+           # Can combine regimes since alt_ind has strictly less redundant GMAR or StMAR type regimes
            cant_comb <- FALSE
            if(model == "G-StMAR") {
-             if(sum(which_redundant <= M1) > sum(which_redundant_alt <= M1)) { # Any GMAR type redundants and more GMAR type alternatives?
-               # Choose GMAR type ind_to_change
+             if(sum(which_redundant <= M1) > sum(which_redundant_alt <= M1)) { # More GMAR type redundants in best_ind than in alt_ind?
+               # Choose GMAR type regime to change
                which_to_change <- which_redundant[which_redundant <= M1][1]
-             } else if(sum(which_redundant > M1) > sum(which_redundant_alt > M1)) { # Any StMAR type redundants and more StMAR type alternatives?
-               # Choose StMAR type ind_to_change
+             } else { # If not, then there must be more StMAR type redundants in best_ind than in alt_ind.
+               # Choose StMAR type regime to change
                which_to_change <- which_redundant[which_redundant > M1][1]
-             } else { # If no, then no regime combining is done.
-               cant_comb <- TRUE
-               # PÄÄSTÄNKÖ TÄNNE KOSKAAN ALT_INDILLÄ STRICTLY VÄHEMMÄN REDUNDANTTEJA? EI?
              }
-             if(length(which_redundant) <= length(which_redundant_alt)) cant_comb <- TRUE
-           } else { # model == GMAR or StMAR
+           } else { # model == "GMAR" or "StMAR"; all regimes are the same type.
              which_to_change <- which_redundant[1]
            }
          }
@@ -400,27 +401,58 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           # Change a redundant regime of best_ind to be a non-redundant regime of alt_ind to form the individual to be used in smart mutations.
 
           # Choose regime of best_ind to be changed
-   #       which_to_change <- which_redundant[1]
-          # TÄÄLLÄ PITÄÄ SITTEN VAIN VALITA G-STMARRILLE ERIKSEEN, ETTÄ VAIHTOEHTOISET REGIIMIT ON OIKEAA TYYPPIÄ
+          # which_to_change <- which_redundant[1]
 
-          # Pick non-redundant regimes of best_ind and alt_ind
-          best_ind_nonRedRegimes <- sapply((1:M)[-which_redundant], function(i2) extractRegime(p=p, M=M_orig, params=best_ind, model=model,
-                                                                                               restricted=restricted, constraints=constraints,
-                                                                                               regime=i2))
-          if(length(which_redundant_alt) == 0) {
-            alt_ind_nonRedRegimes <- sapply(1:M, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
-                                                                            restricted=restricted, constraints=constraints,
-                                                                            regime=i2))
-          } else {
-            alt_ind_nonRedRegimes <- sapply((1:M)[-which_redundant_alt], function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
-                                                                                                    restricted=restricted, constraints=constraints,
-                                                                                                    regime=i2))
+          # Pick non-redundant regimes of the best_ind and alt_ind.
+          # We only take regimes of the same type (GMAR or StMAR) as the regime to be changed.
+          if(model == "G-StMAR") {
+            if(which_to_change <= M1) {
+              which_bestind_nonred <- (1:M1)[-which_redundant[which_redundant <= M1]]
+              which_redundant_alt2 <- which_redundant_alt[which_redundant_alt <= M1]
+              if(length(which_redundant_alt2) == 0) { # Special case for techinal reason
+                which_altind_nonred <- 1:M1
+              } else {
+                which_altind_nonred <- (1:M1)[-which_redundant_alt2]
+              }
+            } else { # which_to_change > M1
+              which_bestind_nonred <- (1:M)[-c(1:M1, which_redundant[which_redundant > M1])]
+              which_redundant_alt2 <- which_redundant_alt[which_redundant_alt > M1]
+              if(length(which_redundant_alt2) == 0) { # Special case for technical reason
+                which_altind_nonred <- (M1 + 1):M
+              } else {
+                which_altind_nonred <- ((M1 + 1):M)[-which_redundant_alt2]
+              }
+            }
+          } else { # model == "GMAR" or "StMAR"
+            which_bestind_nonred <- (1:M)[-which_redundant]
+            if(length(which_redundant_alt) == 0) { # Special case for technical reason
+              which_altind_nonred <- 1:M
+            } else {
+              which_altind_nonred <- (1:M)[-which_redundant_alt]
+            }
           }
 
-          # Remove df-parameters from distance comparison if they are larger than 25, since their affect in the
-          # distance comparison may easily be larger than the effect to fit.
+          best_ind_nonRedRegimes <- sapply(which_bestind_nonred, function(i2) extractRegime(p=p, M=M_orig, params=best_ind, model=model,
+                                                                                            restricted=restricted, constraints=constraints,
+                                                                                            regime=i2))
+          alt_ind_nonRedRegimes <- sapply(which_altind_nonred, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
+                                                                                          restricted=restricted, constraints=constraints,
+                                                                                          regime=i2))
+          # if(length(which_redundant_alt) == 0) {
+          #   alt_ind_nonRedRegimes <- sapply(1:M, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
+          #                                                                   restricted=restricted, constraints=constraints,
+          #                                                                   regime=i2))
+          # } else {
+          #   alt_ind_nonRedRegimes <- sapply((1:M)[-which_redundant_alt], function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
+          #                                                                                           restricted=restricted, constraints=constraints,
+          #                                                                                           regime=i2))
+          # }
+
+          # Remove df-parameters from distance comparison if there are dfs larger than 25, since then their affect in the
+          # distance comparison may easily be larger than their effect to fit.
           cond <- any(best_ind_nonRedRegimes[nrow(best_ind_nonRedRegimes),] >= 25) | any(alt_ind_nonRedRegimes[nrow(alt_ind_nonRedRegimes),] >= 25)
-          if(model == "StMAR" & cond) {
+          GStMARcond <- model == "G-StMAR" & which_to_change > M1 # If StMAR type regime is to be changed
+          if((model == "StMAR" | GStMARcond) & cond) {
             best_ind_regimes0 <- as.matrix(best_ind_nonRedRegimes[1:(nrow(best_ind_nonRedRegimes) - 1),])
             alt_ind_regimes0 <- as.matrix(alt_ind_nonRedRegimes[1:(nrow(alt_ind_nonRedRegimes) - 1),])
           } else {
@@ -431,8 +463,8 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           # Calculate "distances" between alt_ind regimes and best_ind non redundant regimes
           dist_to_regime <- matrix(nrow=ncol(best_ind_regimes0), ncol=ncol(alt_ind_regimes0)) # Row for each nonred-regime and column for each alt_ind regime
           for(i2 in 1:nrow(dist_to_regime)) {
-            dist_to_regime[i2,] <- vapply(1:ncol(alt_ind_regimes0), function(i3) regime_distance(regime_pars1=best_ind_regimes0[,i2],
-                                                                                                 regime_pars2=alt_ind_regimes0[,i3]), numeric(1))
+            dist_to_regime[i2,] <- vapply(1:ncol(dist_to_regime), function(i3) regime_distance(regime_pars1=best_ind_regimes0[,i2],
+                                                                                               regime_pars2=alt_ind_regimes0[,i3]), numeric(1))
           }
 
           # Which alt_ind regime, i.e. column should be used? Choose the one that with largest 'distance' to avoid dublicating similar regimes
