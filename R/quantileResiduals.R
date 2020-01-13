@@ -1,14 +1,16 @@
 #' @import stats
 #'
-#' @title Compute quantile residuals of GMAR, StMAR or G-StMAR model
+#' @title Compute quantile residuals of GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{quantileResiduals_int} computes the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
+#' @description \code{quantileResiduals_int} computes the quantile residuals of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals associated with
 #'  the specified GMAR, StMAR or G-StMAR model.
+#' @details Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
+#'  hypergeometric function.
 #' @section Suggested packages:
-#'   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR and G-StMAR models.
+#'   Install the suggested package "gsl" for faster evaluation of the quantile residuals for the StMAR and G-StMAR models.
 #' @references
 #'  \itemize{
 #'    \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising
