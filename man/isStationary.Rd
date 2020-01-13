@@ -2,7 +2,7 @@
 % Please edit documentation in R/argumentChecks.R
 \name{isStationary}
 \alias{isStationary}
-\title{Check the stationary condition of specified GMAR, StMAR or G-StMAR model.}
+\title{Check the stationary condition of specified GMAR, StMAR, or G-StMAR model.}
 \usage{
 isStationary(
   p,
@@ -82,11 +82,11 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 Returns \code{TRUE} or \code{FALSE} accordingly.
 }
 \description{
-\code{isStationary} checks the stationarity condition of the specified GMAR, StMAR or G-StMAR model.
+\code{isStationary} checks the stationarity condition of the specified GMAR, StMAR, or G-StMAR model.
 }
 \details{
-This function uses numerical approximations and it will falsely return \code{FALSE} for stationary models
-  when the stationarity condition is really close to break.
+This function falsely returns \code{FALSE} for stationary models when the parameter is extremely close
+ to the boundary of the stationarity region.
 }
 \examples{
 # GMAR model
@@ -132,6 +132,6 @@ isStationary(3, 2, params32trc, model="StMAR", restricted=TRUE,
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
            arXiv:1805.04010 \strong{[econ.EM]}.
    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
-           theoretical properties similar to the GMAR and StMAR models.
+         theoretical properties similar to the GMAR and StMAR models.
  }
 }

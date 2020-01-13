@@ -10,8 +10,8 @@ check_gsmar(object)
 \item{object}{an object to be tested}
 }
 \value{
-Doesn't return anything, but throws and error if something is wrong.
+Doesn't return anything but throws and error if something is wrong.
 }
 \description{
-\code{check_gsmar} checks that that given object has class attribute 'gsmar'.
+\code{check_gsmar} checks that the given object has class attribute 'gsmar'.
 }

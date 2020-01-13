@@ -1,7 +1,7 @@
-#' @title Check the stationary and identification conditions of specified GMAR, StMAR or G-StMAR model.
+#' @title Check the stationarity and identification conditions of specified GMAR, StMAR, or G-StMAR model.
 #'
-#' @description \code{isStationary_int} checks the stationary condition and \code{isIdentifiable} checks the identification conditions
-#'  of the specified GMAR, StMAR or G-StMAR model.
+#' @description \code{isStationary_int} checks the stationarity condition and \code{isIdentifiable} checks the identification condition
+#'  of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
 #' @param params a real valued parameter vector specifying the model.
@@ -28,12 +28,19 @@
 #'      }
 #'    }
 #'  }
-#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-#'  freedom parameter. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type} and the rest \code{M2} components
-#'  are \emph{StMAR-type}.
-#'  Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
+#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
+#'  freedom parameter. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type} and the rest \code{M2} components
+#'  are \emph{StMAR type}.
+#'  Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 #'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
-#' @details These functions don't support models parametrized with general linear constraints.
+#' @details \code{isStationary_int} does not support models imposing linear constraints. In order to use it for a model imposing linear
+#'  constraints, one needs to expand the constraints first to obtain a nonconstrained parameters vector.
+#'
+#'  Note that \code{isStationary_int} returns \code{FALSE} for stationary parameter vectors if they are extremely close to the boundary
+#'  of the stationarity region.
+#'
+#'  \code{isIdentifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no dublicate
+#'  regimes.
 #' @return Returns \code{TRUE} or \code{FALSE} accordingly.
 #' @section Warning:
 #'  These functions don't have any argument checks!
@@ -44,7 +51,7 @@
 #'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
 #'            arXiv:1805.04010 \strong{[econ.EM]}.
 #'    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
-#'            theoretical properties similar to the GMAR and StMAR models.
+#'          theoretical properties similar to the GMAR and StMAR models.
 #'  }
 
 isStationary_int <- function(p, M, params, restricted=FALSE) {
@@ -99,7 +106,7 @@ isIdentifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
   alphas_unsorted <- function(alps) is.unsorted(rev(alps), strictly=TRUE)
   pars_dublicates <- function(prs0) anyDuplicated(t(prs0)) != 0
 
-  if(model == "G-StMAR") { # Check GMAR parameters and StMAR-parameters separately
+  if(model == "G-StMAR") { # Check GMAR parameters and StMAR parameters separately
     if(M1 > 1) {
       if(alphas_unsorted(alphas1)) {
         return(FALSE)
@@ -125,13 +132,13 @@ isIdentifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 }
 
 
-#' @title Check the stationary condition of specified GMAR, StMAR or G-StMAR model.
+#' @title Check the stationary condition of specified GMAR, StMAR, or G-StMAR model.
 #'
-#' @description \code{isStationary} checks the stationarity condition of the specified GMAR, StMAR or G-StMAR model.
+#' @description \code{isStationary} checks the stationarity condition of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams loglikelihood
-#' @details This function uses numerical approximations and it will falsely return \code{FALSE} for stationary models
-#'   when the stationarity condition is really close to break.
+#' @details This function falsely returns \code{FALSE} for stationary models when the parameter is extremely close
+#'  to the boundary of the stationarity region.
 #' @inherit isStationary_int return references
 #' @examples
 #' # GMAR model
@@ -183,19 +190,21 @@ isStationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), rest
 }
 
 
-#' @title Check the data is set correctly and correct if not
+#' @title Check that the data is set correctly and correct if not
 #'
-#' @description \code{checkAndCorrectData} checks that the data is set correctly and corrects it if not.
-#'  Throws an error if it can't convert the data to the correct form.
+#' @description \code{checkAndCorrectData} checks that the data is set correctly and
+#'  throws an error if there is something wrong with the data.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns a numeric column matrix containing the data.
+#' @return Returns the data as a class 'ts' object.
 
 checkAndCorrectData <- function(data, p) {
   if(anyNA(data)) {
     stop("The data contains NA values")
   } else if(length(data) < p+2) {
     stop("The data must contain at least p+2 values")
+  } else if(!is.numeric(data)) {
+    stop("The data should be numeric")
   }
   if(is.matrix(data)) {
     if(ncol(data) > 1) {
@@ -211,8 +220,8 @@ checkAndCorrectData <- function(data, p) {
 
 #' @title Check the parameter vector is specified correctly
 #'
-#' @description \code{parameterChecks} checks dimension, restrictions and stationarity of the given parameters
-#'   of GMAR, StMAR or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
+#' @description \code{parameterChecks} checks dimension, restrictions, and stationarity of the given parameter
+#'   of a GMAR, StMAR, or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
 #'   condition!
 #'
 #' @inheritParams loglikelihood_int
@@ -226,7 +235,7 @@ checkAndCorrectData <- function(data, p) {
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
 #'          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
 #'      }
-#' @return Throws an informative error if any check fails. Doesn't return anything.
+#' @return Throws an informative error if any check fails. Does not return anything.
 
 parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
@@ -242,19 +251,21 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
     } else if(any(dfs > 1e+5)) {
       stop("We have set an upper bound of 1e+5 for the degrees of freedom parameters
            in order to avoid numerical problems. This is not, however, restrictive
-           since t distribution with dfs higher than this strongly resembles
-           the Gaussian distribution by its shape.")
+           since t-distribution with such a large degrees of freedom parameter value
+           already strongly resembles the Gaussian distribution by its shape. Moreover,
+           the conditional variance of the corresponding regime is close to the constant
+           parameter 'sigma^2' if the degrees of freedom parameter is very large.")
     }
   }
 
   if(sum(M) >= 2 & sum(alphas[-sum(M)]) >= 1) {
-    stop("The mixing weights don't sum to one")
+    stop("The mixing weight parameters don't sum to one")
   } else if(any(alphas <= 0)) {
-    stop("Mixing weight parameters have to be larger than zero")
+    stop("The mixing weight parameters have to be strictly larger than zero")
   } else if(any(pars[p + 2,] <= 0)) {
-    stop("Variance parameters have to be larger than zero")
+    stop("The variance parameters have to be strictly larger than zero")
   } else if(!isStationary_int(p=p, M=M, params=params, restricted=FALSE)) {
-    stop("The model doesn't satisfy the stationary condition")
+    stop("The model doesn't satisfy the stationarity condition")
   }
 }
 
@@ -263,22 +274,22 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 #'
 #' @description \code{checkConstraintMat} checks for some parts that the constraint matrices are correctly set.
 #' @inheritParams loglikelihood_int
-#' @return Doesn't return anything, but throws an informative error if finds out that something is wrong.
+#' @return Doesn't return anything but throws an informative error if finds out that something is wrong.
 
 checkConstraintMat <- function(p, M, restricted=FALSE, constraints=NULL) {
   if(!is.null(constraints)) {
-    M <- sum(M) # For G-StMAR
-    if(restricted == TRUE) { # The constraints is a matrix
+    M <- sum(M)
+    if(restricted == TRUE) { # 'constraints' is a single matrix
       if(!is.matrix(constraints)) {
         stop("The constraint matrix has to be a matrix (not in a list)")
       } else if(nrow(as.matrix(constraints)) != p) {
         stop("The constraint matrix has wrong dimension")
       } else if(ncol(as.matrix(constraints)) > p) {
-        stop("The constraint matrix has more columns than rows?? Please make sure your constraints make sense!")
+        stop("The constraint matrix has more columns than rows!? Please make sure your constraints make sense!")
       } else if(qr(as.matrix(constraints))$rank != ncol(as.matrix(constraints))) {
-        stop("The constraint matrix doesn't have full column rank")
+        stop("The constraint matrix does not have full column rank")
       }
-    } else { # The constraints is a list of matrices
+    } else { # restricted == FALSE, so 'constraints' is a list of matrices
       if(!is.list(constraints) | length(constraints) != M) {
         stop("The argument constraints should be a list of M constraint matrices - one for each mixture component")
       }
@@ -288,9 +299,9 @@ checkConstraintMat <- function(p, M, restricted=FALSE, constraints=NULL) {
         if(nrow(C0) != p) {
           stop(paste("The constraint matrix for regime", i1 ,"has wrong dimension"))
         } else if(q > p) {
-          stop(paste("The constraint matrix for regime", i1, "has more columns than rows?? Please make sure your constraints make sense!"))
+          stop(paste("The constraint matrix for regime", i1, "has more columns than rows!? Please make sure your constraints make sense!"))
         } else if(qr(C0)$rank != ncol(C0)) {
-          stop(paste("The constraint matrix for regime", i1 ,"doesn't have full column rank"))
+          stop(paste("The constraint matrix for regime", i1 ,"does not have full column rank"))
         }
       }
     }
@@ -298,22 +309,22 @@ checkConstraintMat <- function(p, M, restricted=FALSE, constraints=NULL) {
 }
 
 
-#' @title Check p and M are correctly set
+#' @title Check that p and M are correctly set
 #'
 #' @description \code{checkPM} checks that the arguments p and M are correctly set.
 #' @inheritParams loglikelihood_int
-#' @return Doesn't return anything, but throws an informative error if something is wrong.
+#' @return Doesn't return anything but throws an informative error if something is wrong.
 
 checkPM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
   model <- match.arg(model)
   if(model == "G-StMAR") {
     if(length(M) != 2 | !all_pos_ints(M)) {
-      stop("For G-StMAR model the argument M should be length 2 a positive integer vector")
+      stop("For a G-StMAR model the argument M should be a length 2 positive integer vector")
     }
   } else if(!all_pos_ints(M) | length(M) != 1) {
       stop("Argument M has to be positive integer")
   }
-  if(!all_pos_ints(p)) {
+  if(!all_pos_ints(p) | length(p) != 1) {
     stop("Argument p has to be positive integer")
   }
 }
@@ -380,10 +391,10 @@ nParams <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
 
 
 
-#' @title Check whether all arguments are positive scalar whole numbers
+#' @title Check whether all arguments are stricly positive natural numbers
 #'
 #' @description \code{all_pos_ints} tells whether all the elements in a vector
-#'   are strictly positive whole numbers.
+#'   are strictly positive natural numbers.
 #'
 #' @param x a vector containing the elements to be tested.
 #' @return Returns \code{TRUE} or \code{FALSE} accordingly.
@@ -393,22 +404,22 @@ all_pos_ints <- function(x) {
 }
 
 
-#' @title Check that the argument model is correctly specified.
+#' @title Check that the argument 'model' is correctly specified.
 #'
-#' @description \code{check_model} checks that the argument model is correctly specified.
+#' @description \code{check_model} checks that the argument 'model' is correctly specified.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Doesn't return anything, but throws and error if something is wrong.
+#' @return Doesn't return anything but throws and error if something is wrong.
 
 check_model <- function(model) {
   if(!model %in% c("GMAR", "StMAR", "G-StMAR")) {
-    stop("The argument 'model' has to be 'GMAR', 'StMAR' or 'G-StMAR'")
+    stop("The argument 'model' has to be 'GMAR', 'StMAR', or 'G-StMAR'")
   }
 }
 
 #' @title Check that the parameter vector has the correct dimension
 #'
-#' @description \code{check_model} checks that the parameter vector has the correct dimension
+#' @description \code{check_model} checks that the parameter vector has the correct dimension.
 #' @inheritParams loglikelihood_int
 #' @inherit check_model return
 
@@ -421,19 +432,19 @@ check_params_length <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 
 #' @title Check that given object has class attribute 'gsmar'
 #'
-#' @description \code{check_gsmar} checks that that given object has class attribute 'gsmar'.
+#' @description \code{check_gsmar} checks that the given object has class attribute 'gsmar'.
 #'
 #' @param object an object to be tested
 #' @inherit check_model return
 
 check_gsmar <- function(object) {
-  if(!any(class(object) == "gsmar")) stop("The argument 'gsmar' has to be object of class 'gsmar' created with fitGSMAR or GSMAR.")
+  if(!any(class(object) == "gsmar")) stop("The argument 'gsmar' has to be an object of class 'gsmar' created with function 'fitGSMAR' or 'GSMAR'.")
 }
 
 
 #' @title Check that given object contains data
 #'
-#' @description \code{check_data} checks that that given object contains data.
+#' @description \code{check_data} checks that a given object contains data.
 #'
 #' @inheritParams check_gsmar
 #' @inherit check_gsmar return
@@ -446,15 +457,14 @@ check_data <- function(object) {
 
 #' @title Warn about large degrees of freedom parameter values
 #'
-#' @description \code{warn_dfs} warns if the model contains large degrees of freedom paramater values
-#'   possibly indicating unrealiable numerical derivatives.
+#' @description \code{warn_dfs} warns if the model contains large degrees of freedom parameter values.
 #'
 #' @inheritParams check_gsmar
 #' @inheritParams loglikelihood_int
 #' @param warn_about warn about inaccurate derivatives or standard errors?
 #' @details Either provide a class 'gsmar' object or specify the model by hand.
 #' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
-#'   larger than 1000.
+#'   larger than 200.
 
 warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, warn_about=c("derivs", "errors")) {
 
@@ -469,6 +479,6 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
   if(model %in% c("StMAR", "G-StMAR")) {
     pars <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
     dfs <- pick_dfs(p=p, M=M, params=pars, model=model)
-    if(any(dfs > 100)) warning("The model contains overly large degrees of freedom parameter values. Consider switching to G-StMAR model by setting the corresponding regimes to GMAR type with the function 'stmar_to_gstmar'.")
+    if(any(dfs > 200)) warning("The model contains overly large degrees of freedom parameter values. Consider switching to a G-StMAR model by setting the corresponding regimes to be GMAR type with the function 'stmar_to_gstmar'.")
   }
 }

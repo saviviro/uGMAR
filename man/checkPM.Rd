@@ -2,7 +2,7 @@
 % Please edit documentation in R/argumentChecks.R
 \name{checkPM}
 \alias{checkPM}
-\title{Check p and M are correctly set}
+\title{Check that p and M are correctly set}
 \usage{
 checkPM(p, M, model = c("GMAR", "StMAR", "G-StMAR"))
 }
@@ -19,7 +19,7 @@ checkPM(p, M, model = c("GMAR", "StMAR", "G-StMAR"))
 are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 }
 \value{
-Doesn't return anything, but throws an informative error if something is wrong.
+Doesn't return anything but throws an informative error if something is wrong.
 }
 \description{
 \code{checkPM} checks that the arguments p and M are correctly set.

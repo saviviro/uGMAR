@@ -10,8 +10,8 @@ check_data(object)
 \item{object}{an object to be tested}
 }
 \value{
-Doesn't return anything, but throws and error if something is wrong.
+Doesn't return anything but throws and error if something is wrong.
 }
 \description{
-\code{check_data} checks that that given object contains data.
+\code{check_data} checks that a given object contains data.
 }

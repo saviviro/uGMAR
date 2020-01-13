@@ -53,10 +53,10 @@ always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Throws an informative error if any check fails. Doesn't return anything.
+Throws an informative error if any check fails. Does not return anything.
 }
 \description{
-\code{parameterChecks} checks dimension, restrictions and stationarity of the given parameters
-  of GMAR, StMAR or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
+\code{parameterChecks} checks dimension, restrictions, and stationarity of the given parameter
+  of a GMAR, StMAR, or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
   condition!
 }

@@ -79,8 +79,8 @@ always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Doesn't return anything, but throws and error if something is wrong.
+Doesn't return anything but throws and error if something is wrong.
 }
 \description{
-\code{check_model} checks that the parameter vector has the correct dimension
+\code{check_model} checks that the parameter vector has the correct dimension.
 }

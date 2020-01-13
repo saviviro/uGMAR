@@ -2,7 +2,7 @@
 % Please edit documentation in R/argumentChecks.R
 \name{checkAndCorrectData}
 \alias{checkAndCorrectData}
-\title{Check the data is set correctly and correct if not}
+\title{Check that the data is set correctly and correct if not}
 \usage{
 checkAndCorrectData(data, p)
 }
@@ -12,9 +12,9 @@ checkAndCorrectData(data, p)
 \item{p}{a positive integer specifying the order of AR coefficients.}
 }
 \value{
-Returns a numeric column matrix containing the data.
+Returns the data as a class 'ts' object.
 }
 \description{
-\code{checkAndCorrectData} checks that the data is set correctly and corrects it if not.
- Throws an error if it can't convert the data to the correct form.
+\code{checkAndCorrectData} checks that the data is set correctly and
+ throws an error if there is something wrong with the data.
 }

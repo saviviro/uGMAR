@@ -32,7 +32,7 @@ always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Doesn't return anything, but throws an informative error if finds out that something is wrong.
+Doesn't return anything but throws an informative error if finds out that something is wrong.
 }
 \description{
 \code{checkConstraintMat} checks for some parts that the constraint matrices are correctly set.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/argumentChecks.R
 \name{check_model}
 \alias{check_model}
-\title{Check that the argument model is correctly specified.}
+\title{Check that the argument 'model' is correctly specified.}
 \usage{
 check_model(model)
 }
@@ -11,8 +11,8 @@ check_model(model)
 are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
 }
 \value{
-Doesn't return anything, but throws and error if something is wrong.
+Doesn't return anything but throws and error if something is wrong.
 }
 \description{
-\code{check_model} checks that the argument model is correctly specified.
+\code{check_model} checks that the argument 'model' is correctly specified.
 }

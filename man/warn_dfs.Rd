@@ -86,11 +86,10 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 }
 \value{
 Doesn't return anything but throws a warning if any degrees of freedom parameters have value
-  larger than 1000.
+  larger than 200.
 }
 \description{
-\code{warn_dfs} warns if the model contains large degrees of freedom paramater values
-  possibly indicating unrealiable numerical derivatives.
+\code{warn_dfs} warns if the model contains large degrees of freedom parameter values.
 }
 \details{
 Either provide a class 'gsmar' object or specify the model by hand.

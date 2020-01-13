@@ -3,7 +3,7 @@
 \name{isStationary_int}
 \alias{isStationary_int}
 \alias{isIdentifiable}
-\title{Check the stationary and identification conditions of specified GMAR, StMAR or G-StMAR model.}
+\title{Check the stationarity and identification conditions of specified GMAR, StMAR, or G-StMAR model.}
 \usage{
 isStationary_int(p, M, params, restricted = FALSE)
 
@@ -49,10 +49,10 @@ isIdentifiable(
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-freedom parameter. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type} and the rest \code{M2} components
-are \emph{StMAR-type}.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
+freedom parameter. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type} and the rest \code{M2} components
+are \emph{StMAR type}.
+Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
@@ -78,11 +78,18 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 Returns \code{TRUE} or \code{FALSE} accordingly.
 }
 \description{
-\code{isStationary_int} checks the stationary condition and \code{isIdentifiable} checks the identification conditions
- of the specified GMAR, StMAR or G-StMAR model.
+\code{isStationary_int} checks the stationarity condition and \code{isIdentifiable} checks the identification condition
+ of the specified GMAR, StMAR, or G-StMAR model.
 }
 \details{
-These functions don't support models parametrized with general linear constraints.
+\code{isStationary_int} does not support models imposing linear constraints. In order to use it for a model imposing linear
+ constraints, one needs to expand the constraints first to obtain a nonconstrained parameters vector.
+
+ Note that \code{isStationary_int} returns \code{FALSE} for stationary parameter vectors if they are extremely close to the boundary
+ of the stationarity region.
+
+ \code{isIdentifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no dublicate
+ regimes.
 }
 \section{Warning}{
 
@@ -96,6 +103,6 @@ These functions don't support models parametrized with general linear constraint
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
            arXiv:1805.04010 \strong{[econ.EM]}.
    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
-           theoretical properties similar to the GMAR and StMAR models.
+         theoretical properties similar to the GMAR and StMAR models.
  }
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/argumentChecks.R
 \name{all_pos_ints}
 \alias{all_pos_ints}
-\title{Check whether all arguments are positive scalar whole numbers}
+\title{Check whether all arguments are stricly positive natural numbers}
 \usage{
 all_pos_ints(x)
 }
@@ -14,5 +14,5 @@ Returns \code{TRUE} or \code{FALSE} accordingly.
 }
 \description{
 \code{all_pos_ints} tells whether all the elements in a vector
-  are strictly positive whole numbers.
+  are strictly positive natural numbers.
 }
