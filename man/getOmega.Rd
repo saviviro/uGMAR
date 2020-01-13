@@ -2,7 +2,7 @@
 % Please edit documentation in R/getOmega.R
 \name{getOmega}
 \alias{getOmega}
-\title{Generate covariance matrix Omega for quantile residual tests}
+\title{Generate the covariance matrix Omega for quantile residual tests}
 \usage{
 getOmega(
   data,

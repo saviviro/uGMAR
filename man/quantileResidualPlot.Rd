@@ -2,7 +2,7 @@
 % Please edit documentation in R/diagnosticPlot.R
 \name{quantileResidualPlot}
 \alias{quantileResidualPlot}
-\title{Ploy quantile residual time series and kernel density}
+\title{Plot quantile residual time series and kernel density}
 \usage{
 quantileResidualPlot(gsmar)
 }
@@ -58,5 +58,6 @@ quantileResidualPlot(fit32rc)
  }
 }
 \seealso{
-\code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+\code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+ \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 }

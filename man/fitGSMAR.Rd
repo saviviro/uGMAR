@@ -76,7 +76,7 @@ or \code{NULL} for not initializing the seed. Exists for the purpose of creating
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
-  estimated mixing weights, conditional and unconditional moments, quantile residuals, and quantile residual test results
+  estimated mixing weights, some conditional and unconditional moments, quantile residuals, and quantile residual test results
   if the tests were performed. Note that the first p observations are taken as the initial values so the mixing weights, conditional
   moments, and quantile residuals start from the p+1:th observation (interpreted as t=1).In addition, the returned object contains
   the estimates and log-likelihood values from all of the estimation rounds.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/GSMARconstructor.R
 \name{stmar_to_gstmar}
 \alias{stmar_to_gstmar}
-\title{Estimate a G-StMAR model based on StMAR model with large degrees of freedom parameters}
+\title{Estimate a G-StMAR model based on a StMAR model with large degrees of freedom parameters}
 \usage{
 stmar_to_gstmar(
   gsmar,
@@ -19,38 +19,40 @@ stmar_to_gstmar(
 \item{maxdf}{regimes with degrees of freedom parameter value large than this will be turned into
 GMAR type.}
 
-\item{estimate}{set \code{TRUE} if the new model should be estimated with variable metric algorithm using the StMAR model
-parameters as the initial values. By default \code{TRUE} iff the model contains data.}
+\item{estimate}{set \code{TRUE} if the new model should be estimated with a variable metric algorithm
+using the StMAR model parameter value as the initial value. By default \code{TRUE} iff the model
+contains data.}
 
 \item{calc_std_errors}{set \code{TRUE} if the approximate standard errors should be calculated.
 By default \code{TRUE} iff the model contains data.}
 
 \item{maxit}{the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate==FALSE}.}
 
-\item{custom_h}{A numeric vector of with same length as the parameter vector of the estimated model: i:th element
-of custom_h is the difference used in central difference approximation for differentials of the log-likelihood function
-for the i:th parameter. If \code{NULL} (default), then the difference used for differentiating overly large degrees of
-freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
+\item{custom_h}{A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference
+used in central difference approximation for partial differentials of the log-likelihood function for the i:th parameter.
+If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom parameters
+is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
-  contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
-  taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
+ the returned object contains (by default) empirical mixing weights, some conditional and unconditional moments, and quantile
+ residuals. Note that the first p observations are taken as the initial values so the mixing weights, conditional moments, and
+ quantile residuals start from the p+1:th observation (interpreted as t=1).
 }
 \description{
-\code{stmar_to_gstmar} estimates a G-StMAR model based on StMAR model with large degree
- of freedom parameters
+\code{stmar_to_gstmar} estimates a G-StMAR model based on a StMAR model with large degree
+ of freedom parameters.
 }
 \details{
-If a StMAR model contains large estimates for the degrees of freedom parameters
-  one should consider switching to the corresponding G-StMAR model that lets the corresponding regimes to be GMAR type.
-  \code{stmar_to_gstmar}  makes it convenient to do this switch.
+If a StMAR model contains large estimates for the degrees of freedom parameters,
+  one should consider switching to the corresponding G-StMAR model that lets the corresponding
+  regimes to be GMAR type. \code{stmar_to_gstmar} does this switch conveniently.
 }
 \examples{
 \donttest{
  # These are long running examples and use parallel computing
  fit13tr <- fitGSMAR(logVIX, 1, 3, model="StMAR", restricted=TRUE,
-  ncalls=1, seeds=1)
+  ncalls=2, seeds=1:2)
  fit13tr
  fit13gsr <- stmar_to_gstmar(fit13tr)
  fit13gsr

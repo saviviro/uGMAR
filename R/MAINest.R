@@ -41,7 +41,7 @@
 #'  similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
 #'  components with large degrees of freedom parameter estimates to be GMAR type.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
-#'   estimated mixing weights, conditional and unconditional moments, quantile residuals, and quantile residual test results
+#'   estimated mixing weights, some conditional and unconditional moments, quantile residuals, and quantile residual test results
 #'   if the tests were performed. Note that the first p observations are taken as the initial values so the mixing weights, conditional
 #'   moments, and quantile residuals start from the p+1:th observation (interpreted as t=1).In addition, the returned object contains
 #'   the estimates and log-likelihood values from all of the estimation rounds.

@@ -24,27 +24,28 @@ alt_gsmar(
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 
-\item{custom_h}{A numeric vector of with same length as the parameter vector of the estimated model: i:th element
-of custom_h is the difference used in central difference approximation for differentials of the log-likelihood function
-for the i:th parameter. If \code{NULL} (default), then the difference used for differentiating overly large degrees of
-freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
+\item{custom_h}{A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference
+used in central difference approximation for partial differentials of the log-likelihood function for the i:th parameter.
+If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom parameters
+is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
-  contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
-  taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
+ the returned object contains (by default) empirical mixing weights, some conditional and unconditional moments, and quantile
+ residuals. Note that the first p observations are taken as the initial values so the mixing weights, conditional moments, and
+ quantile residuals start from the p+1:th observation (interpreted as t=1).
 }
 \description{
 \code{alt_gsmar} constructs a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}.
 }
 \details{
 It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
-  is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an returned by \code{fitGSMAR}.
+  is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
 }
 \examples{
 \donttest{
  # These are long running examples and use parallel computing
- fit12t <- fitGSMAR(IE, 1, 2, model="StMAR", ncalls=2, seeds=1:2)
+ fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=2, seeds=1:2)
  fit12t
  fit12t2 <- alt_gsmar(fit12t, which_round=2)
  fit12t2

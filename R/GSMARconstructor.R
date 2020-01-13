@@ -1,21 +1,22 @@
-#' @title Create object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model
+#' @title Create object of class 'gsmar' defining a GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR or G-StMAR model.
+#' @description \code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams fitGSMAR
 #' @inheritParams loglikelihood_int
 #' @param calc_qresiduals should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.
 #' @param calc_cond_moments should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.
 #' @param calc_std_errors should approximate standard errors be calculated?
-#' @param custom_h A numeric vector of with same length as the parameter vector of the estimated model: i:th element
-#'   of custom_h is the difference used in central difference approximation for differentials of the log-likelihood function
-#'   for the i:th parameter. If \code{NULL} (default), then the difference used for differentiating overly large degrees of
-#'   freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.
-#' @details Models can be built without data, e.q., in order to simulate from the process, but some elements such as quantile
+#' @param custom_h A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference
+#'  used in central difference approximation for partial differentials of the log-likelihood function for the i:th parameter.
+#'  If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom parameters
+#'  is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.
+#' @details Models can be built without data, e.q., in order to simulate from the process, but some things such as quantile
 #'  residuals and conditional moments can't be calculated without data.
-#' @return Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
-#'   contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
-#'   taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
+#' @return Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
+#'  the returned object contains (by default) empirical mixing weights, some conditional and unconditional moments, and quantile
+#'  residuals. Note that the first p observations are taken as the initial values so the mixing weights, conditional moments, and
+#'  quantile residuals start from the p+1:th observation (interpreted as t=1).
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{stmar_to_gstmar}},
 #'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}},
 #'  \code{\link{predict.gsmar}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
@@ -63,13 +64,6 @@
 #' stmar32rc <- GSMAR(logVIX, p=3, M=2, params=params32trc, model="StMAR",
 #'  restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' stmar32rc
-#'
-#' # Mixture version of Heterogenuous autoregressive (HAR) model (without data)
-#' paramsHAR <- c(1, 0.1, 0.2, 0.3, 1, 2, 0.15, 0.25, 0.35, 2, 0.55)
-#' r1 = c(1, rep(0, 21)); r2 = c(rep(0.2, 5), rep(0, 17)); r3 = rep(1/22, 22)
-#' R0 = cbind(r1, r2, r3)
-#' mixhar <- GSMAR(p=22, M=2, params=paramsHAR, model="GMAR", constraints=list(R0, R0))
-#' mixhar
 #' @export
 
 GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
@@ -170,15 +164,15 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 }
 
 
-#' @title Add data to object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model
+#' @title Add data to object of class 'gsmar' defining a GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{add_data} adds or updates data to object of class '\code{gsmar}' that defines a GMAR, StMAR or G-StMAR
-#'  model. Also calculates mixing weights, conditional moments and quantile residuals accordingly.
+#' @description \code{add_data} adds or updates data to object of class '\code{gsmar}' that defines a GMAR, StMAR,
+#'  or G-StMAR model. Also calculates empirical mixing weights, conditional moments, and quantile residuals accordingly.
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams loglikelihood_int
 #' @inheritParams GSMAR
-#' @return Returns an object of class 'gsmar' defining the GMAR, StMAR or G-StMAR model with the data added to the model.
+#' @return Returns an object of class 'gsmar' defining the GMAR, StMAR, or G-StMAR model with the data added to the model.
 #'   If the object already contained data, the data will be updated. Does not modify the 'gsmar' object given as argument!
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{get_gradient}},
 #'  \code{\link{get_regime_means}}, \code{\link{swap_parametrization}}, \code{\link{stmar_to_gstmar}}
@@ -206,27 +200,28 @@ add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, 
 
 
 
-#' @title Swap the parametrization of object of class 'gsmar' defining a gsmar model
+#' @title Swap the parametrization of object of class 'gsmar' defining a GMAR, StMAR, or G-StMAR model
 #'
 #' @description \code{swap_parametrization} swaps the parametrization of object of class '\code{gsmar}'
 #'  to \code{"mean"} if the current parametrization is \code{"intercept"}, and vice versa.
 #'
 #' @inheritParams add_data
-#' @details \code{swap_parametrization} is convenient tool if you have estimated the model in
-#'  "intercept"-parametrization, but wish to work with "mean"-parametrization in the future, or vice versa.
-#'  In \code{gsmarkit}, for example the approximate standard errors are only available for
-#'  parametrized parameters.
+#' @details \code{swap_parametrization} is a convenient tool if you have estimated the model in
+#'  "intercept"-parametrization but wish to work with "mean"-parametrization in the future,
+#'  or vice versa. For example, approximate standard errors are readily available for
+#'  parametrized parameters only.
 #' @inherit GSMAR references return
 #' @inherit add_data seealso
 #' @examples
 #' # GMAR model with intercept parametrization
-#' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-#' gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR")
-#' gmar12
+#' params12 <- c(0.183, 0.927, 0.002, 0.857, 0.682, 0.019, 0.883)
+#' gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR",
+#'  calc_std_errors=TRUE)
+#' summary(gmar12)
 #'
 #' # Swap to mean parametrization
 #' gmar12 <- swap_parametrization(gmar12)
-#' gmar12
+#' summary(gmar12)
 #' @export
 
 swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
@@ -242,29 +237,30 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
 }
 
 
-#' @title Estimate a G-StMAR model based on StMAR model with large degrees of freedom parameters
+#' @title Estimate a G-StMAR model based on a StMAR model with large degrees of freedom parameters
 #'
-#' @description \code{stmar_to_gstmar} estimates a G-StMAR model based on StMAR model with large degree
-#'  of freedom parameters
+#' @description \code{stmar_to_gstmar} estimates a G-StMAR model based on a StMAR model with large degree
+#'  of freedom parameters.
 #'
 #' @inheritParams GSMAR
 #' @inheritParams add_data
 #' @inheritParams stmarpars_to_gstmar
-#' @param estimate set \code{TRUE} if the new model should be estimated with variable metric algorithm using the StMAR model
-#'   parameters as the initial values. By default \code{TRUE} iff the model contains data.
+#' @param estimate set \code{TRUE} if the new model should be estimated with a variable metric algorithm
+#'  using the StMAR model parameter value as the initial value. By default \code{TRUE} iff the model
+#'  contains data.
 #' @param calc_std_errors set \code{TRUE} if the approximate standard errors should be calculated.
 #'  By default \code{TRUE} iff the model contains data.
 #'@param maxit the maximum number of iterations for the variable metric algorithm. Ignored if \code{estimate==FALSE}.
-#' @details If a StMAR model contains large estimates for the degrees of freedom parameters
-#'   one should consider switching to the corresponding G-StMAR model that lets the corresponding regimes to be GMAR type.
-#'   \code{stmar_to_gstmar}  makes it convenient to do this switch.
+#' @details If a StMAR model contains large estimates for the degrees of freedom parameters,
+#'   one should consider switching to the corresponding G-StMAR model that lets the corresponding
+#'   regimes to be GMAR type. \code{stmar_to_gstmar} does this switch conveniently.
 #' @inherit GSMAR references return
 #' @inherit add_data seealso
 #' @examples
 #' \donttest{
 #'  # These are long running examples and use parallel computing
 #'  fit13tr <- fitGSMAR(logVIX, 1, 3, model="StMAR", restricted=TRUE,
-#'   ncalls=1, seeds=1)
+#'   ncalls=2, seeds=1:2)
 #'  fit13tr
 #'  fit13gsr <- stmar_to_gstmar(fit13tr)
 #'  fit13gsr
@@ -308,7 +304,8 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
     new_mod <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=new_M, params=new_params$params,
                      model=new_model, restricted=gsmar$model$restricted,
                      constraints=new_constraints, conditional=gsmar$model$conditional,
-                     parametrization=gsmar$model$parametrization, calc_std_errors=calc_std_errors, custom_h=custom_h)
+                     parametrization=gsmar$model$parametrization, calc_std_errors=calc_std_errors,
+                     custom_h=custom_h)
   }
   new_mod
 }
@@ -322,13 +319,13 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' @inheritParams GSMAR
 #' @param which_round based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.
 #' @details It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
-#'   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an returned by \code{fitGSMAR}.
+#'   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
 #' @inherit GSMAR references return
 #' @inherit add_data seealso
 #' @examples
 #' \donttest{
 #'  # These are long running examples and use parallel computing
-#'  fit12t <- fitGSMAR(IE, 1, 2, model="StMAR", ncalls=2, seeds=1:2)
+#'  fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=2, seeds=1:2)
 #'  fit12t
 #'  fit12t2 <- alt_gsmar(fit12t, which_round=2)
 #'  fit12t2

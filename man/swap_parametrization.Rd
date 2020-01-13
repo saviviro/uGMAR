@@ -2,7 +2,7 @@
 % Please edit documentation in R/GSMARconstructor.R
 \name{swap_parametrization}
 \alias{swap_parametrization}
-\title{Swap the parametrization of object of class 'gsmar' defining a gsmar model}
+\title{Swap the parametrization of object of class 'gsmar' defining a GMAR, StMAR, or G-StMAR model}
 \usage{
 swap_parametrization(gsmar, calc_std_errors = TRUE, custom_h = NULL)
 }
@@ -11,35 +11,37 @@ swap_parametrization(gsmar, calc_std_errors = TRUE, custom_h = NULL)
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 
-\item{custom_h}{A numeric vector of with same length as the parameter vector of the estimated model: i:th element
-of custom_h is the difference used in central difference approximation for differentials of the log-likelihood function
-for the i:th parameter. If \code{NULL} (default), then the difference used for differentiating overly large degrees of
-freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
+\item{custom_h}{A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference
+used in central difference approximation for partial differentials of the log-likelihood function for the i:th parameter.
+If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom parameters
+is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
-  contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
-  taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
+ the returned object contains (by default) empirical mixing weights, some conditional and unconditional moments, and quantile
+ residuals. Note that the first p observations are taken as the initial values so the mixing weights, conditional moments, and
+ quantile residuals start from the p+1:th observation (interpreted as t=1).
 }
 \description{
 \code{swap_parametrization} swaps the parametrization of object of class '\code{gsmar}'
  to \code{"mean"} if the current parametrization is \code{"intercept"}, and vice versa.
 }
 \details{
-\code{swap_parametrization} is convenient tool if you have estimated the model in
- "intercept"-parametrization, but wish to work with "mean"-parametrization in the future, or vice versa.
- In \code{gsmarkit}, for example the approximate standard errors are only available for
- parametrized parameters.
+\code{swap_parametrization} is a convenient tool if you have estimated the model in
+ "intercept"-parametrization but wish to work with "mean"-parametrization in the future,
+ or vice versa. For example, approximate standard errors are readily available for
+ parametrized parameters only.
 }
 \examples{
 # GMAR model with intercept parametrization
-params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR")
-gmar12
+params12 <- c(0.183, 0.927, 0.002, 0.857, 0.682, 0.019, 0.883)
+gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR",
+ calc_std_errors=TRUE)
+summary(gmar12)
 
 # Swap to mean parametrization
 gmar12 <- swap_parametrization(gmar12)
-gmar12
+summary(gmar12)
 }
 \references{
 \itemize{

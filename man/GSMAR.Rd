@@ -8,7 +8,7 @@
 \alias{summary.gsmar}
 \alias{plot.gsmar}
 \alias{print.gsmar}
-\title{Create object of class 'gsmar' defining a GMAR, StMAR or G-StMAR model}
+\title{Create object of class 'gsmar' defining a GMAR, StMAR, or G-StMAR model}
 \usage{
 GSMAR(
   data,
@@ -114,10 +114,10 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 
-\item{custom_h}{A numeric vector of with same length as the parameter vector of the estimated model: i:th element
-of custom_h is the difference used in central difference approximation for differentials of the log-likelihood function
-for the i:th parameter. If \code{NULL} (default), then the difference used for differentiating overly large degrees of
-freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
+\item{custom_h}{A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference
+used in central difference approximation for partial differentials of the log-likelihood function for the i:th parameter.
+If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom parameters
+is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.}
 
 \item{object}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
 
@@ -132,15 +132,16 @@ standard errors, log-likelihood and information criteria values. Supported only 
 models with data.}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR or G-StMAR model. If data is supplied, the returned object
-  contains (by default) empirical mixing weights, conditional means and variances and quantile residuals. Note that the first p observations are
-  taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation (interpreted as t=1).
+Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
+ the returned object contains (by default) empirical mixing weights, some conditional and unconditional moments, and quantile
+ residuals. Note that the first p observations are taken as the initial values so the mixing weights, conditional moments, and
+ quantile residuals start from the p+1:th observation (interpreted as t=1).
 }
 \description{
-\code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR or G-StMAR model.
+\code{GSMAR} creates an S3 object of class \code{'gsmar'} that defines a GMAR, StMAR, or G-StMAR model.
 }
 \details{
-Models can be built without data, e.q., in order to simulate from the process, but some elements such as quantile
+Models can be built without data, e.q., in order to simulate from the process, but some things such as quantile
  residuals and conditional moments can't be calculated without data.
 }
 \section{Methods (by generic)}{
@@ -199,13 +200,6 @@ params32trc <- c(0.35, 0.33, 0.88, -0.02, 0.01, 0.01, 0.36, 4.53, 1000)
 stmar32rc <- GSMAR(logVIX, p=3, M=2, params=params32trc, model="StMAR",
  restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 stmar32rc
-
-# Mixture version of Heterogenuous autoregressive (HAR) model (without data)
-paramsHAR <- c(1, 0.1, 0.2, 0.3, 1, 2, 0.15, 0.25, 0.35, 2, 0.55)
-r1 = c(1, rep(0, 21)); r2 = c(rep(0.2, 5), rep(0, 17)); r3 = rep(1/22, 22)
-R0 = cbind(r1, r2, r3)
-mixhar <- GSMAR(p=22, M=2, params=paramsHAR, model="GMAR", constraints=list(R0, R0))
-mixhar
 }
 \references{
 \itemize{
