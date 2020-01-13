@@ -7,7 +7,7 @@
 get_minval(data)
 }
 \arguments{
-\item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
+\item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 }
 \value{
 Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}

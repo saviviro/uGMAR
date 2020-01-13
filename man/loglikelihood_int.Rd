@@ -2,7 +2,7 @@
 % Please edit documentation in R/loglikelihood.R
 \name{loglikelihood_int}
 \alias{loglikelihood_int}
-\title{Compute the log-likelihood of GMAR, StMAR or G-StMAR model}
+\title{Compute the log-likelihood of GMAR, StMAR, or G-StMAR model}
 \usage{
 loglikelihood_int(
   data,
@@ -22,14 +22,14 @@ loglikelihood_int(
 )
 }
 \arguments{
-\item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
+\item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 
-\item{p}{a positive integer specifying the order of AR coefficients.}
+\item{p}{a positive integer specifying the autoregressive order of the model.}
 
 \item{M}{\describe{
   \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
-   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+  \item{For \strong{G-StMAR} models:}{a size (2x1) integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
+   first element and \emph{StMAR type} components \code{M2} in the second element. The total number of mixture components is \code{M=M1+M2}.}
 }}
 
 \item{params}{a real valued parameter vector specifying the model.
@@ -62,15 +62,15 @@ loglikelihood_int(
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
-\eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
-and the rest \code{M2} components are \emph{StMAR-type}.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
+freedom parameter. If \code{parametrization=="mean"}, just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
+\eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type}
+and the rest \code{M2} components are \emph{StMAR type}.
+Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
-\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
-are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
+\item{model}{is "GMAR", "StMAR", or "G-StMAR" model considered? In the G-StMAR model, the first \code{M1} components
+are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes.}
@@ -84,8 +84,8 @@ to be the same for all regimes.}
   \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
-always \code{p} for all regimes.
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal autoregressive order
+is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{conditional}{a logical argument specifying whether the conditional or exact log-likelihood function should be used.}
@@ -93,46 +93,45 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
-\item{boundaries}{a logical argument. If \code{TRUE} then \code{loglikelihood} returns \code{minval} if...
+\item{boundaries}{a logical argument. If \code{TRUE}, then \code{loglikelihood} returns \code{minval} if...
 \itemize{
-  \item any component variance is not larger than zero,
-  \item any parametrized mixing weight \eqn{\alpha_{1},...,\alpha_{M-1}} is not larger than zero,
+  \item some component variance is not larger than zero,
+  \item some parametrized mixing weight \eqn{\alpha_{1},...,\alpha_{M-1}} is not larger than zero,
   \item sum of the parametrized mixing weights is not smaller than one,
   \item if the model is not stationary,
-  \item or if \code{model=="StMAR"} or \code{model=="G-StMAR"} and any degrees of freedom parameter \eqn{\nu_{m}} is not larger than two.
+  \item or if \code{model=="StMAR"} or \code{model=="G-StMAR"} and some degrees of freedom parameter \eqn{\nu_{m}} is not larger than two.
 }
 Argument \code{minval} will be used only if \code{boundaries==TRUE}.}
 
-\item{checks}{an (optional) logical argument defining whether argument checks are made. If \code{FALSE} then no argument checks
-such as stationary checks etc are made. The default is \code{TRUE}.}
+\item{checks}{\code{TRUE} or \code{FALSE} specifying whether argument checks, such as stationarity checks, should be done.}
 
 \item{to_return}{should the returned object be the log-likelihood value, mixing weights, mixing weights including
 value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights, the terms \eqn{l_{t}: t=1,..,T}
 in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), regimewise conditional means, regimewise conditional variances,
-total conditional means or total conditional variances?
+total conditional means, or total conditional variances?
 Default is the log-likelihood value (\code{"loglik"}).}
 
-\item{minval}{this will be returned when the parameter vector is outside the parameter space.}
+\item{minval}{this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.}
 }
 \value{
-Note that the first p observations are taken as the initial values so
- mixing weights and conditional moments start from the p+1:th observation (interpreted as t=1).
+Note that the first p observations are taken as the initial values so the mixing weights and conditional moments start
+ from the p+1:th observation (interpreted as t=1).
  \describe{
   \item{By default:}{log-likelihood value of the specified model,}
-  \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in m:th column.}
-  \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in m:th column.
+  \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in the m:th column.}
+  \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in the m:th column.
     The last row is for \eqn{\alpha_{m,T+1}}.}
-  \item{if \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
+  \item{If \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
     second element contains the mixing weights.}
   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
-  \item{if \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
-  \item{if \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
-  \item{if \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
-  \item{if \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
+  \item{If \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
+  \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
+  \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
+  \item{If \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
  }
 }
 \description{
-\code{loglikelihood_int} computes the log-likelihood value of the specified GMAR, StMAR or G-StMAR model for the given data.
+\code{loglikelihood_int} computes the log-likelihood of the specified GMAR, StMAR, or G-StMAR model.
 }
 \references{
 \itemize{

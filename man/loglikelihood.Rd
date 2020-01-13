@@ -2,7 +2,7 @@
 % Please edit documentation in R/loglikelihood.R
 \name{loglikelihood}
 \alias{loglikelihood}
-\title{Compute the log-likelihood of GMAR, StMAR or G-StMAR model}
+\title{Compute the log-likelihood of GMAR, StMAR, or G-StMAR model}
 \usage{
 loglikelihood(
   data,
@@ -19,14 +19,14 @@ loglikelihood(
 )
 }
 \arguments{
-\item{data}{a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.}
+\item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 
-\item{p}{a positive integer specifying the order of AR coefficients.}
+\item{p}{a positive integer specifying the autoregressive order of the model.}
 
 \item{M}{\describe{
   \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-  \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
-   first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+  \item{For \strong{G-StMAR} models:}{a size (2x1) integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
+   first element and \emph{StMAR type} components \code{M2} in the second element. The total number of mixture components is \code{M=M1+M2}.}
 }}
 
 \item{params}{a real valued parameter vector specifying the model.
@@ -59,15 +59,15 @@ loglikelihood(
     }
   }
 }
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
-\eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
-and the rest \code{M2} components are \emph{StMAR-type}.
-Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
+Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
+freedom parameter. If \code{parametrization=="mean"}, just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
+\eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type}
+and the rest \code{M2} components are \emph{StMAR type}.
+Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
-\item{model}{is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
-are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.}
+\item{model}{is "GMAR", "StMAR", or "G-StMAR" model considered? In the G-StMAR model, the first \code{M1} components
+are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes.}
@@ -81,8 +81,8 @@ to be the same for all regimes.}
   \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
-always \code{p} for all regimes.
+Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal autoregressive order
+is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{conditional}{a logical argument specifying whether the conditional or exact log-likelihood function should be used.}
@@ -90,16 +90,16 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
-\item{returnTerms}{should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)})
-be returned instead of the log-likelihood value?}
+\item{returnTerms}{should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)}
+or MPS 2018, eq.(15)) be returned instead of the log-likelihood value?}
 
-\item{minval}{this will be returned when the parameter vector is outside the parameter space.}
+\item{minval}{this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.}
 }
 \value{
 Returns the log-likelihood value or the terms described in \code{returnTerms}.
 }
 \description{
-\code{loglikelihood} computes the log-likelihood value of the specified GMAR, StMAR or G-StMAR model.
+\code{loglikelihood} computes the log-likelihood of the specified GMAR, StMAR, or G-StMAR model.
   Exists for convenience if one wants to for example plot profile log-likelihoods or employ other estimation algorithms.
   Use \code{minval} to control what happens when the parameter vector is outside the parameter space.
 }

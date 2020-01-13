@@ -32,4 +32,4 @@
 
 * Improved comments and documentation
 * Disabled camelCase compatibility for arguments 'ncalls' and 'ncores' in fitGMAR.
-* Updated the 'regime combining procedure' in the genetic algorithm which now also supports the G-StMAR model.
+* Updated the 'regime combining procedure' in the genetic algorithm to also support the G-StMAR model.

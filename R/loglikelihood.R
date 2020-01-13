@@ -1,15 +1,15 @@
 #' @import stats
 #'
-#' @title Compute the log-likelihood of GMAR, StMAR or G-StMAR model
+#' @title Compute the log-likelihood of GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{loglikelihood_int} computes the log-likelihood value of the specified GMAR, StMAR or G-StMAR model for the given data.
+#' @description \code{loglikelihood_int} computes the log-likelihood of the specified GMAR, StMAR, or G-StMAR model.
 #'
-#' @param data a numeric vector class \code{'ts'} object containing the data. \code{NA} values are not supported.
-#' @param p a positive integer specifying the order of AR coefficients.
+#' @param data a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.
+#' @param p a positive integer specifying the autoregressive order of the model.
 #' @param M \describe{
 #'   \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-#'   \item{For \strong{G-StMAR} model:}{a size (2x1) vector specifying the number of \emph{GMAR-type} components \code{M1} in the
-#'    first element and \emph{StMAR-type} components \code{M2} in the second. The total number of mixture components is \code{M=M1+M2}.}
+#'   \item{For \strong{G-StMAR} models:}{a size (2x1) integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
+#'    first element and \emph{StMAR type} components \code{M2} in the second element. The total number of mixture components is \code{M=M1+M2}.}
 #' }
 #' @param params a real valued parameter vector specifying the model.
 #'  \describe{
@@ -41,16 +41,16 @@
 #'      }
 #'    }
 #'  }
-#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
-#'  freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
-#'  \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
-#'  and the rest \code{M2} components are \emph{StMAR-type}.
-#'  Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
+#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
+#'  freedom parameter. If \code{parametrization=="mean"}, just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
+#'  \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type}
+#'  and the rest \code{M2} components are \emph{StMAR type}.
+#'  Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 #'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
 #' @param restricted a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 #'  to be the same for all regimes.
-#' @param model is "GMAR", "StMAR" or "G-StMAR" model considered? In G-StMAR model the first \code{M1} components
-#'  are \emph{GMAR-type} and the rest \code{M2} components are \emph{StMAR-type}.
+#' @param model is "GMAR", "StMAR", or "G-StMAR" model considered? In the G-StMAR model, the first \code{M1} components
+#'  are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.
 #' @param constraints specifies linear constraints applied to the autoregressive parameters.
 #'   \describe{
 #'   \item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
@@ -60,44 +60,43 @@
 #'     \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
 #'     \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 #'   }
-#'   Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal order of AR coefficients is
-#'   always \code{p} for all regimes.
+#'   Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal autoregressive order
+#'   is always \code{p} for all regimes.
 #'   Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.
 #' @param conditional a logical argument specifying whether the conditional or exact log-likelihood function should be used.
 #' @param parametrization is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 #'  "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?
-#' @param boundaries a logical argument. If \code{TRUE} then \code{loglikelihood} returns \code{minval} if...
+#' @param boundaries a logical argument. If \code{TRUE}, then \code{loglikelihood} returns \code{minval} if...
 #' \itemize{
-#'   \item any component variance is not larger than zero,
-#'   \item any parametrized mixing weight \eqn{\alpha_{1},...,\alpha_{M-1}} is not larger than zero,
+#'   \item some component variance is not larger than zero,
+#'   \item some parametrized mixing weight \eqn{\alpha_{1},...,\alpha_{M-1}} is not larger than zero,
 #'   \item sum of the parametrized mixing weights is not smaller than one,
 #'   \item if the model is not stationary,
-#'   \item or if \code{model=="StMAR"} or \code{model=="G-StMAR"} and any degrees of freedom parameter \eqn{\nu_{m}} is not larger than two.
+#'   \item or if \code{model=="StMAR"} or \code{model=="G-StMAR"} and some degrees of freedom parameter \eqn{\nu_{m}} is not larger than two.
 #' }
 #' Argument \code{minval} will be used only if \code{boundaries==TRUE}.
-#' @param checks an (optional) logical argument defining whether argument checks are made. If \code{FALSE} then no argument checks
-#' such as stationary checks etc are made. The default is \code{TRUE}.
+#' @param checks \code{TRUE} or \code{FALSE} specifying whether argument checks, such as stationarity checks, should be done.
 #' @param to_return should the returned object be the log-likelihood value, mixing weights, mixing weights including
 #'   value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights, the terms \eqn{l_{t}: t=1,..,T}
 #'   in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), regimewise conditional means, regimewise conditional variances,
-#'   total conditional means or total conditional variances?
+#'   total conditional means, or total conditional variances?
 #'   Default is the log-likelihood value (\code{"loglik"}).
-#' @param minval this will be returned when the parameter vector is outside the parameter space.
+#' @param minval this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.
 #' @return
-#'  Note that the first p observations are taken as the initial values so
-#'  mixing weights and conditional moments start from the p+1:th observation (interpreted as t=1).
+#'  Note that the first p observations are taken as the initial values so the mixing weights and conditional moments start
+#'  from the p+1:th observation (interpreted as t=1).
 #'  \describe{
 #'   \item{By default:}{log-likelihood value of the specified model,}
-#'   \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in m:th column.}
-#'   \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in m:th column.
+#'   \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in the m:th column.}
+#'   \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in the m:th column.
 #'     The last row is for \eqn{\alpha_{m,T+1}}.}
-#'   \item{if \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
+#'   \item{If \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
 #'     second element contains the mixing weights.}
 #'   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
-#'   \item{if \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
-#'   \item{if \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
-#'   \item{if \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
-#'   \item{if \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
+#'   \item{If \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
+#'   \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
+#'   \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
+#'   \item{If \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
 #'  }
 #' @references
 #'  \itemize{
@@ -124,19 +123,23 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     M1 <- M[1]
     M2 <- M[2]
     M <- sum(M)
+  } else if(model == "GMAR") {
+    M1 <- M
+    M2 <- 0
+  } else { # model == "StMAR
+    M1 <- 0
+    M2 <- M
   }
 
   # Reform parameters to the "standard form" and collect them
-  if(checks) {
-    checkConstraintMat(p=p, M=M_orig, restricted=restricted, constraints=constraints)
-  }
+  if(checks) checkConstraintMat(p=p, M=M_orig, restricted=restricted, constraints=constraints)
   params <- removeAllConstraints(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
   pars <- pick_pars(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
   sigmas <- pars[p + 2,]
 
-  # Return minval if parameters are out of their boundaries.
+  # Return minval if the parameter is outside the parameters space
   if(boundaries) {
     if(any(pars[p + 2,] <= 0)) {
       return(minval)
@@ -158,9 +161,10 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
   n_obs <- length(data)
 
-  #### Start evaluating the log-likelihood ####
 
-  # Expected values mu_m (Kalliovirta 2015, s.250)
+  ## Start evaluating the log-likelihood ##
+
+  # Unconditional regimewise means, mu_m (KMS 2015, s.250, and MDP 2018, eq.(4))
   if(parametrization == "mean") {
     mu <- pars[1,]
     pars[1,] <- vapply(1:M, function(i1) mu[i1]*(1 - sum(pars[2:(p + 1), i1])), numeric(1))
@@ -171,10 +175,12 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
   Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1) )
 
-  # Calculate inverse Gamma_m and calculate the matrix products in mv normal and t-distribution (Galbraith and Galbraith 1974)
+  # Calculate inverse Gamma_m (see the covariance matrix Gamma_p in MDP 2018, p.3 - we calculate this for all mixture components using
+  # the inverse formula in Galbraith and Galbraith 1974). Also, calculate the matrix products in multivariate normal and t-distribution
+  # densities.
   matProd <- matrix(nrow=n_obs - p + 1, ncol=M)
   invG <- array(dim=c(p, p, M))
-  if(p == 1) { # Inverse formula by Galbraith, R., Galbraith, J., (1974)
+  if(p == 1) {
     for(i1 in 1:M) {
       invG[, , i1] <- (1 - pars[p + 1, i1]^2)/sigmas[i1]
       matProd[, i1] <- (Y - mu[i1])*invG[, , i1]*(Y - mu[i1])
@@ -193,33 +199,24 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
-  # Calculate the log multivariate normal or student's t values (Kalliovirta 2015, s250 eq.(7) or MPS 2018) for each vector y_t and for each m=1,..,M
-  # First row for initial values y_0 (as denoted by Kalliovirta 2015) and i:th row for y_(i-1). First column for component m=1 and j:th column for m=j.
+  # Calculate the multivariate normal or student's t values (KMS 2015, eq.(7) and MPS 2018, Theorem 1) in log for each vector y_t and for each m=1,..,M.
+  # First row for initial values \bm{y}_0 (as denoted by KMS 2015) and i:th row for \bm{y}_(i-1). First column for component m=1 and j:th column for m=j.
   logmv_values <- matrix(nrow=(n_obs - p + 1), ncol=M)
-  if(model == "GMAR") {
-    for(i1 in 1:M) {
+  if(model == "GMAR" | model == "G-StMAR") { # Multinormals
+    for(i1 in 1:M1) {
       detG <- 1/det(as.matrix(invG[, , i1]))
       logmv_values[,i1] <- -0.5*p*log(2*pi) - 0.5*log(detG) - 0.5*matProd[,i1]
     }
-  } else if(model == "StMAR"){
-    for(i1 in 1:M) {
+  }
+  if(model == "StMAR" | model == "G-StMAR") { # Multistudents
+    for(i1 in (M1 + 1):M) {
       detG <- 1/det(as.matrix(invG[, , i1]))
-      logC <- lgamma(0.5*(p + dfs[i1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i1] - 2) - lgamma(0.5*dfs[i1])
-      logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p + dfs[i1])*log(1 + matProd[,i1]/(dfs[i1] - 2))
-    }
-  } else {  # If model == "G-StMAR
-    for(i1 in 1:M) {
-      detG <- 1/det(as.matrix(invG[, , i1]))
-      if(i1 <= M1) { # Multinormals
-        logmv_values[,i1] <- -0.5*p*log(2*pi) - 0.5*log(detG) - 0.5*matProd[,i1]
-      } else { # Multistudents
-        logC <- lgamma(0.5*(p + dfs[i1 - M1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i1 - M1] - 2) - lgamma(0.5*dfs[i1 - M1])
-        logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p + dfs[i1 - M1])*log(1 + matProd[,i1]/(dfs[i1 - M1] - 2))
-      }
+      logC <- lgamma(0.5*(p + dfs[i1 - M1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i1 - M1] - 2) - lgamma(0.5*dfs[i1 - M1])
+      logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p + dfs[i1 - M1])*log(1 + matProd[,i1]/(dfs[i1 - M1] - 2))
     }
   }
 
-  # Calculate the alpha_mt mixing weights (Kalliovirta 2015, s.250 eq.(8))
+  # Calculate the mixing weights alpha_mt (KMS 2015, eq.(8) and MPS 2018, eq.(11)).
   # First row for t=1, second for t=2, and i:th for t=i. First column for m=1, second for m=2 and j:th column for m=j.
   if(to_return != "mw_tplus1") {
     logmv_values0 <- logmv_values[1:(n_obs - p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
@@ -231,10 +228,10 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   l_0 <- 0 # "The first term" of the exact log-likelihood
   if(M == 1) {
     alpha_mt <- as.matrix(rep(1, nrow(logmv_values0)))
-    if(conditional == FALSE) { # Calculate "the first term" of the log-likelihood (Kalliovirta ym 2015, s.254 eq.(12))
+    if(conditional == FALSE) { # Calculate "the first term" of the log-likelihood (KMS 2015, eq.(12) and MPS, eq.(14))
       l_0 <- logmv_values[1]
     }
-  } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with Brobdingnag if needed
+  } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with package Brobdingnag if needed
     numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1]))) # alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]
     denominator <- Reduce("+", numerators) # For all t=0,...,T
     alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(nrow(logmv_values0)))
@@ -255,7 +252,8 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     return(alpha_mt)
   }
 
-  # Calculate the conditional means mu_mt (Kalliovirta 2015, s.249 eq.(2)). First row for t=1, second for t=2 etc. First column for m=1, second column for m=2 etc.
+  # Calculate the conditional means mu_mt (KMS 2015, eq.(2), MPS 2018, eq.(5)). First row for t=1, second for t=2 etc. First column for m=1,
+  # second column for m=2 etc.
   if(p == 1) {
     mu_mt <- vapply(1:M, function(i1) rep(pars[1, i1], nrow(Y) - 1) + Y[1:(nrow(Y) - 1),]*pars[2, i1], numeric(n_obs - p))
   } else {
@@ -265,47 +263,38 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   # Calculate/return conditional means
   if(to_return == "regime_cmeans") {
     return(mu_mt)
-  } else if(to_return == "total_cmeans") {
+  } else if(to_return == "total_cmeans") { # KMS 2015, eq.(4), MPS 2018, eq.(13)
     return(rowSums(alpha_mt*mu_mt))
   }
 
-  # Calculate "the second term" of the log-likelihood (Kalliovirta 2015, s.254 eq.(12)-(13) )
-  Y2 <- Y[2:nrow(Y), 1] # Only first column and rows 2...T are needed
-  if(model == "GMAR") {
-    invsqrt_sigmas <- sigmas^(-1/2)
-    if(M == 1) {
-      lt_tmp <- invsqrt_sigmas*dnorm((Y2 - mu_mt)*invsqrt_sigmas)
-    } else {
-      lt_tmp <- alpha_mt*dnorm((Y2 - mu_mt)%*%diag(invsqrt_sigmas))%*%diag(invsqrt_sigmas)
-    }
-  } else if(model == "StMAR") {
-    matProd0 <- matProd[1:(n_obs - p),] # Last row is not needed because sigma_t uses y_{t-1}
-    if(M == 1) {
-      sigma_mt <- sigmas*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances
-      lt_tmp <- ((exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2)))/sqrt(sigma_mt))*(1 + ((Y2 - mu_mt)^2)/((dfs + p - 2)*sigma_mt))^(-0.5*(1 + dfs + p))
-    } else {
-      sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmas)
-      lt_tmp <- alpha_mt*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2 - mu_mt)^2)/(sigma_mt%*%diag(dfs + p - 2)))^(-0.5*(1 + dfs + p)))
-    }
-  } else {  # If model == "G-StMAR"
-    # GMAR-components
-    invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2)
+  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15))
+  Y2 <- Y[2:nrow(Y), 1] # Only the first column and rows 2...T are needed
+  if(model == "GMAR" | model == "G-StMAR") { # GMAR type components
+    invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2) # M1 = M for the GMAR model
     if(M1 == 1) {
       lt_tmpM1 <- alpha_mt[,1]*invsqrt_sigmasM1*dnorm((Y2 - mu_mt[,1])*invsqrt_sigmasM1)
     } else {
       lt_tmpM1 <- alpha_mt[,1:M1]*dnorm((Y2 - mu_mt[,1:M1])%*%diag(invsqrt_sigmasM1))%*%diag(invsqrt_sigmasM1)
     }
-    # StMAR-components
-    sigmasM2 <- sigmas[(M1 + 1):M]
-    matProd0 <- matProd[1:(n_obs - p), (M1 + 1):M]
+  }
+  if(model == "StMAR" | model == "G-StMAR") { # StMAR type components
+    sigmasM2 <- sigmas[(M1 + 1):M] # M1 = 0 and M2 = M for the StMAR model
+    matProd0 <- matProd[1:(n_obs - p), (M1 + 1):M] # The last row is not needed because sigma_t uses y_{t-1}
     if(M2 == 1) {
-      sigma_mt <- sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances
-      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*((exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2)))/sqrt(sigma_mt))*(1 + ((Y2-mu_mt[,(M1 + 1):M])^2)/((dfs + p - 2)*sigma_mt))^(-0.5*(1 + dfs + p))
+      sigma_mt <- sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances (MPS 2018, eq.(5))
+      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*((exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2)))/sqrt(sigma_mt))*(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/((dfs + p - 2)*sigma_mt))^(-0.5*(1 + dfs + p))
     } else {
       sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2)
-      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p))-lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/(sigma_mt%*%diag(dfs + p - 2)))^(-0.5*(1 + dfs + p)))
+      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/(sigma_mt%*%diag(dfs + p - 2)))^(-0.5*(1 + dfs + p)))
     }
-    lt_tmp <- cbind(lt_tmpM1, lt_tmpM2)
+  }
+
+  if(model == "GMAR") {
+    lt_tmp <- as.matrix(lt_tmpM1)
+  } else if(model == "StMAR") {
+    lt_tmp <- as.matrix(lt_tmpM2)
+  } else { # model == "G-StMAR
+    lt_tmp <- as.matrix(cbind(lt_tmpM1, lt_tmpM2))
   }
   l_t <- rowSums(lt_tmp)
 
@@ -322,7 +311,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
     if(to_return == "regime_cvars") {
       return(sigma_mt)
-    } else { # Calculate and return total conditional variances
+    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS 2018, eq.(13))
       return(rowSums(alpha_mt*sigma_mt) - rowSums(alpha_mt*(mu_mt - rowSums(alpha_mt*mu_mt))^2))
     }
   }
@@ -332,7 +321,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   } else if(to_return == "loglik_and_mw") {
     ret <- list(loglik=l_0 + sum(log(l_t)), mw=alpha_mt)
   } else {
-    ret <- l_0 + sum(log(l_t))
+    ret <- l_0 + sum(log(l_t)) # KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15)
   }
   ret
 }
@@ -340,15 +329,15 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 
 #' @import stats
 #'
-#' @title Compute the log-likelihood of GMAR, StMAR or G-StMAR model
+#' @title Compute the log-likelihood of GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{loglikelihood} computes the log-likelihood value of the specified GMAR, StMAR or G-StMAR model.
+#' @description \code{loglikelihood} computes the log-likelihood of the specified GMAR, StMAR, or G-StMAR model.
 #'   Exists for convenience if one wants to for example plot profile log-likelihoods or employ other estimation algorithms.
 #'   Use \code{minval} to control what happens when the parameter vector is outside the parameter space.
 #'
 #' @inheritParams loglikelihood_int
-#' @param returnTerms should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)})
-#'   be returned instead of the log-likelihood value?
+#' @param returnTerms should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)}
+#'   or MPS 2018, eq.(15)) be returned instead of the log-likelihood value?
 #' @return Returns the log-likelihood value or the terms described in \code{returnTerms}.
 #' @inherit loglikelihood_int references
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResiduals}},
@@ -404,13 +393,14 @@ loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 
 #' @import stats
 #'
-#' @title Calculate mixing weights of GMAR, StMAR or G-StMAR model
+#' @title Calculate mixing weights of a GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{mixingWeights_int} calculates the mixing weights of the specified GMAR, StMAR or G-StMAR model and returns them as a matrix.
+#' @description \code{mixingWeights_int} calculates the mixing weights of the specified GMAR, StMAR, or G-StMAR model
+#'  and returns them as a matrix.
 #'
 #' @inheritParams loglikelihood_int
-#' @param to_return should the returned object the mixing weights or mixing weights (\code{"mw"}) including
-#'   value for \eqn{alpha_{m,T+1}} (\code{"mw_tplus1"})?
+#' @param to_return should the returned object contain mixing weights for t=1,..,T (\code{"mw"}) or for t=1,..,T+1 (\code{"mw_tplus1"})?
+#' @details The first p observations are taken to be the initial values.
 #' @return
 #'  \describe{
 #'   \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in m:th column.}
@@ -435,7 +425,7 @@ mixingWeights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #' @description \code{mixingWeights} calculates the mixing weights of the specified GMAR, StMAR or G-StMAR model and returns them as a matrix.
 #'
 #' @inheritParams mixingWeights_int
-#' @inherit mixingWeights_int return references
+#' @inherit mixingWeights_int return details references
 #' @examples
 #' # GMAR model
 #' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
@@ -484,7 +474,7 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 
 #' @import stats
 #'
-#' @title Calculate conditional moments of GMAR, StMAR or G-StMAR model
+#' @title Calculate conditional moments of GMAR, StMAR, or G-StMAR model
 #'
 #' @description \code{condMoments} calculates the regime specific conditional means and variances and total
 #'  conditional means and variances of the specified GMAR, StMAR or G-StMAR model.
@@ -525,6 +515,7 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' tcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
 #'  to_return="total_cvars")
 #' @export
+
 condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                         parametrization=c("intercept", "mean"), to_return=c("regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars")) {
   model <- match.arg(model)
@@ -542,8 +533,8 @@ condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 #' @description \code{get_IC} calculates AIC, HQIC and BIC
 #'
 #' @param loglik log-likelihood value
-#' @param npars number of (freely estimated) parameters in the model.
-#' @param obs numbers of observations with starting values excluded for conditional models.
+#' @param npars the number of (freely estimated) parameters in the model.
+#' @param obs the number of observations with initial values excluded for conditional models.
 #' @return Returns a data frame containing the information criteria values.
 
 get_IC <- function(loglik, npars, obs) {
