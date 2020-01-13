@@ -2,14 +2,14 @@
 % Please edit documentation in R/MAINest.R
 \name{iterate_more}
 \alias{iterate_more}
-\title{Maximum likelihood estimation of GMAR, StMAR or G-StMAR model with preliminary estimates}
+\title{Maximum likelihood estimation of GMAR, StMAR, or G-StMAR model with preliminary estimates}
 \usage{
 iterate_more(gsmar, maxit = 100, custom_h = NULL, calc_std_errors = TRUE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{maxit}{maximum number of iterations in the variable metric algorithm.}
+\item{maxit}{the maximum number of iterations for the variable metric algorithm.}
 
 \item{custom_h}{A numeric vector of with same length as the parameter vector of the estimated model: i:th element
 of custom_h is the difference used in central difference approximation for differentials of the log-likelihood function
@@ -19,12 +19,12 @@ freedom parameters is adjusted to avoid numerical problems, and the difference i
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 }
 \value{
-Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
-  to work with other functions provided in \code{uGMAR}.
+Returns an object of class \code{'gsmar'} defining the estimated model.
 }
 \description{
 \code{iterate_more} uses a variable metric algorithm to finalize maximum likelihood
- estimation of GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has preliminary estimates.
+ estimation of a GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has
+ preliminary estimates.
 }
 \details{
 The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize

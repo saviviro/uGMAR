@@ -12,11 +12,11 @@ add_dfs(x, how_many)
 \item{how_many}{how many dfs?}
 }
 \value{
-Returns \code{c(ind, dfs)} with \code{how_many} dfs-elements.
+Returns \code{c(x, dfs)} with \code{how_many} dfs-elements.
 }
 \description{
-\code{add_dfs} adds random dfs to a vector
+\code{add_dfs} adds random degrees of freedom parameters to a vector.
 }
 \details{
-For details read the source code.
+Read the source code for details.
 }

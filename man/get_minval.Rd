@@ -15,6 +15,9 @@ Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 \description{
 \code{get_minval} returns the default smallest allowed log-likelihood for given data.
 }
+\details{
+This function exists simply to avoid dublication inside the package.
+}
 \examples{
 set.seed(1)
 get_minval(rnorm(1000))

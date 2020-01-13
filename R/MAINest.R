@@ -2,18 +2,18 @@
 #'
 #' @title Estimate Gaussian or Student's t Mixture Autoregressive model
 #'
-#' @description \code{fitGSMAR} estimates GMAR, StMAR or G-StMAR model in two phases: in the first phase, the genetic algorithm is employed
-#'   to find starting values for the gradient based variable metric algorithm (also known as quasi-Newton method). In the second phase, the
-#'   variable metric algorithm accurately converges to a nearby local maximum or saddle point. Parallel computing is used to perform multiple
+#' @description \code{fitGSMAR} estimates GMAR, StMAR, or G-StMAR model in two phases. In the first phase, a genetic algorithm is employed
+#'   to find starting values for a gradient based method. In the second phase, the gradient based variable metric algorithm is utilized to
+#'   accurately converge to a local maximum or a saddle point near each starting value. Parallel computing is used to conduct multiple
 #'   rounds of estimations in parallel.
 #' @inheritParams GAfit
 #' @param ncalls a positive integer specifying how many rounds of estimation should be conducted.
 #'  The estimation results may vary from round to round because of multimodality of the log-likelihood function
-#'  and randomness associated with the genetic algorithm.
-#' @param ncores the number of cores to be used in the estimation process.
-#' @param maxit maximum number of iterations in the variable metric algorithm.
+#'  and the randomness associated with the genetic algorithm.
+#' @param ncores the number of CPU cores to be used in the estimation process.
+#' @param maxit the maximum number of iterations for the variable metric algorithm.
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
-#'   or \code{NULL} for not initializing the seed. Exists for creating reproducible results.
+#'   or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.
 #' @param printRes should the estimation results be printed?
 #' @param runTests should quantile residuals tests be performed after the estimation?
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
@@ -22,29 +22,31 @@
 #'  algorithm will end up in the global maximum point. It's often expected that most of the estimation rounds will end up in
 #'  some local maximum point instead, and therefore a number of estimation rounds is required for reliable results. Because
 #'  of the nature of the models, the estimation may fail particularly in the cases where the number of mixture components is
-#'  chosen too large.
+#'  chosen too large. Note that the genetic algorithm is designed to avoid solutions with mixing weights of some regimes
+#'  too close to zero at almost all times ('redudant regimes') but the settings can, however, be adjusted (see ?GAfit).
 #'
-#'  If the iteration limit in the variable metric algorithm (\code{maxit}) is reached, one can continue the estimation by iterating
-#'  more with the function \code{iterate_more}.
+#'  If the iteration limit for the variable metric algorithm (\code{maxit}) is reached, one can continue the estimation by
+#'  iterating more with the function \code{iterate_more}.
 #'
-#'  The genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}. It uses (slightly modified)
-#'  individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)} and employs (50\%)
-#'  fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}. Large (in absolute value) but stationary
+#'  The core of the genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}. It utilizes
+#'  a slightly modified version the individually adaptive crossover and mutation rates described by \emph{Patnaik and Srinivas (1994)}
+#'  and employs (50\%) fitness inheritance discussed by \emph{Smith, Dike and Stegmann (1995)}. Large (in absolute value) but stationary
 #'  AR parameter values are generated with the algorithm proposed by Monahan (1984).
 #'
-#'  The variable metric algorithm (or quasi-Newton method, Nash (1990, algorithm 21)) used in the second phase is implemented with function the
-#'  \code{optim} from the package \code{stats}.
+#'  The variable metric algorithm (or quasi-Newton method, Nash (1990, algorithm 21)) used in the second phase is implemented
+#'  with function the \code{optim} from the package \code{stats}.
 #'
-#'  Some mixture components of the StMAR model may sometimes get very large estimates for degrees of freedom parameters. Such estimates may,
-#'  for example, cause computing the quantile residual tests to fail. However, such mixture components are very much similar to the components
-#'  of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture components with large degrees of freedom
-#'  parameter estimates to be GMAR type.
+#'  Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters. Such parameters
+#'  are weakly identified and induce various numerical problems. However, mixture components with large degree of freedom parameters are
+#'  similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
+#'  components with large degrees of freedom parameter estimates to be GMAR type.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
-#'   empirical mixing weights, conditional means and variances, quantile residuals, and quantile residual test results if the tests were performed.
-#'   Note that the first p observations are taken as the initial values so mixing weights, conditional moments and qresiduals start from the p+1:th observation
-#'   (interpreted as t=1). In addition, the returned object contains the estimates and log-likelihood values from all the estimation rounds.
-#'   The estimated parameter vector can be obtained at \code{gsmar$params} (and the corresponding approximate standard errors at \code{gsmar$std_errors})
-#'   and it's...
+#'   estimated mixing weights, conditional and unconditional moments, quantile residuals, and quantile residual test results
+#'   if the tests were performed. Note that the first p observations are taken as the initial values so the mixing weights, conditional
+#'   moments, and quantile residuals start from the p+1:th observation (interpreted as t=1).In addition, the returned object contains
+#'   the estimates and log-likelihood values from all of the estimation rounds.
+#'   The estimated parameter vector can be obtained as \code{gsmar$params} (and the corresponding approximate standard errors as
+#'   \code{gsmar$std_errors}) and it's...
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
 #'      \describe{
@@ -74,18 +76,18 @@
 #'      }
 #'    }
 #'  }
-#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight and \eqn{\nu} a degrees of
+#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
 #'  freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
-#'  \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model the first \code{M1} components are \emph{GMAR-type}
-#'  and the rest \code{M2} components are \emph{StMAR-type}.
+#'  \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type}
+#'  and the rest \code{M2} components are \emph{StMAR type}.
 #'  Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
 #'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
 #' @section S3 methods:
 #'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
 #'  \code{logLik}, \code{residuals}.
 #' @section Suggested packages:
-#'  For faster evaluation of the quantile residuals of StMAR and G-StMAR models, install the suggested package "gsl".
-#'  Note that for large StMAR and G-StMAR models with large data the evaluations of the quantile residual tests may take
+#'  For faster evaluation of the quantile residuals for StMAR and G-StMAR models, install the suggested package "gsl".
+#'  Note that for large StMAR and G-StMAR models with large data, performing the quantile residual tests may take
 #'  significantly long time without the package "gsl".
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
 #'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
@@ -319,10 +321,11 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 }
 
 
-#' @title Maximum likelihood estimation of GMAR, StMAR or G-StMAR model with preliminary estimates
+#' @title Maximum likelihood estimation of GMAR, StMAR, or G-StMAR model with preliminary estimates
 #'
 #' @description \code{iterate_more} uses a variable metric algorithm to finalize maximum likelihood
-#'  estimation of GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has preliminary estimates.
+#'  estimation of a GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has
+#'  preliminary estimates.
 #'
 #' @inheritParams simulateGSMAR
 #' @inheritParams fitGSMAR
@@ -331,8 +334,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'   the estimation when the maximum number of iterations is reached when estimating a model with the
 #'   main estimation function \code{fitGSMAR}. \code{iterate_more} is essentially a wrapper for the functions
 #'   \code{optim} from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
-#' @return Returns an object of class \code{'gsmar'} defining the estimated model. Can be used
-#'   to work with other functions provided in \code{uGMAR}.
+#' @return Returns an object of class \code{'gsmar'} defining the estimated model.
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
 #' @inherit GSMAR references
 #' @examples
@@ -385,6 +387,7 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
 #' @description \code{get_minval} returns the default smallest allowed log-likelihood for given data.
 #'
 #' @inheritParams GAfit
+#' @details This function exists simply to avoid dublication inside the package.
 #' @return Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GAfit}}
 #' @examples

@@ -3,7 +3,7 @@
 \name{randomIndividual_int}
 \alias{randomIndividual_int}
 \alias{smartIndividual_int}
-\title{Create random GMAR, StMAR or G-StMAR model compatible parameter vector}
+\title{Create random GMAR, StMAR, or G-StMAR model compatible parameter vector}
 \usage{
 randomIndividual_int(
   p,
@@ -58,11 +58,12 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element) of the normal distribution
-from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization) parameters (for random regimes) should be generated.}
+\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+of the normal distribution from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization)
+parameters (for random regimes) should be generated.}
 
-\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
-from which the component variance parameters (for random regimes) should be generated.}
+\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+normal distribution from which the component variance parameters (for random regimes) should be generated.}
 
 \item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
 Not supported for constrained models.}
@@ -105,18 +106,19 @@ Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{accuracy}{a real number larger than zero specifying how close to \code{params} the generated parameter vector should be.
-Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter value divided by \code{accuracy}.}
+Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter
+value divided by \code{accuracy}.}
 
-\item{whichRandom}{an (optional) numeric vector of max length \code{M} specifying which regimes should be random instead of "smart" when
-using \code{smartIndividual}. Does not affect on mixing weight parameters. Default in none.}
+\item{whichRandom}{a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
+using \code{smartIndividual}. Does not affect mixing weight parameters. Default in none.}
 }
 \value{
-Returns estimated parameter vector described in \code{initpop}.
+Returns estimated parameter vector with the form described in \code{initpop}.
 }
 \description{
-\code{randomIndividual_int} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector.
+\code{randomIndividual_int} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector.
 
-\code{smartIndividual_int} creates a random GMAR, StMAR or G-StMAR model compatible parameter vector close to argument \code{params}.
+\code{smartIndividual_int} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector close to argument \code{params}.
 }
 \references{
 \itemize{

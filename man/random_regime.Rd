@@ -2,7 +2,7 @@
 % Please edit documentation in R/geneticAlgorithm.R
 \name{random_regime}
 \alias{random_regime}
-\title{Create random regime}
+\title{Create random regime parameters}
 \usage{
 random_regime(
   p,
@@ -23,8 +23,8 @@ Default is \code{c(mean(data), sd(data))}.
 Note that the genetic algorithm optimizes with mean-parametrization even when \code{parametrization=="intercept"}, but
 input (in \code{initpop}) and output (return value) parameter vectors may be intercept-parametrized.}
 
-\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only) normal distribution
-from which the component variance parameters are generated in the random mutations in the genetic algorithm.
+\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+normal distribution from which the component variance parameters are generated in the random mutations in the genetic algorithm.
 Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
 
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
@@ -43,7 +43,8 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{m}{which regime?}
+\item{m}{which regime? This is required for models with constraints for which a list of possibly differing
+constraint matrices is provided.}
 
 \item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower)?
 Not supported for constrained models.}
@@ -57,10 +58,10 @@ Not supported for constrained models.}
 }
 }
 \description{
-\code{random_regime} generates random regime parameters
+\code{random_regime} generates random regime parameters.
 }
 \details{
-if \code{forcestat==TRUE} then the AR coefficients are relatively large, otherwise they are usually relatively small.
+If \code{forcestat==TRUE}, then the AR coefficients are relatively large, otherwise they are usually relatively small.
 }
 \references{
 \itemize{

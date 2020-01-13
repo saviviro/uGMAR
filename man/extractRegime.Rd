@@ -11,7 +11,8 @@ extractRegime(
   model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
-  regime
+  regime,
+  with_dfs = TRUE
 )
 }
 \arguments{
@@ -80,6 +81,8 @@ always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{regime}{a positive integer in the interval [1, M] defining which regime should be extracted.}
+
+\item{with_dfs}{Should the degrees of freedom parameter (if any) be included?}
 }
 \value{
 Returns a numeric vector corresponding to the regime with...
@@ -104,6 +107,6 @@ Returns a numeric vector corresponding to the regime with...
  }
 }
 \description{
-\code{extractRegime} extracts the specified regime from the GMAR, StMAR or G-StMAR model's parameter vector.
- Doesn't extract mixing weight parameter alpha.
+\code{extractRegime} extracts the specified regime from the GMAR, StMAR, or G-StMAR model parameter vector.
+ Doesn't extract mixing weight parameter \eqn{\alpha}.
 }

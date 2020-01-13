@@ -13,9 +13,9 @@ regime_distance(regime_pars1, regime_pars2)
 }
 \value{
 Returns "distance" between \code{regime_pars1} and \code{regime_pars2}. Values are scaled
-  before calculating the "distance". Read the source code for details.
+  to the same magnitude before calculating the "distance". Read the source code for details.
 }
 \description{
-\code{regime_distance} scales each regime parameter and then calculates distance
- between scaled \code{regime_pars1} and \code{regime_pars2}.
+\code{regime_distance} scales each regime parameter to the same magnitude
+ and then calculates distance between scaled \code{regime_pars1} and \code{regime_pars2}.
 }
