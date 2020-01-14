@@ -5,7 +5,7 @@
 logLik.gsmar <- function(object, ...) object$loglik
 
 
-#' @describeIn GSMAR residuals method to extract multivariate quantile residuals
+#' @describeIn GSMAR residuals method to extract quantile residuals
 #' @inheritParams logLik.gsmar
 #' @export
 residuals.gsmar <- function(object, ...) object$quantile_residuals

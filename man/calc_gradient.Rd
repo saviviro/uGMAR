@@ -22,11 +22,11 @@ get_hessian(gsmar, custom_h = NULL)
 get_soc(gsmar, custom_h = NULL)
 }
 \arguments{
-\item{x}{a numeric vector specifying the point where the gradient or Hessian should be calculated.}
+\item{x}{a numeric vector specifying the point at which the gradient or Hessian should be evaluated.}
 
-\item{fn}{a function that takes in argument \code{x} as the \strong{first} argument.}
+\item{fn}{a function that takes in the argument \code{x} as the \strong{first} argument.}
 
-\item{h}{difference used to approximate the derivatives.}
+\item{h}{the difference used to approximate the derivatives.}
 
 \item{varying_h}{a numeric vector with the same length as \code{x} specifying the difference \code{h}
 for each dimension separately. If \code{NULL} (default), then the difference given as parameter \code{h}
@@ -34,27 +34,25 @@ will be used for all dimensions.}
 
 \item{...}{other arguments passed to \code{fn}.}
 
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{custom_h}{same as \code{varying_h} but if \code{NULL} (default), then the difference \code{h} used for differentiating
 overly large degrees of freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other
 parameters.}
 }
 \value{
-Gradient functions return numerical approximation of the gradient, and Hessian functions return
+The gradient functions return numerical approximation of the gradient, and the Hessian functions return
  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix, \code{get_foc}
  is the same as \code{get_gradient} but named conveniently.
 }
 \description{
 \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
  of the given function at the given point using central difference numerical approximation.
- \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
- log-likelihood function at the parameter values of class \code{'gsmar'} object. \code{get_soc}
- returns eigenvalues of the Hessian matrix.
+ \code{get_gradient} (and \code{get_foc}) or \code{get_hessian} calculates the gradient or Hessian matrix of the
+ log-likelihood function at the parameter values of a class \code{'gsmar'} object.
+ \code{get_soc} returns eigenvalues of the Hessian matrix.
 }
 \details{
-Especially the functions \code{get_foc} or \code{get_soc} can be used to check whether
- the found estimates denote a (local) maximum point, a saddle point or something else.
+In particular, the functions \code{get_foc} and \code{get_soc} can be used to check whether
+ the found estimates denote a (local) maximum point, a saddle point, or something else.
 }
 \section{Warning}{
 

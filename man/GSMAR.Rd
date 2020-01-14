@@ -148,7 +148,7 @@ Models can be built without data, e.q., in order to simulate from the process, b
 \itemize{
 \item \code{logLik}: Log-likelihood method
 
-\item \code{residuals}: residuals method to extract multivariate quantile residuals
+\item \code{residuals}: residuals method to extract quantile residuals
 
 \item \code{summary}: summary method, standard errors in brackets
 

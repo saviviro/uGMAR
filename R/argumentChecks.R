@@ -464,7 +464,7 @@ check_data <- function(object) {
 #' @param warn_about warn about inaccurate derivatives or standard errors?
 #' @details Either provide a class 'gsmar' object or specify the model by hand.
 #' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
-#'   larger than 200.
+#'   larger than 100.
 
 warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, warn_about=c("derivs", "errors")) {
 
@@ -479,6 +479,6 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
   if(model %in% c("StMAR", "G-StMAR")) {
     pars <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
     dfs <- pick_dfs(p=p, M=M, params=pars, model=model)
-    if(any(dfs > 200)) warning("The model contains overly large degrees of freedom parameter values. Consider switching to a G-StMAR model by setting the corresponding regimes to be GMAR type with the function 'stmar_to_gstmar'.")
+    if(any(dfs > 100)) warning("The model contains overly large degrees of freedom parameter values. Consider switching to a G-StMAR model by setting the corresponding regimes to be GMAR type with the function 'stmar_to_gstmar'.")
   }
 }

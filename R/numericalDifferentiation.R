@@ -2,14 +2,13 @@
 #'
 #' @description \code{calc_gradient} or \code{calc_hessian} calculates the gradient or Hessian matrix
 #'  of the given function at the given point using central difference numerical approximation.
-#'  \code{get_gradient} or \code{get_hessian} calculates the gradient or Hessian matrix of the
-#'  log-likelihood function at the parameter values of class \code{'gsmar'} object. \code{get_soc}
-#'  returns eigenvalues of the Hessian matrix.
+#'  \code{get_gradient} (and \code{get_foc}) or \code{get_hessian} calculates the gradient or Hessian matrix of the
+#'  log-likelihood function at the parameter values of a class \code{'gsmar'} object.
+#'  \code{get_soc} returns eigenvalues of the Hessian matrix.
 #'
-#' @inheritParams simulateGSMAR
-#' @param x a numeric vector specifying the point where the gradient or Hessian should be calculated.
-#' @param fn a function that takes in argument \code{x} as the \strong{first} argument.
-#' @param h difference used to approximate the derivatives.
+#' @param x a numeric vector specifying the point at which the gradient or Hessian should be evaluated.
+#' @param fn a function that takes in the argument \code{x} as the \strong{first} argument.
+#' @param h the difference used to approximate the derivatives.
 #' @param varying_h a numeric vector with the same length as \code{x} specifying the difference \code{h}
 #'  for each dimension separately. If \code{NULL} (default), then the difference given as parameter \code{h}
 #'  will be used for all dimensions.
@@ -17,9 +16,9 @@
 #'   overly large degrees of freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other
 #'   parameters.
 #' @param ... other arguments passed to \code{fn}.
-#' @details Especially the functions \code{get_foc} or \code{get_soc} can be used to check whether
-#'  the found estimates denote a (local) maximum point, a saddle point or something else.
-#' @return Gradient functions return numerical approximation of the gradient, and Hessian functions return
+#' @details In particular, the functions \code{get_foc} and \code{get_soc} can be used to check whether
+#'  the found estimates denote a (local) maximum point, a saddle point, or something else.
+#' @return The gradient functions return numerical approximation of the gradient, and the Hessian functions return
 #'  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix, \code{get_foc}
 #'  is the same as \code{get_gradient} but named conveniently.
 #' @section Warning:
@@ -108,7 +107,7 @@ get_gradient <- function(gsmar, custom_h=NULL) {
 #' @rdname calc_gradient
 #' @export
 get_foc <- function(gsmar, custom_h=NULL) {
-  get_gradient(gsmar=gsmar, custom_h=NULL)
+  get_gradient(gsmar=gsmar, custom_h=custom_h)
 }
 
 #' @rdname calc_gradient
@@ -143,15 +142,15 @@ get_soc <- function(gsmar, custom_h=NULL) {
 #' @title Get differences 'h' which are adjusted for overly large degrees of freedom parameters
 #'
 #' @description \code{get_varying_h} adjusts differences for overly large degrees of freedom parameters
-#'   for finite difference approximation of the derivatives of the log-likelihood function of
-#'   a StMAR or G-StMAR model.
+#'   for finite difference approximation of the derivatives of the log-likelihood function. StMAR and
+#'   G-StMAR models are supported.
 #'
 #' @inheritParams loglikelihood_int
 #' @details This function is used for approximating gradient and Hessian of a StMAR or G-StMAR model. Large
 #'   degrees of freedom parameters cause significant numerical error if too small differences are used.
-#' @return Returns a vector with the same length as \code{params}. For other than the degrees of freedom
-#'   parameters larger than 100 the values will be \code{6e-6}, and for the large degrees of freedom parameters
-#'   the values will be \code{signif(df/1000, digits=2)}.
+#' @return Returns a vector with the same length as \code{params}. For other parameters than degrees
+#'   of freedom parameters larger than 100, the differences will be \code{6e-6}. For the large degrees of
+#'   freedom parameters, the difference will be \code{signif(df/1000, digits=2)}.
 
 get_varying_h <- function(p, M, params, model) {
   if(model != "GMAR") {

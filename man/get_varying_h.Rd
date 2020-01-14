@@ -56,14 +56,14 @@ the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 }
 \value{
-Returns a vector with the same length as \code{params}. For other than the degrees of freedom
-  parameters larger than 100 the values will be \code{6e-6}, and for the large degrees of freedom parameters
-  the values will be \code{signif(df/1000, digits=2)}.
+Returns a vector with the same length as \code{params}. For other parameters than degrees
+  of freedom parameters larger than 100, the differences will be \code{6e-6}. For the large degrees of
+  freedom parameters, the difference will be \code{signif(df/1000, digits=2)}.
 }
 \description{
 \code{get_varying_h} adjusts differences for overly large degrees of freedom parameters
-  for finite difference approximation of the derivatives of the log-likelihood function of
-  a StMAR or G-StMAR model.
+  for finite difference approximation of the derivatives of the log-likelihood function. StMAR and
+  G-StMAR models are supported.
 }
 \details{
 This function is used for approximating gradient and Hessian of a StMAR or G-StMAR model. Large
