@@ -2,14 +2,10 @@ library(uGMAR)
 context("argument checks")
 
 test_that("checkAndCorrectData gives correct answer", {
-  # expect_true(is.matrix(checkAndCorrectData(ts(VIX, start=c(2000, 2), frequency=12), 1)))
-  # expect_true(is.matrix(checkAndCorrectData(as.vector(VIX), 4)))
-  # expect_true(ncol(checkAndCorrectData(as.vector(VIX), 2))==1 & nrow(checkAndCorrectData(as.vector(VIX), 2))==length(as.vector(VIX)))
-  # expect_true(ncol(checkAndCorrectData(t(VIX), 2))==1)
-  checkAndCorrectData(as.matrix(VIX), 1)
-  expect_error(checkAndCorrectData(VIX[1:3], 4))
-  expect_error(checkAndCorrectData(c(VIX, NA, 1), 1))
-  expect_error(checkAndCorrectData(cbind(VIX, VIX), 3))
+  checkAndCorrectData(as.matrix(VIX), p=1)
+  expect_error(checkAndCorrectData(VIX[1:3], p=4))
+  expect_error(checkAndCorrectData(c(VIX, NA, 1), p=1))
+  expect_error(checkAndCorrectData(cbind(VIX, VIX), p=3))
 })
 
 params11 = c(1, 0.1, 1, 2)
