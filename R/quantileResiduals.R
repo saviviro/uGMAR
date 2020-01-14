@@ -36,6 +36,12 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
     M1 <- M[1]
     M2 <- M[2]
     M <- sum(M)
+  } else if(model == "GMAR") {
+    M1 <- M
+    M2 <- 0
+  } else { # model == "StMAR
+    M1 <- 0
+    M2 <- M
   }
 
   # Reform and collect parameters
@@ -135,85 +141,50 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
 
   # Calculate the quantile residuals
   Y2 <- Y[2:nrow(Y),1] # Only first column and rows 2...T are needed
-  if(model == "GMAR") {
-    invsqrt_sigmas <- sigmas^(-1/2)
-    res0 <- rowSums(vapply(1:M, function(i1) alpha_mt[,i1]*pnorm((Y2 - mu_mt[,i1])*invsqrt_sigmas[i1]), numeric(n_obs - p)))
-  } else if(model == "StMAR") {
-    matProd0 <- matProd[1:(n_obs - p),] # Last row is not needed because sigma_t uses y_{t-1}
-    if(M == 1) {
-      sigma_mt <- as.matrix(sigmas*(dfs - 2 + matProd0)/(dfs - 2 + p))
+  if(model == "GMAR" | model == "G-StMAR") { # GMAR type components
+    invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2) # M1 = M for GMAR models
+    ## resM1 voi luultavasti nopeuttaa matriisilaskulla (ks loglikelihood, M1 == 1 erikoistapaus tarvitaan)
+#    resM1 <- vapply(1:M1, function(i1) alpha_mt[,i1]*pnorm((Y2 - mu_mt[,i1])*invsqrt_sigmasM1[i1]), numeric(n_obs - p)) # was res0
+    #resM1 <- rowSums(resM1)
+    #resM1 <- rowSums(vapply(1:M1, function(i1) alpha_mt[,i1]*pnorm((Y2 - mu_mt[,i1])*invsqrt_sigmasM1[i1]), numeric(n_obs - p)))
+    if(M1 == 1) {
+      resM1 <- alpha_mt[,1]*pnorm((Y2 - mu_mt[,1])*invsqrt_sigmasM1[1])
     } else {
-      sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmas) # Calculate conditional variances
+      resM1 <- alpha_mt[,1:M1]*pnorm((Y2 - mu_mt[,1:M1])%*%diag(invsqrt_sigmasM1))
+      resM1 <- rowSums(resM1)
     }
-    res0 <- matrix(ncol=M, nrow=n_obs - p)
-    if(requireNamespace("gsl", quietly = TRUE)) { # Calculate with hypergeometric function what can be calculated
-      for(i1 in 1:M) {
-        whichDef <- which(abs(mu_mt[,i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hyper geometric function
-        whichNotDef <- (1:length(Y2))[-whichDef]
-
-        if(length(whichDef) > 0) { # Calculate CDF for values y_t that are bigger than mu_mt (or equal)
-          Y0 = Y2[whichDef]
-          alpha_mt0 <- alpha_mt[whichDef, i1]
-          mu_mt0 <- mu_mt[whichDef, i1]
-          sigma_mt0 <- sigma_mt[whichDef, i1]
-          a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*pi*(dfs[i1] + p - 2))
-          res0[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5, -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)), give=FALSE, strict=TRUE))
-        }
-        # Calculate CDF for the values that can't be calculated with hypergeometric function
-        if(length(whichNotDef) > 0) {
-          for(i2 in whichNotDef) {
-            # Conditional density function to integrate numerically
-            f_mt <- function(y_t) {
-              alpha_mt[i2, i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
-                (1 + ((y_t-mu_mt[i2, i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
-            }
-            res0[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
-                                     error=function(e) {
-                                       warning("Couldn't numerically integrate all quantile residuals.")
-                                       warning(e)
-                                       return(NA)
-                                     })
-          }
-        }
-      }
-    } else { # Numerically integrate everything if package "gsl" is not available: slow but works always with all platforms
-      for(i1 in 1:M) {
-        for(i2 in 1:length(Y2)) {
-          # Conditional density function to integrate numerically
-          f_mt <- function(y_t) {
-            alpha_mt[i2, i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
-              (1 + ((y_t - mu_mt[i2, i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
-          }
-          res0[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
-                                   error=function(e) {
-                                     warning("Couldn't numerically integrate all quantile residuals.")
-                                     warning(e)
-                                     return(NA)
-                                   })
-        }
-      }
-    }
-    res0 <- rowSums(res0)
-  } else { # If model == "G-StMAR"
-    # GMAR components
-    invsqrt_sigmas <- sigmas[1:M1]^(-1/2)
-    resM1 <- rowSums(vapply(1:M1, function(i1) alpha_mt[,i1]*pnorm((Y2 - mu_mt[,i1])*invsqrt_sigmas[i1]), numeric(n_obs - p)))
-
-    # StMAR components
+ #   resM1 <- rowSums(resM1)
+  }
+  if(model == "StMAR" | model == "G-StMAR") { # StMAR type components; M1 = 0 for StMAR models
     matProd0 <- matProd[1:(n_obs - p),(M1 + 1):M] # Last row is not needed because sigma_t uses y_{t-1}
     sigmasM2 <- sigmas[(M1 + 1):M]
-    if(M2==1) {
+    if(M2 == 1) { # M2 = M for StMAR models, sigma_mt taken only for StMAR type regimes
       sigma_mt <- as.matrix(sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p))
     } else {
       sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2) # Calculate conditional variances
     }
-    resM2 <- matrix(ncol=M2, nrow=n_obs - p)
-    if(requireNamespace("gsl", quietly=TRUE)) { # Calculate with hypergeometric function what can be calculated
-      for(i1 in 1:M2) {
-        whichDef <- which(abs(mu_mt[,M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hyper geometric function
+    resM2 <- matrix(ncol=M2, nrow=n_obs - p) # was res0
+
+    # Function for numerical integration of the pdf.
+    my_integral <- function(i1, i2) { # Takes in the regime index i1 and the observation index i2 for the upper bound
+      f_mt <- function(y_t) { # The conditional density function to be integrated numerically
+        alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
+         (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
+      }
+     tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
+              error=function(e) {
+              #  warning("Couldn't numerically nor analytically integrate all quantile residuals")
+                warning(e)
+                return(NA)
+              })
+    }
+
+    if(requireNamespace("gsl", quietly = TRUE)) { # If 'gsl' available, calculate with hypergeometric function what can be calculated
+      for(i1 in 1:M2) { # Go through StMAR type regimes
+        whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
         whichNotDef <- (1:length(Y2))[-whichDef]
 
-        if(length(whichDef) > 0) { # Calculate CDF for values y_t that are bigger than mu_mt (or equal)
+        if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
           Y0 <- Y2[whichDef]
           alpha_mt0 <- alpha_mt[whichDef, M1 + i1]
           mu_mt0 <- mu_mt[whichDef, M1 + i1]
@@ -221,46 +192,37 @@ quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "
           a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*pi*(dfs[i1] + p - 2))
           resM2[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5, -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)), give=FALSE, strict=TRUE))
         }
-        # Calculate CDF for the values that can't be calculated with hypergeometric function
+        # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function
         if(length(whichNotDef) > 0) {
           for(i2 in whichNotDef) {
-            # Conditional density function to integrate numerically
-            f_mt <- function(y_t) {
-              alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
-                (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
-            }
-            resM2[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
-                                      error=function(e) {
-                                        warning("Couldn't numerically integrate all quantile residuals.")
-                                        warning(e)
-                                        return(NA)
-                                      })
+            resM2[i2, i1] <- my_integral(i1, i2)
           }
         }
       }
-    } else { # Numerically integrate everything if package "gsl" is not available
-      for(i1 in 1:M2) {
-        for(i2 in 1:length(Y2)) {
-          # Conditional density function to integrate numerically
-          f_mt <- function(y_t) {
-            alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
-              (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
-          }
-          resM2[i2, i1] <- tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
-                                       error=function(e) {
-                                         warning("Couldn't numerically integrate all quantile residuals.")
-                                         warning(e)
-                                         return(NA)
-                                       })
+    } else { # Numerically integrate everything if package "gsl" is not available - slow but works "always".
+      for(i1 in 1:M2) { # Go through the StMAR type regimes
+        for(i2 in 1:length(Y2)) { # GO through the observations, exluding the initial values
+          resM2[i2, i1] <- my_integral(i1, i2)
         }
       }
     }
-    res0 <- rowSums(cbind(resM1, resM2))
+    #res0 <- rowSums(res0)
+    #resM2 <- rowSums(resM2)
   }
+  if(anyNA(resM2)) warning("Couldn't analytically nor numerically integrate all quantile residuals")
+
+  if(model == "GMAR") {
+    res <- rowSums(as.matrix(resM1))
+  } else if(model == "StMAR") {
+    res <- rowSums(as.matrix(resM2))
+  } else { # model == "G-StMAR"
+    res <- rowSums(cbind(resM1, resM2))
+  }
+
   # To prevent problems with numerical approximations
-  res0[which(res0 >= 1)] <- 1 - 2e-16
-  res0[which(res0 <= 0)] <- 2e-16
-  qnorm(res0)
+  res[which(res >= 1)] <- 1 - 2e-16
+  res[which(res <= 0)] <- 2e-16
+  qnorm(res)
 }
 
 
