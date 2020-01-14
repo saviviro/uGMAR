@@ -31,7 +31,7 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
   } else {
     stopifnot(nt > 0 & nt %% 1 == 0)
     if(nt > length(data)) {
-      warning("nt > length(data), using nt = length(data)")
+      warning("nt > length(data); using nt = length(data)")
       nt <- length(data)
     }
   }
