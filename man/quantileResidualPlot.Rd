@@ -15,6 +15,10 @@ Only plots to a graphical device and doesn't return anything.
 \description{
 \code{quantileResidualsPlot} plots quantile residual time series and histogram.
 }
+\details{
+Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
+ hypergeometric function using the package 'gsl'.
+}
 \section{Suggested packages}{
 
   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR and G-StMAR models.

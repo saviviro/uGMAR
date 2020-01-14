@@ -429,7 +429,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           # to avoid dublicating similar regimes.
           which_reg_to_use <- which(apply(dist_to_regime, 2, min) == max(apply(dist_to_regime, 2, min)))[1]
 
-          if(model %in% c("StMAR", "GMAR")) {
+          if(model == "StMAR" | model == "GMAR") {
             reg_to_use <- extractRegime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
                                         regime=which_reg_to_use, with_dfs=TRUE)
           } else { # model == "G-StMAR"

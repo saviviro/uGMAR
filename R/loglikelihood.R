@@ -79,7 +79,7 @@
 #' @param to_return should the returned object be the log-likelihood value, mixing weights, mixing weights including
 #'   value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights, the terms \eqn{l_{t}: t=1,..,T}
 #'   in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), regimewise conditional means, regimewise conditional variances,
-#'   total conditional means, or total conditional variances?
+#'   total conditional means, total conditional variances, or quantile residuals?
 #'   Default is the log-likelihood value (\code{"loglik"}).
 #' @param minval this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.
 #' @return
@@ -97,11 +97,14 @@
 #'   \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
 #'   \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
 #'   \item{If \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
+#'   \item{If \code{to_return=="qresiduals"}:}{a size ((n_obs-p)x1) vector containing the quantile residuals.}
 #'  }
 #' @references
 #'  \itemize{
 #'    \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising
 #'            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
+#'    \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
+#'            \emph{The Econometrics Journal}, \strong{15}, 358-393.
 #'    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
 #'            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
 #'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
@@ -113,7 +116,7 @@
 loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               conditional=TRUE, parametrization=c("intercept", "mean"), boundaries=TRUE, checks=TRUE,
                               to_return=c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "regime_cmeans", "regime_cvars",
-                                          "total_cmeans", "total_cvars"), minval) {
+                                          "total_cmeans", "total_cvars", "qresiduals"), minval) {
   epsilon <- round(log(.Machine$double.xmin) + 10)
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
@@ -137,7 +140,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   pars <- pick_pars(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
-  sigmas <- pars[p + 2,]
+  sigmas <- pars[p + 2,] # sigma^2
 
   # Return minval if the parameter is outside the parameters space
   if(boundaries) {
@@ -225,18 +228,18 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
   if(!is.matrix(logmv_values0)) logmv_values0 <- as.matrix(logmv_values0)
 
-  l_0 <- 0 # "The first term" of the exact log-likelihood
-  if(M == 1) {
+  l_0 <- 0 # "The first term" of the exact log-likelihood function (KMS 2015, eq.(12) and MPS, eq.(14))
+  if(M == 1) { # No need to do calculations is only one regime.
     alpha_mt <- as.matrix(rep(1, nrow(logmv_values0)))
-    if(conditional == FALSE) { # Calculate "the first term" of the log-likelihood (KMS 2015, eq.(12) and MPS, eq.(14))
+    if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
       l_0 <- logmv_values[1]
     }
-  } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with package Brobdingnag if needed
+  } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with package Brobdingnag if needed.
     numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1]))) # alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]
     denominator <- Reduce("+", numerators) # For all t=0,...,T
     alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(nrow(logmv_values0)))
 
-    if(conditional == FALSE) {
+    if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
       l_0 <- log(Reduce("+", lapply(1:M, function(i1) numerators[[i1]][1])))
     }
   } else {
@@ -244,7 +247,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     denominator <- as.vector(mv_values0%*%alphas)
     alpha_mt <- (mv_values0/denominator)%*%diag(alphas)
 
-    if(conditional == FALSE) {
+    if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
       l_0 <- log(sum(alphas*mv_values0[1,]))
     }
   }
@@ -267,25 +270,81 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     return(rowSums(alpha_mt*mu_mt))
   }
 
-  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15))
+  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15)) or quantile residuals
   Y2 <- Y[2:nrow(Y), 1] # Only the first column and rows 2...T are needed
-  if(model == "GMAR" | model == "G-StMAR") { # GMAR type components
+
+  # GMAR type components
+  if(model == "GMAR" | model == "G-StMAR") {
     invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2) # M1 = M for the GMAR model
-    if(M1 == 1) {
-      lt_tmpM1 <- alpha_mt[,1]*invsqrt_sigmasM1*dnorm((Y2 - mu_mt[,1])*invsqrt_sigmasM1)
+    smat <- diag(x=invsqrt_sigmasM1, nrow=length(invsqrt_sigmasM1), ncol=length(invsqrt_sigmasM1))
+
+    if(to_return == "qresiduals") { # Calculate quantile residuals; see Kalliovirta 2012 for the general formulas and framework
+      resM1 <- alpha_mt[,1:M1]*pnorm((Y2 - mu_mt[,1:M1])%*%smat)
+      lt_tmpM1 <- resM1 # We exploit the same names
     } else {
-      lt_tmpM1 <- alpha_mt[,1:M1]*dnorm((Y2 - mu_mt[,1:M1])%*%diag(invsqrt_sigmasM1))%*%diag(invsqrt_sigmasM1)
+      lt_tmpM1 <- alpha_mt[,1:M1]*dnorm((Y2 - mu_mt[,1:M1])%*%smat)%*%smat
     }
   }
-  if(model == "StMAR" | model == "G-StMAR") { # StMAR type components
+
+  # StMAR type components
+  if(model == "StMAR" | model == "G-StMAR") {
     sigmasM2 <- sigmas[(M1 + 1):M] # M1 = 0 and M2 = M for the StMAR model
     matProd0 <- matProd[1:(n_obs - p), (M1 + 1):M] # The last row is not needed because sigma_t uses y_{t-1}
-    if(M2 == 1) {
-      sigma_mt <- sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p) # Conditional variances (MPS 2018, eq.(5))
-      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*((exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2)))/sqrt(sigma_mt))*(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/((dfs + p - 2)*sigma_mt))^(-0.5*(1 + dfs + p))
-    } else {
-      sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2)
-      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*t(t(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/(sigma_mt%*%diag(dfs + p - 2)))^(-0.5*(1 + dfs + p)))
+    smat <- diag(x=sigmasM2, nrow=length(sigmasM2), ncol=length(sigmasM2))
+    dfmat1 <- diag(x=1/(dfs - 2 + p), nrow=length(dfs), ncol=length(dfs))
+    dfmat2 <- diag(x=dfs + p - 2, nrow=length(dfs), ncol=length(dfs))
+    sigma_mt <- t(dfs - 2 + t(matProd0))%*%dfmat1%*%diag(x=sigmasM2, nrow=length(sigmasM2), ncol=length(sigmasM2))
+
+    if(to_return == "qresiduals") { # Calculate the integrals for the quantile residuals
+      resM2 <- matrix(ncol=M2, nrow=n_obs - p)
+
+      # Function for numerical integration of the pdf.
+      my_integral <- function(i1, i2) { # Takes in the regime index i1 and the observation index i2 for the upper bound
+        f_mt <- function(y_t) { # The conditional density function to be integrated numerically
+          alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
+            (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
+        }
+        tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
+                 error=function(e) {
+                   warning("Couldn't analytically nor numerically integrate all quantile residuals:")
+                   warning(e)
+                   return(NA)
+                 })
+      }
+
+      if(requireNamespace("gsl", quietly = TRUE)) { # If 'gsl' available, calculate with hypergeometric function what can be calculated
+        for(i1 in 1:M2) { # Go through StMAR type regimes
+          whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
+          whichNotDef <- (1:length(Y2))[-whichDef]
+
+          if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
+            Y0 <- Y2[whichDef]
+            alpha_mt0 <- alpha_mt[whichDef, M1 + i1]
+            mu_mt0 <- mu_mt[whichDef, M1 + i1]
+            sigma_mt0 <- sigma_mt[whichDef, i1]
+            a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*pi*(dfs[i1] + p - 2))
+            resM2[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5,
+                                                                                     -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)),
+                                                                                     give=FALSE, strict=TRUE))
+          }
+          # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function
+          if(length(whichNotDef) > 0) {
+            for(i2 in whichNotDef) {
+              resM2[i2, i1] <- my_integral(i1, i2)
+            }
+          }
+        }
+      } else { # Numerically integrate everything if package "gsl" is not available - slow but works "always".
+        for(i1 in 1:M2) { # Go through the StMAR type regimes
+          for(i2 in 1:length(Y2)) { # GO through the observations, exluding the initial values
+            resM2[i2, i1] <- my_integral(i1, i2)
+          }
+        }
+      }
+      lt_tmpM2 <- resM2 # We exploit the same names
+    } else { # Calculate l_t in the log-likelihood function
+      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*
+                  t(t(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/(sigma_mt%*%dfmat2))^(-0.5*(1 + dfs + p)))
     }
   }
 
@@ -297,6 +356,16 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     lt_tmp <- as.matrix(cbind(lt_tmpM1, lt_tmpM2))
   }
   l_t <- rowSums(lt_tmp)
+
+  # Return quantile residuals (note that l_t is different if qresiduals are not to be returned)
+  if(to_return == "qresiduals") {
+    res <- l_t
+
+    # To prevent problems with numerical approximations
+    res[which(res >= 1)] <- 1 - 2e-16
+    res[which(res <= 0)] <- 2e-16
+    return(qnorm(res))
+  }
 
   # Calculate/return conditional variances
   if(to_return == "regime_cvars" | to_return == "total_cvars") {

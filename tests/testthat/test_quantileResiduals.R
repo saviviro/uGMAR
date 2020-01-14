@@ -1,6 +1,8 @@
 library(uGMAR)
 context("quantileResiduals")
 
+params11 <- c(1, 0.9, 1)
+params11t <- c(1, 0.8, 1, 3) # StMAR
 params12 <- c(1.0, 0.9, 0.25, 4.5, 0.7, 3.0, 0.8)
 params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8) # StMAR
 params22 <- c(1.2, 0.8, 0.05, 0.3, 3.5, 0.8, -0.1, 2.8, 0.8)
@@ -34,6 +36,8 @@ params32gsc <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10) # M1=1, M2=1, R1,
 params22gsrc <- c(1, 2, 0.5, 1, 2, 0.5, 10) # M1=1, M2=1, R3
 
 test_that("quantileResiduals gives correct residuals for non-restricted models", {
+  expect_equal(quantileResiduals_int(VIX, 1, 1, params11, model="GMAR")[4:6], c(0.660, 0.364, -0.155), tolerance=1e-3)
+  expect_equal(quantileResiduals_int(VIX, 1, 1, params11t, model="StMAR")[7:9], c(0.5198048, 0.5428692, 0.5111834), tolerance=1e-4)
   expect_equal(quantileResiduals_int(VIX, 1, 2, params12, model="GMAR")[1:3], c(-0.2574897, -0.1218930, -0.9431908), tolerance=1e-4)
   expect_equal(quantileResiduals_int(VIX, 1, 2, params12t, model="StMAR")[13:17], c(-0.97288160, 1.48243917, 0.39651300, -0.18067370, -0.01133098), tolerance=1e-4)
   expect_equal(quantileResiduals_int(VIX[1:10], 2, 2, params22)[1:2], c(0.5079722, -0.3657400), tolerance=1e-4)

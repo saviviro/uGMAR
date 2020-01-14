@@ -1,6 +1,8 @@
 library(uGMAR)
 context("loglikelihood, mixing weights and cond moments")
 
+params11 <- c(2.1, 0.7, 1.1)
+params11t <- c(2.2, 0.7, 2.2, 3) # StMAR
 params12 <- c(1.0, 0.9, 0.25, 4.5, 0.7, 3.0, 0.8)
 params12t <- c(1.1, 0.9, 0.3, 4.5, 0.7, 3.2, 0.8, 5, 8) # StMAR
 params22 <- c(1.2, 0.8, 0.05, 0.3, 3.5, 0.8, -0.1, 2.8, 0.8)
@@ -43,6 +45,8 @@ params32gsc <- c(1, 0.1, 0.1, 1, 2, 0.2, 0.2, 0.2, 2, 0.6, 10) # M1=1, M2=1, R1,
 params22gsrc <- c(1, 2, 0.5, 1, 2, 0.5, 10) # M1=1, M2=1, R3
 
 test_that("Loglikelihood gives correct value for non-restricted models", {
+  expect_equal(loglikelihood_int(VIX, 1, 1, params11, model="GMAR", constraints=NULL), -674.3034, tolerance=1e-3)
+  expect_equal(loglikelihood_int(VIX, 1, 1, params11t, model="StMAR", constraints=NULL), -518.197, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 1, 2, params12, model="GMAR", constraints=NULL), -307.5011, tolerance=1e-3)
   expect_equal(loglikelihood_int(VIX, 1, 2, params12, conditional=FALSE, model="GMAR"), -310.944, tolerance=1e-3)
   expect_equal(loglikelihood_int(5*VIX[10:50], 1, 2, params12, conditional=FALSE, model="GMAR"), -1965.026, tolerance=1e-3)

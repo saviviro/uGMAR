@@ -2,7 +2,7 @@
 % Please edit documentation in R/quantileResiduals.R
 \name{quantileResiduals}
 \alias{quantileResiduals}
-\title{Compute quantile residuals of GMAR, StMAR or G-StMAR model}
+\title{Compute quantile residuals of GMAR, StMAR, or G-StMAR model}
 \usage{
 quantileResiduals(
   data,
@@ -86,11 +86,14 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 }
 \value{
-Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals associated with
- the specified GMAR, StMAR or G-StMAR model.
+Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
 }
 \description{
-\code{quantileResiduals} computes the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
+\code{quantileResiduals} computes the quantile residuals of the specified GMAR, StMAR, or G-StMAR model.
+}
+\details{
+Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
+ hypergeometric function using the package 'gsl'.
 }
 \section{Suggested packages}{
 

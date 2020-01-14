@@ -141,6 +141,8 @@ loglikelihood(logVIX, 3, 2, params32trc, model="StMAR", restricted=TRUE,
 \itemize{
    \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
+   \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
+           \emph{The Econometrics Journal}, \strong{15}, 358-393.
    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.

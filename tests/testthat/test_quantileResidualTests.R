@@ -40,7 +40,7 @@ qrt13gsr <- quantileResidualTests(gstmar13r, lagsAC=c(1), lagsCH=c(1), printRes=
 
 test_that("quantile residual test for normality works", {
   expect_equal(qrt12gs$norm_res$testStat, 6.041794, tolerance=1e-4)
-  expect_equal(qrt13gsr$norm_res$testStat, 35.57558, tolerance=1e-4)
+  expect_equal(qrt13gsr$norm_res$testStat, 35.61841, tolerance=1e-3)
   expect_equal(qrt11t$norm_res$testStat, 42.01667, tolerance=1e-4)
   expect_equal(qrt12$norm_res$testStat, 32.09423, tolerance=1e-4)
   expect_equal(qrt23$norm_res$testStat, 63.89753, tolerance=1e-4)
@@ -50,7 +50,7 @@ test_that("quantile residual test for normality works", {
 
 test_that("quantile residuals tests for autocorrelation work", {
   expect_equal(qrt12gs$ac_res$testStat, 1.227147, tolerance=1e-4)
-  expect_equal(qrt13gsr$ac_res$testStat, 12.54948, tolerance=1e-4)
+  expect_equal(qrt13gsr$ac_res$testStat, 12.54947, tolerance=1e-3)
   expect_equal(qrt11t$ac_res$testStat, c(8.417805, 8.703875, 12.971856, 45.147962), tolerance=1e-4)
   expect_equal(qrt11t$ac_res$indStat, c(1.295102, 1.355809, 1.319642, 1.339617), tolerance=1e-4)
   expect_equal(qrt12$ac_res$testStat, c(0.6927903, 1.0223100, 1.4459217, 5.1346440), tolerance=1e-4)

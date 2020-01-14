@@ -17,7 +17,7 @@ loglikelihood_int(
   boundaries = TRUE,
   checks = TRUE,
   to_return = c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "regime_cmeans",
-    "regime_cvars", "total_cmeans", "total_cvars"),
+    "regime_cvars", "total_cmeans", "total_cvars", "qresiduals"),
   minval
 )
 }
@@ -108,7 +108,7 @@ Argument \code{minval} will be used only if \code{boundaries==TRUE}.}
 \item{to_return}{should the returned object be the log-likelihood value, mixing weights, mixing weights including
 value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights, the terms \eqn{l_{t}: t=1,..,T}
 in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), regimewise conditional means, regimewise conditional variances,
-total conditional means, or total conditional variances?
+total conditional means, total conditional variances, or quantile residuals?
 Default is the log-likelihood value (\code{"loglik"}).}
 
 \item{minval}{this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.}
@@ -128,6 +128,7 @@ Note that the first p observations are taken as the initial values so the mixing
   \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
   \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
   \item{If \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
+  \item{If \code{to_return=="qresiduals"}:}{a size ((n_obs-p)x1) vector containing the quantile residuals.}
  }
 }
 \description{
@@ -137,6 +138,8 @@ Note that the first p observations are taken as the initial values so the mixing
 \itemize{
    \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising
            in the theory of stationary time series. \emph{Journal of Applied Probability} \strong{11}, 63-71.
+   \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
+           \emph{The Econometrics Journal}, \strong{15}, 358-393.
    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.

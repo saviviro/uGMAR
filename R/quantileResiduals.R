@@ -5,10 +5,9 @@
 #' @description \code{quantileResiduals_int} computes the quantile residuals of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals associated with
-#'  the specified GMAR, StMAR or G-StMAR model.
+#' @return Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
 #' @details Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
-#'  hypergeometric function.
+#'  hypergeometric function using the package 'gsl'.
 #' @section Suggested packages:
 #'   Install the suggested package "gsl" for faster evaluation of the quantile residuals for the StMAR and G-StMAR models.
 #' @references
@@ -27,213 +26,19 @@
 
 quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                                   constraints=NULL, parametrization=c("intercept", "mean")) {
-  epsilon <- round(log(.Machine$double.xmin) + 10)
-  model <- match.arg(model)
-  check_model(model)
-  parametrization <- match.arg(parametrization)
-  M_orig <- M
-  if(model == "G-StMAR") {
-    M1 <- M[1]
-    M2 <- M[2]
-    M <- sum(M)
-  } else if(model == "GMAR") {
-    M1 <- M
-    M2 <- 0
-  } else { # model == "StMAR
-    M1 <- 0
-    M2 <- M
-  }
-
-  # Reform and collect parameters
-  # Reform parameters to the "standard form" and collect them
-  checkConstraintMat(p=p, M=M_orig, restricted=restricted, constraints=constraints)
-  params <- removeAllConstraints(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
-  pars <- pick_pars(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
-  alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
-  dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
-  sigmas <- pars[p + 2,]
-
-  data <- checkAndCorrectData(data, p)
-  parameterChecks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
-  n_obs <- length(data)
-
-  #### Start calculating the quantile residuals ####
-
-  # Expected values mu_m (Kalliovirta 2015, s.250)
-  if(parametrization == "mean") {
-    mu <- pars[1,]
-    pars[1,] <- vapply(1:M, function(i1) mu[i1]*(1 - sum(pars[2:(p + 1), i1])), numeric(1))
-  } else {
-    mu <- vapply(1:M, function(i1) pars[1, i1]/(1 - sum(pars[2:(p + 1), i1])), numeric(1))
-  }
-
-  # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
-  Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1) )
-
-  # Calculate inverse Gamma_m and calculate the matrix products in mv normal and t-distribution (Galbraith and Galbraith 1974)
-  matProd <- matrix(nrow=n_obs - p + 1, ncol = M)
-  invG <- array(dim=c(p, p, M))
-  if(p == 1) { # Galbraith, R., Galbraith, J. (1974)
-    for(i1 in 1:M) {
-      invG[, , i1] <- (1 - pars[p + 1, i1]^2)/sigmas[i1]
-      matProd[, i1] <- (Y - mu[i1])*invG[, , i1]*(Y - mu[i1])  }
-  } else {
-    for(i1 in 1:M) {
-      ARcoefs <- pars[2:(p + 1), i1]
-      U <- diag(1, nrow=p, ncol=p)
-      V <- diag(ARcoefs[p], nrow=p, ncol=p)
-      for(i2 in 1:(p-1)) {
-        U[(i2 + 1):p, i2] <- -ARcoefs[1:(p - i2)]
-        V[(i2 + 1):p, i2] <- rev(ARcoefs[i2:(p - 1)])
-      }
-      invG[, , i1] <- (crossprod(U, U) - crossprod(V, V))/sigmas[i1]
-      matProd[,i1] <- rowSums((Y - mu[i1]*rep(1, p))%*%invG[, , i1]*(Y - mu[i1]*rep(1, p)))
-    }
-  }
-
-  # Calculate the log multivariate normal or student's t values (Kalliovirta 2015, s250 eq.(7) or MPS 2007) for each vector y_t and for each m=1,..,M
-  # First row for initial values y_0 (as denoted by Kalliovirta 2015) and i:th row for y_(i-1). First column for component m=1 and j:th column for m=j.
-  logmv_values <- matrix(nrow=(n_obs - p + 1), ncol=M)
-  if(model == "GMAR") {
-    for(i1 in 1:M) {
-      detG <- 1/det(as.matrix(invG[, , i1]))
-      logmv_values[,i1] <- -0.5*p*log(2*pi) - 0.5*log(detG) - 0.5*matProd[,i1]
-    }
-  } else if(model == "StMAR"){
-    for(i1 in 1:M) {
-      detG <- 1/det(as.matrix(invG[, , i1]))
-      logC <- lgamma(0.5*(p + dfs[i1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i1] - 2) - lgamma(0.5*dfs[i1])
-      logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p + dfs[i1])*log(1 + matProd[,i1]/(dfs[i1] - 2))
-    }
-  } else {  # If model == "G-StMAR"
-    for(i1 in 1:M) {
-      detG <- 1/det(as.matrix(invG[, , i1]))
-      if(i1 <= M1) { # Multinormals
-        logmv_values[,i1] <- -0.5*p*log(2*pi) - 0.5*log(detG) - 0.5*matProd[,i1]
-      } else { # Multistudents
-        logC <- lgamma(0.5*(p + dfs[i1 - M1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i1 - M1] - 2) - lgamma(0.5*dfs[i1 - M1])
-        logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p + dfs[i1 - M1])*log(1 + matProd[,i1]/(dfs[i1 - M1] - 2))
-      }
-    }
-  }
-
-  # Calculate the alpha_mt mixing weights (Kalliovirta 2015, s.250 eq.(8)). First row for t=1, second for t=2, and i:th for t=i. First column for m=1, second for m=2 and j:th column for m=j.
-  logmv_values0 <- logmv_values[1:(n_obs - p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
-  if(!is.matrix(logmv_values0)) logmv_values0 <- as.matrix(logmv_values0)
-  if(M == 1) {
-    alpha_mt <- as.matrix(rep(1, n_obs - p))
-  } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with Brobdingnag if needed
-    numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1])))
-    denominator <- Reduce("+", numerators) # For all t=0,...,T
-    alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(n_obs - p))
-  } else {
-    mv_values0 <- exp(logmv_values0)
-    denominator <- as.vector(mv_values0%*%alphas)
-    alpha_mt <- (mv_values0/denominator)%*%diag(alphas)
-  }
-
-  # First the mu_mt values (Kalliovirta 2015, s.249 eq.(2)). First row for t=1, second for t=2 etc. First column for m=1, second column for m=2 etc.
-  if(p == 1) {
-    mu_mt <- vapply(1:M, function(i1) rep(pars[1, i1], nrow(Y) - 1) + Y[1:(nrow(Y) - 1),]*pars[2, i1], numeric(n_obs - p))
-  } else {
-    mu_mt <- vapply(1:M, function(i1) rep(pars[1, i1], nrow(Y) - 1) + colSums(pars[2:(p + 1), i1]*t(Y[1:(nrow(Y) - 1),])), numeric(n_obs - p) )
-  }
-
-  # Calculate the quantile residuals
-  Y2 <- Y[2:nrow(Y),1] # Only first column and rows 2...T are needed
-  if(model == "GMAR" | model == "G-StMAR") { # GMAR type components
-    invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2) # M1 = M for GMAR models
-    ## resM1 voi luultavasti nopeuttaa matriisilaskulla (ks loglikelihood, M1 == 1 erikoistapaus tarvitaan)
-#    resM1 <- vapply(1:M1, function(i1) alpha_mt[,i1]*pnorm((Y2 - mu_mt[,i1])*invsqrt_sigmasM1[i1]), numeric(n_obs - p)) # was res0
-    #resM1 <- rowSums(resM1)
-    #resM1 <- rowSums(vapply(1:M1, function(i1) alpha_mt[,i1]*pnorm((Y2 - mu_mt[,i1])*invsqrt_sigmasM1[i1]), numeric(n_obs - p)))
-    if(M1 == 1) {
-      resM1 <- alpha_mt[,1]*pnorm((Y2 - mu_mt[,1])*invsqrt_sigmasM1[1])
-    } else {
-      resM1 <- alpha_mt[,1:M1]*pnorm((Y2 - mu_mt[,1:M1])%*%diag(invsqrt_sigmasM1))
-      resM1 <- rowSums(resM1)
-    }
- #   resM1 <- rowSums(resM1)
-  }
-  if(model == "StMAR" | model == "G-StMAR") { # StMAR type components; M1 = 0 for StMAR models
-    matProd0 <- matProd[1:(n_obs - p),(M1 + 1):M] # Last row is not needed because sigma_t uses y_{t-1}
-    sigmasM2 <- sigmas[(M1 + 1):M]
-    if(M2 == 1) { # M2 = M for StMAR models, sigma_mt taken only for StMAR type regimes
-      sigma_mt <- as.matrix(sigmasM2*(dfs - 2 + matProd0)/(dfs - 2 + p))
-    } else {
-      sigma_mt <- t(dfs - 2 + t(matProd0))%*%diag(1/(dfs - 2 + p))%*%diag(sigmasM2) # Calculate conditional variances
-    }
-    resM2 <- matrix(ncol=M2, nrow=n_obs - p) # was res0
-
-    # Function for numerical integration of the pdf.
-    my_integral <- function(i1, i2) { # Takes in the regime index i1 and the observation index i2 for the upper bound
-      f_mt <- function(y_t) { # The conditional density function to be integrated numerically
-        alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
-         (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
-      }
-     tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
-              error=function(e) {
-              #  warning("Couldn't numerically nor analytically integrate all quantile residuals")
-                warning(e)
-                return(NA)
-              })
-    }
-
-    if(requireNamespace("gsl", quietly = TRUE)) { # If 'gsl' available, calculate with hypergeometric function what can be calculated
-      for(i1 in 1:M2) { # Go through StMAR type regimes
-        whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
-        whichNotDef <- (1:length(Y2))[-whichDef]
-
-        if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
-          Y0 <- Y2[whichDef]
-          alpha_mt0 <- alpha_mt[whichDef, M1 + i1]
-          mu_mt0 <- mu_mt[whichDef, M1 + i1]
-          sigma_mt0 <- sigma_mt[whichDef, i1]
-          a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*pi*(dfs[i1] + p - 2))
-          resM2[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5, -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)), give=FALSE, strict=TRUE))
-        }
-        # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function
-        if(length(whichNotDef) > 0) {
-          for(i2 in whichNotDef) {
-            resM2[i2, i1] <- my_integral(i1, i2)
-          }
-        }
-      }
-    } else { # Numerically integrate everything if package "gsl" is not available - slow but works "always".
-      for(i1 in 1:M2) { # Go through the StMAR type regimes
-        for(i2 in 1:length(Y2)) { # GO through the observations, exluding the initial values
-          resM2[i2, i1] <- my_integral(i1, i2)
-        }
-      }
-    }
-    #res0 <- rowSums(res0)
-    #resM2 <- rowSums(resM2)
-  }
-  if(anyNA(resM2)) warning("Couldn't analytically nor numerically integrate all quantile residuals")
-
-  if(model == "GMAR") {
-    res <- rowSums(as.matrix(resM1))
-  } else if(model == "StMAR") {
-    res <- rowSums(as.matrix(resM2))
-  } else { # model == "G-StMAR"
-    res <- rowSums(cbind(resM1, resM2))
-  }
-
-  # To prevent problems with numerical approximations
-  res[which(res >= 1)] <- 1 - 2e-16
-  res[which(res <= 0)] <- 2e-16
-  qnorm(res)
+  loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+                    parametrization=parametrization, check=TRUE, boundaries=FALSE, to_return="qresiduals", minval=NA)
 }
 
 
 #' @import stats
 #'
-#' @title Compute quantile residuals of GMAR, StMAR or G-StMAR model
+#' @title Compute quantile residuals of GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{quantileResiduals} computes the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
+#' @description \code{quantileResiduals} computes the quantile residuals of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams quantileResiduals_int
-#' @inherit quantileResiduals_int return references
+#' @inherit quantileResiduals_int return details references
 #' @section Suggested packages:
 #'   Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR and G-StMAR models.
 #' @examples
@@ -278,6 +83,6 @@ quantileResiduals <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   parametrization <- match.arg(parametrization)
   checkPM(p, M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
-                        constraints=constraints, parametrization=parametrization)
+  loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+                    parametrization=parametrization, check=TRUE, boundaries=TRUE, to_return="qresiduals", minval=NA)
 }
