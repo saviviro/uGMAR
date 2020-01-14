@@ -63,16 +63,16 @@ Returns a list with...
   \item{\code{$params}}{parameter vector in the standard form.}
   \item{\code{$pars}}{corresponding parameter matrix containing AR coefficients and
     component variances. First row for phi0 or means depending on the parametrization. Column for each component.}
-  \item{\code{$alphas}}{numeric vector containing mixing weights for all components (also for the last one).}
-  \item{\code{$dfs}}{numeric vector containing degrees of freedom parameters for all components.
+  \item{\code{$alphas}}{numeric vector containing mixing weight parameters for all of the components (also for the last one).}
+  \item{\code{$dfs}}{numeric vector containing degrees of freedom parameters for all of components.
     Returned only if \code{model == "StMAR"} or \code{model == "G-StMAR"}.}
  }
 }
 \description{
-\code{reformParameters} takes a parameter vector of any (non-constrained) GMAR, StMAR or G-StMAR model and returns a list with the
- parameter vector in the standard form, parameter matrix containing AR coefficients and component
- variances, mixing weights alphas and in case of StMAR or G-StMAR model also degrees of freedom parameters.
+\code{reformParameters} takes a parameter vector of any (non-constrained) GMAR, StMAR, or G-StMAR model
+ and returns a list with the parameter vector in the standard form, parameter matrix containing AR coefficients and
+ component variances, mixing weights alphas, and in case of StMAR or G-StMAR model also degrees of freedom parameters.
 }
 \details{
-This function does not support models parametrized with general linear constraints! Nor does it have any argument checks.
+This function does not support models imposing linear constraints. No argument checks in this function.
 }

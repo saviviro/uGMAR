@@ -2,16 +2,17 @@
 #'  with large dfs parameters reduced.
 #'
 #' @description \code{stmarpars_to_gstmar} transforms a StMAR model parameter vector to a corresponding
-#'  G-StMAR model parameter vector with large dfs parameters reduced by turning the related regimes GMAR type.
+#'  G-StMAR model parameter vector with large dfs parameters reduced by swicthing the related regimes
+#'  to be GMAR type.
 #'
 #' @inheritParams loglikelihood_int
-#' @param maxdf regimes with degrees of freedom parameter value large than this will be turned into
+#' @param maxdf regimes with degrees of freedom parameter value larger than this will be turned into
 #'  GMAR type.
 #' @return Returns a list with three elements: \code{$params} contains the corresponding G-StMAR model
 #'  parameter vector, \code{$reg_order} contains the permutation that was applied to the regimes
-#'  (GMAR type components first, and decreasing ordering by mixign weight parameters), and
+#'  (GMAR type components first, and decreasing ordering by mixing weight parameters), and
 #'  \code{$M} a vector of length two containing the number of GMAR type regimes in the first element
-#'  and the number of StMAR type components in the second.
+#'  and the number of StMAR type regimes in the second.
 #' @examples
 #'  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)
 #'  stmarpars_to_gstmar(1, 2, params12, maxdf=100)
@@ -28,12 +29,12 @@ stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL
     return(list(params=params, reg_order=1:M, M=c(0, M)))
   }
   regs_to_change <- which(dfs > maxdf)
-  if(length(regs_to_change) == M) message("All regimes are changed to GMAR type. Thus the result is a GMAR model and not a G-StMAR model.")
+  if(length(regs_to_change) == M) message("All regimes are changed to GMAR type. The result is therefore a GMAR model and not a G-StMAR model.")
   alphas <- pick_alphas(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
   all_regs <- lapply(1:M, function(i1) {
     reg <- extractRegime(p, M, params, model="StMAR", restricted=restricted,
-                         constraints=constraints, regime=i1)
-    reg[-length(reg)]
+                         constraints=constraints, regime=i1, with_dfs=FALSE)
+    reg
     })
   reg_order <- c(regs_to_change[order(alphas[regs_to_change], decreasing=TRUE)], # GMAR type regimes
     (1:M)[-regs_to_change][order(alphas[-regs_to_change], decreasing=TRUE)]) # StMAR type regimes
@@ -53,8 +54,9 @@ stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL
   } else {
     new_dfs <- dfs[-regs_to_change][order(reg_order[(length(regs_to_change) + 1):M], decreasing=FALSE)]
   }
-  pars <- c(tmp_pars, alphas[reg_order][-M], new_dfs)
-  return(list(params=pars, reg_order=reg_order, M=c(length(regs_to_change), M - length(regs_to_change))))
+  list(params=c(tmp_pars, alphas[reg_order][-M], new_dfs),
+       reg_order=reg_order,
+       M=c(length(regs_to_change), M - length(regs_to_change)))
 }
 
 
@@ -79,12 +81,13 @@ pick_phi0 <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 }
 
 
-#' @title Pick degrees of freedom parameters from parameter vector
+#' @title Pick degrees of freedom parameters from a parameter vector
 #'
-#' @description \code{pick_dfs} picks and returns the degrees of freedom parameters from parameter vector.
+#' @description \code{pick_dfs} picks and returns the degrees of freedom parameters from
+#'   the given parameter vector.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns a vector of length \code{M} or \code{M2} containing the  degrees of freedom parameters
+#' @return Returns a vector of length \code{M} or \code{M2} containing the degrees of freedom parameters.
 
 pick_dfs <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")) {
   if(model == "GMAR") {
@@ -102,10 +105,11 @@ pick_dfs <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")) {
 #' @title Pick mixing weights parameters from parameter vector
 #'
 #' @description \code{pick_alphas} picks and returns the mixing weights parameters
-#'  (including the non-parametrized one for the last component) from parameter vector.
+#'   (including the non-parametrized one for the last component) from the given
+#'   parameter vector.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns a vector of length \code{M} containing the mixing weights parameters \eqn{\alpha_m}.
+#' @return Returns a vector of length \code{M} containing the mixing weight parameters \eqn{\alpha_m}.
 
 pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
@@ -126,14 +130,15 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 }
 
 
-#' @title Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients and variance parameters from parameter vector
+#' @title Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients, and variance parameters from a parameter vector
 #'
-#' @description \code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector
+#' @description \code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, AR-coefficients, and variance parameters from
+#'  the given parameter vector.
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component.
-#'  First row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization,
-#'  second row for \eqn{\phi_1},..., second last row for \eqn{\phi_p} and last row for \eqn{\sigma^2}.
+#'  The first row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization, the second row
+#'  for \eqn{\phi_1}, ..., the second to last row for \eqn{\phi_p}, and the last row for \eqn{\sigma^2}.
 
 pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   params <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
@@ -141,7 +146,7 @@ pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 }
 
 
-#' @title Change parametrization of the parameter vector
+#' @title Change parametrization of a parameter vector
 #'
 #' @description \code{change_parametrization} changes the parametrization of the given parameter
 #'   vector to \code{change_to}.
@@ -150,7 +155,7 @@ pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 #' @param change_to either "intercept" or "mean" specifying to which parametrization it should be switched to.
 #'   If set to \code{"intercept"}, it's assumed that \code{params} is mean-parametrized, and if set to \code{"mean"}
 #'   it's assumed that \code{params} is intercept-parametrized.
-#' @return Returns parameter vector described in \code{params}, but with parametrization changed from intercept to mean
+#' @return Returns parameter vector described in \code{params} but with parametrization changed from intercept to mean
 #'   (when \code{change_to==mean}) or from mean to intercept (when \code{change_to==intercept}).
 #' @section Warning:
 #'  No argument checks!
@@ -160,7 +165,7 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
                                    constraints=NULL, change_to=c("intercept", "mean")) {
   model <- match.arg(model)
   change_to <- match.arg(change_to)
-  stopifnot(change_to %in% c("intercept", "mean"))
+  stopifnot(change_to == "intercept" | change_to == "mean")
   params_orig <- params
   params <- reformConstrainedPars(p=p, M=M, params=params, model=model, restricted=restricted,
                                   constraints=constraints)
@@ -168,9 +173,9 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
   M <- sum(M)
 
   if(change_to == "intercept") { # Current parametrization is "mean"
-    new_pars <- vapply(1:M, function(m) pars[1, m]*(1 - sum(pars[(2:(nrow(pars) - 1)), m])), numeric(1))
+    new_pars <- pars[1, ]*(1 - colSums(pars[2:(p + 1), , drop=FALSE]))
   } else {  # change_to == "mean" and current parametrization is "intercept"
-    new_pars <- vapply(1:M, function(m) pars[1, m]/(1 - sum(pars[(2:(nrow(pars) - 1)), m])), numeric(1))
+    new_pars <- pars[1, ]/(1 - colSums(pars[2:(p + 1), , drop=FALSE]))
   }
 
   if(restricted == FALSE) {
@@ -194,8 +199,8 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 
 #' @title Calculate absolute values of the roots of the AR characteristic polynomials
 #'
-#' @description \code{get_ar_roots} calculates absolute values of the roots of the AR characteristic polynomials
-#'   for each component.
+#' @description \code{get_ar_roots} calculates the absolute values of the roots of the AR
+#'   characteristic polynomials for each mixture component.
 #'
 #' @inheritParams simulateGSMAR
 #' @return Returns a list with \code{M} elements each containing the absolute values of the roots

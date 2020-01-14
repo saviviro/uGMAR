@@ -79,9 +79,10 @@ is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 }
 \value{
-Returns a vector of length \code{M} containing the mixing weights parameters \eqn{\alpha_m}.
+Returns a vector of length \code{M} containing the mixing weight parameters \eqn{\alpha_m}.
 }
 \description{
 \code{pick_alphas} picks and returns the mixing weights parameters
- (including the non-parametrized one for the last component) from parameter vector.
+  (including the non-parametrized one for the last component) from the given
+  parameter vector.
 }

@@ -2,25 +2,25 @@
 % Please edit documentation in R/plotMethods.R
 \name{plot.gsmarpred}
 \alias{plot.gsmarpred}
-\title{plot method for class 'gsmarpred' objects}
+\title{Plot method for class 'gsmarpred' objects}
 \usage{
 \method{plot}{gsmarpred}(x, ..., nt, add_grid = TRUE)
 }
 \arguments{
 \item{x}{object of class \code{'gsmarpred'} created with \code{predict.gsmar}.}
 
-\item{...}{arguments passed to \code{grid}}
+\item{...}{arguments passed to function \code{grid}.}
 
 \item{nt}{a positive integer specifying the number of observations to be plotted
 along with the prediction. Default is \code{round(length(data)*0.2)}.}
 
-\item{add_grid}{should grid be added to the plots?}
+\item{add_grid}{should grid a be added to the plots?}
 }
 \description{
-\code{plot.gsmarpred} is plot method for gsmarpred objects
+\code{plot.gsmarpred} is plot method for class 'gsmarpred' objects
 }
 \details{
-This method is used plot forecasts of gsmar processes
+This method is intended for plotting forecasts of GSMAR processes.
 }
 \examples{
  \donttest{
@@ -28,7 +28,7 @@ This method is used plot forecasts of gsmar processes
  params12 <- c(0.18281409, 0.92657275, 0.00214552,
   0.85725129, 0.68210294, 0.01900299, 0.88342018)
  gmar12 <- GSMAR(logVIX, 1, 2, params12)
- pred <- predict(gmar12, n_ahead=10, plotRes=FALSE)
+ pred <- predict(gmar12, n_ahead=10, plotRes=FALSE, pi=c(0.8, 0.9, 0.99), pi_type="two-sided")
  plot(pred, nt=50)
  }
 }

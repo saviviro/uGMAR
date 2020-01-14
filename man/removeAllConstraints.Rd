@@ -83,5 +83,5 @@ Returns such parameter vector corresponding to the input vector that is the form
 for non-restricted and non-constrained models.
 }
 \description{
-\code{removeAllConstraints} transforms constraited and restricted parameter vector into the regular form.
+\code{removeAllConstraints} transforms constrained and restricted parameter vector into the regular form.
 }

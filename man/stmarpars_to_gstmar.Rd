@@ -76,19 +76,20 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{maxdf}{regimes with degrees of freedom parameter value large than this will be turned into
+\item{maxdf}{regimes with degrees of freedom parameter value larger than this will be turned into
 GMAR type.}
 }
 \value{
 Returns a list with three elements: \code{$params} contains the corresponding G-StMAR model
  parameter vector, \code{$reg_order} contains the permutation that was applied to the regimes
- (GMAR type components first, and decreasing ordering by mixign weight parameters), and
+ (GMAR type components first, and decreasing ordering by mixing weight parameters), and
  \code{$M} a vector of length two containing the number of GMAR type regimes in the first element
- and the number of StMAR type components in the second.
+ and the number of StMAR type regimes in the second.
 }
 \description{
 \code{stmarpars_to_gstmar} transforms a StMAR model parameter vector to a corresponding
- G-StMAR model parameter vector with large dfs parameters reduced by turning the related regimes GMAR type.
+ G-StMAR model parameter vector with large dfs parameters reduced by swicthing the related regimes
+ to be GMAR type.
 }
 \examples{
  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)

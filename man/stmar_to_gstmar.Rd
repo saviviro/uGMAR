@@ -16,7 +16,7 @@ stmar_to_gstmar(
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{maxdf}{regimes with degrees of freedom parameter value large than this will be turned into
+\item{maxdf}{regimes with degrees of freedom parameter value larger than this will be turned into
 GMAR type.}
 
 \item{estimate}{set \code{TRUE} if the new model should be estimated with a variable metric algorithm

@@ -2,7 +2,7 @@
 % Please edit documentation in R/pickAndChangeParams.R
 \name{change_parametrization}
 \alias{change_parametrization}
-\title{Change parametrization of the parameter vector}
+\title{Change parametrization of a parameter vector}
 \usage{
 change_parametrization(
   p,
@@ -84,7 +84,7 @@ If set to \code{"intercept"}, it's assumed that \code{params} is mean-parametriz
 it's assumed that \code{params} is intercept-parametrized.}
 }
 \value{
-Returns parameter vector described in \code{params}, but with parametrization changed from intercept to mean
+Returns parameter vector described in \code{params} but with parametrization changed from intercept to mean
   (when \code{change_to==mean}) or from mean to intercept (when \code{change_to==intercept}).
 }
 \description{

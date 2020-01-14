@@ -2,7 +2,7 @@
 % Please edit documentation in R/parameterReforms.R
 \name{sortComponents}
 \alias{sortComponents}
-\title{Sort the mixture components of GMAR, StMAR or G-StMAR model}
+\title{Sort the mixture components of a GMAR, StMAR, or G-StMAR model}
 \usage{
 sortComponents(
   p,
@@ -65,14 +65,14 @@ are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 to be the same for all regimes.}
 }
 \value{
-Returns a parameter vector sorted by it's mixing weights, described in \code{params}.
+Returns a parameter vector sorted according to its mixing weight parameters,
+  described in \code{params}.
 }
 \description{
-\code{sortComponents} sorts mixture components of the specified GMAR, StMAR or G-StMAR model by the mixing weights
-  when the parameter vector is in the "standard form" for restricted or non-restricted models.
+\code{sortComponents} sorts mixture components of the specified GMAR, StMAR, or G-StMAR model
+  according to the mixing weight parameters when the parameter vector has the "standard/regular form" for
+  restricted or non-restricted models.
 }
 \details{
-This function does not support models parametrized with general linear constraints!
-
-Models with general linear constraints are not supported.
+This function does not support models imposing linear constraints.
 }

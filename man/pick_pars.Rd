@@ -2,7 +2,7 @@
 % Please edit documentation in R/pickAndChangeParams.R
 \name{pick_pars}
 \alias{pick_pars}
-\title{Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients and variance parameters from parameter vector}
+\title{Pick \eqn{\phi_0} (or \eqn{\mu}), AR-coefficients, and variance parameters from a parameter vector}
 \usage{
 pick_pars(
   p,
@@ -80,9 +80,10 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 }
 \value{
 Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component.
- First row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization,
- second row for \eqn{\phi_1},..., second last row for \eqn{\phi_p} and last row for \eqn{\sigma^2}.
+ The first row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization, the second row
+ for \eqn{\phi_1}, ..., the second to last row for \eqn{\phi_p}, and the last row for \eqn{\sigma^2}.
 }
 \description{
-\code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, ar-coefficient and variance parameters from parameter vector
+\code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, AR-coefficients, and variance parameters from
+ the given parameter vector.
 }

@@ -1,22 +1,22 @@
 #' @import graphics
 #'
-#' @title plot method for class 'gsmarpred' objects
+#' @title Plot method for class 'gsmarpred' objects
 #'
-#' @description \code{plot.gsmarpred} is plot method for gsmarpred objects
+#' @description \code{plot.gsmarpred} is plot method for class 'gsmarpred' objects
 #'
 #' @param x object of class \code{'gsmarpred'} created with \code{predict.gsmar}.
 #' @param nt a positive integer specifying the number of observations to be plotted
 #'   along with the prediction. Default is \code{round(length(data)*0.2)}.
-#' @param add_grid should grid be added to the plots?
-#' @param ... arguments passed to \code{grid}
-#' @details This method is used plot forecasts of gsmar processes
+#' @param add_grid should grid a be added to the plots?
+#' @param ... arguments passed to function \code{grid}.
+#' @details This method is intended for plotting forecasts of GSMAR processes.
 #' @examples
 #'  \donttest{
 #'  # GMAR-model
 #'  params12 <- c(0.18281409, 0.92657275, 0.00214552,
 #'   0.85725129, 0.68210294, 0.01900299, 0.88342018)
 #'  gmar12 <- GSMAR(logVIX, 1, 2, params12)
-#'  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE)
+#'  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE, pi=c(0.8, 0.9, 0.99), pi_type="two-sided")
 #'  plot(pred, nt=50)
 #'  }
 #' @export
@@ -42,18 +42,14 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
   all_val <- c(ts_dat, ts_pred, gsmarpred$pred_ints)
 
   if(gsmarpred$pi_type == "two-sided") {
-    ts_lowers <- lapply(1:(length(q)/2), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
-    ts_uppers <- lapply((length(q)/2 + 1):length(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
+    ts1 <- lapply(1:(length(q)/2), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
+    ts2 <- lapply((length(q)/2 + 1):length(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
 
-  } else if(gsmarpred$pi_type == "upper") {
-    ts_min <- rep(round(min(all_val)) - 3, times=length(ts_pred))
-    ts_lowers <- lapply(seq_along(q), function(i1) make_ts(ts_min)[-1])
-    ts_uppers <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
-
-  } else if(gsmarpred$pi_type == "lower") {
-    ts_max <- rep(round(max(all_val)) + 3, times=length(ts_pred))
-    ts_lowers <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$pred_ints[,i1]))
-    ts_uppers <- lapply(seq_along(q), function(i1) make_ts(ts_max)[-1])
+  } else {
+    what_to_rep <- ifelse(gsmarpred$pi_type == "upper", round(min(all_val)) - 3, round(max(all_val)) + 3) # Otherwise "lower" or "none"
+    ts0 <- rep(what_to_rep, times=length(ts_pred))
+    ts1 <- lapply(seq_along(q), function(i1) make_ts(ts0)[-1]) # Upper or lower graphical device box bound
+    ts2 <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$pred_ints[,i1])) # Upper or lower prediction bound
   }
 
   ts.plot(ts_dat, ts_pred, gpars=list(col=c("black", "blue"), lty=1:2,
@@ -63,9 +59,9 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
   if(add_grid) grid(...)
 
   if(gsmarpred$pi_type %in% c("two-sided", "upper", "lower")) {
-    for(i1 in 1:length(gsmarpred$pi)) {
-      polygon(x=c(t0, rev(t0)), y=c(ts_lowers[[i1]], rev(ts_pred)), col=grDevices::rgb(0, 0, 1, 0.2), border=NA)
-      polygon(x=c(t0, rev(t0)), y=c(ts_uppers[[i1]], rev(ts_pred)), col=grDevices::rgb(0, 0, 1, 0.2), border=NA)
+    for(i1 in 1:length(gsmarpred$pi)) { # Go through the prediction intervals
+      polygon(x=c(t0, rev(t0)), y=c(ts1[[i1]], rev(ts_pred)), col=grDevices::rgb(0, 0, 1, 0.2), border=NA)
+      polygon(x=c(t0, rev(t0)), y=c(ts2[[i1]], rev(ts_pred)), col=grDevices::rgb(0, 0, 1, 0.2), border=NA)
     }
   }
   invisible(gsmarpred)
@@ -73,7 +69,7 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
 
 
 #' @import graphics
-#' @describeIn quantileResidualTests plot p-values of the autocorrelation and conditional
+#' @describeIn quantileResidualTests Plot p-values of the autocorrelation and conditional
 #'  heteroskedasticity tests.
 #' @inheritParams print.qrtest
 #' @export
@@ -106,7 +102,7 @@ plot.qrtest <- function(x, ...) {
 
 
 #' @import graphics
-#' @describeIn GSMAR plot method for class 'gsmar'
+#' @describeIn GSMAR Plot method for class 'gsmar'
 #' @param x object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.
 #' @param ... graphical parameters passed to \code{ts.plot}.
 #' @export

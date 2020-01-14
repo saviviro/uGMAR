@@ -30,8 +30,8 @@
 
 # uGMAT 3.2.2
 
-* Improved comments and documentation
+* Improved comments and documentation.
 * Disabled camelCase compatibility for arguments 'ncalls' and 'ncores' in fitGMAR.
 * Updated the 'regime combining procedure' in the genetic algorithm to also support the G-StMAR model.
-* Minor computation speed improvements
-* Tidier code
+* Minor computation speed improvements.
+* Tidier code for some parts.

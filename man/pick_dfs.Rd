@@ -2,7 +2,7 @@
 % Please edit documentation in R/pickAndChangeParams.R
 \name{pick_dfs}
 \alias{pick_dfs}
-\title{Pick degrees of freedom parameters from parameter vector}
+\title{Pick degrees of freedom parameters from a parameter vector}
 \usage{
 pick_dfs(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"))
 }
@@ -56,8 +56,9 @@ the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 }
 \value{
-Returns a vector of length \code{M} or \code{M2} containing the  degrees of freedom parameters
+Returns a vector of length \code{M} or \code{M2} containing the degrees of freedom parameters.
 }
 \description{
-\code{pick_dfs} picks and returns the degrees of freedom parameters from parameter vector.
+\code{pick_dfs} picks and returns the degrees of freedom parameters from
+  the given parameter vector.
 }

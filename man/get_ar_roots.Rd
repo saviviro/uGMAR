@@ -14,8 +14,8 @@ Returns a list with \code{M} elements each containing the absolute values of the
  of the AR characteristic polynomial corresponding to each mixture component.
 }
 \description{
-\code{get_ar_roots} calculates absolute values of the roots of the AR characteristic polynomials
-  for each component.
+\code{get_ar_roots} calculates the absolute values of the roots of the AR
+  characteristic polynomials for each mixture component.
 }
 \examples{
 params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)

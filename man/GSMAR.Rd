@@ -152,7 +152,7 @@ Models can be built without data, e.q., in order to simulate from the process, b
 
 \item \code{summary}: summary method, standard errors in brackets
 
-\item \code{plot}: plot method for class 'gsmar'
+\item \code{plot}: Plot method for class 'gsmar'
 
 \item \code{print}: print method
 }}
