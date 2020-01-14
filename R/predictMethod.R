@@ -1,31 +1,33 @@
 #' @import stats
 #'
-#' @title Forecast GMAR, StMAR or G-StMAR process
+#' @title Forecast GMAR, StMAR, or G-StMAR process
 #'
-#' @description \code{predict.gsmar} forecasts the specified GMAR, StMAR or G-StMAR process by using the given data to simulate
-#'  its possible future values. For one-step forecasts using the exact formula of conditional mean is supported.
+#' @description \code{predict.gsmar} forecasts the specified GMAR, StMAR, or G-StMAR process by using the given
+#'  data to simulate its possible future values. For one-step forecasts using the exact formula for conditional
+#'  mean is supported.
 #'
 #' @param object object of class \code{'gsmar'} created with function \code{fitGSMAR} or \code{GSMAR}.
 #' @param ... additional arguments passed to \code{grid} (ignored if \code{plot_res==FALSE}).
 #' @param n_ahead a positive integer specifying how many steps in the future should be forecasted.
 #' @param nsimu a positive integer specifying to how many simulations the forecast should be based on.
-#' @param pi a numeric vector specifying the confidence levels of the prediction intervals.
-#' @param pred_type should the prediction be based on sample "mean" or "median"? Or should it
-#'   be one-step-ahead forecast based on conditional mean (\code{"cond_mean"})? prediction intervals
-#'   won't be calculated if conditional mean is used.
-#' @param pi_type should the prediction intervals be "two-sided", "upper" or "lower"?
+#' @param pi a numeric vector specifying confidence levels for the prediction intervals.
+#' @param pred_type should the prediction be based on sample "median" or "mean"? Or should it
+#'   be one-step-ahead forecast based on the exact conditional mean (\code{"cond_mean"})? prediction
+#'   intervals won't be calculated if the exact conditional mean is used.
+#' @param pi_type should the prediction intervals be "two-sided", "upper", or "lower"?
 #' @param nt a positive integer specifying the number of observations to be plotted
 #'   along with the prediction. Default is \code{round(length(data)*0.2)}.
 #' @param plotRes a logical argument defining whether the forecast should be plotted or not.
-#' @details \code{predict.gsmar} uses the last \code{p} values of the data to simulate \code{nsimu} possible
-#'  future values for each step. The point prediction is then obtained by calculating the sample median (or mean)
-#'  of each step and the prediction intervals are obtained from the empirical fractiles.
+#' @details \code{predict.gsmar} uses the last \code{p} values of the data to simulate \code{nsimu}
+#'  possible future values for each step-ahead. The point prediction is then obtained by calculating
+#'  the sample median or mean for each step and the prediction intervals are obtained from the
+#'  empirical fractiles.
 #'
-#'  We encourage directly using the function \code{simulateGSMAR} for quantile based forecasting. With \code{simulateGSMAR}
-#'  it's easy to forecast the mixing weights too.
+#'  We encourage directly using the function \code{simulateGSMAR} for quantile based forecasting.
+#'  With \code{simulateGSMAR} it's easy to forecast the mixing weights too.
 #'
-#' @return Returns a data frame containing the empirical point prediction and prediction intervals accordingly to \code{pi}.
-#'   Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
+#' @return Returns a data frame containing the empirical point prediction and prediction intervals.
+#'  Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
 #' @inherit simulateGSMAR references
 #' @seealso \code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
 #'  \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}
@@ -101,8 +103,8 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
   if(any(pi >= 1) | any(pi <= 0)) stop("Each confidence level has to be in the open interval (0, 1)")
   if(!is.null(constraints)) checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
 
-  # Simulate future values of the process
-  if(pred_type == "cond_mean") { # Exact optimal forecast
+  # Calculate the prediction
+  if(pred_type == "cond_mean") { # Exact conditional mean
 
     # Collect parameter values and calculate mixing weights
     if(gsmar$model$parametrization == "mean") {
@@ -119,16 +121,16 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     pi <- NULL
     pi_type <- "none"
     q_tocalc <- numeric(0)
-  } else {
+  } else { # Simulate future values of the process
 
     # Simulations
-    res <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu)$sample
+    res <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu, drop=FALSE)$sample
 
     # Predictions
     if(pred_type == "mean") {
       pred <- rowMeans(res)
     } else {
-      pred <- vapply(1:n_ahead, function(i1) median(res[i1,]), numeric(1))
+      pred <- apply(res, 1, FUN=median) # vapply(1:n_ahead, function(i1) median(res[i1,]), numeric(1))
     }
 
     # Prediction intervals
@@ -145,12 +147,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
       pi <- NULL
     }
     q_tocalc <- sort(q_tocalc, decreasing=FALSE)
-
-    if(is.vector(res)) {
-      pred_ints <- as.matrix(quantile(res, probs=q_tocalc))
-    } else {
-      pred_ints <- t(vapply(1:n_ahead, function(i1) quantile(res[i1,], probs=q_tocalc), numeric(length(q_tocalc))))
-    }
+    pred_ints <- t(apply(res, 1, FUN=quantile, probs=q_tocalc)) #t(vapply(1:n_ahead, function(i1) quantile(res[i1,], probs=q_tocalc), numeric(length(q_tocalc))))
   }
 
   ret <- structure(list(gsmar=gsmar,
