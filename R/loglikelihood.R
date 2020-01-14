@@ -170,13 +170,13 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   # Unconditional regimewise means, mu_m (KMS 2015, s.250, and MDP 2018, eq.(4))
   if(parametrization == "mean") {
     mu <- pars[1,]
-    pars[1,] <- vapply(1:M, function(i1) mu[i1]*(1 - sum(pars[2:(p + 1), i1])), numeric(1))
+    pars[1,] <- mu*(1 - colSums(pars[2:(p + 1), , drop=FALSE]))
   } else {
-    mu <- vapply(1:M, function(i1) pars[1, i1]/(1 - sum(pars[2:(p + 1), i1])), numeric(1))
+    mu <- pars[1, ]/(1 - colSums(pars[2:(p + 1), , drop=FALSE]))
   }
 
   # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
-  Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1) )
+  Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1))
 
   # Calculate inverse Gamma_m (see the covariance matrix Gamma_p in MDP 2018, p.3 - we calculate this for all mixture components using
   # the inverse formula in Galbraith and Galbraith 1974). Also, calculate the matrix products in multivariate normal and t-distribution
@@ -257,11 +257,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 
   # Calculate the conditional means mu_mt (KMS 2015, eq.(2), MPS 2018, eq.(5)). First row for t=1, second for t=2 etc. First column for m=1,
   # second column for m=2 etc.
-  if(p == 1) {
-    mu_mt <- vapply(1:M, function(i1) rep(pars[1, i1], nrow(Y) - 1) + Y[1:(nrow(Y) - 1),]*pars[2, i1], numeric(n_obs - p))
-  } else {
-    mu_mt <- vapply(1:M, function(i1) rep(pars[1, i1], nrow(Y) - 1) + colSums(pars[2:(p + 1), i1]*t(Y[1:(nrow(Y) - 1),])), numeric(n_obs - p))
-  }
+  mu_mt <- t(pars[1,] + t(Y[-nrow(Y),]%*%pars[2:(p + 1), , drop=FALSE]))
 
   # Calculate/return conditional means
   if(to_return == "regime_cmeans") {
@@ -293,7 +289,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     smat <- diag(x=sigmasM2, nrow=length(sigmasM2), ncol=length(sigmasM2))
     dfmat1 <- diag(x=1/(dfs - 2 + p), nrow=length(dfs), ncol=length(dfs))
     dfmat2 <- diag(x=dfs + p - 2, nrow=length(dfs), ncol=length(dfs))
-    sigma_mt <- t(dfs - 2 + t(matProd0))%*%dfmat1%*%diag(x=sigmasM2, nrow=length(sigmasM2), ncol=length(sigmasM2))
+    sigma_mt <- crossprod(dfs - 2 + t(matProd0), dfmat1)%*%diag(x=sigmasM2, nrow=length(sigmasM2), ncol=length(sigmasM2))
 
     if(to_return == "qresiduals") { # Calculate the integrals for the quantile residuals
       resM2 <- matrix(ncol=M2, nrow=n_obs - p)
