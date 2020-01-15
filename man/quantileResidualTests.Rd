@@ -76,7 +76,7 @@ heteroskedasticity tests.
 \donttest{
 # GMAR model
 fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-qrtest12 <- quantileResidualTests(fit12)
+qrtest12 <- quantileResidualTests(fit12, nsimu=1)
 plot(qrtest12)
 
 # Restricted GMAR model

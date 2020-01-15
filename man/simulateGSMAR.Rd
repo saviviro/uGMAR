@@ -2,14 +2,14 @@
 % Please edit documentation in R/simulateGSMAR.R
 \name{simulateGSMAR}
 \alias{simulateGSMAR}
-\title{Simulate values from GMAR, StMAR or G-StMAR process}
+\title{Simulate values from GMAR, StMAR, and G-StMAR processes}
 \usage{
 simulateGSMAR(gsmar, nsimu, initvalues, ntimes = 1, drop = TRUE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{nsimu}{a positive integer specifying how many values will be simulated.}
+\item{nsimu}{a positive integer specifying how many values (ahead from \code{initvalues}) will be simulated.}
 
 \item{initvalues}{a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
 element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
@@ -22,24 +22,24 @@ i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_wei
 }
 \value{
 If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
- and is \code{$mixing_weights} is matrix. Otherwise, returns a list with...
+ and \code{$mixing_weights} is a (\code{nsimu}\eqn{xM}) matrix. Otherwise, returns a list with...
   \describe{
     \item{\code{$sample}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
-    \item{\code{$component}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the information from which component each
-     value was generated from.}
+    \item{\code{$component}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the information from which
+     mixture component each value was generated from.}
     \item{\code{$mixing_weights}}{a size (\code{nsimu}\eqn{xMx}\code{ntimes}) array containing the mixing weights corresponding to the
      sample: the dimension \code{[i, , ]} is the time index, the dimension \code{[, i, ]} indicates the regime, and the dimension
      \code{[, , i]} indicates the i:th set of simulations.}
   }
 }
 \description{
-\code{simulateGSMAR} simulates values from the specified GMAR, StMAR or G-StMAR process. Can be used for
- forecasting future values of the process.
+\code{simulateGSMAR} simulates values from the specified GMAR, StMAR, or G-StMAR process.
+ Can be utilized for forecasting future values of the process.
 }
 \details{
-The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating it's possible future values.
- One can easily perform a large number simulations and calculate the sample quantiles from the simulated values to obtain prediction
- intervals (see the forecasting example).
+The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating its
+ possible future values. One can perform a large number of sets of simulations and calculate the sample quantiles from
+ the simulated values to obtain prediction intervals. See the forecasting example below for a hand-on demonstration.
 }
 \examples{
  \donttest{

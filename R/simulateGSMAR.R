@@ -1,27 +1,27 @@
 #' @import stats
 #'
-#' @title Simulate values from GMAR, StMAR or G-StMAR process
+#' @title Simulate values from GMAR, StMAR, and G-StMAR processes
 #'
-#' @description \code{simulateGSMAR} simulates values from the specified GMAR, StMAR or G-StMAR process. Can be used for
-#'  forecasting future values of the process.
+#' @description \code{simulateGSMAR} simulates values from the specified GMAR, StMAR, or G-StMAR process.
+#'  Can be utilized for forecasting future values of the process.
 #'
 #' @param gsmar object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.
-#' @param nsimu a positive integer specifying how many values will be simulated.
+#' @param nsimu a positive integer specifying how many values (ahead from \code{initvalues}) will be simulated.
 #' @param initvalues a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
 #'  element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
 #'  If not specified, initial values will be simulated from the process's stationary distribution.
 #' @param ntimes a positive integer specifying how many sets of simulations should be performed.
 #' @param drop if \code{TRUE} (default) then the components of the returned list are coerced to lower dimension if \code{ntimes==1},
 #'   i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.
-#' @details The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating it's possible future values.
-#'  One can easily perform a large number simulations and calculate the sample quantiles from the simulated values to obtain prediction
-#'  intervals (see the forecasting example).
+#' @details The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating its
+#'  possible future values. One can perform a large number of sets of simulations and calculate the sample quantiles from
+#'  the simulated values to obtain prediction intervals. See the forecasting example below for a hand-on demonstration.
 #' @return If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
-#'  and is \code{$mixing_weights} is matrix. Otherwise, returns a list with...
+#'  and \code{$mixing_weights} is a (\code{nsimu}\eqn{xM}) matrix. Otherwise, returns a list with...
 #'   \describe{
 #'     \item{\code{$sample}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
-#'     \item{\code{$component}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the information from which component each
-#'      value was generated from.}
+#'     \item{\code{$component}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the information from which
+#'      mixture component each value was generated from.}
 #'     \item{\code{$mixing_weights}}{a size (\code{nsimu}\eqn{xMx}\code{ntimes}) array containing the mixing weights corresponding to the
 #'      sample: the dimension \code{[i, , ]} is the time index, the dimension \code{[, i, ]} indicates the regime, and the dimension
 #'      \code{[, , i]} indicates the i:th set of simulations.}
@@ -83,6 +83,8 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
     M1 <- M[1]
     M2 <- M[2]
     M <- sum(M)
+  } else if(model == "StMAR") {
+    M1 <- 0
   }
 
   if(!missing(initvalues)) {
@@ -101,16 +103,17 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
   # Reform and collect parameters
   params <- removeAllConstraints(p=p, M=M_orig, params=gsmar$params, model=model, restricted=gsmar$model$restricted,
                                  constraints=gsmar$model$constraints)
-  if(gsmar$model$parametrization == "mean") {
+  if(gsmar$model$parametrization == "mean") { # For simplicity switch to use intercept parametrization in all cases
     params <- change_parametrization(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL, change_to="intercept")
   }
   pars <- pick_pars(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
-  sigmas <- pars[p + 2,]
+  sigmas <- pars[p + 2,] # sigma^2
   parameterChecks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
 
-  # Create container for the simulated values and initial values. First row row initival values vector, and t+1:th row for (Y_t,Y_[t-1],...,Y_[t-p+1])
+  # Create a container for the simulated values and initial values.
+  # First row for initival values vector, and t+1:th row for (Y_t,Y_[t-1],...,Y_[t-p+1]), t=1,...,nsimu
   Y <- matrix(nrow=nsimu + 1, ncol=p)
 
   # Calculate inverses of covariance matrices Gamma_m and their determinants
@@ -135,37 +138,39 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
      }
   }
 
-  # Calculate expected values mu_m (Kalliovirta 2015, s.250)
-  mu <- vapply(1:M, function(i1) pars[1, i1]/(1 - sum(pars[2:(p + 1), i1])), numeric(1))
-  mu_mp <- matrix(vapply(1:M, function(i1) mu[i1]*matrix(rep(1, p)), numeric(p)), ncol=M) # Column for each component
+  # Calculate expected values mu_m (KMS 2015, p.250, MPS eq.(4))
+  mu <- pars[1, ]/(1 - colSums(pars[2:(p + 1), , drop=FALSE]))
+  mu_mp <- tcrossprod(rep(1, p), mu) # \mu_m*1_p, column for each component
 
   # If initial values are missing simulate them from the processes stationary distribution
   if(missing(initvalues)) {
     mv_samples <- numeric(p)
-    m <- sample.int(M, size=1, prob=alphas)
-    if(model == "GMAR") {
+    m <- sample.int(M, size=1, prob=alphas) # From which mixture component the p-dimensional initial value is drawn from
+    if(model == "GMAR" || (model == "G-StMAR" && m <= M1)) { # Simulate from GMAR type component
       Gamma_m <- solve(invG[, , m])
       L <- t(chol(Gamma_m))
-      mv_samples <- mu_mp[,m] + L%*%rnorm(p)
-    } else if(model == "StMAR") {
-        Gamma_m <- solve(invG[, , m])
-        L <- t(chol((dfs[m] - 2)/dfs[m]*Gamma_m))
-        Z <- L%*%rnorm(p) # Sample from N(0,K)
-        U <- rchisq(p, df=dfs[m]) # Sample from chisq(v)
-        mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m]/U) # sample from student's t
-    } else { # If model == "G-StMAR
-        if(m <= M1) { # p-dimensional Gaussian samples
-          Gamma_m <- solve(invG[, , m])
-          L <- t(chol(Gamma_m))
-          mv_samples <- mu_mp[,m] + L%*%rnorm(p)
-        } else { # p-dimensional Student samples
-          Gamma_m <- solve(invG[, , m])
-          L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m))
-          Z <- L%*%rnorm(p) # Sample from N(0,K)
-          U <- rchisq(p, df=dfs[m - M1]) # Sample from chisq(v)
-          mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m - M1]/U) # sample from Student's t
-        }
+      mv_samples <- mu_mp[,m] + L%*%rnorm(p) # sample from N(mu_mp, Gamma_m)
+    } else { # model == "StMAR" || (model == "G-StMAR" && m > M1); StMAR type components
+      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), degrees of freedom (see MPS 2018, Supplementary material).
+      Gamma_m <- solve(invG[, , m])
+      L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m)) # M1 = 0 for StMAR models
+      Z <- L%*%rnorm(p) # Sample from N(0, ((v - 2)/v)/Gamma_m)
+      U <- rchisq(1, df=dfs[m - M1]) # Sample from chisq(v)
+      mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m - M1]/U) # sample from St(mu_mp, Sigma_m)
     }
+    #else { # If model == "G-StMAR
+    #     if(m <= M1) { # p-dimensional Gaussian samples
+    #       Gamma_m <- solve(invG[, , m])
+    #       L <- t(chol(Gamma_m))
+    #       mv_samples <- mu_mp[,m] + L%*%rnorm(p)
+    #     } else { # p-dimensional Student samples
+    #       Gamma_m <- solve(invG[, , m])
+    #       L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m))
+    #       Z <- L%*%rnorm(p) # Sample from N(0,K)
+    #       U <- rchisq(p, df=dfs[m - M1]) # Sample from chisq(v)
+    #       mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m - M1]/U) # sample from Student's t
+    #     }
+    # }
     Y[1,] <- mv_samples # Initial values sampled from the stationary distribution
   } else {
     initvalues <- initvalues[(length(initvalues) - p + 1):length(initvalues)]
