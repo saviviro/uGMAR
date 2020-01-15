@@ -208,13 +208,13 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   if(model == "GMAR" | model == "G-StMAR") { # Multinormals
     for(i1 in 1:M1) {
       detG <- 1/det(as.matrix(invG[, , i1]))
-      logmv_values[,i1] <- -0.5*p*log(2*pi) - 0.5*log(detG) - 0.5*matProd[,i1]
+      logmv_values[,i1] <- -0.5*p*log(2*base::pi) - 0.5*log(detG) - 0.5*matProd[,i1]
     }
   }
   if(model == "StMAR" | model == "G-StMAR") { # Multistudents
     for(i1 in (M1 + 1):M) {
       detG <- 1/det(as.matrix(invG[, , i1]))
-      logC <- lgamma(0.5*(p + dfs[i1 - M1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i1 - M1] - 2) - lgamma(0.5*dfs[i1 - M1])
+      logC <- lgamma(0.5*(p + dfs[i1 - M1])) - 0.5*p*log(base::pi) - 0.5*p*log(dfs[i1 - M1] - 2) - lgamma(0.5*dfs[i1 - M1])
       logmv_values[,i1] <- logC - 0.5*log(detG) - 0.5*(p + dfs[i1 - M1])*log(1 + matProd[,i1]/(dfs[i1 - M1] - 2))
     }
   }
@@ -297,7 +297,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       # Function for numerical integration of the pdf.
       my_integral <- function(i1, i2) { # Takes in the regime index i1 and the observation index i2 for the upper bound
         f_mt <- function(y_t) { # The conditional density function to be integrated numerically
-          alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*pi*(dfs[i1] + p - 2))*
+          alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*base::pi*(dfs[i1] + p - 2))*
             (1 + ((y_t - mu_mt[i2, M1 + i1])^2)/((dfs[i1] + p - 2)*sigma_mt[i2, i1]))^(-0.5*(1 + dfs[i1] + p))
         }
         tryCatch(integrate(f_mt, lower=-Inf, upper=Y2[i2])$value, # Integrate PDF numerically
@@ -318,7 +318,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
             alpha_mt0 <- alpha_mt[whichDef, M1 + i1]
             mu_mt0 <- mu_mt[whichDef, M1 + i1]
             sigma_mt0 <- sigma_mt[whichDef, i1]
-            a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*pi*(dfs[i1] + p - 2))
+            a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*base::pi*(dfs[i1] + p - 2))
             resM2[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5,
                                                                                      -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)),
                                                                                      give=FALSE, strict=TRUE))
@@ -339,7 +339,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       }
       lt_tmpM2 <- resM2 # We exploit the same names
     } else { # Calculate l_t in the log-likelihood function
-      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*
+      lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(base::pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*
                   t(t(1 + ((Y2 - mu_mt[,(M1 + 1):M])^2)/(sigma_mt%*%dfmat2))^(-0.5*(1 + dfs + p)))
     }
   }

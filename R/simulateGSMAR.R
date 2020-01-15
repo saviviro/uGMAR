@@ -85,6 +85,8 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
     M <- sum(M)
   } else if(model == "StMAR") {
     M1 <- 0
+  } else { # model == "GMAR"
+    M1 <- M
   }
 
   if(!missing(initvalues)) {
@@ -146,61 +148,50 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
   if(missing(initvalues)) {
     mv_samples <- numeric(p)
     m <- sample.int(M, size=1, prob=alphas) # From which mixture component the p-dimensional initial value is drawn from
-    if(model == "GMAR" || (model == "G-StMAR" && m <= M1)) { # Simulate from GMAR type component
+    if(model == "GMAR" || (model == "G-StMAR" && m <= M1)) { # Draw from GMAR type component
       Gamma_m <- solve(invG[, , m])
       L <- t(chol(Gamma_m))
       mv_samples <- mu_mp[,m] + L%*%rnorm(p) # sample from N(mu_mp, Gamma_m)
-    } else { # model == "StMAR" || (model == "G-StMAR" && m > M1); StMAR type components
-      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), degrees of freedom (see MPS 2018, Supplementary material).
+    } else { # model == "StMAR" || (model == "G-StMAR" && m > M1); Draw from StMAR type component
+      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), dfs (see MPS 2018, Supplementary material).
       Gamma_m <- solve(invG[, , m])
       L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m)) # M1 = 0 for StMAR models
       Z <- L%*%rnorm(p) # Sample from N(0, ((v - 2)/v)/Gamma_m)
       U <- rchisq(1, df=dfs[m - M1]) # Sample from chisq(v)
-      mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m - M1]/U) # sample from St(mu_mp, Sigma_m)
+      mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m - M1]/U) # sample from St(mu_mp, Sigma_m, v)
     }
-    #else { # If model == "G-StMAR
-    #     if(m <= M1) { # p-dimensional Gaussian samples
-    #       Gamma_m <- solve(invG[, , m])
-    #       L <- t(chol(Gamma_m))
-    #       mv_samples <- mu_mp[,m] + L%*%rnorm(p)
-    #     } else { # p-dimensional Student samples
-    #       Gamma_m <- solve(invG[, , m])
-    #       L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m))
-    #       Z <- L%*%rnorm(p) # Sample from N(0,K)
-    #       U <- rchisq(p, df=dfs[m - M1]) # Sample from chisq(v)
-    #       mv_samples <- mu_mp[,m] + Z*sqrt(dfs[m - M1]/U) # sample from Student's t
-    #     }
-    # }
     Y[1,] <- mv_samples # Initial values sampled from the stationary distribution
   } else {
     initvalues <- initvalues[(length(initvalues) - p + 1):length(initvalues)]
-    Y[1,] <- rev(initvalues)
+    Y[1,] <- rev(initvalues) # Take the last value to be in the first column, the second last in the second column, etc.
   }
 
-  # Initialize data structures
+  # Initialize data storages
   sample <- matrix(nrow=nsimu, ncol=ntimes)
   component <- matrix(nrow=nsimu, ncol=ntimes)
   mixing_weights <- array(dim=c(nsimu, M, ntimes))
 
-  for(j1 in 1:ntimes) {
+  for(j1 in 1:ntimes) { # For each set of simulations...
 
     ### Start simulation ###
     for(i1 in 1:nsimu) {
-      # Calculate log multinormal values (Kalliovirta 2015, s250 eq.(7)) or log student-t values
+      # Calculate log multinormal values (KMS 2015, eq.(7)) or log Student's t values (PMS 2018, p.5); for each regime 1,...,M.
       matProd <- vapply(1:M, function(i2) crossprod(Y[i1,] - mu_mp[,i2], as.matrix(invG[, , i2]))%*%(Y[i1,] - mu_mp[,i2]), numeric(1))
-      if(model == "GMAR") {
-        logmv_values <- vapply(1:M, function(i2) -0.5*p*log(2*pi) - 0.5*log(detG[i2]) - 0.5*matProd[i2], numeric(1))
-      } else if(model == "StMAR") {
-        logmv_values <- vapply(1:M, function(i2) lgamma(0.5*(p + dfs[i2])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i2] - 2) - lgamma(0.5*dfs[i2]) -
-                               0.5*log(detG[i2]) - 0.5*(p + dfs[i2])*log(1 + matProd[i2]/(dfs[i2] - 2)), numeric(1))
-      } else { # If model == "G-StMAR
-        logmv_values <- c(vapply(1:M1, function(i2) - 0.5*p*log(2*pi) - 0.5*log(detG[i2]) - 0.5*matProd[i2], numeric(1)),
-                          vapply((M1 + 1):M, function(i2) lgamma(0.5*(p + dfs[i2 - M1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i2 - M1] - 2) -
-                                 lgamma(0.5*dfs[i2 - M1]) - 0.5*log(detG[i2]) - 0.5*(p + dfs[i2 - M1])*log(1 + matProd[i2]/(dfs[i2 - M1] - 2)),
-                                 numeric(1)))
+      if(model == "GMAR" || model == "G-StMAR") { # GMAR type regimes, M1 = M for GMAR models
+        logmv_valuesM1 <- vapply(1:M1, function(i2) -0.5*p*log(2*base::pi) - 0.5*log(detG[i2]) - 0.5*matProd[i2], numeric(1))
+      } else {
+        logmv_valuesM1 <- numeric(0)
       }
+      if(model == "StMAR" || model == "G-StMAR") { # StMAR type regimes, M1 = 0 for StMAR models
+        logmv_valuesM2 <- vapply((M1 + 1):M, function(i2) lgamma(0.5*(p + dfs[i2 - M1])) - 0.5*p*log(pi) - 0.5*p*log(dfs[i2 - M1] - 2) -
+                                 lgamma(0.5*dfs[i2 - M1]) - 0.5*log(detG[i2]) - 0.5*(p + dfs[i2 - M1])*log(1 + matProd[i2]/(dfs[i2 - M1] - 2)),
+                                 numeric(1))
+      } else {
+        logmv_valuesM2 <- numeric(0)
+      }
+      logmv_values <- c(logmv_valuesM1, logmv_valuesM2)
 
-      # Calculate the alpha_mt mixing weights (Kalliovirta 2015, s.250 eq.(8)). Close to zero values handled with Brobdingnag
+      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), PMS 2018, eq.(11)). Close to zero values handled with Brobdingnag
       if(M == 1) {
         alpha_mt <- 1
       } else if(any(logmv_values < epsilon)) {
@@ -220,20 +211,14 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
 
       # Draw sample and store it
       mu_mt <- pars[1, m] + sum(pars[2:(p + 1), m]*Y[i1,])
-      if(model == "GMAR") {
-        sample[i1, j1] <- mu_mt + sqrt(sigmas[m])*rnorm(1)
-      } else if(model == "StMAR") {
-        sigma_mt <- sigmas[m]*(dfs[m] - 2 + matProd[m])/(dfs[m] - 2 + p)
-        sample[i1, j1] <- mu_mt + sqrt(sigma_mt*(dfs[m] + p - 2)/(dfs[m] + p))*rt(1, df=dfs[m] + p)
-      } else { # model == "G-StMAR"
-        if(m <= M1) {
-          sample[i1, j1] <- mu_mt + sqrt(sigmas[m])*rnorm(1)
-        } else {
-          sigma_mt <- sigmas[m]*(dfs[m - M1] - 2 + matProd[m])/(dfs[m - M1] - 2 + p)
-          sample[i1, j1] <- mu_mt + sqrt(sigma_mt*(dfs[m - M1] + p - 2)/(dfs[m - M1] + p))*rt(1, df=dfs[m - M1] + p)
-        }
+      if(model == "GMAR" || (model == "G-StMAR" && m <= M1)) { # Draw from GMAR type regime
+        sample[i1, j1] <- mu_mt + sqrt(sigmas[m])*rnorm(1) # MPS 2018, eq.(3)
+      } else { # model == "StMAR" || (model == "G-StMAR" && m > M1)
+        sigma_mt <- sigmas[m]*(dfs[m - M1] - 2 + matProd[m])/(dfs[m - M1] - 2 + p)
+        sample[i1, j1] <- mu_mt + sqrt(sigma_mt*(dfs[m - M1] + p - 2)/(dfs[m - M1] + p))*rt(1, df=dfs[m - M1] + p) # MPS 2018, eq.(7)
       }
 
+      # Setup for the next round
       if(p == 1) {
         Y[i1 + 1] <- sample[i1, j1]
       } else {
