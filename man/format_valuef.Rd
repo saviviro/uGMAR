@@ -2,7 +2,7 @@
 % Please edit documentation in R/printMethods.R
 \name{format_valuef}
 \alias{format_valuef}
-\title{Function factory for value formatting}
+\title{Function factory for formatting values}
 \usage{
 format_valuef(digits)
 }
@@ -10,7 +10,7 @@ format_valuef(digits)
 \item{digits}{number of digits to use}
 }
 \value{
-returns a function that takes an atomic vector as argument
+Returns a function that takes an atomic vector as its argument
   and returns it formatted to character with \code{digits} decimals.
 }
 \description{

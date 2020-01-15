@@ -5,7 +5,6 @@
 #' @description \code{simulateGSMAR} simulates values from the specified GMAR, StMAR or G-StMAR process. Can be used for
 #'  forecasting future values of the process.
 #'
-#' @inheritParams loglikelihood
 #' @param gsmar object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.
 #' @param nsimu a positive integer specifying how many values will be simulated.
 #' @param initvalues a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}

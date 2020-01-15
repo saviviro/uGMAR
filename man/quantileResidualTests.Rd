@@ -56,7 +56,7 @@ For details about the quantile residual tests see the cited article by \emph{Kal
 \item \code{plot}: Plot p-values of the autocorrelation and conditional
 heteroskedasticity tests.
 
-\item \code{print}: print method for class 'qrtest'
+\item \code{print}: Print method for class 'qrtest' objects
 }}
 
 \section{Suggested packages}{

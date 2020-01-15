@@ -128,8 +128,10 @@ is adjusted to avoid numerical problems, and the difference is \code{6e-6} for t
 \item{x}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
 
 \item{summary_print}{if set to \code{TRUE} then the print will include approximate
-standard errors, log-likelihood and information criteria values. Supported only for
-models with data.}
+standard errors for the estimates, log-likelihood, information criteria values,
+modulus of the roots of the characteristic AR polynomias for each regime, and
+several unconditional moments.
+Supported for models that include data only.}
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
