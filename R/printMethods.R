@@ -46,8 +46,8 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   model <- gsmar$model$model
   restricted <- gsmar$model$restricted
   constraints <- gsmar$model$constraints
-  all_mu <- get_regime_means(gsmar) # round(get_regime_means(gsmar), digits)
-  if(summary_print) all_vars <- get_regime_vars(gsmar)  # Unconditional regime variances # round(get_regime_vars(gsmar), digits) # uncomment to print regime variances
+  all_mu <- get_regime_means(gsmar)
+  if(summary_print) all_vars <- get_regime_vars(gsmar)  # Unconditional regime variances
 
   if(gsmar$model$parametrization == "mean") {
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
