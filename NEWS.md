@@ -36,3 +36,4 @@
 * Minor computation speed improvements.
 * Tidier code for some parts.
 * Bug fix: the function 'add_data' did not identify the model type correctly. 
+* Minor update on the summary print for the models
