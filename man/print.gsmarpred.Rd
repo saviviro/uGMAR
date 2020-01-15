@@ -11,7 +11,7 @@
 
 \item{...}{currently not in use.}
 
-\item{digits}{number of digits to be printed}
+\item{digits}{the number of digits to be printed}
 }
 \description{
 \code{print.gsmarpred} is a print method for call 'gsmarpred'

@@ -11,7 +11,7 @@
 
 \item{...}{currently not in use.}
 
-\item{digits}{number of digits to be printed}
+\item{digits}{the number of digits to be printed}
 }
 \description{
 \code{print.gsmarsum} is a print method for objects of class 'gsmarsum'
