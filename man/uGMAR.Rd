@@ -3,14 +3,14 @@
 \docType{package}
 \name{uGMAR}
 \alias{uGMAR}
-\title{uGMAR: Estimate Univariate Gaussian or Student's t Mixture Autoregressive Model}
+\title{uGMAR: Estimate Univariate Gaussian and Student's t Mixture Autoregressive Models}
 \description{
 \code{uGMAR} is a package for estimating univariate Gaussian Mixture Autoregressive (GMAR),
-  Student's t Mixture Autoregressive (StMAR) and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models.
-  It provides tool for quantile residuals tests, graphical diagnostics, forecasting and simulation. Applying
-  general linear constraints to the autoregressive parameters, or restricting them to be the same for all regimes
-  is supported.
+  Student's t Mixture Autoregressive (StMAR), and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models.
+  It provides tools for quantile residuals based model diagnostics, forecasting, and simulation, to name a few.
+  Imposing linear constraints to the autoregressive parameters of each regime or restricting them to be the same
+  for all regimes is supported.
 
-  Many of the functions documented are not exported but for internal use only. The readme file is a good place to start,
-  and the vignette might be useful too.
+  Many of the functions documented are not exported but for intended internal use only. The readme file and the
+  vignette are a good place to start.
 }
