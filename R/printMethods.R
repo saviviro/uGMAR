@@ -1,10 +1,10 @@
-#' @title Function factory for value formatting
+#' @title Function factory for formatting values
 #'
 #' @description \code{format_valuef} generates functions that format
 #'   values so that they print out with the desired number of digits.
 #'
 #' @param digits number of digits to use
-#' @return returns a function that takes an atomic vector as argument
+#' @return Returns a function that takes an atomic vector as its argument
 #'   and returns it formatted to character with \code{digits} decimals.
 
 format_valuef <- function(digits) {
@@ -17,8 +17,10 @@ format_valuef <- function(digits) {
 #' @inheritParams plot.gsmar
 #' @param digits number of digits to be printed (max 20)
 #' @param summary_print if set to \code{TRUE} then the print will include approximate
-#'  standard errors, log-likelihood and information criteria values. Supported only for
-#'  models with data.
+#'  standard errors for the estimates, log-likelihood, information criteria values,
+#'  modulus of the roots of the characteristic AR polynomias for each regime, and
+#'  several unconditional moments.
+#'  Supported for models that include data only.
 #' @export
 
 print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
@@ -44,8 +46,8 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   model <- gsmar$model$model
   restricted <- gsmar$model$restricted
   constraints <- gsmar$model$constraints
-  all_mu <- round(get_regime_means(gsmar), digits)
-  #all_vars <- round(get_regime_vars(gsmar), digits) uncomment to print regime variances
+  all_mu <- get_regime_means(gsmar) # round(get_regime_means(gsmar), digits)
+  if(summary_print) all_vars <- get_regime_vars(gsmar)  # Unconditional regime variances # round(get_regime_vars(gsmar), digits) # uncomment to print regime variances
 
   if(gsmar$model$parametrization == "mean") {
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
@@ -88,10 +90,12 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 
   if(summary_print) {
     IC <- gsmar$IC
-    cat(paste("\nlog-likelihood:", format_value(gsmar$loglik)), "\n")
-    cat(paste("AIC: ", format_value(IC$AIC)), "\n")
-    cat(paste("HQIC:", format_value(IC$HQIC)), "\n")
-    cat(paste("BIC: ", format_value(IC$BIC)), "\n")
+    form_val2 <- function(txt, val) paste(txt, format_value(val))
+    cat("\n", paste(form_val2("log-likelihood:", gsmar$loglik),
+                    form_val2("AIC:", IC$AIC),
+                    form_val2("HQIC:", IC$HQIC),
+                    form_val2("BIC:", IC$BIC),
+                    sep=", "), "\n")
   }
 
   for(m in seq_len(sum(M))) {
@@ -117,19 +121,17 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     print_err(alphas_err[m])
     cat("\nReg mean:", format_value(all_mu[m]))
     print_err(mu_err[m])
-    #cat("\nReg var:", format_value(all_vars[m])) # Uncomment to print regime variances
-    cat("\n")
 
     if(regime_type == "StMAR") {
-      cat("Var param:", format_value(pars[nrow(pars), m]))
+      cat("\nVar param:", format_value(pars[nrow(pars), m]))
       print_err(pars_err[nrow(pars_err), m])
       cat("\n")
 
       cat("Df param:", format_value(dfs[m - M1]))
       print_err(dfs_err[m - M1])
-      cat("\n")
     }
-    cat("\n")
+    if(summary_print) cat("\nReg var: ", format_value(all_vars[m])) # Unconditional regime variances
+    cat("\n\n")
 
     cat(paste0("Y = [", format_value(all_phi0[m]), "]"))
     add_string(const_spaces=4, all_phi0[m], phi0_err[m])

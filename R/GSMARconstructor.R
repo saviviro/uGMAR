@@ -192,7 +192,7 @@ add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, 
   check_gsmar(gsmar)
   checkAndCorrectData(data=data, p=gsmar$model$p)
   GSMAR(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
-        restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
+        model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
         calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments,
         calc_std_errors=calc_std_errors, custom_h=custom_h)

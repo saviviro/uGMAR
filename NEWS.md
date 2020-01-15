@@ -35,3 +35,4 @@
 * Updated the 'regime combining procedure' in the genetic algorithm to also support the G-StMAR model.
 * Minor computation speed improvements.
 * Tidier code for some parts.
+* Bug fix: the function 'add_data' did not identify the model type correctly. 
