@@ -2,7 +2,8 @@
 % Please edit documentation in R/uncondMoments.R
 \name{uncondMoments_int}
 \alias{uncondMoments_int}
-\title{Calculate unconditional mean, variance, first p autocovariances and autocorrelations of the GSMAR process.}
+\title{Calculate unconditional mean, variance, and the first p autocovariances and autocorrelations
+ of a GSMAR process.}
 \usage{
 uncondMoments_int(
   p,
@@ -83,16 +84,16 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 }
 \value{
-Returns a list containing the unconditional mean, variance, first p autocovariances and
+Returns a list containing the unconditional mean, variance, and the first p autocovariances and
  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
  but is given in the \code{uncond_variance} component separately.
 }
 \description{
-\code{uncondMoments_int} calculates the unconditional mean, variance, first p autocovariances and
- autocorrelations of the GSMAR process.
+\code{uncondMoments_int} calculates the unconditional mean, variance, and the first p
+ autocovariances and autocorrelations of the specified GSMAR process.
 }
 \details{
-Differs from the function \code{uncondMoments} in arguments. This functions exists for technical
+Differs from the function \code{uncondMoments} in arguments. This function exists for technical
  reasons only.
 }
 \references{

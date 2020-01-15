@@ -1,10 +1,10 @@
 #' @title Calculate regime specific means \eqn{\mu_{m}}
 #'
-#' @description \code{get_regime_means} calculates regime means \eqn{\mu_{m} =  \phi_{m,0}/(1-\sum\phi_{i,m})}
-#'   of the given GMAR, StMAR or G-StMAR model
+#' @description \code{get_regime_means} calculates the regime means \eqn{\mu_{m} = \phi_{m,0}/(1-\sum\phi_{i,m})}
+#'   for the given GMAR, StMAR, or G-StMAR model
 #'
 #' @inheritParams simulateGSMAR
-#' @return Returns a length \code{M} vector containing regime mean \eqn{\mu_{m}} in the m:th column, \eqn{m=1,..,M}.
+#' @return Returns a length \code{M} vector containing the regime mean \eqn{\mu_{m}} in the m:th element.
 #' @inherit isStationary references
 #' @family moment functions
 #' @seealso \code{\link{condMoments}}, \code{\link{uncondMoments}}, \code{\link{get_regime_vars}},
@@ -39,7 +39,6 @@ get_regime_means <- function(gsmar) {
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
                                      constraints=constraints, change_to="mean")
   }
-
   pick_phi0(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
 }
 
@@ -47,11 +46,11 @@ get_regime_means <- function(gsmar) {
 #' @title Calculate regime specific autocovariances \strong{\eqn{\gamma}}\eqn{_{m,p}}
 #'
 #' @description \code{get_regime_autocovs} calculates the first p regime specific autocovariances \strong{\eqn{\gamma}}\eqn{_{m,p}}
-#'   of the given GMAR, StMAR or G-StMAR model.
+#'   for the given GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams simulateGSMAR
-#' @return Returns a size \eqn{(pxM)} matrix containing the first p autocovariates of the components processes: i:th autocovariance
-#'  in the i:th row and m:th component process in the m:th column.
+#' @return Returns a size \eqn{(pxM)} matrix containing the first p autocovariances of the components processes:
+#'  i:th autocovariance in the i:th row and m:th component process in the m:th column.
 #' @family moment functions
 #' @references
 #'  \itemize{
@@ -108,11 +107,11 @@ get_regime_autocovs <- function(gsmar) {
 #' @title Calculate regime specific variances \eqn{\gamma_{m,0}}
 #'
 #' @description \code{get_regime_vars} calculates the unconditional regime specific variances \eqn{\gamma_{m,0}}
-#'   of the given GMAR, StMAR or G-StMAR model.
+#'   for the given GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams simulateGSMAR
-#' @return Returns a length M vector containing the unconditional variances of the components processes: m:th
-#'   slot for m:th regime.
+#' @return Returns a length M vector containing the unconditional variances of the components processes:
+#'   m:th element for the m:th regime.
 #' @inherit get_regime_autocovs references
 #' @family moment functions
 #' @examples
@@ -136,19 +135,20 @@ get_regime_vars <- function(gsmar) {
   p <- gsmar$model$p
   pars <- pick_pars(p=p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model,
                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
-  colSums(pars[-c(1, p + 2),]*reg_autocovs) + pars[p + 2,]
+  colSums(pars[-c(1, p + 2),]*reg_autocovs) + pars[p + 2,] # MPS 2018, eq.(4) and Theorem 1
 }
 
 
-#' @title Calculate unconditional mean, variance, first p autocovariances and autocorrelations of the GSMAR process.
+#' @title Calculate unconditional mean, variance, and the first p autocovariances and autocorrelations
+#'  of a GSMAR process.
 #'
-#' @description \code{uncondMoments_int} calculates the unconditional mean, variance, first p autocovariances and
-#'  autocorrelations of the GSMAR process.
+#' @description \code{uncondMoments_int} calculates the unconditional mean, variance, and the first p
+#'  autocovariances and autocorrelations of the specified GSMAR process.
 #'
 #' @inheritParams loglikelihood_int
-#' @details Differs from the function \code{uncondMoments} in arguments. This functions exists for technical
+#' @details Differs from the function \code{uncondMoments} in arguments. This function exists for technical
 #'  reasons only.
-#' @return Returns a list containing the unconditional mean, variance, first p autocovariances and
+#' @return Returns a list containing the unconditional mean, variance, and the first p autocovariances and
 #'  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
 #'  but is given in the \code{uncond_variance} component separately.
 #' @inherit get_regime_autocovs references
@@ -168,6 +168,8 @@ uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
   alphas <- pick_alphas(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model,
                         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
   reg_means <- get_regime_means(gsmar)
+
+  # Calculate the unconditional moments: KMS 2015, p.251, MPS 2018, p.6.
   uncond_mean <- sum(alphas*reg_means)
   tmp <- sum(alphas*(reg_means - uncond_mean)^2)
   uncond_var <- sum(alphas*get_regime_vars(gsmar)) + tmp
@@ -182,14 +184,11 @@ uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 
 #' @title Calculate unconditional mean, variance, first p autocovariances and autocorrelations of the GSMAR process.
 #'
-#' @description \code{uncondMoments} calculates the unconditional mean, variance, first p autocovariances and
-#'  autocorrelations of the GSMAR process.
+#' @description \code{uncondMoments} calculates the unconditional mean, variance, and the first p autocovariances
+#'  and autocorrelations of the GSMAR process.
 #'
 #' @inheritParams simulateGSMAR
-#' @return Returns a list containing the unconditional mean, variance, first p autocovariances and
-#'  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
-#'  but is given in the \code{uncond_variance} component separately.
-#' @inherit get_regime_autocovs references
+#' @inherit uncondMoments_int return references
 #' @family moment functions
 #' @examples
 #' # GMAR model

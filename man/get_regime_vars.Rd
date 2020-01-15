@@ -10,12 +10,12 @@ get_regime_vars(gsmar)
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 }
 \value{
-Returns a length M vector containing the unconditional variances of the components processes: m:th
-  slot for m:th regime.
+Returns a length M vector containing the unconditional variances of the components processes:
+  m:th element for the m:th regime.
 }
 \description{
 \code{get_regime_vars} calculates the unconditional regime specific variances \eqn{\gamma_{m,0}}
-  of the given GMAR, StMAR or G-StMAR model.
+  for the given GMAR, StMAR, or G-StMAR model.
 }
 \examples{
 # GMAR model

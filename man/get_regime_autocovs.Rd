@@ -10,12 +10,12 @@ get_regime_autocovs(gsmar)
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 }
 \value{
-Returns a size \eqn{(pxM)} matrix containing the first p autocovariates of the components processes: i:th autocovariance
- in the i:th row and m:th component process in the m:th column.
+Returns a size \eqn{(pxM)} matrix containing the first p autocovariances of the components processes:
+ i:th autocovariance in the i:th row and m:th component process in the m:th column.
 }
 \description{
 \code{get_regime_autocovs} calculates the first p regime specific autocovariances \strong{\eqn{\gamma}}\eqn{_{m,p}}
-  of the given GMAR, StMAR or G-StMAR model.
+  for the given GMAR, StMAR, or G-StMAR model.
 }
 \examples{
 # GMAR model
