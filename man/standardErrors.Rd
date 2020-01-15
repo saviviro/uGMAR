@@ -2,7 +2,7 @@
 % Please edit documentation in R/standardErrors.R
 \name{standardErrors}
 \alias{standardErrors}
-\title{Calculate standard errors for estimates of GMAR, StMAR or GStMAR model}
+\title{Calculate standard errors for estimates of a GMAR, StMAR, or GStMAR model}
 \usage{
 standardErrors(
   data,
@@ -97,8 +97,8 @@ parameters is adjusted to avoid numerical problems, and the difference is \code{
 \item{minval}{this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.}
 }
 \value{
-Approximate standard errors of the parameter values
+Returns approximate standard errors of the parameter values in a numeric vector.
 }
 \description{
-\code{standardErrors} numerically approximates standard errors for the given estimates of GMAR, StMAR or GStMAR model
+\code{standardErrors} numerically approximates standard errors for the given estimates of GMAR, StMAR, or GStMAR model.
 }

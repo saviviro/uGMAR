@@ -1,17 +1,17 @@
-#' @title Calculate standard errors for estimates of GMAR, StMAR or GStMAR model
+#' @title Calculate standard errors for estimates of a GMAR, StMAR, or GStMAR model
 #'
-#' @description \code{standardErrors} numerically approximates standard errors for the given estimates of GMAR, StMAR or GStMAR model
+#' @description \code{standardErrors} numerically approximates standard errors for the given estimates of GMAR, StMAR, or GStMAR model.
 #'
 #' @inheritParams loglikelihood_int
 #' @param custom_h a numeric vector with the same length as \code{params} specifying the difference 'h' used in finite difference approximation
 #'   for each parameter separately. If \code{NULL} (default), then the difference used for differentiating overly large degrees of freedom
 #'   parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.
 #' @inheritParams fitGSMAR
-#' @return Approximate standard errors of the parameter values
+#' @return Returns approximate standard errors of the parameter values in a numeric vector.
 
 standardErrors <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                            parametrization=c("intercept", "mean"), custom_h=NULL, minval) {
-  if(missing(minval)) minval <- -(10^(ceiling(log10(length(data))) + 1) - 1)
+  if(missing(minval)) minval <- get_minval(data)
 
   # Function to differenciate
   fn <- function(params) {
@@ -34,9 +34,9 @@ standardErrors <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR
   # Inverse of the observed information matrix
   inv_obs_inf <- tryCatch(solve(-Hess), error=function(cond) return(matrix(NA, ncol=length(params), nrow=length(params))))
 
-  # Calculate the standard errors if possible: break loop if all calculated and change the difference if not
+  # The diagonal of the inverted observed information matrix evaluated at the estimates
   diag_inv_obs_inf <- diag(inv_obs_inf)
 
-  # Standard errors: NA if can't be calculated
+  # Standard errors: NA if can't be calculated (because of numerical issues)
   unlist(lapply(diag_inv_obs_inf, function(x) ifelse(is.na(x) | x < 0, NA, sqrt(x))))
 }
