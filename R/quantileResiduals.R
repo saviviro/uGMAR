@@ -27,7 +27,7 @@
 quantileResiduals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                                   constraints=NULL, parametrization=c("intercept", "mean")) {
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                    parametrization=parametrization, check=TRUE, boundaries=FALSE, to_return="qresiduals", minval=NA)
+                    parametrization=parametrization, checks=TRUE, boundaries=FALSE, to_return="qresiduals", minval=NA)
 }
 
 
