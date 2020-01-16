@@ -4,14 +4,8 @@
 \alias{pick_alphas}
 \title{Pick mixing weights parameters from parameter vector}
 \usage{
-pick_alphas(
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL
-)
+pick_alphas(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

@@ -4,27 +4,12 @@
 \alias{GAfit}
 \title{Genetic algorithm for preliminary estimation of GMAR, StMAR, or G-StMAR model}
 \usage{
-GAfit(
-  data,
-  p,
-  M,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL,
-  parametrization = c("intercept", "mean"),
-  conditional = TRUE,
-  ngen = 200,
-  popsize,
-  smartMu,
-  meanscale,
-  sigmascale,
-  initpop = NULL,
-  regime_force_scale = 1,
-  red_criteria = c(0.05, 0.01),
-  to_return = c("alt_ind", "best_ind"),
-  minval,
-  seed = NULL
-)
+GAfit(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL,
+  parametrization = c("intercept", "mean"), conditional = TRUE,
+  ngen = 200, popsize, smartMu, meanscale, sigmascale, initpop = NULL,
+  regime_force_scale = 1, red_criteria = c(0.05, 0.01),
+  to_return = c("alt_ind", "best_ind"), minval, seed = NULL)
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

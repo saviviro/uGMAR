@@ -4,7 +4,8 @@
 \alias{diagnosticPlot}
 \title{Quantile residual based diagnostic plots for GMAR, StMAR, and G-StMAR models}
 \usage{
-diagnosticPlot(gsmar, nlags = 20, nsimu = 2000, plot_indstats = FALSE)
+diagnosticPlot(gsmar, nlags = 20, nsimu = 2000,
+  plot_indstats = FALSE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}

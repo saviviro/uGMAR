@@ -4,16 +4,9 @@
 \alias{mixingWeights}
 \title{Calculate mixing weights of GMAR, StMAR or G-StMAR model}
 \usage{
-mixingWeights(
-  data,
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL,
-  parametrization = c("intercept", "mean")
-)
+mixingWeights(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL,
+  parametrization = c("intercept", "mean"))
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

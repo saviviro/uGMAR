@@ -4,14 +4,8 @@
 \alias{check_params_length}
 \title{Check that the parameter vector has the correct dimension}
 \usage{
-check_params_length(
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL
-)
+check_params_length(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

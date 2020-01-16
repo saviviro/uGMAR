@@ -18,10 +18,6 @@ Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 \details{
 This function exists simply to avoid dublication inside the package.
 }
-\examples{
-set.seed(1)
-get_minval(rnorm(1000))
-}
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GAfit}}
 }

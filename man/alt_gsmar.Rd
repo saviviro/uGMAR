@@ -4,14 +4,8 @@
 \alias{alt_gsmar}
 \title{Construct a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}}
 \usage{
-alt_gsmar(
-  gsmar,
-  which_round = 1,
-  calc_qresiduals = TRUE,
-  calc_cond_moments = TRUE,
-  calc_std_errors = TRUE,
-  custom_h = NULL
-)
+alt_gsmar(gsmar, which_round = 1, calc_qresiduals = TRUE,
+  calc_cond_moments = TRUE, calc_std_errors = TRUE, custom_h = NULL)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}

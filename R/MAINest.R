@@ -392,9 +392,6 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
 #' @details This function exists simply to avoid dublication inside the package.
 #' @return Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GAfit}}
-#' @examples
-#' set.seed(1)
-#' get_minval(rnorm(1000))
 
 get_minval <- function(data) {
   -(10^(ceiling(log10(length(data))) + 1) - 1)

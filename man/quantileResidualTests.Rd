@@ -11,13 +11,8 @@
 
 \method{print}{qrtest}(x, ..., digits = 3)
 
-quantileResidualTests(
-  gsmar,
-  lagsAC = c(1, 2, 5, 10),
-  lagsCH = lagsAC,
-  nsimu = 2000,
-  printRes = TRUE
-)
+quantileResidualTests(gsmar, lagsAC = c(1, 2, 5, 10), lagsCH = lagsAC,
+  nsimu = 2000, printRes = TRUE)
 }
 \arguments{
 \item{x}{object of class \code{'qrtest'} created with the function \code{quantileResidualTests}.}

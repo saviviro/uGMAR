@@ -4,14 +4,8 @@
 \alias{removeAllConstraints}
 \title{Transform constrained and restricted parameter vector into the regular form}
 \usage{
-removeAllConstraints(
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL
-)
+removeAllConstraints(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

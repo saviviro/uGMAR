@@ -4,14 +4,8 @@
 \alias{parameterChecks}
 \title{Check the parameter vector is specified correctly}
 \usage{
-parameterChecks(
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL
-)
+parameterChecks(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

@@ -4,16 +4,9 @@
 \alias{warn_dfs}
 \title{Warn about large degrees of freedom parameter values}
 \usage{
-warn_dfs(
-  object,
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL,
-  warn_about = c("derivs", "errors")
-)
+warn_dfs(object, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL, warn_about = c("derivs",
+  "errors"))
 }
 \arguments{
 \item{object}{an object to be tested}

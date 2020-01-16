@@ -4,13 +4,8 @@
 \alias{reformParameters}
 \title{Reform any parameter vector into standard form.}
 \usage{
-reformParameters(
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE
-)
+reformParameters(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

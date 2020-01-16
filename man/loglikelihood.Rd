@@ -4,19 +4,10 @@
 \alias{loglikelihood}
 \title{Compute the log-likelihood of GMAR, StMAR, or G-StMAR model}
 \usage{
-loglikelihood(
-  data,
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL,
-  conditional = TRUE,
-  parametrization = c("intercept", "mean"),
-  returnTerms = FALSE,
-  minval = NA
-)
+loglikelihood(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE, constraints = NULL, conditional = TRUE,
+  parametrization = c("intercept", "mean"), returnTerms = FALSE,
+  minval = NA)
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

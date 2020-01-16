@@ -4,13 +4,8 @@
 \alias{reformRestrictedPars}
 \title{Reform parameter vector with restricted autoregressive parameters to correspond non-restricted parameter vector.}
 \usage{
-reformRestrictedPars(
-  p,
-  M,
-  params,
-  model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE
-)
+reformRestrictedPars(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}
