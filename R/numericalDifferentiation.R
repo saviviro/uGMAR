@@ -6,6 +6,7 @@
 #'  log-likelihood function at the parameter values of a class \code{'gsmar'} object.
 #'  \code{get_soc} returns eigenvalues of the Hessian matrix.
 #'
+#' @inheritParams simulateGSMAR
 #' @param x a numeric vector specifying the point at which the gradient or Hessian should be evaluated.
 #' @param fn a function that takes in the argument \code{x} as the \strong{first} argument.
 #' @param h the difference used to approximate the derivatives.
