@@ -48,6 +48,7 @@ plot(fit)
 
 get_gradient(fit) # The first order condition
 get_soc(fit) # The second order condition (eigenvalues of approximated Hessian)
+profile_logliks(fit) # Plot the profile log-likelihood functions
 
 ## Quantile residual diagnostics
 quantileResidualPlot(fit)
