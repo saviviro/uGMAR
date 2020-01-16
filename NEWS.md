@@ -30,11 +30,12 @@
 
 # uGMAT 3.2.2
 
-* Improved comments and documentation.
+* New function: 'profile_logliks' for plotting profile log-likelihood functions.
 * Disabled camelCase compatibility for arguments 'ncalls' and 'ncores' in fitGMAR.
 * Updated the 'regime combining procedure' in the genetic algorithm to also support the G-StMAR model.
 * Minor computation speed improvements.
 * Tidier code for some parts.
+* Improved comments and documentation.
 * Bug fix: the function 'add_data' did not identify the model type correctly. 
-* Bug fix: simulateGSMAR simulated some initial values from 'slighly wrong' the distribution; did not have affect on forecasts.
+* Bug fix: simulateGSMAR simulated some initial values from slighly wrong the distribution; did not have affect on forecasts.
 * Minor update on the summary print for the models
