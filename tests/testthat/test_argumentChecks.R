@@ -23,7 +23,6 @@ test_that("parameterChecks throws errors correctly", {
   expect_error(parameterChecks(1, 2, params12, pars=matrix(params12[1:6], ncol=2), alphas=c(0.7, 0.3), model="StMAR"))
   expect_error(parameterChecks(2, 2, params22, pars=matrix(params22[1:8], ncol=2), alphas=c(0.6, 0.4)))
   expect_error(parameterChecks(2, 2, params22, pars=matrix(params22[1:8], ncol=2), alphas=c(0.6, 0.4), model="StMAR"))
-#  expect_error(parameterChecks(1, 2, params12_2, pars=matrix(params12_2[1:6], ncol=2), alphas=c(0.6, 0.4))) # identification
   expect_error(parameterChecks(2, c(1,1), params22gs, pars=matrix(params22gs, ncol=2), alphas=c(0.3, 0.7), model="G-StMAR"))
   expect_error(parameterChecks(1, c(1,2), params13gs, pars=matrix(params13gs[1:9], ncol=3), alphas=c(0.2, 0.5, 0.3), model="G-StMAR"))
 })

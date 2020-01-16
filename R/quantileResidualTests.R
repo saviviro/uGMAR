@@ -134,7 +134,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
   }
   dim_g <- 3
 
-  # Omega (Kalliovirta 2013 eq.(2.4))
+  # Omega (Kalliovirta 2012, Lemma 2.2)
   Omega <- try_to_get_omega(g=g, dim_g=dim_g, which_test="norm", which_lag=NA)
 
   # Test statistics and p-value
