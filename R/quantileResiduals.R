@@ -84,5 +84,5 @@ quantileResiduals <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   checkPM(p, M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                    parametrization=parametrization, check=TRUE, boundaries=TRUE, to_return="qresiduals", minval=NA)
+                    parametrization=parametrization, checks=TRUE, boundaries=TRUE, to_return="qresiduals", minval=NA)
 }
