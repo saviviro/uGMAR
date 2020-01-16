@@ -55,5 +55,6 @@ fit12
  }
 }
 \seealso{
-\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
+\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}},
+  \code{\link{profile_logliks}}, \code{\link{optim}}
 }

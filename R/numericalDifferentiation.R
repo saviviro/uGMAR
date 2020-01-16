@@ -21,6 +21,7 @@
 #' @return The gradient functions return numerical approximation of the gradient, and the Hessian functions return
 #'  numerical approximation of the Hessian. \code{get_soc} returns eigenvalues of the Hessian matrix, \code{get_foc}
 #'  is the same as \code{get_gradient} but named conveniently.
+#' @seealso \code{\link{profile_logliks}}
 #' @section Warning:
 #'  No argument checks!
 #' @examples

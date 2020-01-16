@@ -28,8 +28,8 @@
 #'   For large StMAR and G-StMAR models with large data, the evaluations may take significantly long time
 #'   without the package "gsl".
 #' @inherit quantileResiduals_int references
-#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}}, \code{\link{predict.gsmar}},
-#'  \code{\link{getOmega}},
+#' @seealso \code{\link{profile_logliks}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}},
+#'  \code{\link{predict.gsmar}}, \code{\link{getOmega}},
 #' @examples
 #' \donttest{
 #' # GMAR model

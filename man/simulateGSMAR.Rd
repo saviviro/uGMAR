@@ -71,16 +71,6 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
  ts.plot(sim12gs$sample)
  ts.plot(sim12gs$component)
  ts.plot(sim12gs$mixing_weights, col=rainbow(3), lty=2)
-
- # Mixture version of Heterogenuous Autoregressive (HAR) model (without data)
- paramsHAR <- c(1, 0.1, 0.2, 0.3, 1, 1, 0.15, 0.25, 0.35, 1, 0.55)
- r1 = c(1, rep(0, 21)); r2 = c(rep(0.2, 5), rep(0, 17)); r3 = rep(1/22, 22)
- R0 = cbind(r1, r2, r3)
- mixhar <- GSMAR(p=22, M=2, params=paramsHAR, model="GMAR", constraints=list(R0, R0))
- simhar <- simulateGSMAR(mixhar, nsimu=1000)
- ts.plot(simhar$sample)
- ts.plot(simhar$component)
- ts.plot(simhar$mixing_weights, col=rainbow(3), lty=2)
 }
 }
 \references{

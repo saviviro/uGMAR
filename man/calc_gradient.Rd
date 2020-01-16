@@ -80,3 +80,6 @@ In particular, the functions \code{get_foc} and \code{get_soc} can be used to ch
  get_hessian(gmar12)
  get_soc(gmar12)
 }
+\seealso{
+\code{\link{profile_logliks}}
+}

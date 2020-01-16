@@ -53,6 +53,6 @@ quantileResidualPlot(fit32rc)
  }
 }
 \seealso{
-\code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+\code{\link{profile_logliks}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 }

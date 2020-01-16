@@ -90,7 +90,7 @@
 #'  Note that for large StMAR and G-StMAR models with large data, performing the quantile residual tests may take
 #'  significantly long time without the package "gsl".
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
-#'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
+#'  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
 #'   \code{\link{diagnosticPlot}}, \code{\link{quantileResidualTests}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
 #' @references
 #'  \itemize{
@@ -121,6 +121,7 @@
 #' fit12
 #' summary(fit12)
 #' plot(fit12)
+#' profile_logliks(fit12)
 #'
 #' # Restricted GMAR model
 #' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE,
@@ -148,9 +149,9 @@
 #' # The following three examples demonstrate how to apply linear constraints
 #' # to the AR parameters.
 #'
-#' # GMAR(p=3, M=2) model that the second and third AR coefficients are constrained
-#' # to zero in the first regime, and the second AR coefficient is constrained to
-#' # zero in the second regime.
+#' # GMAR(p=3, M=2) model such that the second AR coefficient is constrained
+#' # to zero in the first regime, and the second and third AR coefficients
+#' # is constrained to zero in the second regime.
 #' constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
 #' fit32c <- fitGSMAR(logVIX, 3, 2, constraints=constraints)
 #' fit32c
@@ -335,7 +336,8 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'   main estimation function \code{fitGSMAR}. \code{iterate_more} is essentially a wrapper for the functions
 #'   \code{optim} from the package \code{stats} and \code{GSMAR} from the package \code{uGMAR}.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated model.
-#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}}, \code{\link{optim}}
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{stmar_to_gstmar}},
+#'   \code{\link{profile_logliks}}, \code{\link{optim}}
 #' @inherit GSMAR references
 #' @examples
 #' \donttest{

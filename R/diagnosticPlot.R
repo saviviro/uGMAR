@@ -31,7 +31,7 @@
 #'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
 #'   For large StMAR and G-StMAR models with large data the calculations to obtain the individual statistics
 #'   may take a significantly long time without the package "gsl".
-#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}},
+#' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}},
 #'  \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
@@ -166,7 +166,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
 #' @inheritParams simulateGSMAR
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit quantileResiduals references
-#' @seealso \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
 #'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
@@ -224,7 +224,7 @@ quantileResidualPlot <- function(gsmar) {
 #'
 #' @title Plot profile log-likehoods around the estimates
 #'
-#' @description \code{plot_profile_logliks} plots profile log-likelihoods around the estimates.
+#' @description \code{profile_logliks} plots profile log-likelihoods around the estimates.
 #'
 #' @inheritParams simulateGSMAR
 #' @param scale a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.
@@ -239,90 +239,147 @@ quantileResidualPlot <- function(gsmar) {
 #'   related example below).
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit loglikelihood references
-#' @seealso \code{\link{loglikelihood}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}},
-#'  \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+#' @seealso  \code{\link{quantileResidualPlot}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' plot_profile_logliks(fit12)
+#' profile_logliks(fit12)
 #'
 #' # Non-mixture version of StMAR model
 #' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' plot_profile_logliks(fit11t)
+#' profile_logliks(fit11t)
 #'
 #' # Restricted G-StMAR-model
 #' fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
 #'  restricted=TRUE)
-#' plot_profile_logliks(fit12gsr)
+#' profile_logliks(fit12gsr)
 #'
 #' # Extremely large degrees of freedom numerical error demonstration
 #' fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncores=1,
 #'  ncalls=1, seeds=1)
-#' plot_profile_logliks(fit12t, scale=0.00001)
+#' profile_logliks(fit12t, scale=0.00001)
 #' # See the last figure? Surface of the profile log-likelihood function
 #' # should be flat around that large degrees of freedom!
 #' }
 #' @export
 
-plot_profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=100) {
+profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
   check_gsmar(gsmar)
   check_data(gsmar)
   p <- gsmar$model$p
-  M <- gsmar$model$M
+  M_orig <- gsmar$model$M
+  M <- sum(M_orig)
   params <- gsmar$params
   npars <- length(params)
   constraints <- gsmar$model$constraints
-  if(missing(nrows)) nrows <- sum(M)
+  restricted <- gsmar$model$restricted
+  if(missing(nrows)) nrows <- M
   if(missing(ncols)) ncols <- ceiling(npars/nrows)
   stopifnot(all_pos_ints(c(nrows, ncols)) && nrows*ncols >= npars)
 
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
-  par(mar=c(2.1, 2.1, 1.1, 1), mfrow=c(nrows, ncols))
+  par(mar=c(2.1, 2.1, 1.6, 1.1), mfrow=c(nrows, ncols))
 
   # In order to get the labels right, we first determine which indeces in params
   # correspond to which parameters: different procedure for restricted model.
   if(restricted == FALSE) {
-    if(is.null(constraints)) {
-      all_q <- vapply(1:length(constraints), function(m) ncol(constraints[m]), numeric(1))
+    if(!is.null(constraints)) {
+      all_q <- vapply(1:length(constraints), function(m) ncol(constraints[[m]]), numeric(1)) # q = number of estimated AR parameters in a regime
     } else {
-      all_q <- rep(p, sum(M)) # Consider non-constrained models as special cases of constrainted models
+      all_q <- rep(p, M) # Consider non-constrained models as special cases of constrainted models
     }
     cum_q <- c(0, cumsum(all_q + 2)) # Indeces in parameter vector after which the regime changes (before alphas)
   } else { # restricted == TRUE
+    cum_q <- rep(0, times=M + 1) # For techinal reasons so that "first arguments" below are always false
     q <- ifelse(is.null(constraints), p, ncol(constraints)) # Constraints is a singe matrix
   }
 
   for(i1 in seq_len(npars)) { # Go though the parameters
+
     pars <- params
     range <- abs(scale*pars[i1])
-    vals <- seq(from=pars[i1] - range, to=pars[i1] + range, length.out=100) # Loglik to be evaluated at these values of the parameter considered
+    vals <- seq(from=pars[i1] - range, to=pars[i1] + range, length.out=precission) # Loglik to be evaluated at these values of the parameter considered
     logliks <- vapply(vals, function(val) {
       new_pars <- pars
       new_pars[i1] <- val # Change the single parameter value
-      loglikelihood_int(data=gsmar$data, p=p, M=M, params=new_pars, model=gsmar$model$model, restricted=gsmar$model$restricted,
-                        constraints=constraints, conditional=gsmar$model$conditional, boundaries=TRUE, checks=FALSE, minval=NA)
+      loglikelihood_int(data=gsmar$data, p=p, M=M_orig, params=new_pars, model=gsmar$model$model, restricted=restricted,
+                        constraints=constraints, conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
+                        boundaries=TRUE, checks=FALSE, minval=NA)
     }, numeric(1))
 
     # In order to get the labels right, we first determine which parameter is in question.
-    # With constraints AR parameters are not phi-parameters! So different label.
+    # For readability of the code, we do the cases of restricted and unrestricted models
+    # complitely separately at the expense of some dublicate code.
     if(restricted == FALSE) {
-      # phi and sigma^2 parameters
-      if(i1 <= max(cum_q)) {
+      if(i1 <= max(cum_q)) { # phi and sigma^2 parameters first
         m <- sum(i1 > cum_q) # Which regime are we considering
-
-        if(i1 == cum_q[m] + 1) { # phi_{m,0}
-          1
+        if(i1 == cum_q[m + 1]) { # sigma^2
+          main <- substitute(sigma[foo]^2, list(foo=m))
+        } else if(i1 <= max(cum_q)) { # phi_{m,0},...,phi_{m,p}
+          if(i1 == cum_q[m] + 1) { # phi_{m,0}
+            mylist <- list(foo=paste0(m, ",", 0))
+          } else {  # phi_{m,1},...,phi_{m,p}
+              p0 <- i1 - cum_q[m] - 1 # p0 = 1,...,p; minus 1 from phi_0
+            if(is.null(constraints)) {
+              mylist  <- list(foo=paste0(m, ",", p0))
+            } else { # The AR parameters are not generally the same as phi-parameters with linear constraints
+              mylist  <- list(phi="AR", foo=paste0(m, ",", p0))
+            }
+          }
+          main <- substitute(phi[foo], mylist) # Substitute the character strings from mylist
+        }
+      } else { # alphas and degrees of freedom if any
+        if(M == 1) {
+          # No alphas, so if we are here there must be dfs parameters
+          m <- 1
+          main <- substitute(nu[foo], list(foo=m))
+        } else {
+          if(i1 <= max(cum_q) + M - 1) { # The alphas first
+            m <- i1 - max(cum_q)
+            main <- substitute(alpha[foo], list(foo=m))
+          } else { # Finally, degrees of freedom
+            m <- i1 - max(cum_q) - (M - 1)
+            main <- substitute(nu[foo], list(foo=m))
+          }
         }
       }
-
-
-    } else { # restricted == TRUE
-
+    } else { ## restricted == TRUE, taken care separately
+        if(i1 <= M + q) { # phi_{m,0},...,phi_{m,p}
+          if(i1 <= M) { # phi_{m,0}
+            m <- i1
+            mylist <- list(foo=paste0(m, ",", 0))
+          } else { # phi_{m,1},...,phi_{m,p}
+            m <- "m"
+            p0 <- i1 - M
+            if(is.null(constraints)) {
+              mylist  <- list(foo=paste0(m, ",", p0))
+            } else { # The AR parameters are not generally the same as phi-parameters with linear constraints
+              mylist  <- list(phi="AR", foo=paste0(m, ",", p0))
+            }
+          }
+          main <- substitute(phi[foo], mylist) # Substitute the character strings from mylist
+        } else if(i1 <= 2*M + q) { # sigma^2
+          m <- i1 - M - q
+          main <- substitute(sigma[foo]^2, list(foo=m))
+        } else { # alphas and degrees of freedom
+          if(M == 1) { # No alphas if this is true
+            m <- 1
+            main <- substitute(nu[foo]^2, list(foo=m))
+          } else {
+            if(i1 <= 3*M + q - 1) { # The alphas first
+              m <- i1 - 2*M - q
+              main <- substitute(alpha[foo], list(foo=m))
+            } else { # Finally, degrees of freedom
+              m <- i1 - (3*M + q - 1)
+              main <- substitute(nu[foo], list(foo=m))
+            }
+          }
+        }
     }
-    tmp <- list(a=expression(beta))
-    plot(x=vals, y=logliks, type="l", main=expression(paste(beta [eval(m)])))#, "(", m, ",0)")))
-    abline(v=pars[i1], col="red")
+    plot(x=vals, y=logliks, type="l", main=main)
+    abline(v=pars[i1], col="red") # Points the estimate
   }
 }

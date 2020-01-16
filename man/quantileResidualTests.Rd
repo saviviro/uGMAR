@@ -115,6 +115,6 @@ quantileResidualTests(fit22c, lagsAC=c(1, 3), nsimu=1, printRes=FALSE)
  }
 }
 \seealso{
-\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}}, \code{\link{predict.gsmar}},
- \code{\link{getOmega}},
+\code{\link{profile_logliks}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}},
+ \code{\link{predict.gsmar}}, \code{\link{getOmega}},
 }
