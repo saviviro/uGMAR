@@ -227,55 +227,102 @@ quantileResidualPlot <- function(gsmar) {
 #' @description \code{plot_profile_logliks} plots profile log-likelihoods around the estimates.
 #'
 #' @inheritParams simulateGSMAR
+#' @param scale a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.
+#' @param nrows how rows should be in the plot-matrix? The default is M.
+#' @param ncols how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
+#'   Note that \code{nrows*ncols} should not be smaller than the number of parameters.
+#' @param precission at how many points should each profile log-likelihood be evaluated at?
+#' @details The red vertical line points the estimate.
+#'
+#'   Be aware that the profile log-likelihood function is subject to a numerical error due to limited float-point
+#'   precission when considering extremely large parameter values, say, overly large degrees freedom estimates (see the
+#'   related example below).
 #' @return  Only plots to a graphical device and doesn't return anything.
-#' @inherit quantileResiduals
-#' @seealso \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
-#'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+#' @inherit loglikelihood references
+#' @seealso \code{\link{loglikelihood}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}},
+#'  \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' quantileResidualPlot(fit12)
+#' plot_profile_logliks(fit12)
 #'
 #' # Non-mixture version of StMAR model
 #' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' quantileResidualPlot(fit11t)
+#' plot_profile_logliks(fit11t)
 #'
 #' # Restricted G-StMAR-model
 #' fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
 #'  restricted=TRUE)
-#' quantileResidualPlot(fit12gsr)
+#' plot_profile_logliks(fit12gsr)
 #'
-#' # Such StMAR(3,2) that the AR coefficients are restricted to be
-#' # the same for both regimes and that the second AR coefficients are
-#' # constrained to zero.
-#' fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
-#'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' quantileResidualPlot(fit32rc)
+#' # Extremely large degrees of freedom numerical error demonstration
+#' fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncores=1,
+#'  ncalls=1, seeds=1)
+#' plot_profile_logliks(fit12t, scale=0.00001)
+#' # See the last figure? Surface of the profile log-likelihood function
+#' # should be flat around that large degrees of freedom!
 #' }
 #' @export
 
-plot_profile_logliks <- function(gsmar) {
+plot_profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=100) {
   check_gsmar(gsmar)
   check_data(gsmar)
-  if(is.null(gsmar$quantile_residuals)) {
-    qresiduals <- quantileResiduals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
-                                        model=gsmar$model$mode, restricted=gsmar$model$restricted,
-                                        constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
-  } else {
-    qresiduals <- gsmar$quantile_residuals
-  }
-  if(anyNA(qresiduals)) {
-    n_na <- sum(is.na(qresiduals))
-    qresiduals <- qresiduals[!is.na(qresiduals)]
-    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
-  }
+  p <- gsmar$model$p
+  M <- gsmar$model$M
+  params <- gsmar$params
+  npars <- length(params)
+  constraints <- gsmar$model$constraints
+  if(missing(nrows)) nrows <- sum(M)
+  if(missing(ncols)) ncols <- ceiling(npars/nrows)
+  stopifnot(all_pos_ints(c(nrows, ncols)) && nrows*ncols >= npars)
+
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
-  par(mfrow=c(2, 1), mar=c(2.6, 2.6, 2.1, 1.6))
-  plot(qresiduals, type="l", ylab="", xlab="", main="Quantile residuals")
-  abline(h=c(-1.96, 0, 1.96), lty=2, col="red")
-  hs <- hist(qresiduals, breaks="Scott", probability=TRUE, col="skyblue", plot=TRUE, ylim=c(0, 0.5))
-  xc <- seq(from=min(hs$breaks), to=max(hs$breaks), length.out=500)
-  lines(x=xc, y=dnorm(xc), lty=2, col="red")
+  par(mar=c(2.1, 2.1, 1.1, 1), mfrow=c(nrows, ncols))
+
+  # In order to get the labels right, we first determine which indeces in params
+  # correspond to which parameters: different procedure for restricted model.
+  if(restricted == FALSE) {
+    if(is.null(constraints)) {
+      all_q <- vapply(1:length(constraints), function(m) ncol(constraints[m]), numeric(1))
+    } else {
+      all_q <- rep(p, sum(M)) # Consider non-constrained models as special cases of constrainted models
+    }
+    cum_q <- c(0, cumsum(all_q + 2)) # Indeces in parameter vector after which the regime changes (before alphas)
+  } else { # restricted == TRUE
+    q <- ifelse(is.null(constraints), p, ncol(constraints)) # Constraints is a singe matrix
+  }
+
+  for(i1 in seq_len(npars)) { # Go though the parameters
+    pars <- params
+    range <- abs(scale*pars[i1])
+    vals <- seq(from=pars[i1] - range, to=pars[i1] + range, length.out=100) # Loglik to be evaluated at these values of the parameter considered
+    logliks <- vapply(vals, function(val) {
+      new_pars <- pars
+      new_pars[i1] <- val # Change the single parameter value
+      loglikelihood_int(data=gsmar$data, p=p, M=M, params=new_pars, model=gsmar$model$model, restricted=gsmar$model$restricted,
+                        constraints=constraints, conditional=gsmar$model$conditional, boundaries=TRUE, checks=FALSE, minval=NA)
+    }, numeric(1))
+
+    # In order to get the labels right, we first determine which parameter is in question.
+    # With constraints AR parameters are not phi-parameters! So different label.
+    if(restricted == FALSE) {
+      # phi and sigma^2 parameters
+      if(i1 <= max(cum_q)) {
+        m <- sum(i1 > cum_q) # Which regime are we considering
+
+        if(i1 == cum_q[m] + 1) { # phi_{m,0}
+          1
+        }
+      }
+
+
+    } else { # restricted == TRUE
+
+    }
+    tmp <- list(a=expression(beta))
+    plot(x=vals, y=logliks, type="l", main=expression(paste(beta [eval(m)])))#, "(", m, ",0)")))
+    abline(v=pars[i1], col="red")
+  }
 }

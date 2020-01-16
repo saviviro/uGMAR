@@ -4,10 +4,17 @@
 \alias{plot_profile_logliks}
 \title{Plot profile log-likehoods around the estimates}
 \usage{
-plot_profile_logliks(gsmar)
+plot_profile_logliks(gsmar, scale = 0.02, nrows, ncols)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
+
+\item{scale}{a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.}
+
+\item{nrows}{how rows should be in the plot-matrix? The default is M.}
+
+\item{ncols}{how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
+Note that \code{nrows*ncols} should not be smaller than the number of parameters.}
 }
 \value{
 Only plots to a graphical device and doesn't return anything.
@@ -15,36 +22,27 @@ Only plots to a graphical device and doesn't return anything.
 \description{
 \code{plot_profile_logliks} plots profile log-likelihoods around the estimates.
 }
-\details{
-Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
- hypergeometric function using the package 'gsl'.
-}
-\section{Suggested packages}{
-
-  Install the suggested package "gsl" for faster evaluation of the quantile residuals of StMAR and G-StMAR models.
-}
-
 \examples{
 \donttest{
 # GMAR model
 fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-quantileResidualPlot(fit12)
+plot_profile_logliks(fit12)
 
 # Non-mixture version of StMAR model
 fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-quantileResidualPlot(fit11t)
+plot_profile_logliks(fit11t)
 
 # Restricted G-StMAR-model
 fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
  restricted=TRUE)
-quantileResidualPlot(fit12gsr)
+plot_profile_logliks(fit12gsr)
 
 # Such StMAR(3,2) that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
 fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-quantileResidualPlot(fit32rc)
+plot_profile_logliks(fit32rc)
 }
 }
 \references{
@@ -57,11 +55,11 @@ quantileResidualPlot(fit32rc)
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
            arXiv:1805.04010 \strong{[econ.EM]}.
-   \item There are currently no published references for G-StMAR model, but it's a straight forward generalization with
-           theoretical properties similar to GMAR and StMAR models.
+   \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
+           theoretical properties similar to the GMAR and StMAR models.
  }
 }
 \seealso{
-\code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
- \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+\code{\link{loglikelihood}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}},
+ \code{\link{GSMAR}}, \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 }
