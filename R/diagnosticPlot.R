@@ -159,9 +159,72 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
 #' @import graphics
 #' @importFrom grDevices rgb
 #'
-#' @title Plot quantile residual time series and kernel density
+#' @title Plot quantile residual time series and histogram
 #'
 #' @description \code{quantileResidualsPlot} plots quantile residual time series and histogram.
+#'
+#' @inheritParams simulateGSMAR
+#' @return  Only plots to a graphical device and doesn't return anything.
+#' @inherit quantileResiduals references
+#' @seealso \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+#' @examples
+#' \donttest{
+#' # GMAR model
+#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
+#' quantileResidualPlot(fit12)
+#'
+#' # Non-mixture version of StMAR model
+#' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
+#' quantileResidualPlot(fit11t)
+#'
+#' # Restricted G-StMAR-model
+#' fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
+#'  restricted=TRUE)
+#' quantileResidualPlot(fit12gsr)
+#'
+#' # Such StMAR(3,2) that the AR coefficients are restricted to be
+#' # the same for both regimes and that the second AR coefficients are
+#' # constrained to zero.
+#' fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
+#'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' quantileResidualPlot(fit32rc)
+#' }
+#' @export
+
+quantileResidualPlot <- function(gsmar) {
+  check_gsmar(gsmar)
+  check_data(gsmar)
+  if(is.null(gsmar$quantile_residuals)) {
+    qresiduals <- quantileResiduals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
+                                        model=gsmar$model$mode, restricted=gsmar$model$restricted,
+                                        constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
+  } else {
+    qresiduals <- gsmar$quantile_residuals
+  }
+  if(anyNA(qresiduals)) {
+    n_na <- sum(is.na(qresiduals))
+    qresiduals <- qresiduals[!is.na(qresiduals)]
+    warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
+  }
+  old_par <- par(no.readonly = TRUE) # Save old settings
+  on.exit(par(old_par)) # Restore the settings before quitting
+  par(mfrow=c(2, 1), mar=c(2.6, 2.6, 2.1, 1.6))
+  plot(qresiduals, type="l", ylab="", xlab="", main="Quantile residuals")
+  abline(h=c(-1.96, 0, 1.96), lty=2, col="red")
+  hs <- hist(qresiduals, breaks="Scott", probability=TRUE, col="skyblue", plot=TRUE, ylim=c(0, 0.5))
+  xc <- seq(from=min(hs$breaks), to=max(hs$breaks), length.out=500)
+  lines(x=xc, y=dnorm(xc), lty=2, col="red")
+}
+
+
+#' @import stats
+#' @import graphics
+#' @importFrom grDevices rgb
+#'
+#' @title Plot profile log-likehoods around the estimates
+#'
+#' @description \code{plot_profile_logliks} plots profile log-likelihoods around the estimates.
 #'
 #' @inheritParams simulateGSMAR
 #' @return  Only plots to a graphical device and doesn't return anything.
@@ -192,7 +255,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
 #' }
 #' @export
 
-quantileResidualPlot <- function(gsmar) {
+plot_profile_logliks <- function(gsmar) {
   check_gsmar(gsmar)
   check_data(gsmar)
   if(is.null(gsmar$quantile_residuals)) {
