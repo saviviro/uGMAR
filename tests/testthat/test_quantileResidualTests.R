@@ -14,7 +14,7 @@ params23 <- c(2.7, 0.8, -0.06, 0.3, 3.5, 0.8, -0.07, 2.6, 7.2, 0.3, -0.01, 0.1, 
 params23t <- c(1.8, 0.9, -0.06, 0.4, 7.2, 0.3, -0.009, 0.1, 3.1, 0.83, -0.05, 3.7, 0.7, 0.2, 11, 9, 8) # StMAR
 params12r <- c(1.4, 1.8, 0.9, 0.3, 3.3, 0.8)
 params12gs <- c(1.5, 0.8, 1.5, 2.9, 0.8, 1.1, 0.6, 3)
-params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 20) # M1=2, M2=1
+params13gsr <- c(1.3, 1, 1.4, 0.8, 0.4, 2, 0.2, 0.25, 0.15, 6) # M1=2, M2=1
 
 stmar11 <- GSMAR(data=VIX[20:50], p=1, M=1, params=params11t, model="StMAR")
 gmar12 <- GSMAR(data=VIX[1:100], p=1, M=2, params=params12, model="GMAR")
@@ -35,7 +35,7 @@ qrt13gsr <- quantileResidualTests(gstmar13r, lagsAC=c(1), lagsCH=c(1), printRes=
 
 test_that("quantile residual test for normality works", {
   expect_equal(qrt12gs$norm_res$testStat, 6.041794, tolerance=1e-3)
-  expect_equal(qrt13gsr$norm_res$testStat, 35.61841, tolerance=1e-3)
+  expect_equal(qrt13gsr$norm_res$testStat, 54.27201, tolerance=1e-3)
   expect_equal(qrt11t$norm_res$testStat, 42.01667, tolerance=1e-3)
   expect_equal(qrt12$norm_res$testStat, 32.09423, tolerance=1e-3)
   expect_equal(qrt23$norm_res$testStat, 63.89753, tolerance=1e-3)
@@ -49,7 +49,7 @@ test_that("quantile residual test for normality works", {
 test_that("quantile residuals tests for autocorrelation work", {
   expect_equal(qrt12gs$ac_res$testStat, 1.227147, tolerance=1e-3)
   expect_equal(qrt12gs$ac_res$pvalue, 0.5414125, tolerance=1e-3)
-  expect_equal(qrt13gsr$ac_res$testStat, 12.54947, tolerance=1e-3)
+  expect_equal(qrt13gsr$ac_res$testStat, 5.293113, tolerance=1e-3)
   expect_equal(qrt11t$ac_res$testStat, c(8.417805, 8.703875, 12.971856, 45.147962), tolerance=1e-3)
   expect_equal(qrt11t$ac_res$indStat, c(1.295102, 1.355809, 1.319642, 1.339617), tolerance=1e-3)
   expect_equal(qrt12$ac_res$testStat, c(0.6927903, 1.0223100, 1.4459217, 5.1346440), tolerance=1e-3)
@@ -72,7 +72,7 @@ test_that("quantile residuals tests for autocorrelation work", {
 test_that("quantile residual tests for conditional heteroskedasticity work", {
   expect_equal(qrt12gs$ch_res$testStat, 0.01772478, tolerance=1e-3)
   expect_equal(qrt12gs$ch_res$pvalue, 0.8940871, tolerance=1e-3)
-  expect_equal(qrt13gsr$ch_res$indStat, 0.5920743, tolerance=1e-3)
+  expect_equal(qrt13gsr$ch_res$indStat, 0.2663676, tolerance=1e-3)
   expect_equal(qrt11t$ch_res$testStat, c(0.3393064, 0.4802340, 2.5123071, 1.1701140), tolerance=1e-3)
   expect_equal(qrt11t$ch_res$stdError, c(0.7286874, 1.0237356, 0.8122795, 0.8237535), tolerance=1e-3)
   expect_equal(qrt12$ch_res$testStat, c(0.4647988, 0.5310061, 10.1436096, 20.4697598), tolerance=1e-3)

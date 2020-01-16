@@ -13,7 +13,7 @@ params12 <- c(1.1, 0.9, 0.29, 4.5, 0.7, 3.2, 0.8)
 params23t <- c(1.8, 0.9, -0.06, 0.4, 7.2, 0.3, -0.009, 0.1, 3.1, 0.83, -0.05, 3.7, 0.7, 0.2, 11, 9, 8)
 params12r <- c(1, 4, 0.8, 0.3, 3, 0.8)
 params12gs <- c(1.2, 0.8, 0.6, 1.3, 0.6, 1.1, 0.6, 3) # M1=1, M2=1
-params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 20) # M1=2, M2=1
+params13gsr <- c(1.3, 2.2, 1.4, 0.8, 2.4, 4.6, 0.4, 0.25, 0.15, 5) # M1=2, M2=1
 
 g_norm <- function(r) cbind(r^2-1, r^3, r^4-3)
 omega_n11t <- getOmega(VIX, 1, 1, params11t, model="StMAR", g=g_norm, dim_g=3)
@@ -32,7 +32,7 @@ test_that("getOmega works for normality tests", {
   expect_equal(omega_n23t[3, ], c(7.602507, 26.867599, 121.582016), tolerance=1e-3)
   expect_equal(omega_n23t[1, ], c(0.726662, 1.437387, 7.602507), tolerance=1e-3)
   expect_equal(omega_n23gs[2, ], c(45.98163, 66.98521, 94.66165), tolerance=1e-3)
-  expect_equal(omega_n13gsr[1, ], c(1.5743312, 0.6217055, 2.8404580), tolerance=1e-3)
+  expect_equal(omega_n13gsr[1, ], c(1.953731, 1.220330, 5.045507), tolerance=1e-3)
 })
 
 g0_ac <- function(r, lag) {
@@ -71,20 +71,20 @@ omega_ac3_12gs <- getOmega(VIX, 1, c(1,1), params12gs, model="G-StMAR", g=g_ac3,
 omega_ac3_13gsr <- getOmega(VIX, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ac3, dim_g=3)
 
 test_that("getOmega works for autocorrelation test", {
-  expect_equal(omega_ac1_12gs[1, 1], 31.9099, tolerance=1e-4)
-  expect_equal(omega_ac1_13gsr[1, 1], 0.8864288, tolerance=1e-4)
-  expect_equal(omega_ac3_12gs[2, ], c(31.72712, 32.00536, 32.01475), tolerance=1e-4)
-  expect_equal(omega_ac3_13gsr[3, ], c(0.8803784, 0.8692675, 0.9629880), tolerance=1e-4)
-  expect_equal(omega_ac1_11t[1, 1], 16.76182, tolerance=1e-4)
-  expect_equal(omega_ac1_12[1, 1], 0.533819, tolerance=1e-4)
-  expect_equal(omega_ac1_12r[1, 1], 15.07792, tolerance=1e-4)
-  expect_equal(omega_ac1_23t[1, 1], 0.4227976, tolerance=1e-4)
-  expect_equal(omega_ac3_11t[, 3], c(16.68747, 16.67081, 16.77604), tolerance=1e-4)
-  expect_equal(omega_ac3_12[3, ], c(-0.213822420, -0.008611741, 0.612060542), tolerance=1e-4)
-  expect_equal(omega_ac3_12[1, ], c(0.5377463, -0.1461050, -0.2138224), tolerance=1e-4)
-  expect_equal(omega_ac3_12r[, 2], c(14.78865, 15.01056, 14.53314), tolerance=1e-4)
-  expect_equal(omega_ac3_23t[, 1], c(0.41839286, 0.15075618, 0.06807495), tolerance=1e-4)
-  expect_equal(omega_ac3_23t[2, ], c(0.15075618, 0.80076669, -0.01143371), tolerance=1e-4)
+  expect_equal(omega_ac1_12gs[1, 1], 31.9099, tolerance=1e-3)
+  expect_equal(omega_ac1_13gsr[1, 1], 0.8833241, tolerance=1e-3)
+  expect_equal(omega_ac3_12gs[2, ], c(31.72712, 32.00536, 32.01475), tolerance=1e-3)
+  expect_equal(omega_ac3_13gsr[3, ], c(0.8892394, 0.8760472, 0.9902948), tolerance=1e-3)
+  expect_equal(omega_ac1_11t[1, 1], 16.76182, tolerance=1e-3)
+  expect_equal(omega_ac1_12[1, 1], 0.533819, tolerance=1e-3)
+  expect_equal(omega_ac1_12r[1, 1], 15.07792, tolerance=1e-3)
+  expect_equal(omega_ac1_23t[1, 1], 0.4227976, tolerance=1e-3)
+  expect_equal(omega_ac3_11t[, 3], c(16.68747, 16.67081, 16.77604), tolerance=1e-3)
+  expect_equal(omega_ac3_12[3, ], c(-0.213822420, -0.008611741, 0.612060542), tolerance=1e-3)
+  expect_equal(omega_ac3_12[1, ], c(0.5377463, -0.1461050, -0.2138224), tolerance=1e-3)
+  expect_equal(omega_ac3_12r[, 2], c(14.78865, 15.01056, 14.53314), tolerance=1e-3)
+  expect_equal(omega_ac3_23t[, 1], c(0.41839286, 0.15075618, 0.06807495), tolerance=1e-3)
+  expect_equal(omega_ac3_23t[2, ], c(0.15075618, 0.80076669, -0.01143371), tolerance=1e-3)
 })
 
 g0_ch <- function(r, lag) {
@@ -124,8 +124,8 @@ omega_ch3_13gsr <- getOmega(VIX, 1, c(2,1), params13gsr, model="G-StMAR", restri
 
 test_that("getOmega works for conditional heteroskedasticity tests", {
   expect_equal(omega_ch1_12gs[1, 1], 16.83635, tolerance=1e-3)
-  expect_equal(omega_ch1_13gsr[1, 1], 1.034198, tolerance=1e-3)
-  expect_equal(omega_ch3_13gsr[3, ], c(0.7978984, 0.5466978, 1.0220235), tolerance=1e-3)
+  expect_equal(omega_ch1_13gsr[1, 1], 1.795549, tolerance=1e-3)
+  expect_equal(omega_ch3_13gsr[3, ], c(1.1305589, 0.8987261, 1.1694323), tolerance=1e-3)
   expect_equal(omega_ch3_12gs[, 1], c(17.09112, 17.61228, 17.30636), tolerance=1e-3)
   expect_equal(omega_ch1_11t[1, 1], 43.6595, tolerance=1e-3)
   expect_equal(omega_ch1_12[1, 1], 2.152529, tolerance=1e-3)
