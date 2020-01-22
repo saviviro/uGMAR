@@ -11,7 +11,7 @@ profile_logliks(gsmar, scale = 0.02, nrows, ncols, precission = 200)
 
 \item{scale}{a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.}
 
-\item{nrows}{how rows should be in the plot-matrix? The default is M.}
+\item{nrows}{how many rows should be in the plot-matrix? The default is \code{max(ceiling(log2(nparams) - 1), 1)}.}
 
 \item{ncols}{how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
 Note that \code{nrows*ncols} should not be smaller than the number of parameters.}

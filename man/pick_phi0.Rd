@@ -4,8 +4,14 @@
 \alias{pick_phi0}
 \title{Pick phi0 or mean parameters from parameter vector}
 \usage{
-pick_phi0(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL)
+pick_phi0(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

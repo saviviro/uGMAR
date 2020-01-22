@@ -4,10 +4,17 @@
 \alias{predict.gsmar}
 \title{Forecast GMAR, StMAR, or G-StMAR process}
 \usage{
-\method{predict}{gsmar}(object, ..., n_ahead, nsimu = 10000,
-  pi = c(0.95, 0.8), pred_type = c("median", "mean", "cond_mean"),
-  pi_type = c("two-sided", "upper", "lower", "none"), nt,
-  plotRes = TRUE)
+\method{predict}{gsmar}(
+  object,
+  ...,
+  n_ahead,
+  nsimu = 10000,
+  pi = c(0.95, 0.8),
+  pred_type = c("median", "mean", "cond_mean"),
+  pi_type = c("two-sided", "upper", "lower", "none"),
+  nt,
+  plotRes = TRUE
+)
 }
 \arguments{
 \item{object}{object of class \code{'gsmar'} created with function \code{fitGSMAR} or \code{GSMAR}.}

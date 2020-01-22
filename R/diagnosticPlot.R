@@ -228,7 +228,7 @@ quantileResidualPlot <- function(gsmar) {
 #'
 #' @inheritParams simulateGSMAR
 #' @param scale a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.
-#' @param nrows how rows should be in the plot-matrix? The default is M.
+#' @param nrows how many rows should be in the plot-matrix? The default is \code{max(ceiling(log2(nparams) - 1), 1)}.
 #' @param ncols how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
 #'   Note that \code{nrows*ncols} should not be smaller than the number of parameters.
 #' @param precission at how many points should each profile log-likelihood be evaluated at?
@@ -276,7 +276,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
   constraints <- gsmar$model$constraints
   restricted <- gsmar$model$restricted
   parametrization <- gsmar$model$parametrization
-  if(missing(nrows)) nrows <- M
+  if(missing(nrows)) nrows <- max(ceiling(log2(npars) - 1), 1)
   if(missing(ncols)) ncols <- ceiling(npars/nrows)
   stopifnot(all_pos_ints(c(nrows, ncols)) && nrows*ncols >= npars)
 

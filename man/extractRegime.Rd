@@ -4,8 +4,16 @@
 \alias{extractRegime}
 \title{Extract regime from a parameter vector}
 \usage{
-extractRegime(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, regime, with_dfs = TRUE)
+extractRegime(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  regime,
+  with_dfs = TRUE
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

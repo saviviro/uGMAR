@@ -4,9 +4,16 @@
 \alias{quantileResiduals}
 \title{Compute quantile residuals of GMAR, StMAR, or G-StMAR model}
 \usage{
-quantileResiduals(data, p, M, params, model = c("GMAR", "StMAR",
-  "G-StMAR"), restricted = FALSE, constraints = NULL,
-  parametrization = c("intercept", "mean"))
+quantileResiduals(
+  data,
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  parametrization = c("intercept", "mean")
+)
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

@@ -39,3 +39,7 @@
 * Bug fix: the function 'add_data' did not identify the model type correctly. 
 * Bug fix: simulateGSMAR simulated some initial values from slighly wrong the distribution; did not have affect on forecasts.
 * Minor update on the summary print for the models
+
+# uGMAR 3.2.3
+
+* Fixed 'profile_logliks' to show correct headlines with mean parametrization + improved the default method for choosing the number of rows and colums in the plot-matrix.

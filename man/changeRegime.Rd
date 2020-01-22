@@ -4,8 +4,16 @@
 \alias{changeRegime}
 \title{Change the specified regime of parameter vector to the given regime-parameter vector}
 \usage{
-changeRegime(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, regimeParams, regime)
+changeRegime(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  regimeParams,
+  regime
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

@@ -4,12 +4,23 @@
 \alias{fitGSMAR}
 \title{Estimate Gaussian or Student's t Mixture Autoregressive model}
 \usage{
-fitGSMAR(data, p, M, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, conditional = TRUE,
-  parametrization = c("intercept", "mean"), ncalls = round(10 + 9 *
-  log(sum(M))), ncores = min(2, ncalls, parallel::detectCores()),
-  maxit = 300, seeds = NULL, printRes = TRUE, runTests = FALSE,
-  ...)
+fitGSMAR(
+  data,
+  p,
+  M,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  conditional = TRUE,
+  parametrization = c("intercept", "mean"),
+  ncalls = round(10 + 9 * log(sum(M))),
+  ncores = min(2, ncalls, parallel::detectCores()),
+  maxit = 300,
+  seeds = NULL,
+  printRes = TRUE,
+  runTests = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

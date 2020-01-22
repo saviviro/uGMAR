@@ -47,9 +47,10 @@ uncondMoments(gstmar12)
  }
 }
 \seealso{
-Other moment functions: \code{\link{condMoments}},
-  \code{\link{get_regime_autocovs}},
-  \code{\link{get_regime_means}},
-  \code{\link{get_regime_vars}}
+Other moment functions: 
+\code{\link{condMoments}()},
+\code{\link{get_regime_autocovs}()},
+\code{\link{get_regime_means}()},
+\code{\link{get_regime_vars}()}
 }
 \concept{moment functions}

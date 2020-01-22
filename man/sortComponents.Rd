@@ -4,8 +4,13 @@
 \alias{sortComponents}
 \title{Sort the mixture components of a GMAR, StMAR, or G-StMAR model}
 \usage{
-sortComponents(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE)
+sortComponents(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

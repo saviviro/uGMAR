@@ -4,8 +4,14 @@
 \alias{reformConstrainedPars}
 \title{Reform parameter vector with linear constraints to correspond non-constrained parameter vector.}
 \usage{
-reformConstrainedPars(p, M, params, model = c("GMAR", "StMAR",
-  "G-StMAR"), restricted = FALSE, constraints = NULL)
+reformConstrainedPars(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

@@ -4,9 +4,19 @@
 \alias{standardErrors}
 \title{Calculate standard errors for estimates of a GMAR, StMAR, or GStMAR model}
 \usage{
-standardErrors(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL, conditional = TRUE,
-  parametrization = c("intercept", "mean"), custom_h = NULL, minval)
+standardErrors(
+  data,
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  conditional = TRUE,
+  parametrization = c("intercept", "mean"),
+  custom_h = NULL,
+  minval
+)
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

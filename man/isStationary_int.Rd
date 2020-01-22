@@ -7,8 +7,14 @@
 \usage{
 isStationary_int(p, M, params, restricted = FALSE)
 
-isIdentifiable(p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL)
+isIdentifiable(
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

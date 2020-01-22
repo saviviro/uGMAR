@@ -4,8 +4,13 @@
 \alias{nParams}
 \title{Calculate the number of parameters}
 \usage{
-nParams(p, M, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL)
+nParams(
+  p,
+  M,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}

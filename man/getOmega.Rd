@@ -4,9 +4,18 @@
 \alias{getOmega}
 \title{Generate the covariance matrix Omega for quantile residual tests}
 \usage{
-getOmega(data, p, M, params, model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE, constraints = NULL,
-  parametrization = c("intercept", "mean"), g, dim_g)
+getOmega(
+  data,
+  p,
+  M,
+  params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
+  restricted = FALSE,
+  constraints = NULL,
+  parametrization = c("intercept", "mean"),
+  g,
+  dim_g
+)
 }
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}

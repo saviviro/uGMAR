@@ -5,8 +5,14 @@
 \title{Transform a StMAR model parameter vector to a corresponding G-StMAR model parameter vector
  with large dfs parameters reduced.}
 \usage{
-stmarpars_to_gstmar(p, M, params, restricted = FALSE,
-  constraints = NULL, maxdf = 100)
+stmarpars_to_gstmar(
+  p,
+  M,
+  params,
+  restricted = FALSE,
+  constraints = NULL,
+  maxdf = 100
+)
 }
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}
