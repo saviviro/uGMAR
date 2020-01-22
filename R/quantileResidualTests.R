@@ -138,7 +138,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, n
   Omega <- try_to_get_omega(g=g, dim_g=dim_g, which_test="norm", which_lag=NA)
 
   # Test statistics and p-value
-  sumg <- as.matrix(colSums(g(qresiduals))) #as.matrix(rowSums(t(g(qresiduals))))
+  sumg <- as.matrix(colSums(g(qresiduals)))
   N <- crossprod(sumg, solve(Omega, sumg))/T_obs
   pvalue <- 1 - pchisq(N, df=dim_g)
 
