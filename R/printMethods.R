@@ -30,7 +30,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 
   # Help functions
   format_value <- format_valuef(digits)
-  print_err <- function(val) {
+  print_err <- function(val) { # Function for printing standard errors in brackets
     if(summary_print) cat(paste0(" (", format_value(val),")"))
   }
   make_string <- function(n_spaces, val) paste0(c(rep(" ", n_spaces), paste0("(", format_value(val), ")")), collapse="")
@@ -63,7 +63,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   if(summary_print) {
     all_ar_roots <- get_ar_roots(gsmar)
     std_errors <- removeAllConstraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
-                                       constraints=constraints)
+                                       constraints=constraints) # These errors are valid only if there is no multiplications or summations
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err <- pick_alphas(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err[sum(M)] <- NA
@@ -139,7 +139,17 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     for(i1 in seq_len(p)) {
       cat(paste0(" + [", format_value(pars[1 + i1, m]), "]Y.", i1))
       nspaces <- ifelse(i1 == 1, 3, 6)
-      add_string(const_spaces=nspaces, pars[1 + i1, m], pars_err[1 + i1, m])
+      if(!is.null(constraints) && (any(constraints[[m]] != 1 & constraints[[m]] != 0) | any(rowSums(constraints[[m]]) > 1))) {
+        # The constrained AR parameter standard errors multiplied open in 'pars_err' are valid only
+        # iff the constraint matrix (for the current regime) contains zeros and ones only, and
+        # there is at most one one in each row (no multiplications or summations).
+        add_string(const_spaces=nspaces, pars[1 + i1, m], NA)
+        sep_AR <- TRUE
+      } else {
+        # No constraints or the standard errors expanded from constraints are valid for this regime.
+        add_string(const_spaces=nspaces, pars[1 + i1, m], pars_err[1 + i1, m])
+        sep_AR <- FALSE
+      }
     }
     cat(" + ")
 
@@ -151,6 +161,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     }
     cat("\n")
     if(summary_print) cat(paste0(err_string, collapse=""), '\n')
+    if(summary_print && sep_AR) cat(paste0("AR parameter std errors: ", paste0(format_value(pars_err[2:(p + 1), m]), collapse=", ")), "\n")
   }
 
   if(summary_print) {
