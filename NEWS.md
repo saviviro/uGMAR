@@ -43,4 +43,4 @@
 # uGMAR 3.2.3
 
 * Fixed 'profile_logliks' to show correct headlines with mean parametrization + improved the default method for choosing the number of rows and colums in the plot-matrix.
-* Now standard errors are printed correctly for models imposing all kinds of constraints. In earlier versions, the constraint AR parameter standard errors were printed incorrectly if the constraints involved multiplications or summations. 
+* Now standard errors are printed correctly for models imposing all kinds of constraints. In the earlier versions, constrained AR parameter standard errors were printed incorrectly if the constraints involved multiplications or summations. 
