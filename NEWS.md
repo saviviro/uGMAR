@@ -28,7 +28,7 @@
 
 * Fixed 'additional issue' in CRAN checks
 
-# uGMAT 3.2.2
+# uGMAR 3.2.2
 
 * New function: 'profile_logliks' for plotting profile log-likelihood functions.
 * Disabled camelCase compatibility for arguments 'ncalls' and 'ncores' in fitGMAR.
