@@ -351,7 +351,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
           }
         }
       }
-    } else { ## restricted == TRUE, taken care separately
+    } else { ## restricted == TRUE, taken care separately for readability of the code
         if(i1 <= M + q) { # phi_{m,0},...,phi_{m,p}
           if(i1 <= M) { # phi_{m,0}
             m <- i1

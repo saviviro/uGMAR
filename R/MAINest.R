@@ -228,8 +228,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   # Logarithmize dfs to get overly large dfs values to the same range as other parameters.
   # This adjusts the difference 'h' larger for larger dfs parameters in non-log scale to
-  # avoid numerical problems associated with overly large degrees of freedom values, and
-  # it also allows the dfs estimates to 'explode' more sensitively.
+  # avoid numerical problems associated with overly large degrees of freedom values.
   manipulateDFS <- function(M, params, model, FUN) {
     FUN <- match.fun(FUN)
     M2 <- ifelse(model == "StMAR", M, M[2])
