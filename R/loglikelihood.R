@@ -309,32 +309,32 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       }
 
       is_gsl <- requireNamespace("gsl", quietly = TRUE) # If 'gsl' available, calculate with hypergeometric function what can be calculated
-        for(i1 in 1:M2) { # Go through StMAR type regimes
-          if(is_gsl) {
-            whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
-            whichNotDef <- (1:length(Y2))[-whichDef]
-          } else {
-            whichDef <- integer(0)
-            whichNotDef <- 1:length(Y2)
-          }
+      for(i1 in 1:M2) { # Go through StMAR type regimes
+        if(is_gsl) {
+          whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
+          whichNotDef <- (1:length(Y2))[-whichDef]
+        } else {
+          whichDef <- integer(0)
+          whichNotDef <- 1:length(Y2)
+        }
 
-          if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
-            Y0 <- Y2[whichDef]
-            alpha_mt0 <- alpha_mt[whichDef, M1 + i1]
-            mu_mt0 <- mu_mt[whichDef, M1 + i1]
-            sigma_mt0 <- sigma_mt[whichDef, i1]
-            a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*base::pi*(dfs[i1] + p - 2))
-            resM2[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5,
-                                                                                     -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)),
-                                                                                     give=FALSE, strict=TRUE))
-          }
-          # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function
-          if(length(whichNotDef) > 0) {
-            for(i2 in whichNotDef) {
-              resM2[i2, i1] <- my_integral(i1, i2)
-            }
+        if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
+          Y0 <- Y2[whichDef]
+          alpha_mt0 <- alpha_mt[whichDef, M1 + i1]
+          mu_mt0 <- mu_mt[whichDef, M1 + i1]
+          sigma_mt0 <- sigma_mt[whichDef, i1]
+          a0 <- exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt0*base::pi*(dfs[i1] + p - 2))
+          resM2[whichDef, i1] <- alpha_mt0*(0.5 - a0*(mu_mt0 - Y0)*gsl::hyperg_2F1(0.5, 0.5*(1 + dfs[i1] + p), 1.5,
+                                                                                   -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)),
+                                                                                   give=FALSE, strict=TRUE))
+        }
+        # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function
+        if(length(whichNotDef) > 0) {
+          for(i2 in whichNotDef) {
+            resM2[i2, i1] <- my_integral(i1, i2)
           }
         }
+      }
       lt_tmpM2 <- resM2 # We exploit the same names
     } else { # Calculate l_t in the log-likelihood function
       lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(base::pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*
