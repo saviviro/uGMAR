@@ -178,7 +178,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
   Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1))
 
-  # Calculate inverse Gamma_m (see the covariance matrix Gamma_p in MDP 2018, p.3 - we calculate this for all mixture components using
+  # Calculate inverse Gamma_m (see the covariance matrix Gamma_p in MPS 2018, p.3 - we calculate this for all mixture components using
   # the inverse formula in Galbraith and Galbraith 1974). Also, calculate the matrix products in multivariate normal and t-distribution
   # densities.
   matProd <- matrix(nrow=n_obs - p + 1, ncol=M)
@@ -228,7 +228,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
   if(!is.matrix(logmv_values0)) logmv_values0 <- as.matrix(logmv_values0)
 
-  l_0 <- 0 # "The first term" of the exact log-likelihood function (KMS 2015, eq.(12) and MPS, eq.(14))
+  l_0 <- 0 # "The first term" of the exact log-likelihood function (KMS 2015, eq.(12) and MPS 2018, eq.(14))
   if(M == 1) { # No need to do calculations is only one regime.
     alpha_mt <- as.matrix(rep(1, nrow(logmv_values0)))
     if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
