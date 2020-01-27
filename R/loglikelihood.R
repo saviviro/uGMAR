@@ -294,7 +294,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     if(to_return == "qresiduals") { # Calculate the integrals for the quantile residuals
       resM2 <- matrix(ncol=M2, nrow=n_obs - p)
 
-      # Function for numerical integration of the pdf.
+      # Function for numerical integration of the pdf
       my_integral <- function(i1, i2) { # Takes in the regime index i1 and the observation index i2 for the upper bound
         f_mt <- function(y_t) { # The conditional density function to be integrated numerically
           alpha_mt[i2, M1 + i1]*exp(lgamma(0.5*(1 + dfs[i1] + p)) - lgamma(0.5*(dfs[i1] + p)))/sqrt(sigma_mt[i2, i1]*base::pi*(dfs[i1] + p - 2))*
@@ -308,10 +308,15 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
                  })
       }
 
-      if(requireNamespace("gsl", quietly = TRUE)) { # If 'gsl' available, calculate with hypergeometric function what can be calculated
+      is_gsl <- requireNamespace("gsl", quietly = TRUE) # If 'gsl' available, calculate with hypergeometric function what can be calculated
         for(i1 in 1:M2) { # Go through StMAR type regimes
-          whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
-          whichNotDef <- (1:length(Y2))[-whichDef]
+          if(is_gsl) {
+            whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
+            whichNotDef <- (1:length(Y2))[-whichDef]
+          } else {
+            whichDef <- integer(0)
+            whichNotDef <- 1:length(Y2)
+          }
 
           if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
             Y0 <- Y2[whichDef]
@@ -330,13 +335,6 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
             }
           }
         }
-      } else { # Numerically integrate everything if package "gsl" is not available - slow but works "always".
-        for(i1 in 1:M2) { # Go through the StMAR type regimes
-          for(i2 in 1:length(Y2)) { # GO through the observations, exluding the initial values
-            resM2[i2, i1] <- my_integral(i1, i2)
-          }
-        }
-      }
       lt_tmpM2 <- resM2 # We exploit the same names
     } else { # Calculate l_t in the log-likelihood function
       lt_tmpM2 <- alpha_mt[,(M1 + 1):M]*t(exp(lgamma(0.5*(1 + dfs + p)) - lgamma(0.5*(dfs + p)))/sqrt(base::pi*(dfs + p - 2))/t(sqrt(sigma_mt)))*
