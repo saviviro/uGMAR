@@ -328,7 +328,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
                                                                                    -((mu_mt0 - Y0)^2)/(sigma_mt0*(dfs[i1] + p - 2)),
                                                                                    give=FALSE, strict=TRUE))
         }
-        # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function
+        # Calculate the CDF values at y_t that can't be calculated with the hypergeometric function (from the package 'gsl')
         if(length(whichNotDef) > 0) {
           for(i2 in whichNotDef) {
             resM2[i2, i1] <- my_integral(i1, i2)
