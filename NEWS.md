@@ -42,6 +42,7 @@
 
 # uGMAR 3.2.3
 
+* Updated the plot method for class 'gsmar' object: now includes a density plot by default (can be removed by argument).
 * Fixed 'profile_logliks' to show correct headlines with mean parametrization + improved the default method for choosing the number of rows and colums in the plot-matrix.
 * Now standard errors are printed correctly for models imposing all kinds of constraints. In the earlier versions, constrained AR parameter standard errors were printed incorrectly if the constraints involved multiplications or summations. 
 * Removed redundant reinitialization of a PSOCK cluster in the function 'fitGSMAR'. 

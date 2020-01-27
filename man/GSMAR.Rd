@@ -32,7 +32,7 @@ GSMAR(
 
 \method{summary}{gsmar}(object, ..., digits = 2)
 
-\method{plot}{gsmar}(x, ...)
+\method{plot}{gsmar}(x, ..., include_dens = TRUE)
 
 \method{print}{gsmar}(x, ..., digits = 2, summary_print = FALSE)
 }
@@ -121,11 +121,15 @@ is adjusted to avoid numerical problems, and the difference is \code{6e-6} for t
 
 \item{object}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{...}{graphical parameters passed to \code{ts.plot}.}
+\item{...}{in the plot method: arguments passed to the function \code{density} which
+calculates the kernel density estimate of the data.}
 
 \item{digits}{number of digits to be printed (max 20)}
 
 \item{x}{object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.}
+
+\item{include_dens}{Plot also kernel density estimate of the data and model implied stationary
+density with regimewise densities? See the details.}
 
 \item{summary_print}{if set to \code{TRUE} then the print will include approximate
 standard errors for the estimates, log-likelihood, information criteria values,
@@ -145,6 +149,20 @@ Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or
 \details{
 Models can be built without data, e.q., in order to simulate from the process, but some things such as quantile
  residuals and conditional moments can't be calculated without data.
+
+If \code{include_dens == TRUE}, the kernel density estimate of the data is calculated
+  with the function \code{density} from the package \code{stats}. By default, the default
+  settings of that function are used, including the usage of Gaussian kernel. Use the dot
+  parameters to adjust the settings if desired.
+
+  By the model implied stationary density we mean the stationary one-dimensional mixture
+  density of M regimes (see KMS 2015, Theorem 1 and the discussion following it for the Gaussian
+  case and Theorem 2 in PMS 2018 for the Studen's t case). The regimewise densities (i.e. each
+  density 1,...,M in the stationary mixture density) are multiplied with the mixing weight
+  parameters accordingly.
+
+  In the density plot black represents the kernel density estimate of the data, grey dashed line the
+  model implied density, and the colored dotter lines the regime wise densities.
 }
 \section{Methods (by generic)}{
 \itemize{

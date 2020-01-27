@@ -98,16 +98,33 @@ plot.qrtest <- function(x, ...) {
 
   plot_pvalues("ac_res")
   plot_pvalues("ch_res")
+  invisible(qrtest)
 }
 
 
 #' @import graphics
 #' @describeIn GSMAR Plot method for class 'gsmar'
 #' @param x object of class \code{'gsmar'} created with \code{fitGSMAR} or \code{GSMAR}.
-#' @param ... graphical parameters passed to \code{ts.plot}.
+#' @param ... in the plot method: arguments passed to the function \code{density} which
+#'   calculates the kernel density estimate of the data.
+#' @param include_dens Plot also kernel density estimate of the data and model implied stationary
+#'  density with regimewise densities? See the details.
+#' @details If \code{include_dens == TRUE}, the kernel density estimate of the data is calculated
+#'   with the function \code{density} from the package \code{stats}. By default, the default
+#'   settings of that function are used, including the usage of Gaussian kernel. Use the dot
+#'   parameters to adjust the settings if desired.
+#'
+#'   By the model implied stationary density we mean the stationary one-dimensional mixture
+#'   density of M regimes (see KMS 2015, Theorem 1 and the discussion following it for the Gaussian
+#'   case and Theorem 2 in PMS 2018 for the Studen's t case). The regimewise densities (i.e. each
+#'   density 1,...,M in the stationary mixture density) are multiplied with the mixing weight
+#'   parameters accordingly.
+#'
+#'   In the density plot black represents the kernel density estimate of the data, grey dashed line the
+#'   model implied density, and the colored dotter lines the regime wise densities.
 #' @export
 
-plot.gsmar <- function(x, ...) {
+plot.gsmar <- function(x, ..., include_dens=TRUE) {
   gsmar <- x
   check_data(gsmar)
   data <- as.ts(gsmar$data)
@@ -119,11 +136,87 @@ plot.gsmar <- function(x, ...) {
 
   old_par <- par(no.readonly=TRUE)
   on.exit(par(old_par))
-  par(mfrow=c(2, 1), mar=c(2.5, 2.5, 2.1, 1))
+  if(include_dens) {
+    layout(mat=matrix(c(1, 3, 2, 3), nrow=2, byrow=TRUE), widths=c(2, 1))
+    par(mar=c(2.5, 2.3, 1.5, 0.3))
+  } else {
+    par(mfrow=c(2, 1), mar=c(2.5, 2.5, 2.1, 1))
+  }
   colpal_mw <- grDevices::colorRampPalette(c("blue", "turquoise1", "green", "red"))(M)
 
-  ts.plot(data, gpars=list(main="Time series", ...))
+  ts.plot(data, gpars=list(main="Time series"))
   ts.plot(ts_mw, gpars=list(main="Mixing weights", ylim=c(0, 1), col=colpal_mw, lty=2))
-  legend("topleft", legend=paste0("mix.comp.", 1:M), bty="n", col=colpal_mw, lty=1, lwd=2,
-         text.font=2, cex=0.6, x.intersp=0.5, y.intersp=1)
+  legend("topleft", legend=paste0("regime ", 1:M), bty="n", col=colpal_mw, lty=1, lwd=2,
+         text.font=2, cex=0.65, x.intersp=0.5, y.intersp=1)
+
+  # Plot kernel density estimate of the data with the model implied density
+  if(include_dens) {
+
+    # Collected the required statistics
+    params <- gsmar$params
+    M_orig <- gsmar$model$M
+    model <- gsmar$model$model
+    restricted <- gsmar$model$restricted
+    constraints <- gsmar$model$constraints
+    alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
+    means <- get_regime_means(gsmar)
+    vars <- get_regime_vars(gsmar)
+    if(model == "GMAR") {
+      M1 <- M
+      M2 <- 0
+    } else if(model == "StMAR") {
+      M1 <- 0
+      M2 <- M
+    } else { # Model == "G-StMAR"
+      M1 <- M_orig[1]
+      M2 <- M_orig[2]
+    }
+
+    # Degrees of freedom and Student's t density
+    if(model %in% c("StMAR", "G-StMAR")) {
+      dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
+
+      # The student's density as in the model definition
+      my_dt <- function(y, mean, var, df) {
+        tmp <- lgamma(0.5*(1 + df)) - lgamma(0.5*df) - 0.5*log(pi*(df - 2)) - 0.5*log(var) -
+          0.5*(1 + df)*log(1 + (y - mean)^2/(var*(df - 2)))
+        exp(tmp)
+      }
+    }
+
+    # Regime density multiplied with the corresponding mixing weight parameter
+    reg_dens <- function(m, xx) {
+      if(m <= M1) {
+        return(alphas[m]*dnorm(xx, mean=means[m], sd=sqrt(vars[m])))
+      } else {
+        return(alphas[m]*my_dt(xx, mean=means[m], var=vars[m], df=dfs[m - M1]))
+      }
+    }
+
+    # The model density
+    mod_dens_f <- function(xx) {
+      rowSums(vapply(1:M, function(m) reg_dens(m, xx), numeric(length(xx))))
+    }
+
+    # Densities and figure bounds
+    data_dens <- density(data)
+    mod_mean <- gsmar$uncond_moments$uncond_mean
+    mod_sd <- sqrt(gsmar$uncond_moments$uncond_var)
+    x0 <- min(mod_mean - 3*mod_sd, min(data_dens$x))
+    x1 <- max(mod_mean + 3*mod_sd, max(data_dens$x))
+    xpp <- seq(from=x0, to=x1, length.out=500)
+    mod_dens <- mod_dens_f(xpp)
+    y0 <- 0
+    y1 <- max(c(data_dens$y, mod_dens))
+
+    # Plot the densities
+    plot(x=data_dens$x, y=data_dens$y, xlim=c(x0, x1), ylim=c(y0, y1), main="Density",
+         ylab="", xlab="", cex.axis=0.8, font.axis=2, type="l")
+    lines(x=xpp, y=mod_dens, type="l", lty=2, lwd=2, col="darkgrey")
+    for(m in 1:M) {
+      lines(x=xpp, y=reg_dens(m, xx=xpp), type="l", lty=3, col=colpal_mw[m])
+    }
+  }
+
+  invisible(gsmar)
 }
