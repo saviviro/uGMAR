@@ -318,6 +318,9 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' @inheritParams simulateGSMAR
 #' @inheritParams GSMAR
 #' @param which_round based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.
+#' @param which_largest based on estination round with which largest log-likelihood should the model be constructed?
+#'   An integer value in 1,...,\code{ncalls}. For example, \code{which_largest=2} would take the second largest log-likelihood
+#'   and construct the model based on the corresponding estimates. If used, then \code{which_round} is ignored.
 #' @details It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
 #'   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
 #' @inherit GSMAR references return
@@ -332,9 +335,14 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' }
 #' @export
 
-alt_gsmar <- function(gsmar, which_round=1, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE, custom_h=NULL) {
+alt_gsmar <- function(gsmar, which_round=1, which_largest, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=TRUE,
+                      custom_h=NULL) {
   stopifnot(!is.null(gsmar$all_estimates))
   stopifnot(which_round >= 1 || which_round <= length(gsmar$all_estimates))
+  if(!missing(which_largest)) {
+    stopifnot(which_largest >= 1 || which_largest <= length(gsmar$all_estimates))
+    which_round <- order(gsmar$all_logliks, decreasing=TRUE)[which_largest]
+  }
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$all_estimates[[which_round]],
         model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
