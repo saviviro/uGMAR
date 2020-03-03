@@ -15,7 +15,7 @@ quantileResidualTests(
   gsmar,
   lagsAC = c(1, 2, 5, 10),
   lagsCH = lagsAC,
-  nsimu = 2000,
+  nsimu = 1,
   printRes = TRUE
 )
 }
@@ -36,7 +36,8 @@ is tested.}
 
 \item{nsimu}{a positive integer specifying to how many simulated observations the covariance matrix Omega
 (see Kalliovirta (2012)) should be based on. If smaller than data size, then omega will be based on the
-given data and not on simulated data.}
+given data and not on simulated data. Having the covariance matrix omega based on a large simulated sample
+might improve the tests size properties.}
 
 \item{printRes}{a logical argument defining whether the results should be printed or not.}
 }

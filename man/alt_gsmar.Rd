@@ -7,6 +7,7 @@
 alt_gsmar(
   gsmar,
   which_round = 1,
+  which_largest,
   calc_qresiduals = TRUE,
   calc_cond_moments = TRUE,
   calc_std_errors = TRUE,
@@ -17,6 +18,10 @@ alt_gsmar(
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
 \item{which_round}{based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.}
+
+\item{which_largest}{based on estination round with which largest log-likelihood should the model be constructed?
+An integer value in 1,...,\code{ncalls}. For example, \code{which_largest=2} would take the second largest log-likelihood
+and construct the model based on the corresponding estimates. If used, then \code{which_round} is ignored.}
 
 \item{calc_qresiduals}{should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.}
 

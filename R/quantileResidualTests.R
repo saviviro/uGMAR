@@ -12,7 +12,8 @@
 #'  is tested.
 #' @param nsimu a positive integer specifying to how many simulated observations the covariance matrix Omega
 #'  (see Kalliovirta (2012)) should be based on. If smaller than data size, then omega will be based on the
-#'  given data and not on simulated data.
+#'  given data and not on simulated data. Having the covariance matrix omega based on a large simulated sample
+#'  might improve the tests size properties.
 #' @param printRes a logical argument defining whether the results should be printed or not.
 #' @details
 #'   For a correctly specified GSMAR model employing the maximum likelihood estimator, the quantile residuals
@@ -59,7 +60,7 @@
 #' }
 #' @export
 
-quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, nsimu=2000, printRes=TRUE) {
+quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
   check_gsmar(gsmar)
   check_data(gsmar)
   data <- gsmar$data
