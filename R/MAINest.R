@@ -189,6 +189,10 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   minval <- ifelse(is.null(dot_params$minval), get_minval(data), dot_params$minval)
   red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
 
+  if(ncores > parallel::detectCores()) {
+    ncores <- parallel::detectCores()
+    message("ncores was set to be larger than the number of detected: using ncores = parallel::detectCores()")
+  }
   if(ncalls < ncores) {
     ncores <- ncalls
     message("ncores was set to be larger than the number of estimation rounds: using ncores = ncalls")
