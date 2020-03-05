@@ -71,7 +71,7 @@
 #' }
 #' @export
 
-diagnosticPlot <- function(gsmar, nlags=20, nsimu=2000, plot_indstats=FALSE) {
+diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   if(!all_pos_ints(c(nlags, nsimu))) stop("The arguments 'nlags' and 'nsimu' have to be a strictly positive integers")
   check_gsmar(gsmar)
   check_data(gsmar)
