@@ -47,3 +47,5 @@
 * Now standard errors are printed correctly for models imposing all kinds of constraints. In the earlier versions, constrained AR parameter standard errors were printed incorrectly if the constraints involved multiplications or summations. 
 * Removed redundant reinitialization of a PSOCK cluster in the function 'fitGSMAR'. 
 * In the function quantileResidualTests the default argument for 'nsimu' is now 1 so that the tests are based on the given data only (and not on simulation).
+* Removed inflation expectation data.
+* Added interest rate spead (10-Year minus 1-Year treasury) data.
