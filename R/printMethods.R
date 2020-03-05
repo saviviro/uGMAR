@@ -98,6 +98,9 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
                     sep=", "), "\n")
   }
 
+  if(restricted & !is.null(constraints)) { # So that no need to make special case for restricted models
+    constraints <- replicate(n=M, expr=constraints, simplify=FALSE)
+  }
   for(m in seq_len(sum(M))) {
     cat("\n")
     count <- 1
