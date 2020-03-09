@@ -12,7 +12,7 @@
 \item{...}{arguments passed to function \code{grid}.}
 
 \item{nt}{a positive integer specifying the number of observations to be plotted
-along with the prediction. Default is \code{round(length(data)*0.2)}.}
+along with the prediction. Default is \code{round(length(data)*0.15)}.}
 
 \item{add_grid}{should grid a be added to the plots?}
 }

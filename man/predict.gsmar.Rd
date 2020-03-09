@@ -9,9 +9,10 @@
   ...,
   n_ahead,
   nsimu = 10000,
-  pi = c(0.95, 0.8),
+  pi = 0.95,
   pred_type = c("median", "mean", "cond_mean"),
   pi_type = c("two-sided", "upper", "lower", "none"),
+  mix_weights = TRUE,
   nt,
   plotRes = TRUE
 )
@@ -33,14 +34,22 @@ intervals won't be calculated if the exact conditional mean is used.}
 
 \item{pi_type}{should the prediction intervals be "two-sided", "upper", or "lower"?}
 
+\item{mix_weights}{\code{TRUE} if point predictions for mixing weights should be plotted,
+\code{FALSE} in not.}
+
 \item{nt}{a positive integer specifying the number of observations to be plotted
-along with the prediction. Default is \code{round(length(data)*0.2)}.}
+along with the prediction. Default is \code{round(length(data)*0.15)}.}
 
 \item{plotRes}{a logical argument defining whether the forecast should be plotted or not.}
 }
 \value{
-Returns a data frame containing the empirical point prediction and prediction intervals.
- Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
+Returns a class \code{'gsmarpred'} object containing, among the specifications,...
+ \describe{
+   \item{$pred}{Point forecasts}
+   \item{$pred_int}{Prediction intervals}
+   \item{$mix_pred}{Point forecasts for mixing weights}
+   \item{mix_pred_int}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
+ }
 }
 \description{
 \code{predict.gsmar} forecasts the specified GMAR, StMAR, or G-StMAR process by using the given
@@ -53,24 +62,18 @@ Returns a data frame containing the empirical point prediction and prediction in
  the sample median or mean for each step and the prediction intervals are obtained from the
  empirical fractiles.
 
- We encourage directly using the function \code{simulateGSMAR} for quantile based forecasting.
- With \code{simulateGSMAR} it's easy to forecast the mixing weights too.
+ The function \code{simulateGSMAR} can also be used directly for quantile based forecasting.
 }
 \examples{
 \donttest{
 # GMAR model
 fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-pred12 <- predict(fit12, n_ahead=10)
+pred12 <- predict(fit12, n_ahead=10, pi=c(0.95, 0.8))
 pred12
-
-# Restricted GMAR model, one-step conditional mean prediction
-fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
-pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
-pred12r
 
 # Non-mixture StMAR model, upper prediction intervals
 fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-predict(fit11t, n_ahead=10, pi_type="upper", pi=c(0.99, 0.95, 0.9))
+predict(fit11t, n_ahead=10, pi_type="upper", pi=0.9)
 
 # G-StMAR model, no prediction intervals
 fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
@@ -78,6 +81,11 @@ pred12gs <- predict(fit12gs, n_ahead=10, pred_type="median",
  pi_type="none", plotRes=FALSE)
 pred12gs
 plot(pred12gs)
+
+# Restricted GMAR model, one-step conditional mean prediction
+fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
+pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
+pred12r
 
 # Such StMAR(3,2) that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are

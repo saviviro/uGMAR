@@ -91,7 +91,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
     qresiduals <- qresiduals[!is.na(qresiduals)]
     warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
   }
-  old_par <- par(no.readonly = TRUE) # Save old settings
+  old_par <- par(no.readonly=TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   if(plot_indstats) {
     par(mfrow=c(3, 2), mar=c(2.1, 2.1, 2.1, 0.8))
@@ -309,6 +309,8 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
                         constraints=constraints, conditional=gsmar$model$conditional, parametrization=parametrization,
                         boundaries=TRUE, checks=FALSE, minval=NA)
     }, numeric(1))
+
+    if(sum(is.na(logliks)) == precission) stop("Profile log-likelihood function is too peaky - increase precission (also estimates might be peculiar)")
 
     # In order to get the labels right, we first determine which parameter is in question.
     # For readability of the code, we do the cases of restricted and unrestricted models

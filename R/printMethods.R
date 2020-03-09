@@ -86,7 +86,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   cat(ifelse(gsmar$model$conditional, "conditional,", "exact,"),
       ifelse(gsmar$model$parametrization == "mean", "mean parametrization,", "intercept parametrization,"),
       ifelse(restricted, "AR parameters restricted,", "not restricted,"),
-      ifelse(is.null(constraints), "no constraints", "linear constraints imposed"), "\n")
+      ifelse(is.null(constraints), "no constraints.", "linear constraints imposed."), "\n")
 
   if(summary_print) {
     IC <- gsmar$IC
@@ -257,6 +257,10 @@ print.gsmarpred <- function(x, ..., digits=2) {
     }
      print(df[, new_order])
   }
+  if(gsmarpred$pred_type != "cond_mean") {
+    cat("\n Point forecasts and prediction intervals for mixing weights can be obtained with $mix_pred and $mix_pred_ints, respectively.\n")
+  }
+
   invisible(gsmarpred)
 }
 

@@ -15,19 +15,25 @@
 #'   be one-step-ahead forecast based on the exact conditional mean (\code{"cond_mean"})? prediction
 #'   intervals won't be calculated if the exact conditional mean is used.
 #' @param pi_type should the prediction intervals be "two-sided", "upper", or "lower"?
+#' @param mix_weights \code{TRUE} if point predictions for mixing weights should be plotted,
+#'   \code{FALSE} in not.
 #' @param nt a positive integer specifying the number of observations to be plotted
-#'   along with the prediction. Default is \code{round(length(data)*0.2)}.
+#'   along with the prediction. Default is \code{round(length(data)*0.15)}.
 #' @param plotRes a logical argument defining whether the forecast should be plotted or not.
 #' @details \code{predict.gsmar} uses the last \code{p} values of the data to simulate \code{nsimu}
 #'  possible future values for each step-ahead. The point prediction is then obtained by calculating
 #'  the sample median or mean for each step and the prediction intervals are obtained from the
 #'  empirical fractiles.
 #'
-#'  We encourage directly using the function \code{simulateGSMAR} for quantile based forecasting.
-#'  With \code{simulateGSMAR} it's easy to forecast the mixing weights too.
+#'  The function \code{simulateGSMAR} can also be used directly for quantile based forecasting.
 #'
-#' @return Returns a data frame containing the empirical point prediction and prediction intervals.
-#'  Or if \code{pred_type=="cond_mean"} returns the optimal prediction as (1x1) numeric vector.
+#' @return Returns a class \code{'gsmarpred'} object containing, among the specifications,...
+#'  \describe{
+#'    \item{$pred}{Point forecasts}
+#'    \item{$pred_int}{Prediction intervals}
+#'    \item{$mix_pred}{Point forecasts for mixing weights}
+#'    \item{mix_pred_int}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
+#'  }
 #' @inherit simulateGSMAR references
 #' @seealso \code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
 #'  \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}
@@ -35,17 +41,12 @@
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' pred12 <- predict(fit12, n_ahead=10)
+#' pred12 <- predict(fit12, n_ahead=10, pi=c(0.95, 0.8))
 #' pred12
-#'
-#' # Restricted GMAR model, one-step conditional mean prediction
-#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
-#' pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
-#' pred12r
 #'
 #' # Non-mixture StMAR model, upper prediction intervals
 #' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' predict(fit11t, n_ahead=10, pi_type="upper", pi=c(0.99, 0.95, 0.9))
+#' predict(fit11t, n_ahead=10, pi_type="upper", pi=0.9)
 #'
 #' # G-StMAR model, no prediction intervals
 #' fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
@@ -53,6 +54,11 @@
 #'  pi_type="none", plotRes=FALSE)
 #' pred12gs
 #' plot(pred12gs)
+#'
+#' # Restricted GMAR model, one-step conditional mean prediction
+#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
+#' pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
+#' pred12r
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
@@ -63,8 +69,8 @@
 #' }
 #' @export
 
-predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pred_type=c("median", "mean", "cond_mean"),
-                         pi_type=c("two-sided", "upper", "lower", "none"), nt, plotRes=TRUE) {
+predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=0.95, pred_type=c("median", "mean", "cond_mean"),
+                         pi_type=c("two-sided", "upper", "lower", "none"), mix_weights=TRUE, nt, plotRes=TRUE) {
   gsmar <- object
   pred_type <- match.arg(pred_type)
   pi_type <- match.arg(pi_type)
@@ -91,11 +97,11 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     }
   }
   if(missing(nt)) {
-    nt <- round(length(data)*0.2)
+    nt <- round(length(data)*0.15)
   } else {
     stopifnot(nt > 0 & nt %% 1 == 0)
     if(nt > length(data)) {
-      warning("nt > length(data), using nt = length(data)")
+      warning("nt > length(data); using nt = length(data)")
       nt <- length(data)
     }
   }
@@ -121,17 +127,18 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     pi <- NULL
     pi_type <- "none"
     q_tocalc <- numeric(0)
-  } else { # Simulate future values of the process
+    mix_weights <- FALSE
+  } else { # pred_type != cond_mean: Simulate future values of the process
 
     # Simulations
-    res <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu, drop=FALSE)$sample
+    sim <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu, drop=FALSE)
+    sample <- sim$sample
+    alpha_mt <- sim$mixing_weights
 
-    # Predictions
-    if(pred_type == "mean") {
-      pred <- rowMeans(res)
-    } else {
-      pred <- apply(res, 1, FUN=median) # vapply(1:n_ahead, function(i1) median(res[i1,]), numeric(1))
-    }
+    # Point forecasts
+    myFUN <- ifelse(pred_type == "mean", mean, median)
+    pred <- apply(sample, 1, FUN=myFUN)
+    mix_pred <- apply(alpha_mt, MARGIN=1:2, FUN=mean)
 
     # Prediction intervals
     if(pi_type == "upper") {
@@ -147,18 +154,23 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
       pi <- NULL
     }
     q_tocalc <- sort(q_tocalc, decreasing=FALSE)
-    pred_ints <- t(apply(res, 1, FUN=quantile, probs=q_tocalc)) #t(vapply(1:n_ahead, function(i1) quantile(res[i1,], probs=q_tocalc), numeric(length(q_tocalc))))
+    pred_ints <- t(apply(sample, 1, FUN=quantile, probs=q_tocalc))
+    mix_pred_ints <- apply(alpha_mt, MARGIN=1:2, FUN=quantile, probs=q_tocalc)
+    mix_pred_ints <- aperm(mix_pred_ints, perm=c(2, 1, 3)) # So that for each [, , i1] the dimensions match with point forecasts
   }
 
   ret <- structure(list(gsmar=gsmar,
                         pred=pred,
                         pred_ints=pred_ints,
+                        mix_pred=mix_pred,
+                        mix_pred_ints=mix_pred_ints,
                         n_ahead=n_ahead,
                         nsimu=nsimu,
                         pi=pi,
                         pi_type=pi_type,
                         pred_type=pred_type,
-                        q=q_tocalc),
+                        q=q_tocalc,
+                        mix_weights=mix_weights),
                    class="gsmarpred")
   if(plotRes) plot.gsmarpred(x=ret, nt=nt, ...)
   ret
