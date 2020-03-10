@@ -36,7 +36,7 @@ test_that("predict.gsmar gives correct prediction", {
 
 test_that("predict.gsmar gives correct prediction intervals", {
   expect_equal(pred12$pred_ints[1], 10.1512, tolerance=1e-3)
-  expect_equal(pred12$pred_ints[3], 11.69211, tolerance=1e-3)
+  expect_equal(pred12$pred_ints[2], 12.37541, tolerance=1e-3)
   expect_equal(pred23$pred_ints[3], 9.144938, tolerance=1e-3)
   expect_equal(pred23$pred_ints[11], 11.56006, tolerance=1e-3)
   expect_equal(pred12r$pred_ints[3], 8.716014, tolerance=1e-3)

@@ -128,6 +128,8 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=0.95, pred_type=
     pi_type <- "none"
     q_tocalc <- numeric(0)
     mix_weights <- FALSE
+    mix_pred <- NULL
+    mix_pred_ints <- NULL
   } else { # pred_type != cond_mean: Simulate future values of the process
 
     # Simulations
