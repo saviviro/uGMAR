@@ -12,6 +12,7 @@
 
 # uGMAR 3.2.0
 
+* Added reference for the G-StMAR model.
 * In the predict method arguments "ci" and "ci_type" were changed to "pi" and "pi_type" to signify "prediction interval"" as it's more correct expression than "confidence interval". Also the default prediction method is now median, and not mean.
 * Changed the default number of CPU cores employed by the estimation function fitGSMAR to be at most two due to CRAN policy.
 * Added the argument "seeds" to fitGSMAR allowing one to set the random number generator seed for each call to the genetic algorithm.

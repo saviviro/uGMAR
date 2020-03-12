@@ -61,7 +61,7 @@ qrt <- quantileResidualTests(fit)
 sim <- simulateGSMAR(fit, nsimu=10)
 
 ## Forecast future values of the process
-predict(fit, n_ahead=10)
+predict(fit, n_ahead=10, pi=c(0.95, 0.8))
 ```
 
 References
@@ -71,4 +71,4 @@ References
 -   Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution. arXiv:1805.04010 **
     *e**c**o**n*.*E**M*
     **
--   There are currently no published references for the G-StMAR model, but it's a straightforward generalization with theoretical properties similar to the GMAR and StMAR models.
+-   Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distribution.	arXiv:2003.05221 [econ.EM].
