@@ -20,15 +20,16 @@
 #'  }
 #' @export
 
-plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
+plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
 
   gsmarpred <- x
   data <- as.ts(gsmarpred$gsmar$data)
   n_obs <- length(data)
   q <- gsmarpred$q
-  mix_weights <- gsmarpred$mix_weights
   M <- sum(gsmarpred$gsmar$model$M)
-  n_mix <- nrow(gsmarpred$gsmar$mixing_weights)
+  mix_weights <- gsmarpred$mix_weights & M > 1
+  mixing_weights <- gsmarpred$gsmar$mixing_weights
+  n_mix <- nrow(mixing_weights)
 
   # Graphical parameters
   old_par <- par(no.readonly=TRUE) # Save old settings
@@ -47,7 +48,7 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
     }
   }
   make_ts <- function(a, mix=FALSE, m) { # a is vector of values; if mix == TRUE, give component m in 1,...,M
-    last_obs <- ifelse(mix, gsmarpred$gsmar$mixing_weights[n_mix, m], data[n_obs])
+    last_obs <- ifelse(mix, mixing_weights[n_mix, m], data[n_obs])
     ts(c(last_obs, a), start=time(data)[n_obs], frequency=frequency(data))
   }
   ts_pred <- make_ts(gsmarpred$pred)
@@ -68,10 +69,6 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
 
     ts1_lapply <- function(pred_ints, mix=FALSE, m) lapply(seq_along(q), function(i1) make_ts(pred_ints[,i1], mix, m)[-1]) # Upper or lower graphical device box bound (redundant argument)
     ts2_lapply <- function(pred_ints, mix=FALSE, m) lapply(seq_along(q), function(i1) make_ts(pred_ints[,i1], mix, m)) # Make upper or lower prediction bound
-
-  #  ts0 <- rep(what_to_rep, times=length(ts_pred))
-  #  ts1 <- lapply(seq_along(q), function(i1) make_ts(ts0)[-1]) # Upper or lower graphical device box bound
-  #  ts2 <- lapply(seq_along(q), function(i1) make_ts(gsmarpred$pred_ints[,i1])) # Upper or lower prediction bound
 
     ints1 <- matrix(rep(what_to_rep, times=length(q)*length(ts_pred)), ncol=length(q))
     ints1_mix <- array(rep(what_to_rep_mix, times=length(ts_pred)*length(q)*M), dim=c(length(ts_pred), length(q), M))
@@ -112,7 +109,7 @@ plot.gsmarpred <- function(x, ..., nt, add_grid=TRUE) {
     # Point forecasts
     colpal_mw <- grDevices::colorRampPalette(c("blue", "turquoise1", "green", "red"))(M)
     colpal_mw2 <- grDevices::adjustcolor(colpal_mw, alpha.f=0.5)
-    mix_ts <- ts(gsmarpred$gsmar$mixing_weights[(n_mix - nt + 1):n_mix,], start=time(data)[n_obs - nt + 1],
+    mix_ts <- ts(mixing_weights[(n_mix - nt + 1):n_mix,], start=time(data)[n_obs - nt + 1],
                  frequency=frequency(data))
     mix_pred_ts <- ts(rbind(mix_ts[nrow(mix_ts),], gsmarpred$mix_pred), start=time(data)[n_obs], frequency=frequency(data))
     ts.plot(mix_ts, mix_pred_ts, gpars=list(col=c(colpal_mw2, colpal_mw), ylim=c(0, 1), lty=c(rep(1, M), rep(2, M))))

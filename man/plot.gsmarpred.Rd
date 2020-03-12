@@ -4,7 +4,7 @@
 \alias{plot.gsmarpred}
 \title{Plot method for class 'gsmarpred' objects}
 \usage{
-\method{plot}{gsmarpred}(x, ..., nt, add_grid = TRUE)
+\method{plot}{gsmarpred}(x, ..., nt, mix_weights = TRUE, add_grid = TRUE)
 }
 \arguments{
 \item{x}{object of class \code{'gsmarpred'} created with \code{predict.gsmar}.}
@@ -13,6 +13,8 @@
 
 \item{nt}{a positive integer specifying the number of observations to be plotted
 along with the prediction. Default is \code{round(length(data)*0.15)}.}
+
+\item{mix_weights}{\code{TRUE} if forecasts for mixing weights should be plotted, \code{FALSE} in not.}
 
 \item{add_grid}{should grid a be added to the plots?}
 }

@@ -9,12 +9,12 @@
   ...,
   n_ahead,
   nsimu = 10000,
-  pi = 0.95,
+  pi = c(0.95, 0.8),
   pred_type = c("median", "mean", "cond_mean"),
   pi_type = c("two-sided", "upper", "lower", "none"),
+  plotRes = TRUE,
   mix_weights = TRUE,
-  nt,
-  plotRes = TRUE
+  nt
 )
 }
 \arguments{
@@ -34,13 +34,12 @@ intervals won't be calculated if the exact conditional mean is used.}
 
 \item{pi_type}{should the prediction intervals be "two-sided", "upper", or "lower"?}
 
-\item{mix_weights}{\code{TRUE} if point predictions for mixing weights should be plotted,
-\code{FALSE} in not.}
+\item{plotRes}{a logical argument defining whether the forecast should be plotted or not.}
+
+\item{mix_weights}{\code{TRUE} if forecasts for mixing weights should be plotted, \code{FALSE} in not.}
 
 \item{nt}{a positive integer specifying the number of observations to be plotted
 along with the prediction. Default is \code{round(length(data)*0.15)}.}
-
-\item{plotRes}{a logical argument defining whether the forecast should be plotted or not.}
 }
 \value{
 Returns a class \code{'gsmarpred'} object containing, among the specifications,...

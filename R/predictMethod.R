@@ -15,11 +15,10 @@
 #'   be one-step-ahead forecast based on the exact conditional mean (\code{"cond_mean"})? prediction
 #'   intervals won't be calculated if the exact conditional mean is used.
 #' @param pi_type should the prediction intervals be "two-sided", "upper", or "lower"?
-#' @param mix_weights \code{TRUE} if point predictions for mixing weights should be plotted,
-#'   \code{FALSE} in not.
+#' @param plotRes a logical argument defining whether the forecast should be plotted or not.
+#' @param mix_weights \code{TRUE} if forecasts for mixing weights should be plotted, \code{FALSE} in not.
 #' @param nt a positive integer specifying the number of observations to be plotted
 #'   along with the prediction. Default is \code{round(length(data)*0.15)}.
-#' @param plotRes a logical argument defining whether the forecast should be plotted or not.
 #' @details \code{predict.gsmar} uses the last \code{p} values of the data to simulate \code{nsimu}
 #'  possible future values for each step-ahead. The point prediction is then obtained by calculating
 #'  the sample median or mean for each step and the prediction intervals are obtained from the
@@ -69,8 +68,8 @@
 #' }
 #' @export
 
-predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=0.95, pred_type=c("median", "mean", "cond_mean"),
-                         pi_type=c("two-sided", "upper", "lower", "none"), mix_weights=TRUE, nt, plotRes=TRUE) {
+predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pred_type=c("median", "mean", "cond_mean"),
+                         pi_type=c("two-sided", "upper", "lower", "none"), plotRes=TRUE, mix_weights=TRUE, nt) {
   gsmar <- object
   pred_type <- match.arg(pred_type)
   pi_type <- match.arg(pi_type)
@@ -136,6 +135,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=0.95, pred_type=
     sim <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu, drop=FALSE)
     sample <- sim$sample
     alpha_mt <- sim$mixing_weights
+    colnames(alpha_mt) <- vapply(1:gsmar$model$M, function(m) paste("regime", m), character(1))
 
     # Point forecasts
     myFUN <- ifelse(pred_type == "mean", mean, median)
@@ -158,7 +158,10 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=0.95, pred_type=
     q_tocalc <- sort(q_tocalc, decreasing=FALSE)
     pred_ints <- t(apply(sample, 1, FUN=quantile, probs=q_tocalc))
     mix_pred_ints <- apply(alpha_mt, MARGIN=1:2, FUN=quantile, probs=q_tocalc)
-    mix_pred_ints <- aperm(mix_pred_ints, perm=c(2, 1, 3)) # So that for each [, , i1] the dimensions match with point forecasts
+
+    if(pi_type != "none") {
+      mix_pred_ints <- aperm(mix_pred_ints, perm=c(2, 1, 3)) # So that for each [, , i1] the dimensions match with point forecasts
+    }
   }
 
   ret <- structure(list(gsmar=gsmar,
@@ -174,7 +177,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=0.95, pred_type=
                         q=q_tocalc,
                         mix_weights=mix_weights),
                    class="gsmarpred")
-  if(plotRes) plot.gsmarpred(x=ret, nt=nt, ...)
+  if(plotRes) plot.gsmarpred(x=ret, nt=nt, mix_weights=mix_weights, ...)
   ret
 }
 
