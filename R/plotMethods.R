@@ -82,8 +82,8 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
     ts1_mw <- vector(mode="list", length=M) # Sublist for each regime
     ts2_mw <- vector(mode="list", length=M)
     for(m in 1:M) {
-      ts1_mw[[m]] <- ts1_lapply(ints1_mix[, , m], mix=TRUE, m=m)
-      ts2_mw[[m]] <- ts2_lapply(gsmarpred$mix_pred_ints[, , m], mix=TRUE, m=m)
+      ts1_mw[[m]] <- ts1_lapply(as.matrix(ints1_mix[, , m]), mix=TRUE, m=m)
+      ts2_mw[[m]] <- ts2_lapply(as.matrix(gsmarpred$mix_pred_ints[, , m]), mix=TRUE, m=m)
     }
   }
 

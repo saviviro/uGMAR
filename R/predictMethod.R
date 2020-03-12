@@ -156,11 +156,19 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
       pi <- NULL
     }
     q_tocalc <- sort(q_tocalc, decreasing=FALSE)
-    pred_ints <- t(apply(sample, 1, FUN=quantile, probs=q_tocalc))
+    pred_ints <- apply(sample, 1, FUN=quantile, probs=q_tocalc)
     mix_pred_ints <- apply(alpha_mt, MARGIN=1:2, FUN=quantile, probs=q_tocalc)
 
     if(pi_type != "none") {
-      mix_pred_ints <- aperm(mix_pred_ints, perm=c(2, 1, 3)) # So that for each [, , i1] the dimensions match with point forecasts
+      if(length(q_tocalc) == 1) {
+        pred_ints <- as.matrix(pred_ints)
+        mix_pred_ints <- array(mix_pred_ints, dim=c(n_ahead, gsmar$model$M, length(q_tocalc)), dimnames=list(NULL, colnames(alpha_mt), q_tocalc))
+        mix_pred_ints <- aperm(mix_pred_ints, perm=c(1, 3, 2))
+      } else {
+        pred_ints <- t(pred_ints)
+        mix_pred_ints <- aperm(mix_pred_ints, perm=c(2, 1, 3)) # So that for each [, , i1] the dimensions match with point forecasts
+      }
+      colnames(pred_ints) <- q_tocalc
     }
   }
 
