@@ -38,7 +38,7 @@
 * Tidier code for some parts.
 * Improved comments and documentation.
 * Bug fix: the function 'add_data' did not identify the model type correctly. 
-* Bug fix: simulateGSMAR simulated some initial values from slighly wrong the distribution; did not have affect on forecasts.
+* Bug fix: simulateGSMAR simulated some initial values from slighly wrong distribution; did not have affect on forecasts.
 * Minor update on the summary print for the models
 
 # uGMAR 3.2.3
