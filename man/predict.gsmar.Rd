@@ -45,9 +45,9 @@ along with the prediction. Default is \code{round(length(data)*0.15)}.}
 Returns a class \code{'gsmarpred'} object containing, among the specifications,...
  \describe{
    \item{$pred}{Point forecasts}
-   \item{$pred_int}{Prediction intervals}
+   \item{$pred_ints}{Prediction intervals}
    \item{$mix_pred}{Point forecasts for mixing weights}
-   \item{mix_pred_int}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
+   \item{mix_pred_ints}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
  }
 }
 \description{
@@ -67,7 +67,7 @@ Returns a class \code{'gsmarpred'} object containing, among the specifications,.
 \donttest{
 # GMAR model
 fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-pred12 <- predict(fit12, n_ahead=10, pi=c(0.95, 0.8))
+pred12 <- predict(fit12, n_ahead=1, pi=c(0.95, 0.8))
 pred12
 
 # Non-mixture StMAR model, upper prediction intervals

@@ -51,3 +51,7 @@
 * In the function quantileResidualTests the default argument for 'nsimu' is now 1 so that the tests are based on the given data only (and not on simulation).
 * Removed inflation expectation data.
 * Added interest rate spead (10-Year minus 1-Year treasury) data.
+
+# uGMAR 3.2.4
+
+* Bug fix: the predict method incurred an error when plotting the results with n_ahead=1. 
