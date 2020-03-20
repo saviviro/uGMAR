@@ -40,7 +40,7 @@
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' pred12 <- predict(fit12, n_ahead=1, pi=c(0.95, 0.8))
+#' pred12 <- predict(fit12, n_ahead=10, pi=c(0.95, 0.8))
 #' pred12
 #'
 #' # Non-mixture StMAR model, upper prediction intervals
