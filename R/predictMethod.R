@@ -135,7 +135,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     sim <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu, drop=FALSE)
     sample <- sim$sample
     alpha_mt <- sim$mixing_weights
-    colnames(alpha_mt) <- vapply(1:sum(gsmar$model$M), function(m) paste("regime", m), character(1))
+    colnames(alpha_mt) <- vapply(1:sum(M), function(m) paste("regime", m), character(1))
 
     # Point forecasts
     myFUN <- ifelse(pred_type == "mean", mean, median)
@@ -162,7 +162,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     if(pi_type != "none") {
       if(length(q_tocalc) == 1) {
         pred_ints <- as.matrix(pred_ints)
-        mix_pred_ints <- array(mix_pred_ints, dim=c(n_ahead, gsmar$model$M, length(q_tocalc)), dimnames=list(NULL, colnames(alpha_mt), q_tocalc))
+        mix_pred_ints <- array(mix_pred_ints, dim=c(n_ahead, sum(M), length(q_tocalc)), dimnames=list(NULL, colnames(alpha_mt), q_tocalc))
         mix_pred_ints <- aperm(mix_pred_ints, perm=c(1, 3, 2))
       } else {
         pred_ints <- t(pred_ints)
