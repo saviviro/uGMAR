@@ -55,3 +55,7 @@
 # uGMAR 3.2.4
 
 * Bug fix: the predict method incurred an error when plotting the results with n_ahead=1. 
+
+# uGMAR 3.2.5
+
+* Yet another bug fix: the predict method incurred an error with G-StMAR models. 

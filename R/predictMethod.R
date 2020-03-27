@@ -49,7 +49,7 @@
 #'
 #' # G-StMAR model, no prediction intervals
 #' fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
-#' pred12gs <- predict(fit12gs, n_ahead=10, pred_type="median",
+#' pred12gs <- predict(fit12gs, n_ahead=2, pred_type="median",
 #'  pi_type="none", plotRes=FALSE)
 #' pred12gs
 #' plot(pred12gs)
@@ -135,7 +135,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     sim <- simulateGSMAR(gsmar, nsimu=n_ahead, initvalues=data, ntimes=nsimu, drop=FALSE)
     sample <- sim$sample
     alpha_mt <- sim$mixing_weights
-    colnames(alpha_mt) <- vapply(1:gsmar$model$M, function(m) paste("regime", m), character(1))
+    colnames(alpha_mt) <- vapply(1:sum(gsmar$model$M), function(m) paste("regime", m), character(1))
 
     # Point forecasts
     myFUN <- ifelse(pred_type == "mean", mean, median)
