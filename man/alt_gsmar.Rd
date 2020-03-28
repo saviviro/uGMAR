@@ -50,10 +50,10 @@ It's sometimes useful to examine other estimates than the one with the highest l
 \examples{
 \donttest{
  # These are long running examples and use parallel computing
- fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=2, seeds=1:2)
- fit12t
- fit12t2 <- alt_gsmar(fit12t, which_round=2)
- fit12t2
+ fit43t <- fitGSMAR(T10Y1Y, 4, 3, model="StMAR", ncalls=2, seeds=1:2)
+ fit43t
+ fit43t2 <- alt_gsmar(fit43t, which_largest=2)
+ fit43t2
 }
 }
 \references{

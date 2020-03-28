@@ -99,37 +99,23 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 The first p observations are taken to be the initial values.
 }
 \examples{
-# GMAR model
-params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-mixingWeights(logVIX, 1, 2, params12)
+# StMAR model
+params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
+ -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
+  0.57, 0.22, 8.05, 2.02, 10000)
+mixingWeights(T10Y1Y, p=4, M=3, params=params43, model="StMAR")
 
-# Restricted GMAR model, outside parameter space
-params12r <- c(0.21, 0.23, 0.92, 0.01, 0.02, 0.86)
-mixingWeights(logVIX, 1, 2, params12r, restricted=TRUE)
+# Restricted G-StMAR-model
+params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
+mixingWeights(T10Y1Y, p=4, M=c(1, 1), params=params42gsr, model="G-StMAR",
+  restricted=TRUE)
 
-# Non-mixture version of StMAR model, outside parameter space
-params11t <- c(0.16, 0.93, 0.01, 3.01)
-mixingWeights(logVIX, 1, 1, params11t, model="StMAR")
-
-# G-StMAR model
-params12gs <- c(0.86, 0.68, 0.02, 0.18, 0.93, 0.01, 0.11, 44.36)
-mixingWeights(logVIX, 1, c(1, 1), params12gs, model="G-StMAR")
-
-# Restricted G-StMAR model
-params12gsr <- c(0.31, 0.33, 0.88, 0.01, 0.02, 0.77, 2.72)
-mixingWeights(logVIX, 1, c(1, 1), params12gsr, model="G-StMAR", restricted=TRUE)
-
-# GMAR model as a mixture of AR(2) and AR(1) models
+# Two-regime GMAR p=2 model with the second AR coeffiecient of
+# of the second regime contrained to zero.
 constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-params22c <- c(0.61, 0.83, -0.06, 0.02, 0.21, 0.91, 0.01, 0.16)
-mixingWeights(logVIX, 2, 2, params22c, constraints=constraints)
-
-# Such StMAR(3,2) that the AR coefficients are restricted to be
-# the same for both regimes and that the second AR coefficients are
-# constrained to zero.
-params32trc <- c(0.35, 0.33, 0.88, -0.02, 0.01, 0.01, 0.36, 4.53, 1000)
-mixingWeights(logVIX, 3, 2, params32trc, model="StMAR", restricted=TRUE,
-              constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
+mixingWeights(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
+ constraints=constraints)
 }
 \references{
 \itemize{

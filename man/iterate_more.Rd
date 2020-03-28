@@ -36,12 +36,12 @@ The main purpose of \code{iterate_more} is to provide a simple and convenient to
 \donttest{
 # Estimate GMAR model with only 50 generations of genetic algorithm and
 # only 1 iteration in variable metric algorithm
-fit12 <- fitGSMAR(logVIX, 1, 2, maxit=1, ngen=50, ncalls=1, seeds=1)
-fit12
+fit13 <- fitGSMAR(T10Y1Y, 1, 3, maxit=1, ngen=50, ncalls=1, seeds=1)
+fit13
 
 # Iterate more since iteration limit was reached
-fit12 <- iterate_more(fit12)
-fit12
+fit13 <- iterate_more(fit13)
+fit13
 }
 }
 \references{

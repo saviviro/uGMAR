@@ -38,14 +38,15 @@ Returns an object of class 'gsmar' defining the GMAR, StMAR, or G-StMAR model wi
  or G-StMAR model. Also calculates empirical mixing weights, conditional moments, and quantile residuals accordingly.
 }
 \examples{
-# GMAR model without data
-params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
-gmar12
+# Restricted G-StMAR-model without data
+params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
+gstmar42r <- GSMAR(p=4, M=c(1, 1), params=params42gsr,
+ model="G-StMAR", restricted=TRUE)
+gstmar42r
 
 # Add data to the model
-gmar12 <- add_data(data=logVIX, gmar12)
-gmar12
+gstmar42r <- add_data(data=T10Y1Y, gstmar42r)
+gstmar42r
 }
 \references{
 \itemize{

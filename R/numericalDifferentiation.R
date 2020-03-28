@@ -37,14 +37,15 @@
 #'  calc_gradient(x=c(1, 2), fn=foo, a=0.3, b=0.1)
 #'  calc_hessian(x=c(1, 2), fn=foo, a=0.3, b=0.1)
 #'
-#'  # GMAR model:
-#'  params12 <- c(0.18281409, 0.92657275, 0.00214552,
-#'   0.85725129, 0.68210294, 0.01900299, 0.88342018)
-#'  gmar12 <- GSMAR(logVIX, 1, 2, params12)
-#'  get_gradient(gmar12)
-#'  get_foc(gmar12)
-#'  get_hessian(gmar12)
-#'  get_soc(gmar12)
+#'  # StMAR model:
+#' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
+#'  -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
+#'   0.57, 0.22, 8.05, 2.02, 1000)
+#'  stmar43 <- GSMAR(T10Y1Y, 4, 3, params43, model="StMAR")
+#'  get_gradient(stmar43)
+#'  get_foc(stmar43)
+#'  get_hessian(stmar43)
+#'  get_soc(stmar43)
 #' @export
 
 calc_gradient <- function(x, fn, h=6e-06, varying_h=NULL, ...) {

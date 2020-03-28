@@ -33,15 +33,15 @@ Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or
  parametrized parameters only.
 }
 \examples{
-# GMAR model with intercept parametrization
-params12 <- c(0.183, 0.927, 0.002, 0.857, 0.682, 0.019, 0.883)
-gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR",
- calc_std_errors=TRUE)
-summary(gmar12)
+# Restricted G-StMAR-model with intercept paarametrization
+params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
+gstmar42r <- GSMAR(data=T10Y1Y, p=4, M=c(1, 1), params=params42gsr,
+ model="G-StMAR", restricted=TRUE)
+summary(gstmar42r)
 
 # Swap to mean parametrization
-gmar12 <- swap_parametrization(gmar12)
-summary(gmar12)
+gstmar42r <- swap_parametrization(gstmar42r)
+summary(gstmar42r)
 }
 \references{
 \itemize{

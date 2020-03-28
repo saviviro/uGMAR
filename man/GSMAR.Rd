@@ -178,48 +178,29 @@ If \code{include_dens == TRUE}, the kernel density estimate of the data is calcu
 }}
 
 \examples{
-# GMAR model
+# GMAR model without data
 params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-gmar12 <- GSMAR(data=logVIX, p=1, M=2, params=params12, model="GMAR")
+gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
 gmar12
-
-# Restricted GMAR model
-params12r <- c(0.21, 0.23, 0.92, 0.01, 0.02, 0.86)
-gmar12r <- GSMAR(data=logVIX, p=1, M=2, params=params12r, model="GMAR",
- restricted=TRUE)
-gmar12r
 
 # StMAR model, without data
 params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 300, 3.6)
 stmar12t <- GSMAR(p=1, M=2, params=params12t, model="StMAR")
 stmar12t
 
-# G-StMAR model (similar to the StMAR model above), without data
-params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
-gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
-gstmar12
-
 # Restricted G-StMAR-model
-params12gsr <- c(0.31, 0.33, 0.88, 0.01, 0.02, 0.77, 2.72)
-gstmar12r <- GSMAR(data=logVIX, p=1, M=c(1, 1), params=params12gsr,
+params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
+gstmar42r <- GSMAR(data=T10Y1Y, p=4, M=c(1, 1), params=params42gsr,
  model="G-StMAR", restricted=TRUE)
-gstmar12r
+gstmar42r
 
-# GMAR(p=2, M=2) model such that the second AR coefficient of the
-# second regime is constrained to zero.
+# Two-regime GMAR p=2 model with the second AR coeffiecient of
+# of the second regime contrained to zero.
 constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-params22c <- c(0.61, 0.83, -0.06, 0.02, 0.21, 0.91, 0.01, 0.16)
-gmar22c <- GSMAR(logVIX, p=2, M=2, params=params22c,
+params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
+gmar22c <- GSMAR(T10Y1Y, p=2, M=2, params=params22c,
  model="GMAR", constraints=constraints)
 gmar22c
-
-# Such StMAR(3,2) that the AR coefficients are restricted to be
-# the same for both regimes and that the second AR coefficients are
-# constrained to zero.
-params32trc <- c(0.35, 0.33, 0.88, -0.02, 0.01, 0.01, 0.36, 4.53, 1000)
-stmar32rc <- GSMAR(logVIX, p=3, M=2, params=params32trc, model="StMAR",
- restricted=TRUE, constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-stmar32rc
 }
 \references{
 \itemize{

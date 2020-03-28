@@ -105,25 +105,27 @@ Note that the first p observations are taken as the initial values so the condit
 }
 \examples{
 # GMAR model
-params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-rcm12 <- condMoments(logVIX, 1, 2, params12, to_return="regime_cmeans")
-rcv12 <- condMoments(logVIX, 1, 2, params12, to_return="regime_cvars")
-tcm12 <- condMoments(logVIX, 1, 2, params12, to_return="total_cmeans")
-tcv12 <- condMoments(logVIX, 1, 2, params12, to_return="total_cvars")
+params12 <- c(0.01, 0.99, 0.02, 0.03, 0.91, 0.32, 0.86)
+rcm12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="regime_cmeans")
+rcv12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="regime_cvars")
+tcm12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="total_cmeans")
+tcv12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="total_cvars")
 
 # StMAR model
-params12t <- c(0.17,  0.93, 0.01, 4.87, -0.90, 0.01, 0.98, 4.22, 1000)
-rcm12t <- condMoments(logVIX, 1, 2, params12t, model="StMAR",
+params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
+ -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
+  0.57, 0.22, 8.05, 2.02, 10000)
+rcm43t <- condMoments(T10Y1Y, 4, 3, params43, model="StMAR",
  to_return="regime_cmeans")
-rcv12t <- condMoments(logVIX, 1, 2, params12t, model="StMAR",
+rcv43t <- condMoments(T10Y1Y, 4, 3, params43, model="StMAR",
  to_return="regime_cvars")
 
 # G-StMAR model
-params12gs <- c(0.86, 0.68, 0.02, 0.18, 0.93, 0.01, 0.11, 44)
-rcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
- to_return="regime_cvars")
-tcv12gs <- condMoments(logVIX, 1, c(1,1), params12gs, model="G-StMAR",
- to_return="total_cvars")
+params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
+rcv42gsr <- condMoments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
+ restricted=TRUE, to_return="regime_cvars")
+tcv42gs <- condMoments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
+ restricted=TRUE, to_return="total_cvars")
 }
 \references{
 \itemize{

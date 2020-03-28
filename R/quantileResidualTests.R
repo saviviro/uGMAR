@@ -33,30 +33,25 @@
 #'  \code{\link{predict.gsmar}}, \code{\link{getOmega}},
 #' @examples
 #' \donttest{
-#' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' qrtest12 <- quantileResidualTests(fit12, nsimu=1)
-#' plot(qrtest12)
+#' # G-StMAR model
+#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+#' qrtest42g <- quantileResidualTests(fit42g)
+#' plot(qrtest42g)
 #'
 #' # Restricted GMAR model
-#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
-#' qrtest12r <- quantileResidualTests(fit12r, lagsAC=1:10, nsimu=1)
-#' plot(qrtest12r)
+#' fit43gmr <- fitGSMAR(T10Y1Y, 4, 3, model="GMAR", restricted=TRUE)
+#' qrtest43gmr <- quantileResidualTests(fit43gmr, lagsAC=1:10)
+#' plot(qrtest43gmr)
 #'
 #' # Non-mixture version of StMAR model
-#' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' quantileResidualTests(fit11t, lagsAC=c(1, 2, 5), nsimu=1, printRes=FALSE)
+#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+#' quantileResidualTests(fit101t, lagsAC=c(1, 2, 5), printRes=FALSE)
 #'
-#' # G-StMAR model
-#' fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
-#' quantileResidualTests(fit12gs, lagsAC=c(1, 3), lagsCH=1:2,
-#'  nsimu=1, printRes=FALSE)
-#'
-#' # GMAR(p=2, M=2) model such that the second AR coefficient of the
-#' # second regime is constrained to zero.
+#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
+#' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' fit22c <- fitGSMAR(logVIX, 2, 2, constraints=constraints)
-#' quantileResidualTests(fit22c, lagsAC=c(1, 3), nsimu=1, printRes=FALSE)
+#' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+#' quantileResidualTests(fit22c, lagsAC=c(1, 3), printRes=FALSE)
 #' }
 #' @export
 

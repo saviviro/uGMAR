@@ -17,25 +17,28 @@ Only plots to a graphical device and doesn't return anything.
 }
 \examples{
 \donttest{
-# GMAR model
-fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-quantileResidualPlot(fit12)
+# StMAR model
+fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+quantileResidualPlot(fit42)
+
+# Restricted StMAR model: plot also the individual statistics with
+# their approximate critical bounds using the given data
+fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
+quantileResidualPlot(fit42r)
 
 # Non-mixture version of StMAR model
-fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-quantileResidualPlot(fit11t)
+fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+quantileResidualPlot(fit101t)
 
-# Restricted G-StMAR-model
-fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
- restricted=TRUE)
-quantileResidualPlot(fit12gsr)
+# G-StMAR model
+fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+quantileResidualPlot(fit42g)
 
-# Such StMAR(3,2) that the AR coefficients are restricted to be
-# the same for both regimes and that the second AR coefficients are
-# constrained to zero.
-fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
- constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-quantileResidualPlot(fit32rc)
+# Two-regime GMAR p=2 model with the second AR coeffiecient of
+# of the second regime contrained to zero.
+constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+quantileResidualPlot(fit22c)
 }
 }
 \references{

@@ -47,37 +47,33 @@ Sometimes the individual statistics are not plotted because it was not (numerica
 
 \examples{
 \donttest{
-# GMAR model
-fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-diagnosticPlot(fit12)
+# StMAR model
+fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+diagnosticPlot(fit42)
 
-# Restricted GMAR model: plot also the individual statistics with
+# Restricted StMAR model: plot also the individual statistics with
 # their approximate critical bounds using the given data
-fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
-diagnosticPlot(fit12r, nlags=10, nsimu=1, plot_indstats=TRUE)
+fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
+diagnosticPlot(fit42r, nlags=10, nsimu=1, plot_indstats=TRUE)
 
 # Non-mixture version of StMAR model
-fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-diagnosticPlot(fit11t)
+fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+diagnosticPlot(fit101t)
 
 # G-StMAR model
-fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
-diagnosticPlot(fit12gs)
+fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+diagnosticPlot(fit42g)
 
-# Restricted G-StMAR-model
-fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
- restricted=TRUE)
-diagnosticPlot(fit12gsr)
-
-# GMAR model as a mixture of AR(2) and AR(1) models
+# Two-regime GMAR p=2 model with the second AR coeffiecient of
+# of the second regime contrained to zero.
 constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-fit22c <- fitGSMAR(logVIX, 2, 2, constraints=constraints)
+fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
 diagnosticPlot(fit22c)
 
 # Such StMAR(3,2) that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
-fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
+fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 diagnosticPlot(fit32rc)
 }

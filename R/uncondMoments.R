@@ -152,6 +152,7 @@ get_regime_vars <- function(gsmar) {
 #'  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
 #'  but is given in the \code{uncond_variance} component separately.
 #' @inherit get_regime_autocovs references
+
 uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                               constraints=NULL, parametrization=c("intercept", "mean")) {
   model <- match.arg(model)
@@ -206,6 +207,7 @@ uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 #' gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
 #' uncondMoments(gstmar12)
 #' @export
+
 uncondMoments <- function(gsmar) {
   check_gsmar(gsmar)
   uncondMoments_int(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model,

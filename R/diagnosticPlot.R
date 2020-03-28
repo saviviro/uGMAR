@@ -35,37 +35,33 @@
 #'  \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
-#' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' diagnosticPlot(fit12)
+#' # StMAR model
+#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+#' diagnosticPlot(fit42)
 #'
-#' # Restricted GMAR model: plot also the individual statistics with
+#' # Restricted StMAR model: plot also the individual statistics with
 #' # their approximate critical bounds using the given data
-#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
-#' diagnosticPlot(fit12r, nlags=10, nsimu=1, plot_indstats=TRUE)
+#' fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
+#' diagnosticPlot(fit42r, nlags=10, nsimu=1, plot_indstats=TRUE)
 #'
 #' # Non-mixture version of StMAR model
-#' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' diagnosticPlot(fit11t)
+#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+#' diagnosticPlot(fit101t)
 #'
 #' # G-StMAR model
-#' fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
-#' diagnosticPlot(fit12gs)
+#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+#' diagnosticPlot(fit42g)
 #'
-#' # Restricted G-StMAR-model
-#' fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
-#'  restricted=TRUE)
-#' diagnosticPlot(fit12gsr)
-#'
-#' # GMAR model as a mixture of AR(2) and AR(1) models
+#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
+#' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' fit22c <- fitGSMAR(logVIX, 2, 2, constraints=constraints)
+#' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
 #' diagnosticPlot(fit22c)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
+#' fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
 #'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' diagnosticPlot(fit32rc)
 #' }
@@ -170,25 +166,28 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 #'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
-#' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' quantileResidualPlot(fit12)
+#' # StMAR model
+#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+#' quantileResidualPlot(fit42)
+#'
+#' # Restricted StMAR model: plot also the individual statistics with
+#' # their approximate critical bounds using the given data
+#' fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
+#' quantileResidualPlot(fit42r)
 #'
 #' # Non-mixture version of StMAR model
-#' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' quantileResidualPlot(fit11t)
+#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+#' quantileResidualPlot(fit101t)
 #'
-#' # Restricted G-StMAR-model
-#' fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
-#'  restricted=TRUE)
-#' quantileResidualPlot(fit12gsr)
+#' # G-StMAR model
+#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+#' quantileResidualPlot(fit42g)
 #'
-#' # Such StMAR(3,2) that the AR coefficients are restricted to be
-#' # the same for both regimes and that the second AR coefficients are
-#' # constrained to zero.
-#' fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
-#'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' quantileResidualPlot(fit32rc)
+#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
+#' # of the second regime contrained to zero.
+#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+#' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+#' quantileResidualPlot(fit22c)
 #' }
 #' @export
 
@@ -235,33 +234,30 @@ quantileResidualPlot <- function(gsmar) {
 #' @details The red vertical line points the estimate.
 #'
 #'   Be aware that the profile log-likelihood function is subject to a numerical error due to limited float-point
-#'   precission when considering extremely large parameter values, say, overly large degrees freedom estimates (see the
-#'   related example below).
+#'   precission when considering extremely large parameter values, say, overly large degrees freedom estimates.
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit loglikelihood references
 #' @seealso  \code{\link{quantileResidualPlot}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
 #'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
-#' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' profile_logliks(fit12)
+#' # StMAR model
+#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+#' profile_logliks(fit42)
 #'
 #' # Non-mixture version of StMAR model
-#' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' profile_logliks(fit11t)
+#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+#' profile_logliks(fit101t)
 #'
-#' # Restricted G-StMAR-model
-#' fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
-#'  restricted=TRUE)
-#' profile_logliks(fit12gsr)
+#' # G-StMAR model
+#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+#' profile_logliks(fit42g)
 #'
-#' # Extremely large degrees of freedom numerical error demonstration
-#' fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncores=1,
-#'  ncalls=1, seeds=1)
-#' profile_logliks(fit12t, scale=0.00001)
-#' # See the last figure? Surface of the profile log-likelihood function
-#' # should be flat around that large degrees of freedom!
+#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
+#' # of the second regime contrained to zero.
+#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+#' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+#' profile_logliks(fit22c)
 #' }
 #' @export
 

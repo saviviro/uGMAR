@@ -38,31 +38,31 @@
 #'  \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}
 #' @examples
 #' \donttest{
-#' # GMAR model
-#' fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-#' pred12 <- predict(fit12, n_ahead=10, pi=c(0.95, 0.8))
-#' pred12
+#' # StMAR model
+#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+#' pred42 <- predict(fit42, n_ahead=10, pi=c(0.95, 0.8))
+#' pred42
 #'
 #' # Non-mixture StMAR model, upper prediction intervals
-#' fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-#' predict(fit11t, n_ahead=10, pi_type="upper", pi=0.9)
+#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+#' predict(fit101t, n_ahead=10, pi_type="upper", pi=0.9)
 #'
 #' # G-StMAR model, no prediction intervals
-#' fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
-#' pred12gs <- predict(fit12gs, n_ahead=2, pred_type="median",
+#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+#' pred42gs <- predict(fit42g, n_ahead=2, pred_type="median",
 #'  pi_type="none", plotRes=FALSE)
-#' pred12gs
-#' plot(pred12gs)
+#' pred42gs
+#' plot(pred42gs)
 #'
 #' # Restricted GMAR model, one-step conditional mean prediction
-#' fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE)
-#' pred12r <- predict(fit12r, pred_type="cond_mean", plotRes=FALSE)
-#' pred12r
+#' fit43gmr <- fitGSMAR(T10Y1Y, 4, 3, model="GMAR", restricted=TRUE)
+#' pred43gmr <- predict(fit43gmr, pred_type="cond_mean", plotRes=FALSE)
+#' pred43gmr
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' fit32rc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
+#' fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
 #'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' predict(fit32rc, n_ahead=3, pi_type="lower")
 #' }

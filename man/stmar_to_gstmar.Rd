@@ -51,11 +51,10 @@ If a StMAR model contains large estimates for the degrees of freedom parameters,
 \examples{
 \donttest{
  # These are long running examples and use parallel computing
- fit13tr <- fitGSMAR(logVIX, 1, 3, model="StMAR", restricted=TRUE,
-  ncalls=2, seeds=1:2)
- fit13tr
- fit13gsr <- stmar_to_gstmar(fit13tr)
- fit13gsr
+ fit43t <- fitGSMAR(T10Y1Y, 4, 3, model="StMAR", ncalls=2, seeds=1:2)
+ fit43t
+ fit43gst <- stmar_to_gstmar(fit43t)
+ fit43gst
 }
 }
 \references{

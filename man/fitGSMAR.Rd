@@ -164,59 +164,58 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 \examples{
 \donttest{
 # These are long running examples that use parallel computing
+# StMAR model
+fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+fit42
+summary(fit42)
+plot(fit42)
 
-# GMAR model
-fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-fit12
-summary(fit12)
-plot(fit12)
-profile_logliks(fit12)
-
-# Restricted GMAR model
-fit12r <- fitGSMAR(logVIX, 1, 2, model="GMAR", restricted=TRUE,
- parametrization="mean", ncalls=10)
-fit12r
-summary(fit12r)
+# Restricted StMAR model: plot also the individual statistics with
+# their approximate critical bounds using the given data
+fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
+fit42r
+plot(fit42)
 
 # Non-mixture version of StMAR model
-fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-fit11t
-
-# StMAR model, seeds for reproducability
-fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncalls=10,
-  seeds=1:10)
-fit12t
+fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+diagnosticPlot(fit101t)
 
 # G-StMAR model with one GMAR type and one StMAR type regime
-fit12gs <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR")
-fit12gs
+fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+diagnosticPlot(fit42g)
 
-# Restricted G-StMAR model
-fit12gsr <- fitGSMAR(logVIX, 1, c(1, 1), model="G-StMAR", restricted=TRUE)
-fit12gsr
+# GMAR model; seeds for rerpoducibility
+fit43gm <- fitGSMAR(T10Y1Y, 4, M=3, model="GMAR", ncalls=16,
+  seeds=1:16)
+fit43gm
+
+# Restricted GMAR model
+fit43gmr <- fitGSMAR(T10Y1Y, 4, M=3, model="GMAR", ncalls=12,
+  restricted=TRUE, seeds=1:12)
+fit43gmr
+
 
 # The following three examples demonstrate how to apply linear constraints
 # to the AR parameters.
 
-# GMAR(p=3, M=2) model such that the second AR coefficient is constrained
-# to zero in the first regime, and the second and third AR coefficients
-# is constrained to zero in the second regime.
-constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2), as.matrix(c(1, 0, 0)))
-fit32c <- fitGSMAR(logVIX, 3, 2, constraints=constraints)
-fit32c
+# Two-regime GMAR p=2 model with the second AR coeffiecient of
+# of the second regime contrained to zero.
+constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+fit22c
 
 # Such constrained StMAR(3, 1) model that the second order AR coefficient
 # is constrained to zero.
 constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-fit31tc <- fitGSMAR(logVIX, 3, 1, model="StMAR", constraints=constraints)
+fit31tc <- fitGSMAR(T10Y1Y, 3, 1, model="StMAR", constraints=constraints)
 fit31tc
 
-# Such StMAR(3, 2) model that the AR coefficients are restricted to be
+# Such StMAR(3,2) that the AR coefficients are restricted to be
 # the same for both regimes and that the second AR coefficients are
 # constrained to zero.
-fit32trc <- fitGSMAR(logVIX, 3, 2, model="StMAR", restricted=TRUE,
-                     constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-fit32trc
+fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
+ constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+fit32rc
 }
 }
 \references{

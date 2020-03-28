@@ -32,12 +32,12 @@
 #' @examples
 #'  \donttest{
 #'  # GMAR model
-#'  params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-#'  gmar13 <- GSMAR(p=1, M=3, params=params13, model="GMAR")
-#'  sim13 <- simulateGSMAR(gmar13, nsimu=500)
-#'  ts.plot(sim13$sample)
-#'  ts.plot(sim13$component)
-#'  ts.plot(sim13$mixing_weights, col=rainbow(3), lty=2)
+#'  params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
+#'  gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
+#'  sim12 <- simulateGSMAR(gmar12, nsimu=500)
+#'  ts.plot(sim12$sample)
+#'  ts.plot(sim12$component)
+#'  ts.plot(sim12$mixing_weights, col=rainbow(2), lty=2)
 #'
 #'  # FORECASTING EXAMPLE:
 #'  # Restricted GMAR model, 10000 sets of simulations with initial values 6 and 6.2.

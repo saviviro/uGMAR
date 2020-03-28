@@ -28,30 +28,27 @@ Only plots to a graphical device and doesn't return anything.
 The red vertical line points the estimate.
 
   Be aware that the profile log-likelihood function is subject to a numerical error due to limited float-point
-  precission when considering extremely large parameter values, say, overly large degrees freedom estimates (see the
-  related example below).
+  precission when considering extremely large parameter values, say, overly large degrees freedom estimates.
 }
 \examples{
 \donttest{
-# GMAR model
-fit12 <- fitGSMAR(data=logVIX, p=1, M=2, model="GMAR")
-profile_logliks(fit12)
+# StMAR model
+fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+profile_logliks(fit42)
 
 # Non-mixture version of StMAR model
-fit11t <- fitGSMAR(logVIX, 1, 1, model="StMAR", ncores=1, ncalls=1)
-profile_logliks(fit11t)
+fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+profile_logliks(fit101t)
 
-# Restricted G-StMAR-model
-fit12gsr <- fitGSMAR(logVIX, 1, M=c(1, 1), model="G-StMAR",
- restricted=TRUE)
-profile_logliks(fit12gsr)
+# G-StMAR model
+fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+profile_logliks(fit42g)
 
-# Extremely large degrees of freedom numerical error demonstration
-fit12t <- fitGSMAR(logVIX, 1, 2, model="StMAR", ncores=1,
- ncalls=1, seeds=1)
-profile_logliks(fit12t, scale=0.00001)
-# See the last figure? Surface of the profile log-likelihood function
-# should be flat around that large degrees of freedom!
+# Two-regime GMAR p=2 model with the second AR coeffiecient of
+# of the second regime contrained to zero.
+constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+profile_logliks(fit22c)
 }
 }
 \references{
