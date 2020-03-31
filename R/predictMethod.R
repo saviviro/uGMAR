@@ -127,7 +127,8 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     pi_type <- "none"
     q_tocalc <- numeric(0)
     mix_weights <- FALSE
-    mix_pred <- NULL
+    mix_pred <- matrix(mw[nrow(mw),], nrow=1)
+    colnames(mix_pred) <- vapply(1:sum(M), function(m) paste("regime", m), character(1))
     mix_pred_ints <- NULL
   } else { # pred_type != cond_mean: Simulate future values of the process
 

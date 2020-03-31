@@ -164,6 +164,12 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 \examples{
 \donttest{
 # These are long running examples that use parallel computing
+
+# GMAR model
+fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
+summary(fit12)
+plot(fit12)
+
 # StMAR model
 fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
 fit42

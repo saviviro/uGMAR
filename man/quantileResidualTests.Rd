@@ -75,6 +75,10 @@ heteroskedasticity tests.
 
 \examples{
 \donttest{
+# GMAR model
+fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
+qrt <- quantileResidualTests(fit12, lagsAC=c(1, 5, 10, 15))
+
 # G-StMAR model
 fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
 qrtest42g <- quantileResidualTests(fit42g)
