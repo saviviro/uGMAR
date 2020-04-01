@@ -21,7 +21,7 @@
 \examples{
 \donttest{
 # GMAR model
-fit12 <- fitGSMAR(logVIX, 1, 2, ncalls=4)
+fit12 <- fitGSMAR(simudata, 1, 2, ncalls=4)
 gsmarsum12 <- summary(fit12)
 gsmarsum12
 print(gsmarsum12, digits=4)

@@ -2,10 +2,10 @@ library(uGMAR)
 context("argument checks")
 
 test_that("checkAndCorrectData gives correct answer", {
-  checkAndCorrectData(as.matrix(VIX), p=1)
-  expect_error(checkAndCorrectData(VIX[1:3], p=4))
-  expect_error(checkAndCorrectData(c(VIX, NA, 1), p=1))
-  expect_error(checkAndCorrectData(cbind(VIX, VIX), p=3))
+  checkAndCorrectData(as.matrix(simudata), p=1)
+  expect_error(checkAndCorrectData(simudata[1:3], p=4))
+  expect_error(checkAndCorrectData(c(simudata, NA, 1), p=1))
+  expect_error(checkAndCorrectData(cbind(simudata, simudata), p=3))
 })
 
 params11 = c(1, 0.1, 1, 2)

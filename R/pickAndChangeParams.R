@@ -207,9 +207,9 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 #'  of the AR characteristic polynomial corresponding to each mixture component.
 #' @inherit isStationary references
 #' @examples
-#' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
-#' gmar13 <- GSMAR(data=VIX, p=1, M=3, params=params13, model="GMAR")
-#' get_ar_roots(gmar13)
+#' params12 <- c(1.7, 0.85, 0.3, 4.12, 0.73, 1.98, 0.63)
+#' gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
+#' get_ar_roots(gmar12)
 #' @export
 
 get_ar_roots <- function(gsmar) {

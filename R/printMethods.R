@@ -190,7 +190,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 #' @examples
 #' \donttest{
 #' # GMAR model
-#' fit12 <- fitGSMAR(logVIX, 1, 2, ncalls=4)
+#' fit12 <- fitGSMAR(simudata, 1, 2, ncalls=4)
 #' gsmarsum12 <- summary(fit12)
 #' gsmarsum12
 #' print(gsmarsum12, digits=4)
@@ -215,7 +215,7 @@ print.gsmarsum <- function(x, ..., digits) {
 #'  \donttest{
 #'  # GMAR-model
 #'  params12 <-  c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-#'  gmar12 <- GSMAR(logVIX, 1, 2, params12)
+#'  gmar12 <- GSMAR(simudata, 1, 2, params12)
 #'  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE)
 #'  pred
 #'  print(pred, digits=3)

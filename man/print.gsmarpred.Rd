@@ -21,7 +21,7 @@
  \donttest{
  # GMAR-model
  params12 <-  c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
- gmar12 <- GSMAR(logVIX, 1, 2, params12)
+ gmar12 <- GSMAR(simudata, 1, 2, params12)
  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE)
  pred
  print(pred, digits=3)

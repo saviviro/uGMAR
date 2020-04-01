@@ -12,9 +12,8 @@
 #' @examples
 #'  \donttest{
 #'  # GMAR-model
-#'  params12 <- c(0.18281409, 0.92657275, 0.00214552,
-#'   0.85725129, 0.68210294, 0.01900299, 0.88342018)
-#'  gmar12 <- GSMAR(logVIX, 1, 2, params12)
+#'  params12 <- c(1.7, 0.85, 0.3, 4.12, 0.73, 1.98, 0.63)
+#'  gmar12 <- GSMAR(simudata, 1, 2, params12)
 #'  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE, pi=c(0.8, 0.9, 0.99), pi_type="two-sided")
 #'  plot(pred, nt=50)
 #'  }
