@@ -39,7 +39,7 @@ computing. After estimating the model, it’s shown by simple examples how
 to conduct some further analysis.
 
 ``` r
-## Estimate a GMAR(1, 2) model to logarithmized VIX data
+## Estimate a GMAR(1, 2) model and examine the estimates
 data(simudata, package="uGMAR")
 fit <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR")
 fit
