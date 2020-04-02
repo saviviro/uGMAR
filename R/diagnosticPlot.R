@@ -345,6 +345,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
             main <- substitute(alpha[foo], list(foo=m))
           } else { # Finally, degrees of freedom
             m <- i1 - max(cum_q) - (M - 1)
+            if(gsmar$model$model == "G-StMAR") m <- M_orig[1] + m
             main <- substitute(nu[foo], list(foo=m))
           }
         }
@@ -382,6 +383,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
               main <- substitute(alpha[foo], list(foo=m))
             } else { # Finally, degrees of freedom
               m <- i1 - (3*M + q - 1)
+              if(gsmar$model$model == "G-StMAR") m <- M_orig[1] + m
               main <- substitute(nu[foo], list(foo=m))
             }
           }
