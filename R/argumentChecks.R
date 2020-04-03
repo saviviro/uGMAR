@@ -437,7 +437,7 @@ check_params_length <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @inherit check_model return
 
 check_gsmar <- function(object) {
-  if(!any(class(object) == "gsmar")) stop("The argument 'gsmar' has to be an object of class 'gsmar' created with function 'fitGSMAR' or 'GSMAR'.")
+  if(!any(class(object) == "gsmar")) stop("The argument 'gsmar' has to be an object of class 'gsmar', often created with function 'fitGSMAR' or 'GSMAR'.")
 }
 
 

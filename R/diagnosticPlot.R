@@ -31,7 +31,7 @@
 #'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
 #'   For large StMAR and G-StMAR models with large data the calculations to obtain the individual statistics
 #'   may take a significantly long time without the package "gsl".
-#' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}},
+#' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{condmomentPlot}}, \code{\link{quantileResidualTests}},
 #'  \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
@@ -237,7 +237,7 @@ quantileResidualPlot <- function(gsmar) {
 #'   precission when considering extremely large parameter values, say, overly large degrees freedom estimates.
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit loglikelihood references
-#' @seealso  \code{\link{quantileResidualPlot}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#' @seealso  \code{\link{quantileResidualPlot}}, \code{\link{diagnosticPlot}}, \code{\link{condmomentPlot}}, \code{\link{GSMAR}},
 #'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
