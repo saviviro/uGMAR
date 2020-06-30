@@ -285,7 +285,8 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
     new_mod <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=new_M, params=new_params$params,
                      model=new_model, restricted=gsmar$model$restricted,
                      constraints=new_constraints, conditional=gsmar$model$conditional,
-                     parametrization=gsmar$model$parametrization, calc_std_errors=calc_std_errors,
+                     parametrization=gsmar$model$parametrization, calc_qresiduals=FALSE,
+                     calc_cond_moments=FALSE, calc_std_errors=calc_std_errors,
                      custom_h=custom_h)
   }
   new_mod
