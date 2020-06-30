@@ -211,7 +211,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir=environment(fitGSMAR)) # assign all variables from package:uGMAR
   parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
 
-  cat("Optimizing with the genetic algorithm...\n")
+  cat("Optimizing with a genetic algorithm...\n")
   GAresults <- pbapply::pblapply(1:ncalls, function(i1) GAfit(data=data, p=p, M=M, model=model, restricted=restricted,
                                                              constraints=constraints, conditional=conditional,
                                                              parametrization=parametrization, seed=seeds[i1], ...), cl=cl)
@@ -264,7 +264,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     vapply(1:d, function(i1) (f(params + I[i1,]*h) - f(params - I[i1,]*h))/(2*h), numeric(1))
   }
 
-  cat("Optimizing with the variable metric algorithm...\n")
+  cat("Optimizing with a variable metric algorithm...\n")
   NEWTONresults <- pbapply::pblapply(1:ncalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method="BFGS",
                                                                   control=list(fnscale=-1, maxit=maxit)), cl=cl)
   parallel::stopCluster(cl=cl)
