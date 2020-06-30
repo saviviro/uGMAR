@@ -101,3 +101,13 @@ test_that("changeRegime changes the right regime correctly", {
   expect_equal(changeRegime(2, 2, params22cr, model="StMAR", restricted=TRUE, constraints=R3, regimeParams=c(9, 8, 7), regime=1), c(9, 2, 0.8, 8, 2, 0.7, 7, 12))
   expect_equal(changeRegime(3, 2, params32cr, restricted=TRUE, constraints=R1, regimeParams=c(9, 8), regime=2), c(1, 9, 0.3, -0.3, 1, 8, 0.6))
 })
+
+test_that("GA functions don't throw errors", {
+  test_length0 <- function(x, length_x)expect_equal(length(x), length_x)
+  test_length0(regime_distance(1:3, 2:4), 1)
+  test_length0(random_regime(p=4, meanscale=1:2, sigmascale=3, forcestat=TRUE), 4 + 2)
+  test_length0(random_arcoefs(p=5, forcestat=TRUE), 5)
+  test_length0(add_dfs(1, how_many=3), 4)
+  test_length0(randomIndividual_int(p=1, M=1, model="StMAR", meanscale=1:2, sigmascale=1), 4)
+  test_length0(smartIndividual_int(p=1, M=2, params=params12, model="GMAR", meanscale=1:2, sigmascale=1, accuracy=1, whichRandom=2), 7)
+})

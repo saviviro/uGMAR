@@ -377,7 +377,7 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
   }
 
   res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
-  if(res$convergence == 1) print("The maximum number of iterations was reached! Consider iterating more.")
+  if(res$convergence == 1) message("The maximum number of iterations was reached! Consider iterating more.")
 
   GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
