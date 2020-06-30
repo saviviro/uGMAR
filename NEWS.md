@@ -60,3 +60,5 @@
 * Yet another bug fix: the predict method incurred an error with G-StMAR models. 
 * Corrected degrees of freedom labels for G-StMAR models in the function profile_logliks.
 * Updated the examples.
+
+# uGMAR 3.2.6
