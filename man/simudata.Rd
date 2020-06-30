@@ -4,7 +4,9 @@
 \name{simudata}
 \alias{simudata}
 \title{Simulated data}
-\format{A numeric vector of length 200.}
+\format{
+A numeric vector of length 200.
+}
 \source{
 Simulated
 }

@@ -15,7 +15,7 @@ LazyData: true
 Imports: Brobdingnag (>= 1.2-4), parallel, pbapply (>= 1.3-2), stats
         (>= 3.3.2)
 Suggests: gsl (>= 1.9-10.3), testthat, knitr, rmarkdown
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2018-09-22 11:32:45 UTC; savi
