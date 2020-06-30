@@ -7,7 +7,7 @@
 #'   for all regimes is supported.
 #'
 #'   Many of the functions documented are not exported but for intended internal use only. The readme file and the
-#'   vignette are a good place to start.
+#'   vignette are good places to start.
 #' @docType package
 #' @name uGMAR
 NULL
