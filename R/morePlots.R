@@ -1,8 +1,8 @@
 #' @title Conditional mean or variance plot for GMAR, StMAR, and G-StMAR models
 #'
-#' @description \code{condmomentPlot} plots the in-sample conditional means/variances of the model along with
+#' @description \code{condmomentPlot} plots the one-step in-sample conditional means/variances of the model along with
 #'  the time series contained in the model (e.g. the time series the model was fitted to). Also plots
-#'  the regimiwise conditional means/variances multiplied with the mixing weights.
+#'  the regimewise conditional means/variances multiplied with the mixing weights.
 #'
 #' @inheritParams simulateGSMAR
 #' @param which_moment should conditional means or variances be plotted?

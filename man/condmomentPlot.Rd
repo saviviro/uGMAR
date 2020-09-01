@@ -16,9 +16,9 @@ condmomentPlot(gsmar, which_moment = c("mean", "variance"))
  of the conditional means/variances can be extracted from the model with the dollar sign.
 }
 \description{
-\code{condmomentPlot} plots the in-sample conditional means/variances of the model along with
+\code{condmomentPlot} plots the one-step in-sample conditional means/variances of the model along with
  the time series contained in the model (e.g. the time series the model was fitted to). Also plots
- the regimiwise conditional means/variances multiplied with the mixing weights.
+ the regimewise conditional means/variances multiplied with the mixing weights.
 }
 \details{
 The conditional mean plot works best if the data contains positive values only.

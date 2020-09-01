@@ -62,3 +62,5 @@
 * Updated the examples.
 
 # uGMAR 3.2.6
+
+* Fixed some typos in documentation
