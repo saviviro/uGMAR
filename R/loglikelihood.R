@@ -227,29 +227,29 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
   if(!is.matrix(logmv_values0)) logmv_values0 <- as.matrix(logmv_values0)
 
-  l_0 <- 0 # "The first term" of the exact log-likelihood function (KMS 2015, eq.(12) and MPS 2018, eq.(14))
-  if(M == 1) { # No need to do calculations is only one regime.
-    alpha_mt <- as.matrix(rep(1, nrow(logmv_values0)))
-    if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-      l_0 <- logmv_values[1]
-    }
-  } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with package Brobdingnag if needed.
-    numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1]))) # alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]
-    denominator <- Reduce("+", numerators) # For all t=0,...,T
-    alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(nrow(logmv_values0)))
-
-    if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-      l_0 <- log(Reduce("+", lapply(1:M, function(i1) numerators[[i1]][1])))
-    }
-  } else {
-    mv_values0 <- exp(logmv_values0)
-    denominator <- as.vector(mv_values0%*%alphas)
-    alpha_mt <- (mv_values0/denominator)%*%diag(alphas)
-
-    if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-      l_0 <- log(sum(alphas*mv_values0[1,]))
-    }
-  }
+  # l_0 <- 0 # "The first term" of the exact log-likelihood function (KMS 2015, eq.(12) and MPS 2018, eq.(14))
+  # if(M == 1) { # No need to do calculations is only one regime.
+  #   alpha_mt <- as.matrix(rep(1, nrow(logmv_values0)))
+  #   if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
+  #     l_0 <- logmv_values[1]
+  #   }
+  # } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with package Brobdingnag if needed.
+  #   numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1]))) # alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]
+  #   denominator <- Reduce("+", numerators) # For all t=0,...,T
+  #   alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(nrow(logmv_values0)))
+  #
+  #   if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
+  #     l_0 <- log(Reduce("+", lapply(1:M, function(i1) numerators[[i1]][1])))
+  #   }
+  # } else {
+  #   mv_values0 <- exp(logmv_values0)
+  #   denominator <- as.vector(mv_values0%*%alphas)
+  #   alpha_mt <- (mv_values0/denominator)%*%diag(alphas)
+  #
+  #   if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
+  #     l_0 <- log(sum(alphas*mv_values0[1,]))
+  #   }
+  # }
 
   alpha_mt_and_l_0 <- get_alpha_mt(M=M, log_mvnvalues=logmv_values0, alphas=alphas,
                                    epsilon=epsilon, conditional=conditional, to_return=to_return,
@@ -422,6 +422,7 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
   } else {
     if(!is.matrix(log_mvnvalues)) log_mvnvalues <- t(as.matrix(log_mvnvalues)) # Only one time point but multiple regimes
 
+    log_mvnvalues_orig <- log_mvnvalues
     small_logmvns <- log_mvnvalues < epsilon
     if(any(small_logmvns)) {
       # If too small or large non-log-density values are present (i.e., that would yield -Inf or Inf),
@@ -453,7 +454,11 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
     if(M == 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
       l_0 <- log_mvnvalues[1]
     } else if(M > 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-      l_0 <- log(sum(alphas*mvnvalues[1,]))
+      if(any(log_mvnvalues_orig[1,] < epsilon)) { # Need to use Brobdingnag
+        l_0 <- log(Reduce("+", lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(log_mvnvalues_orig[1, i1])))))
+      } else {
+        l_0 <- log(sum(alphas*mvnvalues[1,]))
+      }
     }
     return(list(alpha_mt=alpha_mt,
                 l_0=l_0))
