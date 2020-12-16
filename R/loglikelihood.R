@@ -250,6 +250,13 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       l_0 <- log(sum(alphas*mv_values0[1,]))
     }
   }
+
+  alpha_mt_and_l_0 <- get_alpha_mt(M=M, log_mvnvalues=logmv_values0, alphas=alphas,
+                                   epsilon=epsilon, conditional=conditional, to_return=to_return,
+                                   also_l_0=TRUE)
+  alpha_mt <- alpha_mt_and_l_0$alpha_mt
+  l_0 <- alpha_mt_and_l_0$l_0 # The first term in the exact log-likelihood function (=0 for conditional)
+
   if(to_return == "mw" | to_return == "mw_tplus1") {
     return(alpha_mt)
   }
@@ -386,6 +393,71 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     ret <- l_0 + sum(log(l_t)) # KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15)
   }
   ret
+}
+
+
+
+#' @title Get mixing weights alpha_mt (this function is for internal use)
+#'
+#' @description \code{get_alpha_mt} computes the mixing weights based on
+#'   the logarithm of the multivariate normal densities in the definition of
+#'   the mixing weights.
+#'
+#' @inheritParams loglikelihood_int
+#' @param log_mvnvalues \eqn{T x M} matrix containing the log multivariate normal densities.
+#' @param alphas \eqn{M x 1} vector containing the mixing weight pa
+#' @param epsilon the smallest number such that its exponent is wont classified as numerically zero
+#'   (around \code{-698} is used).
+#' @param also_l_0 return also l_0 (the first term in the exact log-likelihood function)?
+#' @details Note that we index the time series as \eqn{-p+1,...,0,1,...,T} as in Kalliovirta et al. (2016).
+#' @return Returns the mixing weights a matrix of the same dimension as \code{log_mvnvalues} so
+#'   that the t:th row is for the time point t and m:th column is for the regime m.
+#' @inherit loglikelihood_int references
+#' @seealso \code{\link{loglikelihood_int}}
+
+get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_return, also_l_0=FALSE) {
+  if(M == 1) {
+    if(!is.matrix(log_mvnvalues)) log_mvnvalues <- as.matrix(log_mvnvalues) # Possibly many time points but only one regime
+    alpha_mt <- as.matrix(rep(1, nrow(log_mvnvalues)))
+  } else {
+    if(!is.matrix(log_mvnvalues)) log_mvnvalues <- t(as.matrix(log_mvnvalues)) # Only one time point but multiple regimes
+
+    small_logmvns <- log_mvnvalues < epsilon
+    if(any(small_logmvns)) {
+      # If too small or large non-log-density values are present (i.e., that would yield -Inf or Inf),
+      # we replace them with ones that are not too small or large but imply the same mixing weights
+      # up to negligible numerical tolerance.
+      which_change <- rowSums(small_logmvns) > 0 # Which rows contain too small  values
+      to_change <- log_mvnvalues[which_change, , drop=FALSE]
+      largest_vals <- do.call(pmax, split(to_change, f=rep(1:ncol(to_change), each=nrow(to_change)))) # The largest values of those rows
+      diff_to_largest <- to_change - largest_vals # Differences to the largest value of the row
+
+      # For each element in each row, check the (negative) distance from the largest value of the row. If the difference
+      # is smaller than epsilon, replace the with epsilon. The results are then the new log_mvn values.
+      diff_to_largest[diff_to_largest < epsilon] <- epsilon
+
+      # Replace the old log_mvnvalues with the new ones
+      log_mvnvalues[which_change,] <- diff_to_largest
+    }
+
+    mvnvalues <- exp(log_mvnvalues)
+    denominator <- as.vector(mvnvalues%*%alphas)
+    alpha_mt <- (mvnvalues/denominator)%*%diag(alphas)
+  }
+
+  if(!also_l_0) {
+    return(alpha_mt)
+  } else {
+    # First term of the exact log-likelihood (Kalliovirta et al. 2016, eq.(9))
+    l_0 <- 0
+    if(M == 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
+      l_0 <- log_mvnvalues[1]
+    } else if(M > 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
+      l_0 <- log(sum(alphas*mvnvalues[1,]))
+    }
+    return(list(alpha_mt=alpha_mt,
+                l_0=l_0))
+  }
 }
 
 

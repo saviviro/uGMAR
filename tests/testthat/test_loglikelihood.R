@@ -66,6 +66,12 @@ test_that("Loglikelihood gives correct value for non-restricted models", {
   expect_equal(loglikelihood_int(simudata, 1, c(1, 1), params12gs, model="G-StMAR", conditional=FALSE), -242.5499, tolerance=1e-3)
   expect_equal(loglikelihood_int(simudata, 2, c(1, 2), params23gs, model="G-StMAR"), -778.8025, tolerance=1e-3)
   expect_equal(loglikelihood_int(simudata, 1, c(1, 1), params12gs2, model="G-StMAR"), -315.1921, tolerance=1e-3)
+
+  expect_equal(loglikelihood_int(-10*simudata, 2, 2, params22t, model="StMAR", parametrization="mean"), -1014.057, tolerance=1e-3)
+  expect_equal(loglikelihood_int(simudata, 2, 3, params23, model="GMAR", parametrization="mean"), -545.4563, tolerance=1e-3)
+  expect_equal(loglikelihood_int(-0.7*simudata, 1, c(1, 1), params12gs, model="G-StMAR", conditional=FALSE), -538.9894, tolerance=1e-3)
+  expect_equal(loglikelihood_int(simudata, 2, c(1, 2), params23gs, model="G-StMAR", parametrization="mean"), -842.6103, tolerance=1e-3)
+  expect_equal(loglikelihood_int(-0.3*simudata, 2, c(1, 2), params23gs, model="G-StMAR"), -795.1153, tolerance=1e-3)
 })
 
 
@@ -86,6 +92,9 @@ test_that("Loglikelihood gives correct value for resticted models", {
   expect_equal(loglikelihood_int(simudata, 1, 3, params13rbound, restricted=TRUE, boundaries=TRUE, model="GMAR", minval=-9999), -9999)
   expect_equal(loglikelihood_int(simudata, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE, conditional=FALSE), -239.2833, tolerance=1e-3)
   expect_equal(loglikelihood_int(simudata, 1, c(2, 1), params13gsr2, model="G-StMAR", restricted=TRUE), -409.1438, tolerance=1e-3)
+
+  expect_equal(loglikelihood_int(3*simudata, 2, 3, params23tr, model="StMAR", restricted=TRUE, parametrization="mean"), -711.2051, tolerance=1e-3)
+  expect_equal(loglikelihood_int(-0.6*simudata, 1, c(2, 1), params13gsr2, model="G-StMAR", restricted=TRUE), -573.1651, tolerance=1e-3)
 })
 
 
@@ -101,6 +110,10 @@ test_that("Loglikelihood gives correct value for constrained models", {
   expect_equal(loglikelihood_int(simudata, 2, 2, params22cr, model="StMAR", restricted=TRUE, constraints=R3), -314.7658, tolerance=1e-3)
   expect_equal(loglikelihood_int(simudata, 3, 2, params32cr, restricted=TRUE, constraints=R1, conditional=FALSE), -5990.307, tolerance=1e-3)
   expect_equal(loglikelihood_int(simudata, 2, 3, params23cr, restricted=TRUE, constraints=R4), -365.42, tolerance=1e-3)
+
+  expect_equal(loglikelihood_int(3*simudata, 3, 2, params32c, model="StMAR", constraints=list(R1, R1), conditional=FALSE), -1325.383, tolerance=1e-3)
+  expect_equal(loglikelihood_int(7*simudata, 2, 2, params22cr, model="StMAR", restricted=TRUE, constraints=R3), -851.2123, tolerance=1e-3)
+  expect_equal(loglikelihood_int(0.7*simudata, 3, 2, params32cr, restricted=TRUE, constraints=R1, conditional=FALSE), -2643.472, tolerance=1e-3)
 })
 
 
