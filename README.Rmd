@@ -43,7 +43,7 @@ This is a basic example how to estimate a GMAR model to data. The example data i
 ``` r
 ## Estimate a GMAR(1, 2) model and examine the estimates
 data(simudata, package="uGMAR")
-fit <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR")
+fit <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncores=4)
 fit
 summary(fit) # Approximate standard errors in brackets
 plot(fit)
@@ -58,10 +58,25 @@ diagnosticPlot(fit)
 qrt <- quantileResidualTests(fit)
 
 ## Simulate a sample path from the estimated process
-sim <- simulateGSMAR(fit, nsimu=10)
+sim <- simulateGSMAR(fit, nsimu=100)
+plot.ts(sim$sample)
 
 ## Forecast future values of the process
 predict(fit, n_ahead=10, pi=c(0.95, 0.8))
+
+# Estimate a GMAR(1, 2) model with the autoregressive coefficients restricted
+# to be the same in both regimes:
+fitr <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", restricted=TRUE,
+                 ncores=4)
+
+# Test with likelihood ratio tests whether the AR parameters are the same in
+# both regimes (see also the function 'Wald_test'):
+LR_test(fit, fitr)
+
+# Conditional mean and variance plots:
+condmomentPlot(fit, which_moment="mean")
+condmomentPlot(fit, which_moment="variance")
+
 ```
 
 References

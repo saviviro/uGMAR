@@ -24,8 +24,8 @@ gmar12r <- GSMAR(data=simudata[100:133], p=1, M=2, params=params12r, model="GMAR
 gstmar12 <- GSMAR(data=simudata[1:50], p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
 gstmar13r <- GSMAR(data=simudata[1:50], p=1, M=c(2, 1), params=params13gsr, model="G-StMAR", restricted=TRUE)
 
-set.seed(1); qrt11t <- quantileResidualTests(stmar11, printRes=FALSE, nsimu=20)
-qrt12 <- quantileResidualTests(gmar12, printRes=FALSE, nsimu=1)
+set.seed(1); qrt11t <- quantileResidualTests(stmar11, printRes=FALSE, nsimu=20, lagsAC=c(1, 2, 5, 10))
+qrt12 <- quantileResidualTests(gmar12, printRes=FALSE, nsimu=1, lagsAC=c(1, 2, 5, 10))
 qrt23 <- quantileResidualTests(gmar23, lagsAC=c(1), lagsCH=c(3), printRes=FALSE, nsimu=1)
 qrt23t <- quantileResidualTests(stmar23, lagsAC=c(3), lagsCH=c(2), printRes=FALSE, nsimu=1)
 qrt12r <- quantileResidualTests(gmar12r, lagsAC=c(1, 3), lagsCH=c(1, 3), printRes=FALSE, nsimu=1)

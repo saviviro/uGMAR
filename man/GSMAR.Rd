@@ -214,5 +214,5 @@ gmar22c
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{stmar_to_gstmar}},
  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}},
- \code{\link{predict.gsmar}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}
+ \code{\link{predict.gsmar}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 }

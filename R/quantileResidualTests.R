@@ -59,7 +59,7 @@
 #' }
 #' @export
 
-quantileResidualTests <- function(gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
+quantileResidualTests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
   check_gsmar(gsmar)
   check_data(gsmar)
   data <- gsmar$data

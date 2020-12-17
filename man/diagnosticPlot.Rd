@@ -93,5 +93,5 @@ diagnosticPlot(fit32rc)
 }
 \seealso{
 \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{condmomentPlot}}, \code{\link{quantileResidualTests}},
- \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}
+ \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 }

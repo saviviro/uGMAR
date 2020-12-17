@@ -185,7 +185,7 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
 
       # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), PMS 2018, eq.(11)).
       alpha_mt <- get_alpha_mt(M=M, log_mvnvalues=logmv_values, alphas=alphas,
-                               epsilon=epsilon, conditional=conditional, also_l_0=FALSE)
+                               epsilon=epsilon, also_l_0=FALSE)
 
       # Draw the component and store the values
       m <- sample.int(M, size=1, prob=alpha_mt)

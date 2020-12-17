@@ -13,7 +13,7 @@
 
 quantileResidualTests(
   gsmar,
-  lagsAC = c(1, 2, 5, 10),
+  lagsAC = c(1, 3, 6, 12),
   lagsCH = lagsAC,
   nsimu = 1,
   printRes = TRUE

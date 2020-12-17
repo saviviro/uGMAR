@@ -4,10 +4,12 @@
 \alias{check_gsmar}
 \title{Check that given object has class attribute 'gsmar'}
 \usage{
-check_gsmar(object)
+check_gsmar(object, object_name = "gsmar")
 }
 \arguments{
 \item{object}{an object to be tested}
+
+\item{object_name}{the name of the tested object}
 }
 \value{
 Doesn't return anything but throws and error if something is wrong.
