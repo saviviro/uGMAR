@@ -31,13 +31,24 @@
 #' @inherit loglikelihood references
 #' @examples
 #'  \donttest{
-#'  # GMAR model
+#'  # GMAR model:
 #'  params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
 #'  gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
 #'  sim12 <- simulateGSMAR(gmar12, nsimu=500)
 #'  ts.plot(sim12$sample)
 #'  ts.plot(sim12$component)
 #'  ts.plot(sim12$mixing_weights, col=rainbow(2), lty=2)
+#'
+#'
+#'  # G-StMAR model, with initial values:
+#'  params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
+#'  gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
+#'  model="G-StMAR")
+#'  sim12gs <- simulateGSMAR(gstmar12, nsimu=500, initvalues=5:6)
+#'  ts.plot(sim12gs$sample)
+#'  ts.plot(sim12gs$component)
+#'  ts.plot(sim12gs$mixing_weights, col=rainbow(2), lty=2)
+#'
 #'
 #'  # FORECASTING EXAMPLE:
 #'  # Restricted GMAR model, 10000 sets of simulations with initial values 6 and 6.2.
@@ -50,15 +61,6 @@
 #'  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=median) # mix.weight point forecast
 #'  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=quantile,
 #'   probs=c(0.025, 0.975)) # mix.weight 95% intervals
-#'
-#'  # G-StMAR model, with initial values
-#'  params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
-#'  gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
-#'  model="G-StMAR")
-#'  sim12gs <- simulateGSMAR(gstmar12, nsimu=500, initvalues=5:6)
-#'  ts.plot(sim12gs$sample)
-#'  ts.plot(sim12gs$component)
-#'  ts.plot(sim12gs$mixing_weights, col=rainbow(3), lty=2)
 #' }
 #' @export
 
@@ -181,18 +183,9 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
       }
       logmv_values <- c(logmv_valuesM1, logmv_valuesM2)
 
-      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), PMS 2018, eq.(11)). Close to zero values handled with Brobdingnag
-      if(M == 1) {
-        alpha_mt <- 1
-      } else if(any(logmv_values < epsilon)) {
-        numerators <- lapply(1:M, function(i2) alphas[i2]*Brobdingnag::as.brob(exp(1))^logmv_values[i2])
-        denominator <- Reduce("+", numerators)
-        alpha_mt <- vapply(1:M, function(i2) as.numeric(numerators[[i2]]/denominator), numeric(1))
-      } else {
-        mv_values <- exp(logmv_values)
-        denominator <- sum(alphas*mv_values)
-        alpha_mt <- alphas*mv_values/denominator
-      }
+      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), PMS 2018, eq.(11)).
+      alpha_mt <- get_alpha_mt(M=M, log_mvnvalues=logmv_values, alphas=alphas,
+                               epsilon=epsilon, conditional=conditional, also_l_0=FALSE)
 
       # Draw the component and store the values
       m <- sample.int(M, size=1, prob=alpha_mt)

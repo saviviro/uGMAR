@@ -39,7 +39,7 @@
 #' @examples
 #' \donttest{
 #' # StMAR model
-#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR", ncores=4)
 #' pred42 <- predict(fit42, n_ahead=10, pi=c(0.95, 0.8))
 #' pred42
 #'

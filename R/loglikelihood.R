@@ -227,30 +227,6 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
   if(!is.matrix(logmv_values0)) logmv_values0 <- as.matrix(logmv_values0)
 
-  # l_0 <- 0 # "The first term" of the exact log-likelihood function (KMS 2015, eq.(12) and MPS 2018, eq.(14))
-  # if(M == 1) { # No need to do calculations is only one regime.
-  #   alpha_mt <- as.matrix(rep(1, nrow(logmv_values0)))
-  #   if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-  #     l_0 <- logmv_values[1]
-  #   }
-  # } else if(any(logmv_values0 < epsilon)) { # Close to zero values handled with package Brobdingnag if needed.
-  #   numerators <- lapply(1:M, function(i1) alphas[i1]*exp(Brobdingnag::as.brob(logmv_values0[,i1]))) # alphas[i1]*Brobdingnag::as.brob(exp(1))^logmv_values0[,i1]
-  #   denominator <- Reduce("+", numerators) # For all t=0,...,T
-  #   alpha_mt <- vapply(1:M, function(i1) as.numeric(numerators[[i1]]/denominator), numeric(nrow(logmv_values0)))
-  #
-  #   if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-  #     l_0 <- log(Reduce("+", lapply(1:M, function(i1) numerators[[i1]][1])))
-  #   }
-  # } else {
-  #   mv_values0 <- exp(logmv_values0)
-  #   denominator <- as.vector(mv_values0%*%alphas)
-  #   alpha_mt <- (mv_values0/denominator)%*%diag(alphas)
-  #
-  #   if(conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
-  #     l_0 <- log(sum(alphas*mv_values0[1,]))
-  #   }
-  # }
-
   alpha_mt_and_l_0 <- get_alpha_mt(M=M, log_mvnvalues=logmv_values0, alphas=alphas,
                                    epsilon=epsilon, conditional=conditional, to_return=to_return,
                                    also_l_0=TRUE)
@@ -409,7 +385,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #' @param epsilon the smallest number such that its exponent is wont classified as numerically zero
 #'   (around \code{-698} is used).
 #' @param also_l_0 return also l_0 (the first term in the exact log-likelihood function)?
-#' @details Note that we index the time series as \eqn{-p+1,...,0,1,...,T} as in Kalliovirta et al. (2016).
+#' @details Note that we index the time series as \eqn{-p+1,...,0,1,...,T} as in Kalliovirta et al. (2015).
 #' @return Returns the mixing weights a matrix of the same dimension as \code{log_mvnvalues} so
 #'   that the t:th row is for the time point t and m:th column is for the regime m.
 #' @inherit loglikelihood_int references

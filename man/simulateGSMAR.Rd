@@ -43,13 +43,24 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
 }
 \examples{
  \donttest{
- # GMAR model
+ # GMAR model:
  params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
  gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
  sim12 <- simulateGSMAR(gmar12, nsimu=500)
  ts.plot(sim12$sample)
  ts.plot(sim12$component)
  ts.plot(sim12$mixing_weights, col=rainbow(2), lty=2)
+
+
+ # G-StMAR model, with initial values:
+ params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
+ gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
+ model="G-StMAR")
+ sim12gs <- simulateGSMAR(gstmar12, nsimu=500, initvalues=5:6)
+ ts.plot(sim12gs$sample)
+ ts.plot(sim12gs$component)
+ ts.plot(sim12gs$mixing_weights, col=rainbow(2), lty=2)
+
 
  # FORECASTING EXAMPLE:
  # Restricted GMAR model, 10000 sets of simulations with initial values 6 and 6.2.
@@ -62,15 +73,6 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=median) # mix.weight point forecast
  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=quantile,
   probs=c(0.025, 0.975)) # mix.weight 95\% intervals
-
- # G-StMAR model, with initial values
- params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
- gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
- model="G-StMAR")
- sim12gs <- simulateGSMAR(gstmar12, nsimu=500, initvalues=5:6)
- ts.plot(sim12gs$sample)
- ts.plot(sim12gs$component)
- ts.plot(sim12gs$mixing_weights, col=rainbow(3), lty=2)
 }
 }
 \references{

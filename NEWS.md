@@ -63,4 +63,5 @@
 
 # uGMAR 3.2.6
 
-* Fixed some typos in documentation
+* Major speed improvement!
+* Fixed some typos in documentation.

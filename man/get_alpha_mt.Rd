@@ -48,7 +48,7 @@ Returns the mixing weights a matrix of the same dimension as \code{log_mvnvalues
   the mixing weights.
 }
 \details{
-Note that we index the time series as \eqn{-p+1,...,0,1,...,T} as in Kalliovirta et al. (2016).
+Note that we index the time series as \eqn{-p+1,...,0,1,...,T} as in Kalliovirta et al. (2015).
 }
 \references{
 \itemize{
