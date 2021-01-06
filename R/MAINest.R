@@ -129,25 +129,25 @@
 #'
 #' # Restricted StMAR model: plot also the individual statistics with
 #' # their approximate critical bounds using the given data
-#' fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
+#' fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
 #' fit42r
 #' plot(fit42)
 #'
 #' # Non-mixture version of StMAR model
-#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
+#' fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
 #' diagnosticPlot(fit101t)
 #'
 #' # G-StMAR model with one GMAR type and one StMAR type regime
-#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
+#' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
 #' diagnosticPlot(fit42g)
 #'
-#' # GMAR model; seeds for rerpoducibility
-#' fit43gm <- fitGSMAR(T10Y1Y, 4, M=3, model="GMAR", ncalls=16,
+#' # GMAR model; seeds for reproducibility
+#' fit43gm <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", ncalls=16,
 #'   seeds=1:16)
 #' fit43gm
 #'
 #' # Restricted GMAR model
-#' fit43gmr <- fitGSMAR(T10Y1Y, 4, M=3, model="GMAR", ncalls=12,
+#' fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", ncalls=12,
 #'   restricted=TRUE, seeds=1:12)
 #' fit43gmr
 #'
@@ -158,19 +158,19 @@
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
+#' fit22c <- fitGSMAR(T10Y1Y, p=2, M=2, constraints=constraints)
 #' fit22c
 #'
 #' # Such constrained StMAR(3, 1) model that the second order AR coefficient
 #' # is constrained to zero.
 #' constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' fit31tc <- fitGSMAR(T10Y1Y, 3, 1, model="StMAR", constraints=constraints)
+#' fit31tc <- fitGSMAR(T10Y1Y, p=3, M=1, model="StMAR", constraints=constraints)
 #' fit31tc
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
+#' fit32rc <- fitGSMAR(T10Y1Y, p=3, M=2, model="StMAR", restricted=TRUE,
 #'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' fit32rc
 #' }

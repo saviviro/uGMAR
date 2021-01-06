@@ -68,3 +68,7 @@
 * New exported function: 'LR_test' for performing a likelihood ratio test.
 * The default lags in 'quantileResidualsTests' are not 1, 3, 6, and 12.
 * Fixed some typos in documentation.
+
+# uGMAR 3.2.7
+
+* The function randomInd does not sort components anymore when constraints are employed (unless only "restricted" argument is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.

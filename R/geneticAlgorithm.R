@@ -634,13 +634,15 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
 
   if(M > 1) {
     alphas <- runif(n=M)
-    if(model != "G-StMAR") {
-      alphas <- alphas[order(alphas, decreasing=TRUE)]/sum(alphas)
-    } else { # model == "G-StMAR
-      alphas <- alphas/sum(alphas)
-      alphasM1 <- alphas[1:M1]
-      alphasM2 <- alphas[(M1 + 1):M]
-      alphas <- c(alphasM1[order(alphasM1, decreasing=TRUE)], alphasM2[order(alphasM2, decreasing=TRUE)])
+    alphas <- alphas/sum(alphas)
+    if(is.null(constraints)) { # alphas to decreasing order
+      if(model != "G-StMAR") {
+        alphas <- alphas[order(alphas, decreasing=TRUE)]
+      } else { # model == "G-StMAR"
+        alphasM1 <- alphas[1:M1]
+        alphasM2 <- alphas[(M1 + 1):M]
+        alphas <- c(alphasM1[order(alphasM1, decreasing=TRUE)], alphasM2[order(alphasM2, decreasing=TRUE)])
+      }
     }
     alphas <- alphas[-M]
     ind <- c(ind, alphas)
