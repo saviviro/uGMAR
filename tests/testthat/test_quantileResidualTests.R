@@ -1,5 +1,5 @@
 library(uGMAR)
-context("quantileResidualTests")
+context("quantile_residual_tests")
 
 ## The results slightly differ depending on whether numerical integration (without the package "gsl")
 # or hypergeometric function is used to calculate the quantile residuals. Also, the limited precission
@@ -7,7 +7,7 @@ context("quantileResidualTests")
 # the tests to fail with too small tolerance (this particularly happens if the parameters contain
 # large degree of freedom parameters).
 
-# quantileResidualTests calls other functions to deal with constraints so they are not considered here
+# quantile_residual_tests calls other functions to deal with constraints so they are not considered here
 params11t <- c(0.9, 0.92, 1.01, 2.89)
 params12 <- c(1.7, 0.85, 0.3, 4.12, 0.73, 1.98, 0.63)
 params23 <- c(2.7, 0.8, -0.06, 0.3, 3.5, 0.8, -0.07, 2.6, 7.2, 0.3, -0.01, 0.1, 0.6, 0.25)
@@ -24,13 +24,13 @@ gmar12r <- GSMAR(data=simudata[100:133], p=1, M=2, params=params12r, model="GMAR
 gstmar12 <- GSMAR(data=simudata[1:50], p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
 gstmar13r <- GSMAR(data=simudata[1:50], p=1, M=c(2, 1), params=params13gsr, model="G-StMAR", restricted=TRUE)
 
-set.seed(1); qrt11t <- quantileResidualTests(stmar11, printRes=FALSE, nsimu=20, lagsAC=c(1, 2, 5, 10))
-qrt12 <- quantileResidualTests(gmar12, printRes=FALSE, nsimu=1, lagsAC=c(1, 2, 5, 10))
-qrt23 <- quantileResidualTests(gmar23, lagsAC=c(1), lagsCH=c(3), printRes=FALSE, nsimu=1)
-qrt23t <- quantileResidualTests(stmar23, lagsAC=c(3), lagsCH=c(2), printRes=FALSE, nsimu=1)
-qrt12r <- quantileResidualTests(gmar12r, lagsAC=c(1, 3), lagsCH=c(1, 3), printRes=FALSE, nsimu=1)
-qrt12gs <- quantileResidualTests(gstmar12, lagsAC=c(2), lagsCH=c(1), printRes=FALSE, nsimu=1)
-qrt13gsr <- quantileResidualTests(gstmar13r, lagsAC=c(1), lagsCH=c(1), printRes=FALSE, nsimu=1)
+set.seed(1); qrt11t <- quantile_residual_tests(stmar11, printRes=FALSE, nsimu=20, lagsAC=c(1, 2, 5, 10))
+qrt12 <- quantile_residual_tests(gmar12, printRes=FALSE, nsimu=1, lagsAC=c(1, 2, 5, 10))
+qrt23 <- quantile_residual_tests(gmar23, lagsAC=c(1), lagsCH=c(3), printRes=FALSE, nsimu=1)
+qrt23t <- quantile_residual_tests(stmar23, lagsAC=c(3), lagsCH=c(2), printRes=FALSE, nsimu=1)
+qrt12r <- quantile_residual_tests(gmar12r, lagsAC=c(1, 3), lagsCH=c(1, 3), printRes=FALSE, nsimu=1)
+qrt12gs <- quantile_residual_tests(gstmar12, lagsAC=c(2), lagsCH=c(1), printRes=FALSE, nsimu=1)
+qrt13gsr <- quantile_residual_tests(gstmar13r, lagsAC=c(1), lagsCH=c(1), printRes=FALSE, nsimu=1)
 
 test_that("quantile residual test for normality works", {
   expect_equal(qrt12gs$norm_res$testStat, 0.5604813, tolerance=1e-3)

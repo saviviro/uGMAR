@@ -66,6 +66,6 @@ LR_test(fit12, fit12r)
  }
 }
 \seealso{
-\code{\link{Wald_test}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}},
- \code{\link{profile_logliks}}, \code{\link{quantileResidualTests}}, \code{\link{condmomentPlot}}
+\code{\link{Wald_test}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnostic_plot}},
+ \code{\link{profile_logliks}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moment_plot}}
 }

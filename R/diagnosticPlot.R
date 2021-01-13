@@ -4,7 +4,7 @@
 #'
 #' @title Quantile residual based diagnostic plots for GMAR, StMAR, and G-StMAR models
 #'
-#' @description \code{diagnosticPlot} plots quantile residual time series, normal QQ-plot, autocorrelation function,
+#' @description \code{diagnostic_plot} plots quantile residual time series, normal QQ-plot, autocorrelation function,
 #'  and squared quantile residual autocorrelation function. There is an option to also plot the individual statistics
 #'  associated with the quantile residual tests (for autocorrelation and conditional heteroskedasticity) divided by
 #'  their approximate standard errors with their approximate 95\% critical bounds (see Kalliovirta 2012, Section 3).
@@ -24,50 +24,50 @@
 #'  The dashed lines plotted with autocorrelation functions (for quantile residuals and their squares) are
 #'  plus-minus \eqn{1.96*T^{-1/2}} where \eqn{T} is the sample size (minus the \eqn{p} initial values for
 #'  conditional models).
-#' @return \code{diagnosticPlot} only plots to a graphical device and does not return anything. Use the
-#'  function \code{quantileResidualTests} in order to obtain the individual statistics.
-#' @inherit quantileResidualTests references
+#' @return \code{diagnostic_plot} only plots to a graphical device and does not return anything. Use the
+#'  function \code{quantile_residual_tests} in order to obtain the individual statistics.
+#' @inherit quantile_residual_tests references
 #' @section Suggested packages:
 #'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
 #'   For large StMAR and G-StMAR models with large data the calculations to obtain the individual statistics
 #'   may take a significantly long time without the package "gsl".
-#' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{condmomentPlot}}, \code{\link{quantileResidualTests}},
-#'  \code{\link{quantileResidualPlot}}, \code{\link{simulateGSMAR}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+#' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{cond_moment_plot}}, \code{\link{quantile_residual_tests}},
+#'  \code{\link{quantile_residual_plot}}, \code{\link{simulateGSMAR}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 #' @examples
 #' \donttest{
 #' # StMAR model
 #' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
-#' diagnosticPlot(fit42)
+#' diagnostic_plot(fit42)
 #'
 #' # Restricted StMAR model: plot also the individual statistics with
 #' # their approximate critical bounds using the given data
-#' fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
-#' diagnosticPlot(fit42r, nlags=10, nsimu=1, plot_indstats=TRUE)
+#' fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
+#' diagnostic_plot(fit42r, nlags=10, nsimu=1, plot_indstats=TRUE)
 #'
 #' # Non-mixture version of StMAR model
-#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
-#' diagnosticPlot(fit101t)
+#' fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
+#' diagnostic_plot(fit101t)
 #'
 #' # G-StMAR model
-#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
-#' diagnosticPlot(fit42g)
+#' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
+#' diagnostic_plot(fit42g)
 #'
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-#' diagnosticPlot(fit22c)
+#' fit22c <- fitGSMAR(T10Y1Y, p=2, M=2, constraints=constraints)
+#' diagnostic_plot(fit22c)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
-#' fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
+#' fit32rc <- fitGSMAR(T10Y1Y, p=3, M=2, model="StMAR", restricted=TRUE,
 #'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' diagnosticPlot(fit32rc)
+#' diagnostic_plot(fit32rc)
 #' }
 #' @export
 
-diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
+diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   if(!all_pos_ints(c(nlags, nsimu))) stop("The arguments 'nlags' and 'nsimu' have to be a strictly positive integers")
   check_gsmar(gsmar)
   check_data(gsmar)
@@ -76,7 +76,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   n_obs <- ifelse(gsmar$model$conditional, length(data) - gsmar$model$p, length(data))
 
   if(is.null(gsmar$quantile_residuals)) {
-    qresiduals <- quantileResiduals_int(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
+    qresiduals <- quantile_residuals_int(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                         model=gsmar$model$mode, restricted=gsmar$model$restricted,
                                         constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
   } else {
@@ -128,7 +128,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 
   if(plot_indstats) {
     # Obtain tests statistics
-    qrtest <- quantileResidualTests(gsmar, lagsAC=1:nlags, lagsCH=1:nlags, nsimu=nsimu, printRes=FALSE)
+    qrtest <- quantile_residual_tests(gsmar, lagsAC=1:nlags, lagsCH=1:nlags, nsimu=nsimu, printRes=FALSE)
 
     plot_inds <- function(which_ones) { # ac_res or ch_res
       res <- qrtest[[which(names(qrtest) == which_ones)]]
@@ -157,45 +157,45 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 #'
 #' @title Plot quantile residual time series and histogram
 #'
-#' @description \code{quantileResidualsPlot} plots quantile residual time series and histogram.
+#' @description \code{quantile_residualsPlot} plots quantile residual time series and histogram.
 #'
 #' @inheritParams simulateGSMAR
 #' @return  Only plots to a graphical device and doesn't return anything.
-#' @inherit quantileResiduals references
-#' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
-#'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+#' @inherit quantile_residuals references
+#' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#'  \code{\link{quantile_residual_tests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
 #' # StMAR model
 #' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
-#' quantileResidualPlot(fit42)
+#' quantile_residual_plot(fit42)
 #'
 #' # Restricted StMAR model: plot also the individual statistics with
 #' # their approximate critical bounds using the given data
 #' fit42r <- fitGSMAR(T10Y1Y, 4, 2, model="StMAR", restricted=TRUE)
-#' quantileResidualPlot(fit42r)
+#' quantile_residual_plot(fit42r)
 #'
 #' # Non-mixture version of StMAR model
 #' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
-#' quantileResidualPlot(fit101t)
+#' quantile_residual_plot(fit101t)
 #'
 #' # G-StMAR model
 #' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
-#' quantileResidualPlot(fit42g)
+#' quantile_residual_plot(fit42g)
 #'
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-#' quantileResidualPlot(fit22c)
+#' quantile_residual_plot(fit22c)
 #' }
 #' @export
 
-quantileResidualPlot <- function(gsmar) {
+quantile_residual_plot <- function(gsmar) {
   check_gsmar(gsmar)
   check_data(gsmar)
   if(is.null(gsmar$quantile_residuals)) {
-    qresiduals <- quantileResiduals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
+    qresiduals <- quantile_residuals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                         model=gsmar$model$mode, restricted=gsmar$model$restricted,
                                         constraints=gsmar$model$constraints, parametrization=gsmar$model$parametrization)
   } else {
@@ -237,8 +237,8 @@ quantileResidualPlot <- function(gsmar) {
 #'   precission when considering extremely large parameter values, say, overly large degrees freedom estimates.
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit loglikelihood references
-#' @seealso  \code{\link{quantileResidualPlot}}, \code{\link{diagnosticPlot}}, \code{\link{condmomentPlot}}, \code{\link{GSMAR}},
-#'  \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+#' @seealso  \code{\link{quantile_residual_plot}}, \code{\link{diagnostic_plot}}, \code{\link{cond_moment_plot}}, \code{\link{GSMAR}},
+#'  \code{\link{quantile_residual_tests}}, \code{\link{simulateGSMAR}}
 #' @examples
 #' \donttest{
 #' # StMAR model

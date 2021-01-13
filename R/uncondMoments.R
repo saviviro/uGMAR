@@ -5,9 +5,9 @@
 #'
 #' @inheritParams simulateGSMAR
 #' @return Returns a length \code{M} vector containing the regime mean \eqn{\mu_{m}} in the m:th element.
-#' @inherit isStationary references
+#' @inherit is_stationary references
 #' @family moment functions
-#' @seealso \code{\link{condMoments}}, \code{\link{uncondMoments}}, \code{\link{get_regime_vars}},
+#' @seealso \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{get_regime_vars}},
 #'  \code{\link{get_regime_autocovs}}
 #' @examples
 #' # GMAR model
@@ -142,22 +142,22 @@ get_regime_vars <- function(gsmar) {
 #' @title Calculate unconditional mean, variance, and the first p autocovariances and autocorrelations
 #'  of a GSMAR process.
 #'
-#' @description \code{uncondMoments_int} calculates the unconditional mean, variance, and the first p
+#' @description \code{uncond_moments_int} calculates the unconditional mean, variance, and the first p
 #'  autocovariances and autocorrelations of the specified GSMAR process.
 #'
 #' @inheritParams loglikelihood_int
-#' @details Differs from the function \code{uncondMoments} in arguments. This function exists for technical
+#' @details Differs from the function \code{uncond_moments} in arguments. This function exists for technical
 #'  reasons only.
 #' @return Returns a list containing the unconditional mean, variance, and the first p autocovariances and
 #'  autocorrelations. Note that the lag-zero autocovariance/correlation is not included in the "first p"
 #'  but is given in the \code{uncond_variance} component separately.
 #' @inherit get_regime_autocovs references
 
-uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
+uncond_moments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                               constraints=NULL, parametrization=c("intercept", "mean")) {
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
-  stopifnot(length(params) == nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints))
+  stopifnot(length(params) == n_params(p=p, M=M, model=model, restricted=restricted, constraints=constraints))
   gsmar <- structure(list(model=list(p=p, # "Pseudo gsmar" object for the helper functions
                                      M=M,
                                      model=model,
@@ -185,32 +185,32 @@ uncondMoments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 
 #' @title Calculate unconditional mean, variance, first p autocovariances and autocorrelations of the GSMAR process.
 #'
-#' @description \code{uncondMoments} calculates the unconditional mean, variance, and the first p autocovariances
+#' @description \code{uncond_moments} calculates the unconditional mean, variance, and the first p autocovariances
 #'  and autocorrelations of the GSMAR process.
 #'
 #' @inheritParams simulateGSMAR
-#' @inherit uncondMoments_int return references
+#' @inherit uncond_moments_int return references
 #' @family moment functions
 #' @examples
 #' # GMAR model
 #' params13 <- c(1.4, 0.88, 0.26, 2.46, 0.82, 0.74, 5.0, 0.68, 5.2, 0.72, 0.2)
 #' gmar13 <- GSMAR(p=1, M=3, params=params13, model="GMAR")
-#' uncondMoments(gmar13)
+#' uncond_moments(gmar13)
 #'
 #' # StMAR model
 #' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 100, 3.6)
 #' stmar12t <- GSMAR(p=1, M=2, params=params12t, model="StMAR")
-#' uncondMoments(stmar12t)
+#' uncond_moments(stmar12t)
 #'
 #' # G-StMAR model (similar to the StMAR model above)
 #' params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
 #' gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
-#' uncondMoments(gstmar12)
+#' uncond_moments(gstmar12)
 #' @export
 
-uncondMoments <- function(gsmar) {
+uncond_moments <- function(gsmar) {
   check_gsmar(gsmar)
-  uncondMoments_int(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model,
+  uncond_moments_int(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model,
                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                     parametrization=gsmar$model$parametrization)
 }

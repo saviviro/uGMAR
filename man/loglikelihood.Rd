@@ -48,7 +48,7 @@ loglikelihood(
   \item{For \strong{restricted} models:}{
     \describe{
       \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
@@ -136,6 +136,6 @@ loglikelihood(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
  }
 }
 \seealso{
-\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResiduals}},
- \code{\link{mixingWeights}}, \code{\link{calc_gradient}}
+\code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residuals}},
+ \code{\link{mixing_weights}}, \code{\link{calc_gradient}}
 }

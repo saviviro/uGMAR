@@ -1,10 +1,10 @@
 #' @title Reform any parameter vector into standard form.
 #'
-#' @description \code{reformParameters} takes a parameter vector of any (non-constrained) GMAR, StMAR, or G-StMAR model
+#' @description \code{reform_parameters} takes a parameter vector of any (non-constrained) GMAR, StMAR, or G-StMAR model
 #'  and returns a list with the parameter vector in the standard form, parameter matrix containing AR coefficients and
 #'  component variances, mixing weights alphas, and in case of StMAR or G-StMAR model also degrees of freedom parameters.
 #'
-#' @inheritParams isStationary_int
+#' @inheritParams is_stationary_int
 #' @details This function does not support models imposing linear constraints. No argument checks in this function.
 #' @return Returns a list with...
 #' \describe{
@@ -16,9 +16,9 @@
 #'     Returned only if \code{model == "StMAR"} or \code{model == "G-StMAR"}.}
 #'  }
 
-reformParameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
+reform_parameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   model <- match.arg(model)
-  params <- reformRestrictedPars(p=p, M=M, params=params, model=model, restricted=restricted)
+  params <- reform_restricted_pars(p=p, M=M, params=params, model=model, restricted=restricted)
   list(params=params,
        pars=pick_pars(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL),
        alphas=pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL),
@@ -28,7 +28,7 @@ reformParameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 
 #' @title Reform parameter vector with linear constraints to correspond non-constrained parameter vector.
 #'
-#' @description \code{reformConstrainedPars} reforms the parameter vector of a model with linear constrains
+#' @description \code{reform_constrained_pars} reforms the parameter vector of a model with linear constrains
 #'   to the "standard form" so that it's comparable with non-constrained models.
 #'
 #' @inheritParams loglikelihood_int
@@ -36,7 +36,7 @@ reformParameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #' for non-restricted or restricted models (for non-constrained models), and can hence be used just as the
 #' parameter vectors of non-constrained models.
 
-reformConstrainedPars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+reform_constrained_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   if(is.null(constraints)) {
     return(params)
   } else {
@@ -71,59 +71,58 @@ reformConstrainedPars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMA
 
 #' @title Reform parameter vector with restricted autoregressive parameters to correspond non-restricted parameter vector.
 #'
-#' @description \code{reformRestrictedPars} reforms parameter vector with restricted autoregressive parameters to correspond
+#' @description \code{reform_restricted_pars} reforms parameter vector with restricted autoregressive parameters to correspond
 #'  non-restricted parameter vector.
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns such parameter vector corresponding to the input vector that is the form describted in \code{params}
 #' for non-restricted models (for non-constrained models). Linear constraints are not supported.
 
-reformRestrictedPars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
+reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   if(restricted == FALSE) {
     return(params)
-  } else {
-    model <- match.arg(model)
-    M_orig <- M
-    M <- sum(M)
-    phi0 <- params[1:M]
-    arcoefs <- matrix(rep(params[(M + 1):(M + p)], M), ncol=M)
-    sigmas <- params[(M + p + 1):(p + 2*M)]
-    pars <- rbind(phi0, arcoefs, sigmas)
-    alphas <- params[(p + 2*M + 1):(3*M + p - 1)]
-    dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
-    return(c(as.vector(pars), alphas, dfs))
   }
+  model <- match.arg(model)
+  M_orig <- M
+  M <- sum(M)
+  phi0 <- params[1:M]
+  arcoefs <- matrix(rep(params[(M + 1):(M + p)], M), ncol=M)
+  sigmas <- params[(M + p + 1):(p + 2*M)]
+  pars <- rbind(phi0, arcoefs, sigmas)
+  alphas <- params[(p + 2*M + 1):(3*M + p - 1)]
+  dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
+  c(as.vector(pars), alphas, dfs)
 }
 
 
 #' @title Transform constrained and restricted parameter vector into the regular form
 #'
-#' @description \code{removeAllConstraints} transforms constrained and restricted parameter vector into the regular form.
+#' @description \code{remove_all_constraints} transforms constrained and restricted parameter vector into the regular form.
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 #' for non-restricted and non-constrained models.
 
-removeAllConstraints <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+remove_all_constraints <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
-  params <- reformConstrainedPars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  reformRestrictedPars(p=p, M=M, params=params, model=model, restricted=restricted)
+  params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+  reform_restricted_pars(p=p, M=M, params=params, model=model, restricted=restricted)
 }
 
 
 
 #' @title Sort the mixture components of a GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{sortComponents} sorts mixture components of the specified GMAR, StMAR, or G-StMAR model
+#' @description \code{sort_components} sorts mixture components of the specified GMAR, StMAR, or G-StMAR model
 #'   according to the mixing weight parameters when the parameter vector has the "standard/regular form" for
 #'   restricted or non-restricted models.
 #'
-#' @inheritParams isStationary
+#' @inheritParams is_stationary
 #' @details This function does not support models imposing linear constraints.
 #' @return Returns a parameter vector sorted according to its mixing weight parameters,
 #'   described in \code{params}.
 
-sortComponents <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
+sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   model <- match.arg(model)
   if(model != "G-StMAR") {
     if(M == 1) {

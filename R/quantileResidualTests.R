@@ -2,7 +2,7 @@
 #'
 #' @title Quantile residual tests for GMAR, StMAR , and G-StMAR models
 #'
-#' @description \code{quantileResidualTests} performs quantile residual tests for GMAR, StMAR,
+#' @description \code{quantile_residual_tests} performs quantile residual tests for GMAR, StMAR,
 #'  and G-StMAR models, testing normality, autocorrelation, and conditional heteroscedasticity
 #'  of the quantile residuals.
 #'
@@ -28,38 +28,38 @@
 #'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
 #'   For large StMAR and G-StMAR models with large data, the evaluations may take significantly long time
 #'   without the package "gsl".
-#' @inherit quantileResiduals_int references
-#' @seealso \code{\link{profile_logliks}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}},
-#'  \code{\link{predict.gsmar}}, \code{\link{getOmega}},
+#' @inherit quantile_residuals_int references
+#' @seealso \code{\link{profile_logliks}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnostic_plot}},
+#'  \code{\link{predict.gsmar}}, \code{\link{get_test_Omega}},
 #' @examples
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-#' qrt <- quantileResidualTests(fit12, lagsAC=c(1, 5, 10, 15))
+#' qrt <- quantile_residual_tests(fit12, lagsAC=c(1, 5, 10, 15))
 #'
 #' # G-StMAR model
-#' fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
-#' qrtest42g <- quantileResidualTests(fit42g)
+#' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
+#' qrtest42g <- quantile_residual_tests(fit42g)
 #' plot(qrtest42g)
 #'
 #' # Restricted GMAR model
-#' fit43gmr <- fitGSMAR(T10Y1Y, 4, 3, model="GMAR", restricted=TRUE)
-#' qrtest43gmr <- quantileResidualTests(fit43gmr, lagsAC=1:10)
+#' fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", restricted=TRUE)
+#' qrtest43gmr <- quantile_residual_tests(fit43gmr, lagsAC=1:10)
 #' plot(qrtest43gmr)
 #'
 #' # Non-mixture version of StMAR model
-#' fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
-#' quantileResidualTests(fit101t, lagsAC=c(1, 2, 5), printRes=FALSE)
+#' fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
+#' quantile_residual_tests(fit101t, lagsAC=c(1, 2, 5), printRes=FALSE)
 #'
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-#' quantileResidualTests(fit22c, lagsAC=c(1, 3), printRes=FALSE)
+#' quantile_residual_tests(fit22c, lagsAC=c(1, 3), printRes=FALSE)
 #' }
 #' @export
 
-quantileResidualTests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
+quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
   check_gsmar(gsmar)
   check_data(gsmar)
   data <- gsmar$data
@@ -76,7 +76,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, n
     message("Suggested package 'gsl' not found and a StMAR or G-StMAR model is considered: performing the tests may take a while")
   }
   if(max(c(lagsAC, lagsCH)) >= T_obs) stop("The lags are too large compared to the data size")
-  qresiduals <- quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+  qresiduals <- quantile_residuals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                                       constraints=constraints, parametrization=parametrization)
   if(nsimu > length(data)) {
     omegaData <- as.matrix(simulateGSMAR(gsmar, nsimu=nsimu)$sample)
@@ -95,7 +95,7 @@ quantileResidualTests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, n
       }
     }
     num_string <- "because of numerical problems."
-    omg <- tryCatch(getOmega(data=omegaData, p=p, M=M, params=params, model=model, restricted=restricted,
+    omg <- tryCatch(get_test_Omega(data=omegaData, p=p, M=M, params=params, model=model, restricted=restricted,
                              constraints=constraints, parametrization=parametrization, g=g, dim_g=dim_g),
                     error=function(e) {
                       if(model %in% c("StMAR", "G-StMAR")) {

@@ -34,8 +34,8 @@
 #'    \item{mix_pred_ints}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
 #'  }
 #' @inherit simulateGSMAR references
-#' @seealso \code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
-#'  \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}
+#' @seealso \code{\link{simulateGSMAR}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#'  \code{\link{quantile_residual_tests}}, \code{\link{diagnostic_plot}}
 #' @examples
 #' \donttest{
 #' # StMAR model
@@ -106,7 +106,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
   }
   if(!all_pos_ints(c(n_ahead, nsimu))) stop("Arguments n_ahead and nsimu must be positive integers")
   if(any(pi >= 1) | any(pi <= 0)) stop("Each confidence level has to be in the open interval (0, 1)")
-  if(!is.null(constraints)) checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
+  if(!is.null(constraints)) check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
 
   # Calculate the prediction
   if(pred_type == "cond_mean") { # Exact conditional mean
@@ -116,7 +116,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
       params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
                                        constraints=constraints, change_to="intercept")
     }
-    mw <- mixingWeights_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+    mw <- mixing_weights_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                             parametrization="intercept", checks=TRUE, to_return="mw_tplus1")
     pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
 

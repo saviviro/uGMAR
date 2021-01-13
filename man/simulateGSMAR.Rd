@@ -90,5 +90,5 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
 }
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{predict.gsmar}},
- \code{\link{add_data}}, \code{\link{condMoments}}, \code{\link{mixingWeights}}
+ \code{\link{add_data}}, \code{\link{cond_moments}}, \code{\link{mixing_weights}}
 }

@@ -17,9 +17,9 @@
 #'   Finally, note that this function does \strong{not} check whether the specified constraints are feasible (e.g. whether
 #'   the implied constrained model would be stationary or have positive definite error term covariance matrices).
 #' @return Returns an object of class \eqn{'wald'} containing the test statistic and the related p-value.
-#' @seealso \code{\link{LR_test}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}},
-#'  \code{\link{profile_logliks}}, \code{\link{quantileResidualTests}}, \code{\link{condmomentPlot}}
-#' @inherit isStationary references
+#' @seealso \code{\link{LR_test}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnostic_plot}},
+#'  \code{\link{profile_logliks}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moment_plot}}
+#' @inherit is_stationary references
 #' @examples
 #' \donttest{
 #' # GMAR p=1, M=2 model:
@@ -100,8 +100,8 @@ Wald_test <- function(gsmar, A, c, h=6e-6) {
 #'
 #'   Note that this function does \strong{not} verify that the two models are actually nested.
 #' @return Returns an object of class \eqn{'lr'} containing the test statistic and the related p-value.
-#' @seealso \code{\link{Wald_test}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnosticPlot}},
-#'  \code{\link{profile_logliks}}, \code{\link{quantileResidualTests}}, \code{\link{condmomentPlot}}
+#' @seealso \code{\link{Wald_test}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnostic_plot}},
+#'  \code{\link{profile_logliks}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moment_plot}}
 #' @inherit Wald_test references
 #' @examples
 #' \donttest{

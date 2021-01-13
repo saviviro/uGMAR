@@ -1,6 +1,6 @@
 #' @title Calculate standard errors for estimates of a GMAR, StMAR, or GStMAR model
 #'
-#' @description \code{standardErrors} numerically approximates standard errors for the given estimates of GMAR, StMAR, or GStMAR model.
+#' @description \code{standard_errors} numerically approximates standard errors for the given estimates of GMAR, StMAR, or GStMAR model.
 #'
 #' @inheritParams loglikelihood_int
 #' @param custom_h a numeric vector with the same length as \code{params} specifying the difference 'h' used in finite difference approximation
@@ -9,7 +9,7 @@
 #' @inheritParams fitGSMAR
 #' @return Returns approximate standard errors of the parameter values in a numeric vector.
 
-standardErrors <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
+standard_errors <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                            parametrization=c("intercept", "mean"), custom_h=NULL, minval) {
   if(missing(minval)) minval <- get_minval(data)
 

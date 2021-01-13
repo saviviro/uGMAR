@@ -94,8 +94,8 @@ test_that("pick_phi0 works correctly", {
 
 calc_mu <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
-  params <- reformConstrainedPars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  pars <- reformParameters(p=p, M=M, params=params, model=model, restricted=restricted)$pars
+  params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+  pars <- reform_parameters(p=p, M=M, params=params, model=model, restricted=restricted)$pars
   M <- sum(M)
   vapply(1:M, function(m) pars[1, m]/(1 - sum(pars[(2:(nrow(pars) - 1)), m])), numeric(1))
 }

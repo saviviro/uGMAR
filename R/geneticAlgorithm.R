@@ -39,7 +39,7 @@
 #'    \item{For \strong{restricted} models:}{
 #'      \describe{
 #'        \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
+#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
 #'        \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
 #'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
@@ -63,7 +63,7 @@
 #'   population and the algorithm might converge poorly. Default is \code{1} and it gives \eqn{2x} larger surviving probability weights for
 #'   individuals with no wasted regimes compared to individuals with one wasted regime. Number \code{2} would give \eqn{3x} larger probabilities etc.
 #' @param red_criteria a length 2 numeric vector specifying the criteria that is used to determine whether a regime is redundant or not.
-#'   Any regime \code{m} which satisfies \code{sum(mixingWeights[,m] > red_criteria[1]) < red_criteria[2]*n_obs} will be considered "redundant".
+#'   Any regime \code{m} which satisfies \code{sum(mixing_weights[,m] > red_criteria[1]) < red_criteria[2]*n_obs} will be considered "redundant".
 #'   One should be careful when adjusting this argument (set \code{c(0, 0)} to fully disable the 'redundant regime' features from the algorithm).
 #' @param to_return should the genetic algorithm return the best fitting individual which has the least "redundant" regimes (\code{"alt_ind"})
 #'   or the individual which has the highest log-likelihood in general (\code{"best_ind"}) but might have more wasted regimes?
@@ -107,10 +107,10 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   set.seed(seed)
   model <- match.arg(model)
   check_model(model)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   parametrization <- match.arg(parametrization)
   to_return <- match.arg(to_return)
-  data <- checkAndCorrectData(data, p)
+  data <- check_and_correct_data(data, p)
   n_obs <- length(data)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -120,7 +120,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   }
   # Check constraint matrices
   if(!is.null(constraints)) {
-    checkConstraintMat(p, M, restricted=restricted, constraints=constraints)
+    check_constraint_mat(p, M, restricted=restricted, constraints=constraints)
     if(restricted) {
       Cquals <- TRUE # States whether all matrices C are equal
     } else {
@@ -129,7 +129,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   } else {
     Cquals <- TRUE # Always true if no constraints
   }
-  d <- nParams(p=p, M=M_orig, model=model, restricted=restricted, constraints=constraints)
+  d <- n_params(p=p, M=M_orig, model=model, restricted=restricted, constraints=constraints)
 
   # Default settings
   if(missing(popsize)) popsize <- 10*d
@@ -152,7 +152,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   if(is.null(initpop)) {
     nattempts <- 100
     for(i1 in 1:nattempts) {
-      G <- replicate(popsize, randomIndividual_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
+      G <- replicate(popsize, random_ind_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
                                                    meanscale=meanscale, sigmascale=sigmascale), numeric(d))
       init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
                                                                     constraints=constraints, conditional=conditional, parametrization="mean",
@@ -173,15 +173,15 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
                                          constraints=constraints, change_to="mean")
       }
       if(!is.null(constraints)) {
-        params <- reformConstrainedPars(p, M_orig, params, model=model, restricted=restricted, constraints=constraints)
+        params <- reform_constrained_pars(p, M_orig, params, model=model, restricted=restricted, constraints=constraints)
       }
-      pars_tmp <- reformParameters(p, M_orig, params=params, model=model, restricted=restricted)
+      pars_tmp <- reform_parameters(p, M_orig, params=params, model=model, restricted=restricted)
       if(model == "StMAR" | model == "G-StMAR") {
         if(any(pars_tmp$dfs <= 2)) {
           stop(paste("The individual", i1, "in the initial population has degrees of freedom not larger than 2"))
         }
       }
-      if(!isStationary_int(p, M, params=pars_tmp$params, restricted=restricted)) {
+      if(!is_stationary_int(p, M, params=pars_tmp$params, restricted=restricted)) {
         stop(paste("The individual", i1, "in the initial population is not stationary"))
       } else if(any(pars_tmp$pars[p + 2,] <= 0)) {
         stop(paste("The individual", i1, "in the initial population has variance parameter that is not larger than zero"))
@@ -189,7 +189,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         stop(paste("The mixing weights of the individual", i1," in the initial population don't sum to one"))
       } else if(is.null(constraints)) {
         # Sort components in the initial population so that alpha_1>...>alpha_M
-        initpop[[i1]] <- sortComponents(p=p, M=M_orig, params=params, model=model, restricted=restricted)
+        initpop[[i1]] <- sort_components(p=p, M=M_orig, params=params, model=model, restricted=restricted)
       }
     }
     G <- replicate(popsize, initpop[[sample.int(length(initpop), size=1)]])
@@ -321,7 +321,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     best_index0 <- which(logliks == max(logliks), arr.ind = TRUE)
     best_index <- best_index0[order(best_index0[,1], decreasing=FALSE)[1],] # The first generation when the best loglik occurred (take the first because of fitness inheritance)
     best_ind <- generations[, best_index[2], best_index[1]]
-    best_mw <- mixingWeights_int(data=data, p=p, M=M_orig, params=best_ind, model=model, restricted=restricted,
+    best_mw <- mixing_weights_int(data=data, p=p, M=M_orig, params=best_ind, model=model, restricted=restricted,
                                  constraints=constraints, parametrization="mean", checks=FALSE, to_return="mw")
     which_redundant <- which((vapply(1:M, function(i2) sum(best_mw[,i2] > red_criteria[1]) < red_criteria[2]*length(data), logical(1))))
 
@@ -400,7 +400,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           which_to_change <- which_redundant[1]
 
           # All nonredundant regimes of best_ind (without dfs)
-          best_ind_nonRedRegimes <- sapply((1:M)[-which_redundant], function(i2) extractRegime(p=p, M=M_orig, params=best_ind, model=model,
+          best_ind_nonRedRegimes <- sapply((1:M)[-which_redundant], function(i2) extract_regime(p=p, M=M_orig, params=best_ind, model=model,
                                                                                                restricted=restricted, constraints=constraints,
                                                                                                regime=i2, with_dfs=FALSE))
           # All nonredundant regimes of alt_ind (without dfs)
@@ -409,7 +409,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           } else {
             nonred_altind <- (1:M)[-which_redundant_alt]
           }
-          alt_ind_nonRedRegimes <- sapply(nonred_altind, function(i2) extractRegime(p=p, M=M_orig, params=alt_ind, model=model,
+          alt_ind_nonRedRegimes <- sapply(nonred_altind, function(i2) extract_regime(p=p, M=M_orig, params=alt_ind, model=model,
                                                                                     restricted=restricted, constraints=constraints,
                                                                                     regime=i2, with_dfs=FALSE))
 
@@ -427,7 +427,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
           which_reg_to_use <- which(apply(dist_to_regime, 2, min) == max(apply(dist_to_regime, 2, min)))[1]
 
           if(model == "StMAR" | model == "GMAR") {
-            reg_to_use <- extractRegime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
+            reg_to_use <- extract_regime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
                                         regime=which_reg_to_use, with_dfs=TRUE)
           } else { # model == "G-StMAR"
             if(which_to_change <= M1) { # No dfs
@@ -436,27 +436,27 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
               if(which_reg_to_use <= M1) { # We need to create new dfs
                 reg_to_use <- c(alt_ind_nonRedRegimes[,which_reg_to_use], runif(n=1, min=2+1e-6, max=30))
               } else { # The chosen alt_ind regime contains dfs
-                reg_to_use <- extractRegime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
+                reg_to_use <- extract_regime(p=p, M=M_orig, params=alt_ind, model=model, restricted=restricted, constraints=constraints,
                                             regime=which_reg_to_use, with_dfs=TRUE)
               }
             }
           }
 
           # Combine the regimes to a complete parameter vector
-          ind_to_use <- changeRegime(p=p, M=M_orig, params=best_ind, model=model, restricted=restricted, constraints=constraints,
+          ind_to_use <- change_regime(p=p, M=M_orig, params=best_ind, model=model, restricted=restricted, constraints=constraints,
                                      regimeParams=reg_to_use, regime=which_to_change)
 
           # If there are redundant regimes left, they should be random mutated and not smart mutated
           rand_to_use <- which_redundant[which_redundant != which_to_change]
         }
         # Do smart mutations close to ind_to_use with random regimes (if any) given by rand_to_use
-        H2[,mutate] <- vapply(1:length(mutate), function(i3) smartIndividual_int(p=p, M=M_orig, params=ind_to_use, model=model,
+        H2[,mutate] <- vapply(1:length(mutate), function(i3) smart_ind_int(p=p, M=M_orig, params=ind_to_use, model=model,
                                                                                  restricted=restricted, constraints=constraints,
                                                                                  meanscale=meanscale, sigmascale=sigmascale,
                                                                                  accuracy=accuracy[i3], whichRandom=rand_to_use,
                                                                                  forcestat=forcestat), numeric(d))
       } else { # Random mutations
-        H2[,mutate] <- vapply(1:length(mutate), function(i3) randomIndividual_int(p, M_orig, model=model, restricted=restricted,
+        H2[,mutate] <- vapply(1:length(mutate), function(i3) random_ind_int(p, M_orig, model=model, restricted=restricted,
                                                                                   constraints=constraints, meanscale=meanscale,
                                                                                   sigmascale=sigmascale, forcestat=forcestat), numeric(d))
       }
@@ -464,7 +464,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
     # Sort components if constraints are not used
     if(is.null(constraints)) {
-      H2 <- vapply(1:popsize, function(i2) sortComponents(p, M_orig, H2[,i2], model=model, restricted=restricted), numeric(d))
+      H2 <- vapply(1:popsize, function(i2) sort_components(p, M_orig, H2[,i2], model=model, restricted=restricted), numeric(d))
     }
 
     # Set up for the next generation
@@ -593,9 +593,9 @@ add_dfs <- function(x, how_many) {
 
 #' @title Create random GMAR, StMAR, or G-StMAR model compatible parameter vector
 #'
-#' @description \code{randomIndividual_int} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector.
+#' @description \code{random_ind_int} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector.
 #'
-#' \code{smartIndividual_int} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector close to argument \code{params}.
+#' \code{smart_ind_int} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector close to argument \code{params}.
 #'
 #' @inheritParams GAfit
 #' @inheritParams random_regime
@@ -607,7 +607,7 @@ add_dfs <- function(x, how_many) {
 #' @inherit GAfit return
 #' @inherit random_regime references
 
-randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
+random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -659,63 +659,63 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
 
 #' @title Create random GMAR, StMAR, or G-StMAR model compatible parameter vector
 #'
-#' @description \code{randomIndividual} creates a random GMAR, StMAR, or G-StMAR model compatible mean-parametrized parameter vector.
+#' @description \code{random_ind} creates a random GMAR, StMAR, or G-StMAR model compatible mean-parametrized parameter vector.
 #'
-#' \code{smartIndividual} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector close to argument \code{params}.
+#' \code{smart_ind} creates a random GMAR, StMAR, or G-StMAR model compatible parameter vector close to argument \code{params}.
 #'   Sometimes returns exactly the given parameter vector.
 #'
-#' @inheritParams randomIndividual_int
-#' @inherit randomIndividual_int return references
+#' @inheritParams random_ind_int
+#' @inherit random_ind_int return references
 #' @details These functions can be used, for example, to create initial populations for the genetic algorithm. Mean-parametrization
 #'   (instead of intercept terms \eqn{\phi_{m,0}}) is assumed.
 #' @examples
 #' # GMAR model parameter vector
-#' params22 <- randomIndividual(2, 2, meanscale=c(0, 1), sigmascale=1)
-#' smart22 <- smartIndividual(2, 2, params22, accuracy=10)
+#' params22 <- random_ind(p=2, M=2, meanscale=c(0, 1), sigmascale=1)
+#' smart22 <- smart_ind(p=2, M=2, params22, accuracy=10)
 #' cbind(params22, smart22)
 #'
 #'
 #' # Restricted GMAR parameter vector
-#' params12r <- randomIndividual(1, 2, restricted=TRUE, meanscale=c(-2, 2), sigmascale=2)
-#' smart12r <- smartIndividual(1, 2, params12r, restricted=TRUE, accuracy=20)
+#' params12r <- random_ind(1, 2, restricted=TRUE, meanscale=c(-2, 2), sigmascale=2)
+#' smart12r <- smart_ind(1, 2, params12r, restricted=TRUE, accuracy=20)
 #' cbind(params12r, smart12r)
 #'
 #'
 #' # StMAR parameter vector: first regime is random in the "smart individual"
-#' params13t <- randomIndividual(1, 3, model="StMAR", meanscale=c(3, 1), sigmascale=3)
-#' smart13t <- smartIndividual(1, 3, params13t, model="StMAR", accuracy=15,
+#' params13t <- random_ind(1, 3, model="StMAR", meanscale=c(3, 1), sigmascale=3)
+#' smart13t <- smart_ind(1, 3, params13t, model="StMAR", accuracy=15,
 #'                             meanscale=c(3, 3), sigmascale=3, whichRandom=1)
 #' cbind(params13t, smart13t)
 #'
 #'
 #' # Restricted StMAR parameter vector
-#' params22tr <- randomIndividual(2, 2, model="StMAR", restricted=TRUE,
+#' params22tr <- random_ind(2, 2, model="StMAR", restricted=TRUE,
 #'                                meanscale=c(3, 2), sigmascale=0.5)
-#' smart22tr <- smartIndividual(2, 2, params22tr, model="StMAR", restricted=TRUE,
+#' smart22tr <- smart_ind(2, 2, params22tr, model="StMAR", restricted=TRUE,
 #'                              accuracy=30)
 #' cbind(params22tr, smart22tr)
 #'
 #'
 #' # G-StMAR parameter vector
-#' params12gs <- randomIndividual(1, c(1, 1), model="G-StMAR", meanscale=c(0, 1),
+#' params12gs <- random_ind(1, c(1, 1), model="G-StMAR", meanscale=c(0, 1),
 #'                                sigmascale=1)
-#' smart12gs <- smartIndividual(1, c(1, 1), params12gs, model="G-StMAR", accuracy=20)
+#' smart12gs <- smart_ind(1, c(1, 1), params12gs, model="G-StMAR", accuracy=20)
 #' cbind(params12gs, smart12gs)
 #'
 #'
 #' # Restricted G-StMAR parameter vector
-#' params23gsr <- randomIndividual(2, c(1, 2), model="G-StMAR", restricted=TRUE,
+#' params23gsr <- random_ind(2, c(1, 2), model="G-StMAR", restricted=TRUE,
 #'                                 meanscale=c(-1, 1), sigmascale=3)
-#' smart23gsr <- smartIndividual(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
+#' smart23gsr <- smart_ind(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
 #'                               meanscale=c(0, 1), sigmascale=1, accuracy=20, whichRandom=2)
 #' cbind(params23gsr, smart23gsr)
 #'
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' C <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- randomIndividual(2, 2, constraints=C, meanscale=c(1, 1),
+#' params22c <- random_ind(2, 2, constraints=C, meanscale=c(1, 1),
 #'                               sigmascale=1)
-#' smart22c <- smartIndividual(2, 2, params22c, constraints=C, accuracy=10)
+#' smart22c <- smart_ind(2, 2, params22c, constraints=C, accuracy=10)
 #' cbind(params22c, smart22c)
 #'
 #'
@@ -723,29 +723,29 @@ randomIndividual_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), rest
 #' # are constrained to zero.
 #' C0 = matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
 #' C = list(C0, C0)
-#' params32c <- randomIndividual(3, 2, model="StMAR", constraints=C,
+#' params32c <- random_ind(3, 2, model="StMAR", constraints=C,
 #'                               meanscale=c(1, 1), sigmascale=1)
-#' smart32c <- smartIndividual(3, 2, params32c, model="StMAR", constraints=C, accuracy=10)
+#' smart32c <- smart_ind(3, 2, params32c, model="StMAR", constraints=C, accuracy=10)
 #' cbind(params32c, smart32c)
 #'
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero. Second regime is random in the "smart individual".
-#' params32trc <- randomIndividual(3, 2, model="StMAR", restricted=TRUE,
+#' params32trc <- random_ind(3, 2, model="StMAR", restricted=TRUE,
 #'                                 constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
 #'                                 meanscale=c(-2, 0.5), sigmascale=4)
-#' smart32trc <- smartIndividual(3, 2, params32trc, model="StMAR", restricted=TRUE,
+#' smart32trc <- smart_ind(3, 2, params32trc, model="StMAR", restricted=TRUE,
 #'                               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
 #'                               meanscale=c(0, 0.1), sigmascale=0.1, whichRandom=2,
 #'                               accuracy=20)
 #' cbind(params32trc, smart32trc)
 #' @export
 
-randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
+random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   if(length(meanscale) != 2) {
     stop("meanscale is wrong dimension")
   } else if(length(sigmascale) != 1) {
@@ -756,31 +756,31 @@ randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restrict
     stop("sigmascale should be larger than zero")
   }
   if(!is.null(constraints)) {
-    checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
+    check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
   for(i1 in 1:42) {
-    ret <- randomIndividual_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, meanscale=meanscale,
+    ret <- random_ind_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, meanscale=meanscale,
                                 sigmascale=sigmascale, forcestat=forcestat)
-    ret0 <- reformConstrainedPars(p=p, M=M, params=ret, model=model, restricted=restricted, constraints=constraints)
-    if(isStationary_int(p=p, M=M, params=ret0, restricted=restricted)) return(ret)
+    ret0 <- reform_constrained_pars(p=p, M=M, params=ret, model=model, restricted=restricted, constraints=constraints)
+    if(is_stationary_int(p=p, M=M, params=ret0, restricted=restricted)) return(ret)
   }
   message("Failed to generate stationary parameter vector")
   ret
 }
 
 
-#' @rdname randomIndividual_int
+#' @rdname random_ind_int
 #' @inheritParams loglikelihood
 #' @param accuracy a real number larger than zero specifying how close to \code{params} the generated parameter vector should be.
 #'   Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter
 #'   value divided by \code{accuracy}.
 #' @param whichRandom a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
-#' using \code{smartIndividual}. Does not affect mixing weight parameters. Default in none.
+#' using \code{smart_ind}. Does not affect mixing weight parameters. Default in none.
 #' @param forcestat use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
 #'   Not supported for constrained models.
 #' @inherit random_regime references
 
-smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                                 meanscale, sigmascale, accuracy, whichRandom, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
@@ -870,8 +870,8 @@ smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
     ind <- c(ind, dfs2)
   }
 
-  ind_stand <- reformConstrainedPars(p=p, M=M_orig, params=ind, model=model, restricted=restricted, constraints=constraints)
-  if(isStationary_int(p=p, M=M, params=ind_stand, restricted=restricted)) {
+  ind_stand <- reform_constrained_pars(p=p, M=M_orig, params=ind, model=model, restricted=restricted, constraints=constraints)
+  if(is_stationary_int(p=p, M=M, params=ind_stand, restricted=restricted)) {
     return(ind)
   } else {
     return(params) # Return the given individual if smart mutation is not stationary
@@ -879,15 +879,15 @@ smartIndividual_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 }
 
 
-#' @rdname randomIndividual
-#' @inheritParams smartIndividual_int
+#' @rdname random_ind
+#' @inheritParams smart_ind_int
 #' @export
 
-smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                             meanscale, sigmascale, accuracy, whichRandom=numeric(0), forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   if(accuracy <= 0) {
     stop("Argument accuracy has to be larger than zero")
@@ -907,9 +907,9 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
     }
   }
   if(!is.null(constraints)) {
-    checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
+    check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
-  smartIndividual_int(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
+  smart_ind_int(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                       meanscale=meanscale, sigmascale=sigmascale, accuracy=accuracy, whichRandom=whichRandom,
                       forcestat=forcestat)
 }
@@ -917,7 +917,7 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 
 #' @title Extract regime from a parameter vector
 #'
-#' @description \code{extractRegime} extracts the specified regime from the GMAR, StMAR, or G-StMAR model parameter vector.
+#' @description \code{extract_regime} extracts the specified regime from the GMAR, StMAR, or G-StMAR model parameter vector.
 #'  Doesn't extract mixing weight parameter \eqn{\alpha}.
 #' @inheritParams loglikelihood
 #' @param regime a positive integer in the interval [1, M] defining which regime should be extracted.
@@ -943,7 +943,7 @@ smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 #'    }
 #'  }
 
-extractRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                           regime, with_dfs=TRUE) {
   model <- match.arg(model)
   M_orig <- M
@@ -994,7 +994,7 @@ extractRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 
 #' @title Change the specified regime of parameter vector to the given regime-parameter vector
 #'
-#' @description \code{changeRegime} changes the specified regime of the parameter vector to correspond the given
+#' @description \code{change_regime} changes the specified regime of the parameter vector to correspond the given
 #'  regime-parameter vector and returns the modified parameter vector. Does not affect mixing weight parameters.
 #'
 #' @inheritParams loglikelihood
@@ -1021,7 +1021,7 @@ extractRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 #' @param regime a positive integer in the interval [1, M] defining which regime should be changed.
 #' @return Returns modified parameter vector of the form described in \code{params}.
 
-changeRegime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, regimeParams, regime) {
+change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, regimeParams, regime) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {

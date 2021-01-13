@@ -2,24 +2,24 @@
 #'
 #' @title Generate the covariance matrix Omega for quantile residual tests
 #'
-#' @description \code{getOmega} generates the covariance matrix Omega used in the quantile residual tests.
+#' @description \code{get_test_Omega} generates the covariance matrix Omega used in the quantile residual tests.
 #'
 #' @inheritParams loglikelihood_int
 #' @param g a function specifying the transformation.
 #' @param dim_g output dimension of the transformation \code{g}.
-#' @details This function is used for quantile residuals tests in \code{quantileResidualTests}.
-#' @seealso \code{\link{quantileResidualTests}}
+#' @details This function is used for quantile residuals tests in \code{quantile_residual_tests}.
+#' @seealso \code{\link{quantile_residual_tests}}
 #' @return Returns size (\code{dim_g}x\code{dim_g}) covariance matrix Omega.
-#' @inherit quantileResidualTests references
+#' @inherit quantile_residual_tests references
 
-getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+get_test_Omega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                      parametrization=c("intercept", "mean"), g, dim_g) {
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
 
   # Function for calculating gradient of g
   f <- function(params) {
-    g(quantileResiduals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+    g(quantile_residuals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                             constraints=constraints, parametrization=parametrization))
   }
 
@@ -48,7 +48,7 @@ getOmega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 
   # Estimate Fisher's information matrix
   FisInf <- crossprod(dl, dl)/nrow(dl)
-  invFisInf <- solve(FisInf) # Can cause error which needs to be handled in the function which calls getOmega
+  invFisInf <- solve(FisInf) # Can cause error which needs to be handled in the function which calls get_test_Omega
 
   # Calculate G (Kalliovirta 2012 eq.(2.4))
   G <- rowMeans(dg, dims=2)

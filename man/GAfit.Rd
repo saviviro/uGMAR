@@ -99,7 +99,7 @@ Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
   \item{For \strong{restricted} models:}{
     \describe{
       \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
+        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
       \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
       \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
@@ -125,7 +125,7 @@ population and the algorithm might converge poorly. Default is \code{1} and it g
 individuals with no wasted regimes compared to individuals with one wasted regime. Number \code{2} would give \eqn{3x} larger probabilities etc.}
 
 \item{red_criteria}{a length 2 numeric vector specifying the criteria that is used to determine whether a regime is redundant or not.
-Any regime \code{m} which satisfies \code{sum(mixingWeights[,m] > red_criteria[1]) < red_criteria[2]*n_obs} will be considered "redundant".
+Any regime \code{m} which satisfies \code{sum(mixing_weights[,m] > red_criteria[1]) < red_criteria[2]*n_obs} will be considered "redundant".
 One should be careful when adjusting this argument (set \code{c(0, 0)} to fully disable the 'redundant regime' features from the algorithm).}
 
 \item{to_return}{should the genetic algorithm return the best fitting individual which has the least "redundant" regimes (\code{"alt_ind"})

@@ -133,7 +133,7 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
 
 
 #' @import graphics
-#' @describeIn quantileResidualTests Plot p-values of the autocorrelation and conditional
+#' @describeIn quantile_residual_tests Plot p-values of the autocorrelation and conditional
 #'  heteroskedasticity tests.
 #' @inheritParams print.qrtest
 #' @export

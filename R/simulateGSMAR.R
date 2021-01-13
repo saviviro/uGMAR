@@ -27,7 +27,7 @@
 #'      \code{[, , i]} indicates the i:th set of simulations.}
 #'   }
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{predict.gsmar}},
-#'  \code{\link{add_data}}, \code{\link{condMoments}}, \code{\link{mixingWeights}}
+#'  \code{\link{add_data}}, \code{\link{cond_moments}}, \code{\link{mixing_weights}}
 #' @inherit loglikelihood references
 #' @examples
 #'  \donttest{
@@ -95,7 +95,7 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
   }
 
   # Reform and collect parameters
-  params <- removeAllConstraints(p=p, M=M_orig, params=gsmar$params, model=model, restricted=gsmar$model$restricted,
+  params <- remove_all_constraints(p=p, M=M_orig, params=gsmar$params, model=model, restricted=gsmar$model$restricted,
                                  constraints=gsmar$model$constraints)
   if(gsmar$model$parametrization == "mean") { # For simplicity switch to use intercept parametrization in all cases
     params <- change_parametrization(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL, change_to="intercept")
@@ -104,7 +104,7 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
   sigmas <- pars[p + 2,] # sigma^2
-  parameterChecks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
+  parameter_checks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
 
   # Create a container for the simulated values and initial values.
   # First row for initival values vector, and t+1:th row for (Y_t,Y_[t-1],...,Y_[t-p+1]), t=1,...,nsimu

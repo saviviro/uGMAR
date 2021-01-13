@@ -65,6 +65,6 @@ profile_logliks(fit22c)
  }
 }
 \seealso{
-\code{\link{quantileResidualPlot}}, \code{\link{diagnosticPlot}}, \code{\link{condmomentPlot}}, \code{\link{GSMAR}},
- \code{\link{quantileResidualTests}}, \code{\link{simulateGSMAR}}
+\code{\link{quantile_residual_plot}}, \code{\link{diagnostic_plot}}, \code{\link{cond_moment_plot}}, \code{\link{GSMAR}},
+ \code{\link{quantile_residual_tests}}, \code{\link{simulateGSMAR}}
 }

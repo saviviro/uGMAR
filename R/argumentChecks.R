@@ -1,6 +1,6 @@
 #' @title Check the stationarity and identification conditions of specified GMAR, StMAR, or G-StMAR model.
 #'
-#' @description \code{isStationary_int} checks the stationarity condition and \code{isIdentifiable} checks the identification condition
+#' @description \code{is_stationary_int} checks the stationarity condition and \code{is_identifiable} checks the identification condition
 #'  of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
@@ -20,7 +20,7 @@
 #'    \item{For \strong{restricted} models:}{
 #'      \describe{
 #'        \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
+#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
 #'        \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
 #'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
@@ -33,13 +33,13 @@
 #'  are \emph{StMAR type}.
 #'  Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 #'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
-#' @details \code{isStationary_int} does not support models imposing linear constraints. In order to use it for a model imposing linear
+#' @details \code{is_stationary_int} does not support models imposing linear constraints. In order to use it for a model imposing linear
 #'  constraints, one needs to expand the constraints first to obtain a nonconstrained parameters vector.
 #'
-#'  Note that \code{isStationary_int} returns \code{FALSE} for stationary parameter vectors if they are extremely close to the boundary
+#'  Note that \code{is_stationary_int} returns \code{FALSE} for stationary parameter vectors if they are extremely close to the boundary
 #'  of the stationarity region.
 #'
-#'  \code{isIdentifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no dublicate
+#'  \code{is_identifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no dublicate
 #'  regimes.
 #' @return Returns \code{TRUE} or \code{FALSE} accordingly.
 #' @section Warning:
@@ -53,7 +53,7 @@
 #'    \item Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distribution.	arXiv:2003.05221 [econ.EM].
 #'  }
 
-isStationary_int <- function(p, M, params, restricted=FALSE) {
+is_stationary_int <- function(p, M, params, restricted=FALSE) {
   M <- sum(M)
   if(restricted == FALSE) {
     pars <- matrix(params[1:(M*(p + 2))], ncol=M)
@@ -72,10 +72,10 @@ isStationary_int <- function(p, M, params, restricted=FALSE) {
 }
 
 
-#' @rdname isStationary_int
-isIdentifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+#' @rdname is_stationary_int
+is_identifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
-  params <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   M_orig <- M
   if(model == "G-StMAR") {
     M1 <- M[1]
@@ -133,71 +133,71 @@ isIdentifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 
 #' @title Check the stationary condition of specified GMAR, StMAR, or G-StMAR model.
 #'
-#' @description \code{isStationary} checks the stationarity condition of the specified GMAR, StMAR, or G-StMAR model.
+#' @description \code{is_stationary} checks the stationarity condition of the specified GMAR, StMAR, or G-StMAR model.
 #'
 #' @inheritParams loglikelihood
 #' @details This function falsely returns \code{FALSE} for stationary models when the parameter is extremely close
 #'  to the boundary of the stationarity region.
-#' @inherit isStationary_int return references
+#' @inherit is_stationary_int return references
 #' @examples
 #' # GMAR model
 #' params22 <- c(0.4, 0.39, 0.6, 0.3, 0.4, 0.1, 0.6, 0.3, 0.8)
-#' isStationary(2, 2, params22)
+#' is_stationary(2, 2, params22)
 #'
 #' # StMAR model
 #' params12t <- c(-0.3, 1, 0.9, 0.1, 0.8, 0.6, 0.7, 10, 12)
-#' isStationary(1, 2, params12t, model="StMAR")
+#' is_stationary(1, 2, params12t, model="StMAR")
 #'
 #' # G-StMAR model
 #' params12gs <- c(1, 0.1, 1, 2, 0.2, 2, 0.8, 20)
-#' isStationary(1, c(1, 1), params12gs, model="G-StMAR")
+#' is_stationary(1, c(1, 1), params12gs, model="G-StMAR")
 #'
 #' # Restricted GMAR model
 #' params13r <- c(0.1, 0.2, 0.3, -0.99, 0.1, 0.2, 0.3, 0.5, 0.3)
-#' isStationary(1, 3, params13r, restricted=TRUE)
+#' is_stationary(1, 3, params13r, restricted=TRUE)
 #'
 #' # Restricted StMAR model
 #' params22tr <- c(-0.1, -0.2, 0.01, 0.99, 0.3, 0.4, 0.9, 3, 13)
-#' isStationary(2, 2, params22tr, model="StMAR", restricted=TRUE)
+#' is_stationary(2, 2, params22tr, model="StMAR", restricted=TRUE)
 #'
 #' # Restricted G-StMAR model
 #' params13gsr <- c(1, 2, 3, -0.99, 1, 2, 3, 0.5, 0.4, 20, 30)
-#' isStationary(1, c(1, 2), params13gsr, model="G-StMAR", restricted=TRUE)
+#' is_stationary(1, c(1, 2), params13gsr, model="G-StMAR", restricted=TRUE)
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' params22c <- c(1.2, 0.8, 0.2, 0.3, 3.3, 0.7, 3, 0.8)
-#' isStationary(2, 2, params22c, constraints=constraints)
+#' is_stationary(2, 2, params22c, constraints=constraints)
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be the
 #' # same for both regimes and that the second AR coefficients are
 #' # constrained to zero.
 #' params32trc <- c(1, 2, 0.8, -0.3, 1, 2, 0.7, 11, 12)
-#' isStationary(3, 2, params32trc, model="StMAR", restricted=TRUE,
-#'              constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' is_stationary(3, 2, params32trc, model="StMAR", restricted=TRUE,
+#'               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
 #' @export
 
-isStationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+is_stationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   if(!is.null(constraints)) {
-    checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
-    params <- reformConstrainedPars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+    check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
+    params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   }
-  isStationary_int(p=p, M=M, params=params, restricted=restricted)
+  is_stationary_int(p=p, M=M, params=params, restricted=restricted)
 }
 
 
 #' @title Check that the data is set correctly and correct if not
 #'
-#' @description \code{checkAndCorrectData} checks that the data is set correctly and
+#' @description \code{check_and_correct_data} checks that the data is set correctly and
 #'  throws an error if there is something wrong with the data.
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns the data as a class 'ts' object.
 
-checkAndCorrectData <- function(data, p) {
+check_and_correct_data <- function(data, p) {
   if(anyNA(data)) {
     stop("The data contains NA values")
   } else if(length(data) < p+2) {
@@ -219,7 +219,7 @@ checkAndCorrectData <- function(data, p) {
 
 #' @title Check the parameter vector is specified correctly
 #'
-#' @description \code{parameterChecks} checks dimension, restrictions, and stationarity of the given parameter
+#' @description \code{parameter_checks} checks dimension, restrictions, and stationarity of the given parameter
 #'   of a GMAR, StMAR, or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
 #'   condition!
 #'
@@ -236,10 +236,10 @@ checkAndCorrectData <- function(data, p) {
 #'      }
 #' @return Throws an informative error if any check fails. Does not return anything.
 
-parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  params <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M, params=params, model=model)
@@ -263,7 +263,7 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
     stop("The mixing weight parameters have to be strictly larger than zero")
   } else if(any(pars[p + 2,] <= 0)) {
     stop("The variance parameters have to be strictly larger than zero")
-  } else if(!isStationary_int(p=p, M=M, params=params, restricted=FALSE)) {
+  } else if(!is_stationary_int(p=p, M=M, params=params, restricted=FALSE)) {
     stop("The model doesn't satisfy the stationarity condition")
   }
 }
@@ -271,11 +271,11 @@ parameterChecks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 
 #' @title Check the constraint matrices
 #'
-#' @description \code{checkConstraintMat} checks for some parts that the constraint matrices are correctly set.
+#' @description \code{check_constraint_mat} checks for some parts that the constraint matrices are correctly set.
 #' @inheritParams loglikelihood_int
 #' @return Doesn't return anything but throws an informative error if finds out that something is wrong.
 
-checkConstraintMat <- function(p, M, restricted=FALSE, constraints=NULL) {
+check_constraint_mat <- function(p, M, restricted=FALSE, constraints=NULL) {
   if(!is.null(constraints)) {
     M <- sum(M)
     if(restricted == TRUE) { # 'constraints' is a single matrix
@@ -310,11 +310,11 @@ checkConstraintMat <- function(p, M, restricted=FALSE, constraints=NULL) {
 
 #' @title Check that p and M are correctly set
 #'
-#' @description \code{checkPM} checks that the arguments p and M are correctly set.
+#' @description \code{check_pM} checks that the arguments p and M are correctly set.
 #' @inheritParams loglikelihood_int
 #' @return Doesn't return anything but throws an informative error if something is wrong.
 
-checkPM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
+check_pM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
   model <- match.arg(model)
   if(model == "G-StMAR") {
     if(length(M) != 2 | !all_pos_ints(M)) {
@@ -331,11 +331,11 @@ checkPM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
 
 #' @title Calculate the number of parameters
 #'
-#' @description \code{nParams} calculates the number of parameters that should be in the parameter vector.
+#' @description \code{n_params} calculates the number of parameters that should be in the parameter vector.
 #' @inheritParams loglikelihood_int
 #' @return Returns the number of parameters.
 
-nParams <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+n_params <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
   if(restricted == FALSE) {
     n_const_pars <- function(M, constraints) sum(vapply(1:M, function(i1) ncol(as.matrix(constraints[[i1]])), numeric(1)))
@@ -423,7 +423,7 @@ check_model <- function(model) {
 #' @inherit check_model return
 
 check_params_length <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
-  if(length(params) != nParams(p=p, M=M, model=model, restricted=restricted, constraints=constraints)) {
+  if(length(params) != n_params(p=p, M=M, model=model, restricted=restricted, constraints=constraints)) {
     stop("The parameter vector has wrong dimension")
   }
 }
@@ -477,7 +477,7 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
     constraints <- object$model$constraints
   }
   if(model %in% c("StMAR", "G-StMAR")) {
-    pars <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+    pars <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
     dfs <- pick_dfs(p=p, M=M, params=pars, model=model)
     if(any(dfs > 100)) warning("The model contains overly large degrees of freedom parameter values. Consider switching to a G-StMAR model by setting the corresponding regimes to be GMAR type with the function 'stmar_to_gstmar'.")
   }

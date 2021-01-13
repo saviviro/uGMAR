@@ -53,7 +53,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
                                      constraints=constraints, change_to="intercept")
   }
-  params <- removeAllConstraints(p=p, M=M, params=params, model=model, restricted=restricted,
+  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted,
                                  constraints=constraints)
   all_phi0 <- pick_phi0(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
@@ -62,7 +62,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
 
   if(summary_print) {
     all_ar_roots <- get_ar_roots(gsmar)
-    std_errors <- removeAllConstraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
+    std_errors <- remove_all_constraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
                                        constraints=constraints) # These errors are valid only if there is no multiplications or summations
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err <- pick_alphas(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
@@ -265,8 +265,8 @@ print.gsmarpred <- function(x, ..., digits=2) {
 }
 
 
-#' @describeIn quantileResidualTests Print method for class 'qrtest' objects
-#' @param x object of class \code{'qrtest'} created with the function \code{quantileResidualTests}.
+#' @describeIn quantile_residual_tests Print method for class 'qrtest' objects
+#' @param x object of class \code{'qrtest'} created with the function \code{quantile_residual_tests}.
 #' @param ... graphical parameters passed to \code{segments} in \code{plot.qrtest}.
 #'  Currectly not used in \code{print.qrtest}
 #' @param digits the number of digits to be print

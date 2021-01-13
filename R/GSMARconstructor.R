@@ -19,8 +19,8 @@
 #'  quantile residuals start from the p+1:th observation (interpreted as t=1).
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{stmar_to_gstmar}},
 #'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}},
-#'  \code{\link{predict.gsmar}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
-#' @inherit isStationary references
+#'  \code{\link{predict.gsmar}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+#' @inherit is_stationary references
 #' @examples
 #' # GMAR model without data
 #' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
@@ -53,9 +53,9 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
   parametrization <- match.arg(parametrization)
   check_model(model)
   stopifnot(parametrization %in% c("intercept", "mean"))
-  checkPM(p=p, M=M, model=model)
-  checkConstraintMat(p=p, M=M, restricted=restricted, constraints=constraints)
-  parameterChecks(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+  check_pM(p=p, M=M, model=model)
+  check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
+  parameter_checks(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   npars <- length(params)
   if(!is.null(custom_h)) stopifnot(length(custom_h) == npars)
 
@@ -74,12 +74,12 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
     lok_and_mw <- list(loglik=NA, mw=NA)
     IC <- data.frame(AIC=NA, HQIC=NA, BIC=NA)
   } else {
-    data <- checkAndCorrectData(data=data, p=p)
+    data <- check_and_correct_data(data=data, p=p)
     lok_and_mw <- loglikelihood_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                     conditional=conditional, parametrization=parametrization, boundaries=FALSE,
                                     checks=TRUE, to_return="loglik_and_mw", minval=NA)
     if(calc_qresiduals) {
-      qresiduals <- quantileResiduals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+      qresiduals <- quantile_residuals_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
                                           parametrization=parametrization)
     }
 
@@ -103,7 +103,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
       std_errors <- rep(NA, npars)
     } else {
       warn_dfs(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-      std_errors <- tryCatch(standardErrors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+      std_errors <- tryCatch(standard_errors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                                             constraints=constraints, parametrization=parametrization, conditional=conditional,
                                             custom_h=custom_h, minval=-(10^(ceiling(log10(length(data))) + 1) - 1)),
                              error=function(e) {
@@ -135,7 +135,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                   class="logLik",
                                   df=npars),
                  IC=IC,
-                 uncond_moments=uncondMoments_int(p=p, M=M, params=params, model=model, restricted=restricted,
+                 uncond_moments=uncond_moments_int(p=p, M=M, params=params, model=model, restricted=restricted,
                                                   constraints=constraints, parametrization=parametrization),
                  all_estimates=NULL,
                  all_logliks=NULL,
@@ -157,7 +157,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #'   If the object already contained data, the data will be updated. Does not modify the 'gsmar' object given as argument!
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{iterate_more}}, \code{\link{get_gradient}},
 #'  \code{\link{get_regime_means}}, \code{\link{swap_parametrization}}, \code{\link{stmar_to_gstmar}}
-#' @inherit isStationary references
+#' @inherit is_stationary references
 #' @examples
 #' # Restricted G-StMAR-model without data
 #' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
@@ -172,7 +172,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 
 add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=FALSE, custom_h=NULL) {
   check_gsmar(gsmar)
-  checkAndCorrectData(data=data, p=gsmar$model$p)
+  check_and_correct_data(data=data, p=gsmar$model$p)
   GSMAR(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
         model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
         conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,

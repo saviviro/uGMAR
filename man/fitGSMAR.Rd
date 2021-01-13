@@ -100,7 +100,7 @@ Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or 
    \item{For \strong{restricted} models:}{
      \describe{
        \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
+         \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
        \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
@@ -172,24 +172,26 @@ plot(fit12)
 profile_logliks(fit12)
 
 # StMAR model
-fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
+fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR",
+                  ncalls=16, ncores=4, seeds=1:16)
 fit42
 summary(fit42)
 plot(fit42)
 
 # Restricted StMAR model: plot also the individual statistics with
 # their approximate critical bounds using the given data
-fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
+fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE,
+                   ncores=4)
 fit42r
 plot(fit42)
 
 # Non-mixture version of StMAR model
 fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
-diagnosticPlot(fit101t)
+diagnostic_plot(fit101t)
 
 # G-StMAR model with one GMAR type and one StMAR type regime
 fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-diagnosticPlot(fit42g)
+diagnostic_plot(fit42g)
 
 # GMAR model; seeds for reproducibility
 fit43gm <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", ncalls=16,
@@ -248,5 +250,5 @@ fit32rc
 \seealso{
 \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
-  \code{\link{diagnosticPlot}}, \code{\link{quantileResidualTests}}, \code{\link{condMoments}}, \code{\link{uncondMoments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+  \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 }

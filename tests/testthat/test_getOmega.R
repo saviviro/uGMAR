@@ -1,5 +1,5 @@
 library(uGMAR)
-context("getOmega")
+context("get_test_Omega")
 
 ## The results slightly differ depending on whether numerical integration (without the package "gsl")
 # or hypergeometric function is used to calculate the quantile residuals. Also, the limited precission
@@ -7,7 +7,7 @@ context("getOmega")
 # the tests to fail with too small tolerance (this particularly happens if the parameters contain
 # large degree of freedom parameters).
 
-# getOmega calls other functions to deal with constraints, so they are not tested separately
+# get_test_Omega calls other functions to deal with constraints, so they are not tested separately
 params11t <- c(0.9, 0.92, 1.01, 2.89)
 params12 <- c(1.7, 0.85, 0.3, 4.12, 0.73, 1.98, 0.63)
 params23t <- c(2.54, 0.99, -0.21, 0.36, 5.13, 0.9, -0.24, 1.88, 7.93, 0.2, 0.03, 0.1, 0.53, 0.36, 9, 10, 11)
@@ -16,14 +16,14 @@ params12gs <- c(4.13, 0.73, 1.98, 1.7, 0.85, 0.3, 0.37, 9) # M1=1, M2=1
 params13gsr <- c(4.8, 3.31, 3.74, 0.69, 2, 0.19, 0.41, 0.34, 0.3, 9) # M1=2, M2=1
 
 g_norm <- function(r) cbind(r^2-1, r^3, r^4-3)
-omega_n11t <- getOmega(simudata, 1, 1, params11t, model="StMAR", g=g_norm, dim_g=3)
-omega_n12 <- getOmega(simudata, 1, 2, params12, g=g_norm, dim_g=3)
-omega_n12r <- getOmega(simudata, 1, 2, params12r, restricted=TRUE, g=g_norm, dim_g=3)
-omega_n23t <- getOmega(simudata, 2, 3, params23t, model="StMAR", g=g_norm, dim_g=3)
-omega_n23gs <- getOmega(simudata, 1, c(1, 1), params12gs, model="G-StMAR", g=g_norm, dim_g=3)
-omega_n13gsr <- getOmega(simudata, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_norm, dim_g=3)
+omega_n11t <- get_test_Omega(simudata, 1, 1, params11t, model="StMAR", g=g_norm, dim_g=3)
+omega_n12 <- get_test_Omega(simudata, 1, 2, params12, g=g_norm, dim_g=3)
+omega_n12r <- get_test_Omega(simudata, 1, 2, params12r, restricted=TRUE, g=g_norm, dim_g=3)
+omega_n23t <- get_test_Omega(simudata, 2, 3, params23t, model="StMAR", g=g_norm, dim_g=3)
+omega_n23gs <- get_test_Omega(simudata, 1, c(1, 1), params12gs, model="G-StMAR", g=g_norm, dim_g=3)
+omega_n13gsr <- get_test_Omega(simudata, 1, c(2, 1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_norm, dim_g=3)
 
-test_that("getOmega works for normality tests", {
+test_that("get_test_Omega works for normality tests", {
   expect_equal(omega_n11t[2, ], c(-0.0538172, 4.1840459, 0.2731159), tolerance=1e-3)
   expect_equal(omega_n12[1, ], c(0.2006648, -0.1384332, 1.2561043), tolerance=1e-3)
   expect_equal(omega_n12[2, 1], -0.1384332, tolerance=1e-3)
@@ -55,22 +55,22 @@ g_ac3 <- function(r) {
   }
 }
 
-omega_ac1_11t <- getOmega(simudata, 1, 1, params11t, model="StMAR", g=g_ac1, dim_g=1)
-omega_ac1_12 <- getOmega(simudata, 1, 2, params12, model="GMAR", g=g_ac1, dim_g=1)
-omega_ac1_12r <- getOmega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ac1, dim_g=1)
-omega_ac1_23t <- getOmega(simudata, 2, 3, params23t, model="StMAR", g=g_ac1, dim_g=1)
+omega_ac1_11t <- get_test_Omega(simudata, 1, 1, params11t, model="StMAR", g=g_ac1, dim_g=1)
+omega_ac1_12 <- get_test_Omega(simudata, 1, 2, params12, model="GMAR", g=g_ac1, dim_g=1)
+omega_ac1_12r <- get_test_Omega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ac1, dim_g=1)
+omega_ac1_23t <- get_test_Omega(simudata, 2, 3, params23t, model="StMAR", g=g_ac1, dim_g=1)
 
-omega_ac3_11t <- getOmega(simudata, 1, 1, params11t, model="StMAR", g=g_ac3, dim_g=3)
-omega_ac3_12 <- getOmega(simudata, 1, 2, params12, g=g_ac3, dim_g=3)
-omega_ac3_12r <- getOmega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ac3, dim_g=3)
-omega_ac3_23t <- getOmega(simudata, 2, 3, params23t, model="StMAR", g=g_ac3, dim_g=3)
+omega_ac3_11t <- get_test_Omega(simudata, 1, 1, params11t, model="StMAR", g=g_ac3, dim_g=3)
+omega_ac3_12 <- get_test_Omega(simudata, 1, 2, params12, g=g_ac3, dim_g=3)
+omega_ac3_12r <- get_test_Omega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ac3, dim_g=3)
+omega_ac3_23t <- get_test_Omega(simudata, 2, 3, params23t, model="StMAR", g=g_ac3, dim_g=3)
 
-omega_ac1_12gs <- getOmega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ac1, dim_g=1)
-omega_ac1_13gsr <- getOmega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ac1, dim_g=1)
-omega_ac3_12gs <- getOmega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ac3, dim_g=3)
-omega_ac3_13gsr <- getOmega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ac3, dim_g=3)
+omega_ac1_12gs <- get_test_Omega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ac1, dim_g=1)
+omega_ac1_13gsr <- get_test_Omega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ac1, dim_g=1)
+omega_ac3_12gs <- get_test_Omega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ac3, dim_g=3)
+omega_ac3_13gsr <- get_test_Omega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ac3, dim_g=3)
 
-test_that("getOmega works for autocorrelation test", {
+test_that("get_test_Omega works for autocorrelation test", {
   expect_equal(omega_ac1_12gs[1, 1], 0.9821655, tolerance=1e-3)
   expect_equal(omega_ac1_13gsr[1, 1], 0.9637771, tolerance=1e-3)
   expect_equal(omega_ac3_12gs[2, ], c(-0.17748730, 0.90975252, 0.02570752), tolerance=1e-3)
@@ -107,22 +107,22 @@ g_ch3 <- function(r) {
   }
 }
 
-omega_ch1_11t <- getOmega(simudata, 1, 1, params11t, model="StMAR", g=g_ch1, dim_g=1)
-omega_ch1_12 <- getOmega(simudata, 1, 2, params12, g=g_ch1, dim_g=1)
-omega_ch1_12r <- getOmega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ch1, dim_g=1)
-omega_ch1_23t <- getOmega(simudata, 2, 3, params23t, model="StMAR", g=g_ch1, dim_g=1)
+omega_ch1_11t <- get_test_Omega(simudata, 1, 1, params11t, model="StMAR", g=g_ch1, dim_g=1)
+omega_ch1_12 <- get_test_Omega(simudata, 1, 2, params12, g=g_ch1, dim_g=1)
+omega_ch1_12r <- get_test_Omega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ch1, dim_g=1)
+omega_ch1_23t <- get_test_Omega(simudata, 2, 3, params23t, model="StMAR", g=g_ch1, dim_g=1)
 
-omega_ch3_11t <- getOmega(simudata, 1, 1, params11t, model="StMAR", g=g_ch3, dim_g=3)
-omega_ch3_12 <- getOmega(simudata, 1, 2, params12, g=g_ch3, dim_g=3)
-omega_ch3_12r <- getOmega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ch3, dim_g=3)
-omega_ch3_23t <- getOmega(simudata, 2, 3, params23t, model="StMAR", g=g_ch3, dim_g=3)
+omega_ch3_11t <- get_test_Omega(simudata, 1, 1, params11t, model="StMAR", g=g_ch3, dim_g=3)
+omega_ch3_12 <- get_test_Omega(simudata, 1, 2, params12, g=g_ch3, dim_g=3)
+omega_ch3_12r <- get_test_Omega(simudata, 1, 2, params12r, restricted=TRUE, g=g_ch3, dim_g=3)
+omega_ch3_23t <- get_test_Omega(simudata, 2, 3, params23t, model="StMAR", g=g_ch3, dim_g=3)
 
-omega_ch1_12gs <- getOmega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ch1, dim_g=1)
-omega_ch1_13gsr <- getOmega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ch1, dim_g=1)
-omega_ch3_12gs <- getOmega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ch3, dim_g=3)
-omega_ch3_13gsr <- getOmega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ch3, dim_g=3)
+omega_ch1_12gs <- get_test_Omega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ch1, dim_g=1)
+omega_ch1_13gsr <- get_test_Omega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ch1, dim_g=1)
+omega_ch3_12gs <- get_test_Omega(simudata, 1, c(1,1), params12gs, model="G-StMAR", g=g_ch3, dim_g=3)
+omega_ch3_13gsr <- get_test_Omega(simudata, 1, c(2,1), params13gsr, model="G-StMAR", restricted=TRUE, g=g_ch3, dim_g=3)
 
-test_that("getOmega works for conditional heteroskedasticity tests", {
+test_that("get_test_Omega works for conditional heteroskedasticity tests", {
   expect_equal(omega_ch1_12gs[1, 1], 4.823228, tolerance=1e-3)
   expect_equal(omega_ch1_13gsr[1, 1], 5.350241, tolerance=1e-3)
   expect_equal(omega_ch3_13gsr[3, ], c(1.5098061, -0.2062663, 4.1129781), tolerance=1e-3)

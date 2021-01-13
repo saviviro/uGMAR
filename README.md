@@ -52,8 +52,8 @@ profile_logliks(fit) # Plot the profile log-likelihood functions
 
 ## Quantile residual diagnostics
 quantileResidualPlot(fit)
-diagnosticPlot(fit)
-qrt <- quantileResidualTests(fit)
+diagnostic_plot(fit)
+qrt <- quantile_residual_tests(fit)
 
 ## Simulate a sample path from the estimated process
 sim <- simulateGSMAR(fit, nsimu=100)
@@ -72,8 +72,8 @@ fitr <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", restricted=TRUE,
 LR_test(fit, fitr)
 
 # Conditional mean and variance plots:
-condmomentPlot(fit, which_moment="mean")
-condmomentPlot(fit, which_moment="variance")
+cond_moment_plot(fit, which_moment="mean")
+cond_moment_plot(fit, which_moment="variance")
 ```
 
 ## References

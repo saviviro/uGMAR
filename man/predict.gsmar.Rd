@@ -108,6 +108,6 @@ predict(fit32rc, n_ahead=3, pi_type="lower")
  }
 }
 \seealso{
-\code{\link{simulateGSMAR}}, \code{\link{condMoments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
- \code{\link{quantileResidualTests}}, \code{\link{diagnosticPlot}}
+\code{\link{simulateGSMAR}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+ \code{\link{quantile_residual_tests}}, \code{\link{diagnostic_plot}}
 }

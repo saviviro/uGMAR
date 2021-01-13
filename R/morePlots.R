@@ -1,38 +1,38 @@
 #' @title Conditional mean or variance plot for GMAR, StMAR, and G-StMAR models
 #'
-#' @description \code{condmomentPlot} plots the one-step in-sample conditional means/variances of the model along with
+#' @description \code{cond_moment_plot} plots the one-step in-sample conditional means/variances of the model along with
 #'  the time series contained in the model (e.g. the time series the model was fitted to). Also plots
 #'  the regimewise conditional means/variances multiplied with the mixing weights.
 #'
 #' @inheritParams simulateGSMAR
 #' @param which_moment should conditional means or variances be plotted?
 #' @details The conditional mean plot works best if the data contains positive values only.
-#' @return \code{condmomentPlot} only plots to a graphical device and does not return anything. Numerical values
+#' @return \code{cond_moment_plot} only plots to a graphical device and does not return anything. Numerical values
 #'  of the conditional means/variances can be extracted from the model with the dollar sign.
 #' @inherit simulateGSMAR references
-#' @seealso \code{\link{profile_logliks}}, \code{\link{diagnosticPlot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResidualTests}},
+#' @seealso \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},
 #'  \code{\link{quantileResidualPlot}}
 #' @examples
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-#' condmomentPlot(fit12, which_moment="mean")
-#' condmomentPlot(fit12, which_moment="variance")
+#' cond_moment_plot(fit12, which_moment="mean")
+#' cond_moment_plot(fit12, which_moment="variance")
 #'
 #' # Restricted StMAR model: plot also the individual statistics with
 #' # their approximate critical bounds using the given data
 #' fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
-#' condmomentPlot(fit42r, which_moment="mean")
-#' condmomentPlot(fit42r, which_moment="variance")
+#' cond_moment_plot(fit42r, which_moment="mean")
+#' cond_moment_plot(fit42r, which_moment="variance")
 #'
 #' # G-StMAR model with one GMAR type and one StMAR type regime
 #' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-#' condmomentPlot(fit42g, which_moment="mean")
-#' condmomentPlot(fit42g, which_moment="variance")
+#' cond_moment_plot(fit42g, which_moment="mean")
+#' cond_moment_plot(fit42g, which_moment="variance")
 #' }
 #' @export
 
-condmomentPlot <- function(gsmar, which_moment=c("mean", "variance")) {
+cond_moment_plot <- function(gsmar, which_moment=c("mean", "variance")) {
   check_gsmar(gsmar)
   check_data(gsmar)
   which_moment <- match.arg(which_moment)

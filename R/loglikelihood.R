@@ -30,7 +30,7 @@
 #'    \item{For \strong{restricted} models:}{
 #'      \describe{
 #'        \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{M})}.}
+#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
 #'        \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
 #'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
 #'        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
@@ -134,8 +134,8 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
 
   # Reform parameters to the "standard form" and collect them
-  if(checks) checkConstraintMat(p=p, M=M_orig, restricted=restricted, constraints=constraints)
-  params <- removeAllConstraints(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
+  if(checks) check_constraint_mat(p=p, M=M_orig, restricted=restricted, constraints=constraints)
+  params <- remove_all_constraints(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
   pars <- pick_pars(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
@@ -149,7 +149,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
       return(minval)
     } else if(any(alphas <= 0)) {
       return(minval)
-    } else if(!isStationary_int(p, M, params, restricted=FALSE)) {
+    } else if(!is_stationary_int(p, M, params, restricted=FALSE)) {
       return(minval)
     }
     if(model == "StMAR" | model == "G-StMAR") {
@@ -158,8 +158,8 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   }
 
   if(checks) {
-    data <- checkAndCorrectData(data=data, p=p)
-    parameterChecks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
+    data <- check_and_correct_data(data=data, p=p)
+    parameter_checks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
   }
   n_obs <- length(data)
 
@@ -455,8 +455,8 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
 #'   or MPS 2018, eq.(15)) be returned instead of the log-likelihood value?
 #' @return Returns the log-likelihood value or the terms described in \code{returnTerms}.
 #' @inherit loglikelihood_int references
-#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantileResiduals}},
-#'  \code{\link{mixingWeights}}, \code{\link{calc_gradient}}
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residuals}},
+#'  \code{\link{mixing_weights}}, \code{\link{calc_gradient}}
 #' @examples
 #' # StMAR model
 #' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
@@ -482,7 +482,7 @@ loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   to_ret <- ifelse(returnTerms, "terms", "loglik")
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
@@ -495,7 +495,7 @@ loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #'
 #' @title Calculate mixing weights of a GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{mixingWeights_int} calculates the mixing weights of the specified GMAR, StMAR, or G-StMAR model
+#' @description \code{mixing_weights_int} calculates the mixing weights of the specified GMAR, StMAR, or G-StMAR model
 #'  and returns them as a matrix.
 #'
 #' @inheritParams loglikelihood_int
@@ -509,7 +509,7 @@ loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #'  }
 #' @inherit loglikelihood_int references
 
-mixingWeights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+mixing_weights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               parametrization=c("intercept", "mean"), checks=TRUE, to_return=c("mw", "mw_tplus1")) {
   to_ret <- match.arg(to_return)
   parametrization <- match.arg(parametrization)
@@ -522,38 +522,38 @@ mixingWeights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #'
 #' @title Calculate mixing weights of GMAR, StMAR or G-StMAR model
 #'
-#' @description \code{mixingWeights} calculates the mixing weights of the specified GMAR, StMAR or G-StMAR model and returns them as a matrix.
+#' @description \code{mixing_weights} calculates the mixing weights of the specified GMAR, StMAR or G-StMAR model and returns them as a matrix.
 #'
-#' @inheritParams mixingWeights_int
-#' @inherit mixingWeights_int return details references
+#' @inheritParams mixing_weights_int
+#' @inherit mixing_weights_int return details references
 #' @examples
 #' # StMAR model
 #' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
 #'  -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
 #'   0.57, 0.22, 8.05, 2.02, 10000)
-#' mixingWeights(T10Y1Y, p=4, M=3, params=params43, model="StMAR")
+#' mixing_weights(T10Y1Y, p=4, M=3, params=params43, model="StMAR")
 #'
 #' # Restricted G-StMAR-model
 #' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' mixingWeights(T10Y1Y, p=4, M=c(1, 1), params=params42gsr, model="G-StMAR",
+#' mixing_weights(T10Y1Y, p=4, M=c(1, 1), params=params42gsr, model="G-StMAR",
 #'   restricted=TRUE)
 #'
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
-#' mixingWeights(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
+#' mixing_weights(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
 #'  constraints=constraints)
 #' @export
 
-mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+mixing_weights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                           parametrization=c("intercept", "mean")) {
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  mixingWeights_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
+  mixing_weights_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                     constraints=constraints, parametrization=parametrization, checks=TRUE, to_return="mw")
 }
 
@@ -562,7 +562,7 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #'
 #' @title Calculate conditional moments of GMAR, StMAR, or G-StMAR model
 #'
-#' @description \code{condMoments} calculates the regime specific conditional means and variances and total
+#' @description \code{cond_moments} calculates the regime specific conditional means and variances and total
 #'  conditional means and variances of the specified GMAR, StMAR or G-StMAR model.
 #'
 #' @inheritParams loglikelihood_int
@@ -582,34 +582,34 @@ mixingWeights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @examples
 #' # GMAR model
 #' params12 <- c(0.01, 0.99, 0.02, 0.03, 0.91, 0.32, 0.86)
-#' rcm12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="regime_cmeans")
-#' rcv12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="regime_cvars")
-#' tcm12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="total_cmeans")
-#' tcv12 <- condMoments(T10Y1Y, 1, 2, params12, to_return="total_cvars")
+#' rcm12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="regime_cmeans")
+#' rcv12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="regime_cvars")
+#' tcm12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="total_cmeans")
+#' tcv12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="total_cvars")
 #'
 #' # StMAR model
 #' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
 #'  -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
 #'   0.57, 0.22, 8.05, 2.02, 10000)
-#' rcm43t <- condMoments(T10Y1Y, 4, 3, params43, model="StMAR",
+#' rcm43t <- cond_moments(T10Y1Y, 4, 3, params43, model="StMAR",
 #'  to_return="regime_cmeans")
-#' rcv43t <- condMoments(T10Y1Y, 4, 3, params43, model="StMAR",
+#' rcv43t <- cond_moments(T10Y1Y, 4, 3, params43, model="StMAR",
 #'  to_return="regime_cvars")
 #'
 #' # G-StMAR model
 #' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' rcv42gsr <- condMoments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
+#' rcv42gsr <- cond_moments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
 #'  restricted=TRUE, to_return="regime_cvars")
-#' tcv42gs <- condMoments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
+#' tcv42gs <- cond_moments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
 #'  restricted=TRUE, to_return="total_cvars")
 #' @export
 
-condMoments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
+cond_moments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                         parametrization=c("intercept", "mean"), to_return=c("regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars")) {
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
-  checkPM(p=p, M=M, model=model)
+  check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     conditional=TRUE, parametrization=parametrization, boundaries=FALSE, checks=TRUE, to_return=to_return)
