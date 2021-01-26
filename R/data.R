@@ -1,4 +1,4 @@
-#' Spread between 10-Year and 2-Year treasury Euro area Government bond interest rates: T10Y1Y
+#' Spread between 10-Year and 2-Year Euro area Government bond interest rates: T10Y1Y
 #'
 #' A dataset containing weekly Euroa area interest rate spread between the 10-Year and 2-Year
 #' government bond interest rate from 2007 Jan 1 to 2020 Dec 31 (all issuers whose rating is triple A).

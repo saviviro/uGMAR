@@ -163,40 +163,29 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 
 \examples{
 \donttest{
-# These are long running examples that use parallel computing
+## These are long running examples that use parallel computing
 
 # GMAR model
-fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
+fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR", ncalls=8, seeds=1:8)
 summary(fit12)
 plot(fit12)
 profile_logliks(fit12)
 
 # StMAR model
 fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR",
-                  ncalls=16, ncores=4, seeds=1:16)
+                  ncalls=16, seeds=1:16)
 fit42
 summary(fit42)
 plot(fit42)
 
-# Restricted StMAR model: plot also the individual statistics with
-# their approximate critical bounds using the given data
-fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE,
-                   ncores=4)
+# Restricted StMAR model
+fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
 fit42r
 plot(fit42)
-
-# Non-mixture version of StMAR model
-fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
-diagnostic_plot(fit101t)
 
 # G-StMAR model with one GMAR type and one StMAR type regime
 fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
 diagnostic_plot(fit42g)
-
-# GMAR model; seeds for reproducibility
-fit43gm <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", ncalls=16,
-  seeds=1:16)
-fit43gm
 
 # Restricted GMAR model
 fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", ncalls=12,

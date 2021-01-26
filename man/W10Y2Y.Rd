@@ -3,7 +3,7 @@
 \docType{data}
 \name{W10Y2Y}
 \alias{W10Y2Y}
-\title{Spread between 10-Year and 2-Year treasury Euro area Government bond interest rates: T10Y1Y}
+\title{Spread between 10-Year and 2-Year Euro area Government bond interest rates: T10Y1Y}
 \format{
 A class 'ts' time series object containing 731 observations.
 }
