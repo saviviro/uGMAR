@@ -74,3 +74,4 @@
 * Some functions were renamed from camelCase to lower_bar convention for consistency. Old functions are for now retained as deprecated.
 * The function randomInd does not sort components anymore when constraints are employed (unless only "restricted" argument is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.
 * Added new data: W10Y2Y
+* Added new data: M10Y1Y
