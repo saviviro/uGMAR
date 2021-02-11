@@ -24,13 +24,13 @@ gmar12r <- GSMAR(data=simudata[100:133], p=1, M=2, params=params12r, model="GMAR
 gstmar12 <- GSMAR(data=simudata[1:50], p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
 gstmar13r <- GSMAR(data=simudata[1:50], p=1, M=c(2, 1), params=params13gsr, model="G-StMAR", restricted=TRUE)
 
-set.seed(1); qrt11t <- quantile_residual_tests(stmar11, print_res=FALSE, nsimu=20, lagsAC=c(1, 2, 5, 10))
-qrt12 <- quantile_residual_tests(gmar12, print_res=FALSE, nsimu=1, lagsAC=c(1, 2, 5, 10))
-qrt23 <- quantile_residual_tests(gmar23, lagsAC=c(1), lagsCH=c(3), print_res=FALSE, nsimu=1)
-qrt23t <- quantile_residual_tests(stmar23, lagsAC=c(3), lagsCH=c(2), print_res=FALSE, nsimu=1)
-qrt12r <- quantile_residual_tests(gmar12r, lagsAC=c(1, 3), lagsCH=c(1, 3), print_res=FALSE, nsimu=1)
-qrt12gs <- quantile_residual_tests(gstmar12, lagsAC=c(2), lagsCH=c(1), print_res=FALSE, nsimu=1)
-qrt13gsr <- quantile_residual_tests(gstmar13r, lagsAC=c(1), lagsCH=c(1), print_res=FALSE, nsimu=1)
+set.seed(1); qrt11t <- quantile_residual_tests(stmar11, print_res=FALSE, nsimu=20, lags_ac=c(1, 2, 5, 10))
+qrt12 <- quantile_residual_tests(gmar12, print_res=FALSE, nsimu=1, lags_ac=c(1, 2, 5, 10))
+qrt23 <- quantile_residual_tests(gmar23, lags_ac=c(1), lags_ch=c(3), print_res=FALSE, nsimu=1)
+qrt23t <- quantile_residual_tests(stmar23, lags_ac=c(3), lags_ch=c(2), print_res=FALSE, nsimu=1)
+qrt12r <- quantile_residual_tests(gmar12r, lags_ac=c(1, 3), lags_ch=c(1, 3), print_res=FALSE, nsimu=1)
+qrt12gs <- quantile_residual_tests(gstmar12, lags_ac=c(2), lags_ch=c(1), print_res=FALSE, nsimu=1)
+qrt13gsr <- quantile_residual_tests(gstmar13r, lags_ac=c(1), lags_ch=c(1), print_res=FALSE, nsimu=1)
 
 test_that("quantile residual test for normality works", {
   expect_equal(qrt12gs$norm_res$testStat, 0.5604813, tolerance=1e-3)

@@ -11,8 +11,8 @@ random_ind(
   model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
-  meanscale,
-  sigmascale,
+  mu_scale,
+  sigma_scale,
   forcestat = FALSE
 )
 
@@ -23,10 +23,10 @@ smart_ind(
   model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
-  meanscale,
-  sigmascale,
+  mu_scale,
+  sigma_scale,
   accuracy,
-  whichRandom = numeric(0),
+  which_random = numeric(0),
   forcestat = FALSE
 )
 }
@@ -58,11 +58,11 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+\item{mu_scale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 of the normal distribution from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization)
 parameters (for random regimes) should be generated.}
 
-\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+\item{sigma_scale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
 normal distribution from which the component variance parameters (for random regimes) should be generated.}
 
 \item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
@@ -109,7 +109,7 @@ the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter
 value divided by \code{accuracy}.}
 
-\item{whichRandom}{a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
+\item{which_random}{a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
 using \code{smart_ind}. Does not affect mixing weight parameters. Default in none.}
 }
 \value{
@@ -127,51 +127,51 @@ These functions can be used, for example, to create initial populations for the 
 }
 \examples{
 # GMAR model parameter vector
-params22 <- random_ind(p=2, M=2, meanscale=c(0, 1), sigmascale=1)
+params22 <- random_ind(p=2, M=2, mu_scale=c(0, 1), sigma_scale=1)
 smart22 <- smart_ind(p=2, M=2, params22, accuracy=10)
 cbind(params22, smart22)
 
 
 # Restricted GMAR parameter vector
-params12r <- random_ind(1, 2, restricted=TRUE, meanscale=c(-2, 2), sigmascale=2)
+params12r <- random_ind(1, 2, restricted=TRUE, mu_scale=c(-2, 2), sigma_scale=2)
 smart12r <- smart_ind(1, 2, params12r, restricted=TRUE, accuracy=20)
 cbind(params12r, smart12r)
 
 
 # StMAR parameter vector: first regime is random in the "smart individual"
-params13t <- random_ind(1, 3, model="StMAR", meanscale=c(3, 1), sigmascale=3)
+params13t <- random_ind(1, 3, model="StMAR", mu_scale=c(3, 1), sigma_scale=3)
 smart13t <- smart_ind(1, 3, params13t, model="StMAR", accuracy=15,
-                            meanscale=c(3, 3), sigmascale=3, whichRandom=1)
+                            mu_scale=c(3, 3), sigma_scale=3, which_random=1)
 cbind(params13t, smart13t)
 
 
 # Restricted StMAR parameter vector
 params22tr <- random_ind(2, 2, model="StMAR", restricted=TRUE,
-                               meanscale=c(3, 2), sigmascale=0.5)
+                               mu_scale=c(3, 2), sigma_scale=0.5)
 smart22tr <- smart_ind(2, 2, params22tr, model="StMAR", restricted=TRUE,
                              accuracy=30)
 cbind(params22tr, smart22tr)
 
 
 # G-StMAR parameter vector
-params12gs <- random_ind(1, c(1, 1), model="G-StMAR", meanscale=c(0, 1),
-                               sigmascale=1)
+params12gs <- random_ind(1, c(1, 1), model="G-StMAR", mu_scale=c(0, 1),
+                               sigma_scale=1)
 smart12gs <- smart_ind(1, c(1, 1), params12gs, model="G-StMAR", accuracy=20)
 cbind(params12gs, smart12gs)
 
 
 # Restricted G-StMAR parameter vector
 params23gsr <- random_ind(2, c(1, 2), model="G-StMAR", restricted=TRUE,
-                                meanscale=c(-1, 1), sigmascale=3)
+                                mu_scale=c(-1, 1), sigma_scale=3)
 smart23gsr <- smart_ind(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
-                              meanscale=c(0, 1), sigmascale=1, accuracy=20, whichRandom=2)
+                              mu_scale=c(0, 1), sigma_scale=1, accuracy=20, which_random=2)
 cbind(params23gsr, smart23gsr)
 
 
 # GMAR model as a mixture of AR(2) and AR(1) models
 C <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-params22c <- random_ind(2, 2, constraints=C, meanscale=c(1, 1),
-                              sigmascale=1)
+params22c <- random_ind(2, 2, constraints=C, mu_scale=c(1, 1),
+                              sigma_scale=1)
 smart22c <- smart_ind(2, 2, params22c, constraints=C, accuracy=10)
 cbind(params22c, smart22c)
 
@@ -181,7 +181,7 @@ cbind(params22c, smart22c)
 C0 = matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
 C = list(C0, C0)
 params32c <- random_ind(3, 2, model="StMAR", constraints=C,
-                              meanscale=c(1, 1), sigmascale=1)
+                              mu_scale=c(1, 1), sigma_scale=1)
 smart32c <- smart_ind(3, 2, params32c, model="StMAR", constraints=C, accuracy=10)
 cbind(params32c, smart32c)
 
@@ -191,10 +191,10 @@ cbind(params32c, smart32c)
 # constrained to zero. Second regime is random in the "smart individual".
 params32trc <- random_ind(3, 2, model="StMAR", restricted=TRUE,
                                 constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-                                meanscale=c(-2, 0.5), sigmascale=4)
+                                mu_scale=c(-2, 0.5), sigma_scale=4)
 smart32trc <- smart_ind(3, 2, params32trc, model="StMAR", restricted=TRUE,
                               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-                              meanscale=c(0, 0.1), sigmascale=0.1, whichRandom=2,
+                              mu_scale=c(0, 0.1), sigma_scale=0.1, which_random=2,
                               accuracy=20)
 cbind(params32trc, smart32trc)
 }

@@ -451,9 +451,9 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
 #'   Use \code{minval} to control what happens when the parameter vector is outside the parameter space.
 #'
 #' @inheritParams loglikelihood_int
-#' @param returnTerms should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)}
+#' @param return_terms should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)}
 #'   or MPS 2018, eq.(15)) be returned instead of the log-likelihood value?
-#' @return Returns the log-likelihood value or the terms described in \code{returnTerms}.
+#' @return Returns the log-likelihood value or the terms described in \code{return_terms}.
 #' @inherit loglikelihood_int references
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residuals}},
 #'  \code{\link{mixing_weights}}, \code{\link{calc_gradient}}
@@ -478,13 +478,13 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
 #' @export
 
 loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                          conditional=TRUE, parametrization=c("intercept", "mean"), returnTerms=FALSE, minval=NA) {
+                          conditional=TRUE, parametrization=c("intercept", "mean"), return_terms=FALSE, minval=NA) {
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
   check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  to_ret <- ifelse(returnTerms, "terms", "loglik")
+  to_ret <- ifelse(return_terms, "terms", "loglik")
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE,
                     to_return=to_ret, minval=minval)

@@ -6,8 +6,8 @@
 \usage{
 random_regime(
   p,
-  meanscale,
-  sigmascale,
+  mu_scale,
+  sigma_scale,
   restricted = FALSE,
   constraints = NULL,
   m,
@@ -17,13 +17,13 @@ random_regime(
 \arguments{
 \item{p}{a positive integer specifying the autoregressive order of the model.}
 
-\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+\item{mu_scale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
 Default is \code{c(mean(data), sd(data))}.
 Note that the genetic algorithm optimizes with mean-parametrization even when \code{parametrization=="intercept"}, but
 input (in \code{initpop}) and output (return value) parameter vectors may be intercept-parametrized.}
 
-\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+\item{sigma_scale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
 normal distribution from which the component variance parameters are generated in the random mutations in the genetic algorithm.
 Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
 

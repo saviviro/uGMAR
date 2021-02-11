@@ -14,7 +14,7 @@ loglikelihood(
   constraints = NULL,
   conditional = TRUE,
   parametrization = c("intercept", "mean"),
-  returnTerms = FALSE,
+  return_terms = FALSE,
   minval = NA
 )
 }
@@ -90,13 +90,13 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
 "means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
-\item{returnTerms}{should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)}
+\item{return_terms}{should the terms \eqn{l_{t}: t=1,..,T} in the log-likelihood function (see \emph{KMS 2015, eq.(13)}
 or MPS 2018, eq.(15)) be returned instead of the log-likelihood value?}
 
 \item{minval}{this will be returned when the parameter vector is outside the parameter space and \code{boundaries==TRUE}.}
 }
 \value{
-Returns the log-likelihood value or the terms described in \code{returnTerms}.
+Returns the log-likelihood value or the terms described in \code{return_terms}.
 }
 \description{
 \code{loglikelihood} computes the log-likelihood of the specified GMAR, StMAR, or G-StMAR model.

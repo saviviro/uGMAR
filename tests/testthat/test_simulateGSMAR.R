@@ -9,7 +9,7 @@ gmar23 <- GSMAR(p=2, M=3, params=params23, model="GMAR")
 gstmar13 <- GSMAR(p=1, M=c(1, 2), params=params13gs, model="G-StMAR")
 set.seed(1); data12 <- simulateGSMAR(stmar12, nsimu=3)
 set.seed(2); data23 <- simulateGSMAR(gmar23, nsimu=1)
-set.seed(3); data23init <- simulateGSMAR(gmar23, nsimu=2, initvalues=c(1, 1.2))
+set.seed(3); data23init <- simulateGSMAR(gmar23, nsimu=2, init_values=c(1, 1.2))
 set.seed(1); data13gs <- simulateGSMAR(gstmar13, nsimu=3)
 
 
@@ -31,7 +31,7 @@ gmar12r <- GSMAR(p=1, M=2, params=params12r, model="GMAR", restricted=TRUE)
 stmar23r <- GSMAR(p=2, M=3, params=params23r, model="StMAR", restricted=TRUE)
 gstmar22r <- GSMAR(p=2, M=c(1, 1), params=params22gsr, model="G-StMAR", restricted=TRUE)
 set.seed(1); data12r <- simulateGSMAR(gmar12r, nsimu=1)
-set.seed(2); data12rinit <- simulateGSMAR(gmar12r, nsimu=2, initvalues=1)
+set.seed(2); data12rinit <- simulateGSMAR(gmar12r, nsimu=2, init_values=1)
 set.seed(3); data23r <- simulateGSMAR(stmar23r, nsimu=2)
 set.seed(1); data22gsr <- simulateGSMAR(gstmar22r, nsimu=2)
 

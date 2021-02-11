@@ -128,7 +128,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 
   if(plot_indstats) {
     # Obtain tests statistics
-    qrtest <- quantile_residual_tests(gsmar, lagsAC=1:nlags, lagsCH=1:nlags, nsimu=nsimu, printRes=FALSE)
+    qrtest <- quantile_residual_tests(gsmar, lags_ac=1:nlags, lags_ch=1:nlags, nsimu=nsimu, print_res=FALSE)
 
     plot_inds <- function(which_ones) { # ac_res or ch_res
       res <- qrtest[[which(names(qrtest) == which_ones)]]

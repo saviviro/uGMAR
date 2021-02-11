@@ -13,10 +13,10 @@
 
 quantile_residual_tests(
   gsmar,
-  lagsAC = c(1, 3, 6, 12),
-  lagsCH = lagsAC,
+  lags_ac = c(1, 3, 6, 12),
+  lags_ch = lags_ac,
   nsimu = 1,
-  printRes = TRUE
+  print_res = TRUE
 )
 }
 \arguments{
@@ -29,9 +29,9 @@ Currectly not used in \code{print.qrtest}}
 
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{lagsAC}{a numeric vector of positive integers specifying the lags for which autocorrelation is tested.}
+\item{lags_ac}{a numeric vector of positive integers specifying the lags for which autocorrelation is tested.}
 
-\item{lagsCH}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
+\item{lags_ch}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
 is tested.}
 
 \item{nsimu}{a positive integer specifying to how many simulated observations the covariance matrix Omega
@@ -39,7 +39,7 @@ is tested.}
 given data and not on simulated data. Having the covariance matrix omega based on a large simulated sample
 might improve the tests size properties.}
 
-\item{printRes}{a logical argument defining whether the results should be printed or not.}
+\item{print_res}{a logical argument defining whether the results should be printed or not.}
 }
 \value{
 Returns an object of class \code{'qrtest'} containing the test results in data frames. In the cases
@@ -66,18 +66,11 @@ heteroskedasticity tests.
 \item \code{print}: Print method for class 'qrtest' objects
 }}
 
-\section{Suggested packages}{
-
-  Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
-  For large StMAR and G-StMAR models with large data, the evaluations may take significantly long time
-  without the package "gsl".
-}
-
 \examples{
 \donttest{
 # GMAR model
 fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-qrt <- quantile_residual_tests(fit12, lagsAC=c(1, 5, 10, 15))
+qrt <- quantile_residual_tests(fit12, lags_ac=c(1, 5, 10, 15))
 
 # G-StMAR model
 fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
@@ -86,18 +79,18 @@ plot(qrtest42g)
 
 # Restricted GMAR model
 fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", restricted=TRUE)
-qrtest43gmr <- quantile_residual_tests(fit43gmr, lagsAC=1:10)
+qrtest43gmr <- quantile_residual_tests(fit43gmr, lags_ac=1:10)
 plot(qrtest43gmr)
 
 # Non-mixture version of StMAR model
 fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
-quantile_residual_tests(fit101t, lagsAC=c(1, 2, 5), printRes=FALSE)
+quantile_residual_tests(fit101t, lags_ac=c(1, 2, 5), print_res=FALSE)
 
 # Two-regime GMAR p=2 model with the second AR coeffiecient of
 # of the second regime contrained to zero.
 constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-quantile_residual_tests(fit22c, lagsAC=c(1, 3), printRes=FALSE)
+quantile_residual_tests(fit22c, lags_ac=c(1, 3), print_res=FALSE)
 }
 }
 \references{

@@ -4,14 +4,14 @@
 \alias{simulateGSMAR}
 \title{Simulate values from GMAR, StMAR, and G-StMAR processes}
 \usage{
-simulateGSMAR(gsmar, nsimu, initvalues, ntimes = 1, drop = TRUE)
+simulateGSMAR(gsmar, nsimu, init_values, ntimes = 1, drop = TRUE)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{nsimu}{a positive integer specifying how many values (ahead from \code{initvalues}) will be simulated.}
+\item{nsimu}{a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.}
 
-\item{initvalues}{a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
+\item{init_values}{a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
 element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
 If not specified, initial values will be simulated from the process's stationary distribution.}
 
@@ -56,7 +56,7 @@ The argument \code{ntimes} is intended for forecasting: a GSMAR process can be f
  params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
  gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
  model="G-StMAR")
- sim12gs <- simulateGSMAR(gstmar12, nsimu=500, initvalues=5:6)
+ sim12gs <- simulateGSMAR(gstmar12, nsimu=500, init_values=5:6)
  ts.plot(sim12gs$sample)
  ts.plot(sim12gs$component)
  ts.plot(sim12gs$mixing_weights, col=rainbow(2), lty=2)

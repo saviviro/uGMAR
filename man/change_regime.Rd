@@ -11,7 +11,7 @@ change_regime(
   model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
-  regimeParams,
+  regime_params,
   regime
 )
 }
@@ -80,7 +80,7 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{regimeParams}{a numeric vector specifying the parameter values that should be inserted to the specified regime.
+\item{regime_params}{a numeric vector specifying the parameter values that should be inserted to the specified regime.
 \describe{
   \item{For \strong{non-restricted} models:}{
     \describe{

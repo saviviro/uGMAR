@@ -76,6 +76,9 @@ quantileResidualPlot <- function(gsmar) {
 #'   Sometimes returns exactly the given parameter vector.  DEPRECATED, USE \code{smart_ind} INSTEAD!
 #'
 #' @inheritParams random_ind_int
+#' @param whichRandom deprecated! Use \code{which_random} instead!
+#' @param meanscale deprecated! Use \code{mu_scale} instead!
+#' @param sigmascale deprecated! Use \code{sigma_scale} instead!
 #' @inherit random_ind_int return references
 #' @details DEPRECATED, USE \code{random_ind} OR \code{smart_ind} INSTEAD!
 #'
@@ -83,10 +86,19 @@ quantileResidualPlot <- function(gsmar) {
 #'   (instead of intercept terms \eqn{\phi_{m,0}}) is assumed.
 #' @export
 
-randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
+randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, mu_scale, sigma_scale,
+                             forcestat=FALSE, meanscale=NULL, sigmascale=NULL) {
   .Deprecated("random_ind")
+  if(!is.null(meanscale)) {
+    warning("The argument 'meanscale' is deprecated! Use 'mu_scale' instead!")
+    mu_scale <- meanscale
+  }
+  if(!is.null(sigmascale)) {
+    warning("The argument 'sigmascale' is deprecated! Use 'sigma_scale' instead!")
+    sigma_scale <- sigmascale
+  }
   random_ind(p=p, M=M, model=model, restricted=restricted, constraints=constraints,
-             meanscale=meanscale, sigmascale=sigmascale, forcestat=forcestat)
+             mu_scale=mu_scale, sigma_scale=sigma_scale, forcestat=forcestat)
 }
 
 
@@ -95,10 +107,23 @@ randomIndividual <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restrict
 #' @export
 
 smartIndividual <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                      meanscale, sigmascale, accuracy, whichRandom=numeric(0), forcestat=FALSE) {
+                      mu_scale, sigma_scale, accuracy, which_random=numeric(0), forcestat=FALSE, whichRandom=NULL,
+                      meanscale=NULL, sigmascale=NULL) {
   .Deprecated("smart_ind")
+  if(!is.null(whichRandom)) {
+    warning("The argument 'whichRandom' is deprecated! Use 'whichRandom' instead!")
+    which_random <- whichRandom
+  }
+  if(!is.null(meanscale)) {
+    warning("The argument 'meanscale' is deprecated! Use 'mu_scale' instead!")
+    mu_scale <- meanscale
+  }
+  if(!is.null(sigmascale)) {
+    warning("The argument 'sigmascale' is deprecated! Use 'sigma_scale' instead!")
+    sigma_scale <- sigmascale
+  }
   smart_ind(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-            meanscale=meanscale, sigmascale=sigmascale, accuracy=accuracy, whichRandom=whichRandom,
+            mu_scale=mu_scale, sigma_scale=sigma_scale, accuracy=accuracy, which_random=which_random,
             forcestat=forcestat)
 }
 

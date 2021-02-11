@@ -6,8 +6,8 @@
 #'  Can be utilized for forecasting future values of the process.
 #'
 #' @param gsmar object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.
-#' @param nsimu a positive integer specifying how many values (ahead from \code{initvalues}) will be simulated.
-#' @param initvalues a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
+#' @param nsimu a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.
+#' @param init_values a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
 #'  element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
 #'  If not specified, initial values will be simulated from the process's stationary distribution.
 #' @param ntimes a positive integer specifying how many sets of simulations should be performed.
@@ -44,7 +44,7 @@
 #'  params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
 #'  gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
 #'  model="G-StMAR")
-#'  sim12gs <- simulateGSMAR(gstmar12, nsimu=500, initvalues=5:6)
+#'  sim12gs <- simulateGSMAR(gstmar12, nsimu=500, init_values=5:6)
 #'  ts.plot(sim12gs$sample)
 #'  ts.plot(sim12gs$component)
 #'  ts.plot(sim12gs$mixing_weights, col=rainbow(2), lty=2)
@@ -64,7 +64,7 @@
 #' }
 #' @export
 
-simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
+simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   epsilon <- round(log(.Machine$double.xmin) + 10)
   check_gsmar(gsmar)
   p <- gsmar$model$p
@@ -81,8 +81,8 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
     M1 <- M
   }
 
-  if(!missing(initvalues)) {
-    if(length(initvalues) < p) {
+  if(!missing(init_values)) {
+    if(length(init_values) < p) {
       stop("The length of initial values vector has to be at least p")
     }
   }
@@ -137,7 +137,7 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
   mu_mp <- tcrossprod(rep(1, p), mu) # \mu_m*1_p, column for each component
 
   # If initial values are missing simulate them from the processes stationary distribution
-  if(missing(initvalues)) {
+  if(missing(init_values)) {
     mv_samples <- numeric(p)
     m <- sample.int(M, size=1, prob=alphas) # From which mixture component the p-dimensional initial value is drawn from
     if(model == "GMAR" || (model == "G-StMAR" && m <= M1)) { # Draw from GMAR type component
@@ -154,8 +154,8 @@ simulateGSMAR <- function(gsmar, nsimu, initvalues, ntimes=1, drop=TRUE) {
     }
     Y[1,] <- mv_samples # Initial values sampled from the stationary distribution
   } else {
-    initvalues <- initvalues[(length(initvalues) - p + 1):length(initvalues)]
-    Y[1,] <- rev(initvalues) # Take the last value to be in the first column, the second last in the second column, etc.
+    init_values <- init_values[(length(init_values) - p + 1):length(init_values)]
+    Y[1,] <- rev(init_values) # Take the last value to be in the first column, the second last in the second column, etc.
   }
 
   # Initialize data storages

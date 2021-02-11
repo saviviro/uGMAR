@@ -95,11 +95,6 @@ Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals of the sp
 Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
  hypergeometric function using the package 'gsl'.
 }
-\section{Suggested packages}{
-
-  Install the suggested package "gsl" for faster evaluation of the quantile residuals for the StMAR and G-StMAR models.
-}
-
 \references{
 \itemize{
    \item Galbraith, R., Galbraith, J. 1974. On the inverses of some patterned matrices arising

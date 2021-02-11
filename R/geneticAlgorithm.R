@@ -464,7 +464,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
           # Combine the regimes to a complete parameter vector
           ind_to_use <- change_regime(p=p, M=M_orig, params=best_ind, model=model, restricted=restricted, constraints=constraints,
-                                     regimeParams=reg_to_use, regime=which_to_change)
+                                     regime_params=reg_to_use, regime=which_to_change)
 
           # If there are redundant regimes left, they should be random mutated and not smart mutated
           rand_to_use <- which_redundant[which_redundant != which_to_change]
@@ -473,7 +473,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         H2[,mutate] <- vapply(1:length(mutate), function(i3) smart_ind_int(p=p, M=M_orig, params=ind_to_use, model=model,
                                                                                  restricted=restricted, constraints=constraints,
                                                                                  mu_scale=mu_scale, sigma_scale=sigma_scale,
-                                                                                 accuracy=accuracy[i3], whichRandom=rand_to_use,
+                                                                                 accuracy=accuracy[i3], which_random=rand_to_use,
                                                                                  forcestat=forcestat), numeric(d))
       } else { # Random mutations
         H2[,mutate] <- vapply(1:length(mutate), function(i3) random_ind_int(p, M_orig, model=model, restricted=restricted,
@@ -701,7 +701,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' # StMAR parameter vector: first regime is random in the "smart individual"
 #' params13t <- random_ind(1, 3, model="StMAR", mu_scale=c(3, 1), sigma_scale=3)
 #' smart13t <- smart_ind(1, 3, params13t, model="StMAR", accuracy=15,
-#'                             mu_scale=c(3, 3), sigma_scale=3, whichRandom=1)
+#'                             mu_scale=c(3, 3), sigma_scale=3, which_random=1)
 #' cbind(params13t, smart13t)
 #'
 #'
@@ -724,7 +724,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' params23gsr <- random_ind(2, c(1, 2), model="G-StMAR", restricted=TRUE,
 #'                                 mu_scale=c(-1, 1), sigma_scale=3)
 #' smart23gsr <- smart_ind(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
-#'                               mu_scale=c(0, 1), sigma_scale=1, accuracy=20, whichRandom=2)
+#'                               mu_scale=c(0, 1), sigma_scale=1, accuracy=20, which_random=2)
 #' cbind(params23gsr, smart23gsr)
 #'
 #'
@@ -754,7 +754,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'                                 mu_scale=c(-2, 0.5), sigma_scale=4)
 #' smart32trc <- smart_ind(3, 2, params32trc, model="StMAR", restricted=TRUE,
 #'                               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                               mu_scale=c(0, 0.1), sigma_scale=0.1, whichRandom=2,
+#'                               mu_scale=c(0, 0.1), sigma_scale=0.1, which_random=2,
 #'                               accuracy=20)
 #' cbind(params32trc, smart32trc)
 #' @export
@@ -791,14 +791,14 @@ random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FAL
 #' @param accuracy a real number larger than zero specifying how close to \code{params} the generated parameter vector should be.
 #'   Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter
 #'   value divided by \code{accuracy}.
-#' @param whichRandom a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
+#' @param which_random a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
 #' using \code{smart_ind}. Does not affect mixing weight parameters. Default in none.
 #' @param forcestat use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
 #'   Not supported for constrained models.
 #' @inherit random_regime references
 
 smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                                mu_scale, sigma_scale, accuracy, whichRandom, forcestat=FALSE) {
+                                mu_scale, sigma_scale, accuracy, which_random, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -806,8 +806,8 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     M2 <- M[2]
     M <- sum(M)
   }
-  if(missing(whichRandom)) {
-    whichRandom <- numeric(0)
+  if(missing(which_random)) {
+    which_random <- numeric(0)
   }
 
   if(restricted == FALSE) {
@@ -815,7 +815,7 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     j <- 0
     for(i1 in 1:M) { # Run through components
       q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints[[i1]]))) # p for non-constrained models
-      if(any(whichRandom == i1)) { # If regime should be random
+      if(any(which_random == i1)) { # If regime should be random
         ind <- c(ind, random_regime(p=p, mu_scale=mu_scale, sigma_scale=sigma_scale,
                                     restricted=restricted, constraints=constraints,
                                     m=i1, forcestat=forcestat))
@@ -830,12 +830,12 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints))) # p for non-constrained models
     params0 <- params[1:(M + q)]
     sigmas <- params[(M + q + 1):(2*M + q)]
-    if(length(whichRandom) == 0) {
+    if(length(which_random) == 0) {
       ind <- c(rnorm(n=M + q, mean=params0, sd=abs(params0/accuracy)), abs(rnorm(n=M, mean=sigmas, sd=sigmas/accuracy)))
     } else { # If some regime(s) should be random
       ind <- numeric(0)
       for(i1 in 1:M) { # Generate phi0
-        if(any(whichRandom == i1)) {
+        if(any(which_random == i1)) {
           ind <- c(ind, rnorm(n=1, mean=mu_scale[1], sd=mu_scale[2]))
         } else {
           ind <- c(ind, rnorm(n=1, mean=params0[i1], sd=abs(params0[i1]/accuracy)))
@@ -843,7 +843,7 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
       }
       ind <- c(ind, rnorm(q, mean=params0[(M + 1):(M + q)], sd=abs(params0[(M + 1):(M + q)]/accuracy)))
       for(i1 in 1:M) { # Generate sigmas
-        if(any(whichRandom == i1)) {
+        if(any(which_random == i1)) {
           ind <- c(ind, abs(rnorm(n=1, mean=0, sd=sigma_scale)))
         } else {
           ind <- c(ind, rnorm(n=1, mean=sigmas[i1], sd=abs(sigmas[i1]/accuracy)))
@@ -871,12 +871,12 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
       M1 <- 0
     }
     dfs <- params[(d - M2 + 1):d]
-    if(length(whichRandom) == 0) {
+    if(length(which_random) == 0) {
       dfs2 <- rnorm(n=M2, mean=dfs, sd=dfs/accuracy)
     } else { # If some regimes should be random
       dfs2 <- numeric(0)
       for(i1 in (M1 + 1):M) { # Generate dfs
-        if(any(whichRandom == i1)) {
+        if(any(which_random == i1)) {
           dfs2 <- add_dfs(dfs2, how_many=1)
         } else {
           dfs2 <- c(dfs2, rnorm(n=1, mean=dfs[i1 - M1], sd=abs(dfs[i1 - M1]/accuracy)))
@@ -901,17 +901,17 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 #' @export
 
 smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                            mu_scale, sigma_scale, accuracy, whichRandom=numeric(0), forcestat=FALSE) {
+                            mu_scale, sigma_scale, accuracy, which_random=numeric(0), forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
   check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   if(accuracy <= 0) {
     stop("Argument accuracy has to be larger than zero")
-  } else if(length(whichRandom) > 0) {
-    if(any(!whichRandom %in% 1:sum(M))) {
-      stop("The elements of whichRandom should be positive integers in the clsoed interval [1, M]")
-    } else if(length(whichRandom) > 0) {
+  } else if(length(which_random) > 0) {
+    if(any(!which_random %in% 1:sum(M))) {
+      stop("The elements of which_random should be positive integers in the clsoed interval [1, M]")
+    } else if(length(which_random) > 0) {
       if(length(mu_scale) != 2) {
         stop("mu_scale is wrong dimension")
       } else if(length(sigma_scale) != 1) {
@@ -927,7 +927,7 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
     check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
   smart_ind_int(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                      mu_scale=mu_scale, sigma_scale=sigma_scale, accuracy=accuracy, whichRandom=whichRandom,
+                      mu_scale=mu_scale, sigma_scale=sigma_scale, accuracy=accuracy, which_random=which_random,
                       forcestat=forcestat)
 }
 
@@ -1015,7 +1015,7 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 #'  regime-parameter vector and returns the modified parameter vector. Does not affect mixing weight parameters.
 #'
 #' @inheritParams loglikelihood
-#' @param regimeParams a numeric vector specifying the parameter values that should be inserted to the specified regime.
+#' @param regime_params a numeric vector specifying the parameter values that should be inserted to the specified regime.
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
 #'      \describe{
@@ -1038,7 +1038,7 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 #' @param regime a positive integer in the interval [1, M] defining which regime should be changed.
 #' @return Returns modified parameter vector of the form described in \code{params}.
 
-change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, regimeParams, regime) {
+change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, regime_params, regime) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -1055,10 +1055,10 @@ change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
       q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints[[i1]])))
       if(i1 == regime) { # Change the parameters
         if(model == "StMAR" | (model == "G-StMAR" & regime > M1)) {
-          regimeDfs <- regimeParams[length(regimeParams)]
-          regimeParams <- regimeParams[-length(regimeParams)] # Delete dfs
+          regimeDfs <- regime_params[length(regime_params)]
+          regime_params <- regime_params[-length(regime_params)] # Delete dfs
         }
-        params0 <- c(params0, regimeParams)
+        params0 <- c(params0, regime_params)
       } else { # Use same parameters
         params0 <- c(params0, params[(j + 1):(j + q + 2)])
       }
@@ -1078,12 +1078,12 @@ change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
   } else { # Restricted == TRUE
     q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints)))
     params0 <- params
-    params0[regime] <- regimeParams[1] # phi0
-    params0[M + q + regime] <- regimeParams[2] # sigma^2
+    params0[regime] <- regime_params[1] # phi0
+    params0[M + q + regime] <- regime_params[2] # sigma^2
     if(model == "StMAR") {
-      params0[3*M + q - 1 + regime] <- regimeParams[3] # dfs
+      params0[3*M + q - 1 + regime] <- regime_params[3] # dfs
     } else if(model == "G-StMAR" & regime > M1) {
-      params0[3*M + q - 1 + regime - M1] <- regimeParams[3] # dfs
+      params0[3*M + q - 1 + regime - M1] <- regime_params[3] # dfs
     }
     return(params0)
   }

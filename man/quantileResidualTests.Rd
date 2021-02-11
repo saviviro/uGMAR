@@ -6,18 +6,21 @@
 \usage{
 quantileResidualTests(
   gsmar,
-  lagsAC = c(1, 3, 6, 12),
-  lagsCH = lagsAC,
+  lags_ac = c(1, 3, 6, 12),
+  lags_ch = lags_ac,
   nsimu = 1,
-  printRes = TRUE
+  print_res = TRUE,
+  lagsAC = NULL,
+  lagsCH = NULL,
+  printRes = NULL
 )
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
 
-\item{lagsAC}{a numeric vector of positive integers specifying the lags for which autocorrelation is tested.}
+\item{lags_ac}{a numeric vector of positive integers specifying the lags for which autocorrelation is tested.}
 
-\item{lagsCH}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
+\item{lags_ch}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
 is tested.}
 
 \item{nsimu}{a positive integer specifying to how many simulated observations the covariance matrix Omega
@@ -25,7 +28,13 @@ is tested.}
 given data and not on simulated data. Having the covariance matrix omega based on a large simulated sample
 might improve the tests size properties.}
 
-\item{printRes}{a logical argument defining whether the results should be printed or not.}
+\item{print_res}{a logical argument defining whether the results should be printed or not.}
+
+\item{lagsAC}{deprecated! Use \code{lags_ac} instead.}
+
+\item{lagsCH}{deprecated! Use \code{lags_ch} instead.}
+
+\item{printRes}{deprecated! Use \code{print_res} instead.}
 }
 \value{
 Returns an object of class \code{'qrtest'} containing the test results in data frames. In the cases
@@ -39,7 +48,7 @@ Returns an object of class \code{'qrtest'} containing the test results in data f
  of the quantile residuals. DEPRECATED, USE \code{quantile_residual_tests} INSTEAD!
 }
 \details{
-DEPRECATED, USE \code{quantile_residual_tests} INSTEAD!
+DEPRECATED! USE \code{quantile_residual_tests} INSTEAD!
 
   For a correctly specified GSMAR model employing the maximum likelihood estimator, the quantile residuals
   are asymptotically independent with standard normal distribution. They can hence be used in a similar

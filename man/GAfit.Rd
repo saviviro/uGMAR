@@ -15,15 +15,16 @@ GAfit(
   conditional = TRUE,
   ngen = 200,
   popsize,
-  smartMu = min(100, ceiling(0.5 * ngen)),
-  meanscale,
-  sigmascale,
+  smart_mu = min(100, ceiling(0.5 * ngen)),
+  mu_scale,
+  sigma_scale,
   initpop = NULL,
   regime_force_scale = 1,
   red_criteria = c(0.05, 0.01),
   to_return = c("alt_ind", "best_ind"),
   minval,
-  seed = NULL
+  seed = NULL,
+  ...
 )
 }
 \arguments{
@@ -66,16 +67,16 @@ Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desi
 \item{popsize}{a positive even integer specifying the population size in the genetic algorithm.
 Default is \code{10*d} where \code{d} is the number of parameters.}
 
-\item{smartMu}{a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
+\item{smart_mu}{a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
 This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far.}
 
-\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+\item{mu_scale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
 Default is \code{c(mean(data), sd(data))}.
 Note that the genetic algorithm optimizes with mean-parametrization even when \code{parametrization=="intercept"}, but
 input (in \code{initpop}) and output (return value) parameter vectors may be intercept-parametrized.}
 
-\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+\item{sigma_scale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
 normal distribution from which the component variance parameters are generated in the random mutations in the genetic algorithm.
 Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
 
@@ -137,6 +138,8 @@ The default is \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}, and one shou
 
 \item{seed}{a single value, interpreted as an integer, or NULL, that sets seed for the random number generator in the beginning of
 the function call. If calling \code{GAfit} from \code{fitGSMAR}, use the argument \code{seeds} instead of passing the argument \code{seed}.}
+
+\item{...}{We currently use this to catch deprecated arguments.}
 }
 \value{
 Returns estimated parameter vector with the form described in \code{initpop}.

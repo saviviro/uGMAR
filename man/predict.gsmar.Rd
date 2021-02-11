@@ -12,7 +12,7 @@
   pi = c(0.95, 0.8),
   pred_type = c("median", "mean", "cond_mean"),
   pi_type = c("two-sided", "upper", "lower", "none"),
-  plotRes = TRUE,
+  plot_res = TRUE,
   mix_weights = TRUE,
   nt
 )
@@ -34,7 +34,7 @@ intervals won't be calculated if the exact conditional mean is used.}
 
 \item{pi_type}{should the prediction intervals be "two-sided", "upper", or "lower"?}
 
-\item{plotRes}{a logical argument defining whether the forecast should be plotted or not.}
+\item{plot_res}{a logical argument defining whether the forecast should be plotted or not.}
 
 \item{mix_weights}{\code{TRUE} if forecasts for mixing weights should be plotted, \code{FALSE} in not.}
 
@@ -77,13 +77,13 @@ predict(fit101t, n_ahead=10, pi_type="upper", pi=0.9)
 # G-StMAR model, no prediction intervals
 fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
 pred42gs <- predict(fit42g, n_ahead=2, pred_type="median",
- pi_type="none", plotRes=FALSE)
+ pi_type="none", plot_res=FALSE)
 pred42gs
 plot(pred42gs)
 
 # Restricted GMAR model, one-step conditional mean prediction
 fit43gmr <- fitGSMAR(T10Y1Y, 4, 3, model="GMAR", restricted=TRUE)
-pred43gmr <- predict(fit43gmr, pred_type="cond_mean", plotRes=FALSE)
+pred43gmr <- predict(fit43gmr, pred_type="cond_mean", plot_res=FALSE)
 pred43gmr
 
 # Such StMAR(3,2) that the AR coefficients are restricted to be

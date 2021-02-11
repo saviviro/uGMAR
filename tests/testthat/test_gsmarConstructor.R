@@ -39,7 +39,7 @@ test_that("stmar_to_gstmar works", {
 
 
 test_that("alt_gsmar does not throw errors", {
-  fit11 <- suppressMessages(fitGSMAR(T10Y1Y, 1, 1, model="StMAR", ncalls=2, ncores=1, maxit=1, seeds=1:2, printRes=FALSE, ngen=1))
+  fit11 <- suppressMessages(fitGSMAR(T10Y1Y, 1, 1, model="StMAR", ncalls=2, ncores=1, maxit=1, seeds=1:2, print_res=FALSE, ngen=1))
   alt_gsmar(fit11, which_round=1)
   expect_true(TRUE)
 })

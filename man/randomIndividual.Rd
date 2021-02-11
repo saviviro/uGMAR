@@ -12,9 +12,11 @@ randomIndividual(
   model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
-  meanscale,
-  sigmascale,
-  forcestat = FALSE
+  mu_scale,
+  sigma_scale,
+  forcestat = FALSE,
+  meanscale = NULL,
+  sigmascale = NULL
 )
 
 smartIndividual(
@@ -24,11 +26,14 @@ smartIndividual(
   model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
-  meanscale,
-  sigmascale,
+  mu_scale,
+  sigma_scale,
   accuracy,
-  whichRandom = numeric(0),
-  forcestat = FALSE
+  which_random = numeric(0),
+  forcestat = FALSE,
+  whichRandom = NULL,
+  meanscale = NULL,
+  sigmascale = NULL
 )
 }
 \arguments{
@@ -59,15 +64,19 @@ Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constra
 is always \code{p} for all regimes.
 Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
-\item{meanscale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+\item{mu_scale}{a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 of the normal distribution from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization)
 parameters (for random regimes) should be generated.}
 
-\item{sigmascale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+\item{sigma_scale}{a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
 normal distribution from which the component variance parameters (for random regimes) should be generated.}
 
 \item{forcestat}{use the algorithm by Monahan (1984) to force stationarity on the AR parameters (slower) for random regimes?
 Not supported for constrained models.}
+
+\item{meanscale}{deprecated! Use \code{mu_scale} instead!}
+
+\item{sigmascale}{deprecated! Use \code{sigma_scale} instead!}
 
 \item{params}{a real valued parameter vector specifying the model.
 \describe{
@@ -110,8 +119,10 @@ the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 Standard deviation of the normal distribution from which new parameter values are drawn from will be corresponding parameter
 value divided by \code{accuracy}.}
 
-\item{whichRandom}{a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
+\item{which_random}{a numeric vector of maximum length \code{M} specifying which regimes should be random instead of "smart" when
 using \code{smart_ind}. Does not affect mixing weight parameters. Default in none.}
+
+\item{whichRandom}{deprecated! Use \code{which_random} instead!}
 }
 \value{
 Returns estimated parameter vector with the form described in \code{initpop}.

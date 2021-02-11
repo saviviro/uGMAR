@@ -17,8 +17,7 @@ fitGSMAR(
   ncores = min(2, ncalls, parallel::detectCores()),
   maxit = 300,
   seeds = NULL,
-  printRes = TRUE,
-  runTests = FALSE,
+  print_res = TRUE,
   ...
 )
 }
@@ -68,9 +67,7 @@ and the randomness associated with the genetic algorithm.}
 \item{seeds}{a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.}
 
-\item{printRes}{should the estimation results be printed?}
-
-\item{runTests}{should quantile residuals tests be performed after the estimation?}
+\item{print_res}{should the estimation results be printed?}
 
 \item{...}{additional settings passed to the function \code{GAfit} employing the genetic algorithm.}
 }
@@ -130,7 +127,7 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
  some local maximum point instead, and therefore a number of estimation rounds is required for reliable results. Because
  of the nature of the models, the estimation may fail particularly in the cases where the number of mixture components is
  chosen too large. Note that the genetic algorithm is designed to avoid solutions with mixing weights of some regimes
- too close to zero at almost all times ('redudant regimes') but the settings can, however, be adjusted (see ?GAfit).
+ too close to zero at almost all times ("redundant regimes") but the settings can, however, be adjusted (see ?GAfit).
 
  If the iteration limit for the variable metric algorithm (\code{maxit}) is reached, one can continue the estimation by
  iterating more with the function \code{iterate_more}.
@@ -143,22 +140,24 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
  The variable metric algorithm (or quasi-Newton method, Nash (1990, algorithm 21)) used in the second phase is implemented
  with function the \code{optim} from the package \code{stats}.
 
+ \strong{Addiotional Notes about the estimates:}
+
+ Sometimes the found MLE is very close to the boundary of the stationarity region some regime, the related variance parameter
+ is very small, and the associated mixing weights are "spiky". This kind of estimates often maximize the log-likelihood function
+ for a technical reason that induces by the endogenously determined mixing weights. In such cases, it might be more appropriate
+ to consider the next-best local maximum point of the log-likelihood function that is well inside the parameter space. Models based
+ local-only maximum points can be built with the function \code{alt_gsmar} by adjusting the argument \code{which_largest}
+ accordingly.
+
  Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters. Such parameters
  are weakly identified and induce various numerical problems. However, mixture components with large degree of freedom parameters are
  similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
- components with large degrees of freedom parameter estimates to be GMAR type.
+ components with large degrees of freedom parameter estimates to be GMAR type with the function \code{stmar_to_gstmar}.
 }
 \section{S3 methods}{
 
  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
  \code{logLik}, \code{residuals}.
-}
-
-\section{Suggested packages}{
-
- For faster evaluation of the quantile residuals for StMAR and G-StMAR models, install the suggested package "gsl".
- Note that for large StMAR and G-StMAR models with large data, performing the quantile residual tests may take
- significantly long time without the package "gsl".
 }
 
 \examples{
