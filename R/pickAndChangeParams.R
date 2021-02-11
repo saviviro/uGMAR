@@ -15,7 +15,7 @@
 #'  and the number of StMAR type regimes in the second.
 #' @examples
 #'  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)
-#'  stmarpars_to_gstmar(1, 2, params12, maxdf=100)
+#'  stmarpars_to_gstmar(p=1, M=2, params=params12, model="StMAR", maxdf=100)
 #' @export
 
 stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
@@ -51,8 +51,13 @@ stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
   all_regs <- lapply(1:M, function(i1) extract_regime(p=p, M=M_orig, params, model=model, restricted=restricted,
                                                       constraints=constraints, regime=i1, with_dfs=FALSE))
-  reg_order <- c(regs_to_change[order(alphas[regs_to_change], decreasing=TRUE)], # GMAR type regimes
-    (1:M)[-regs_to_change][order(alphas[-regs_to_change], decreasing=TRUE)]) # StMAR type regimes
+  if(model == "StMAR") {
+    gmar_regs <- regs_to_change
+  } else { # model == "G-StMAR
+    gmar_regs <- c(1:M1, regs_to_change)
+  }
+  reg_order <- c(gmar_regs[order(alphas[gmar_regs], decreasing=TRUE)], # GMAR type regimes
+                 (1:M)[-gmar_regs][order(alphas[-gmar_regs], decreasing=TRUE)]) # StMAR type regimes
   tmp_pars <- unlist(all_regs[reg_order])
 
   if(!is.null(constraints) && any(reg_order != 1:M)) {

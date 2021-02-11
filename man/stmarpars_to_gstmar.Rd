@@ -2,13 +2,14 @@
 % Please edit documentation in R/pickAndChangeParams.R
 \name{stmarpars_to_gstmar}
 \alias{stmarpars_to_gstmar}
-\title{Transform a StMAR model parameter vector to a corresponding G-StMAR model parameter vector
+\title{Transform a StMAR or G-StMAR model parameter vector to a corresponding G-StMAR model parameter vector
  with large dfs parameters reduced.}
 \usage{
 stmarpars_to_gstmar(
   p,
   M,
   params,
+  model = c("GMAR", "StMAR", "G-StMAR"),
   restricted = FALSE,
   constraints = NULL,
   maxdf = 100
@@ -60,6 +61,9 @@ and the rest \code{M2} components are \emph{StMAR type}.
 Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
+\item{model}{is "GMAR", "StMAR", or "G-StMAR" model considered? In the G-StMAR model, the first \code{M1} components
+are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
+
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes.}
 
@@ -93,5 +97,5 @@ Returns a list with three elements: \code{$params} contains the corresponding G-
 }
 \examples{
  params12 <- c(2, 0.9, 0.1, 0.8, 0.5, 0.5, 0.4, 12, 300)
- stmarpars_to_gstmar(1, 2, params12, maxdf=100)
+ stmarpars_to_gstmar(p=1, M=2, params=params12, model="StMAR", maxdf=100)
 }
