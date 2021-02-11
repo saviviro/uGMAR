@@ -102,6 +102,7 @@ test_that("change_regime changes the right regime correctly", {
   expect_equal(change_regime(3, 2, params32cr, restricted=TRUE, constraints=R1, regimeParams=c(9, 8), regime=2), c(1, 9, 0.3, -0.3, 1, 8, 0.6))
 })
 
+
 test_that("GA functions don't throw errors", {
   test_length0 <- function(x, length_x)expect_equal(length(x), length_x)
   test_length0(regime_distance(1:3, 2:4), 1)

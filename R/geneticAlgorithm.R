@@ -557,23 +557,20 @@ random_regime <- function(p, meanscale, sigmascale, restricted=FALSE, constraint
 #'  }
 
 random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
-  if(forcestat == TRUE) { # Algorithm by Mohanan 1984
-    r_p <- runif(p, min=-0.90, max=0.90) # Random partial autocorrelations
-    ymat <- matrix(0, nrow=p, ncol=p)
-    for(k in 1:p) {
-      if(k > 1) {
-        for(i1 in 1:(k - 1)) {
-          ymat[i1, k] <- ymat[i1, k - 1] + r_p[k]*ymat[k - i1, k - 1]
-        }
-      }
-      ymat[k, k] <- r_p[k]
+  if(forcestat == TRUE) { # Algorithm by Mohanan (1984)
+    all_r <- runif(n=p, min=-0.9, max=0.9) # p random partial autocorrelations
+    if(p == 1) return(all_r) # The stationarity condition is just |phi| < 1
+    all_y <- matrix(nrow=p, ncol=p) # [i,k] for y_i^(k), only upper triangle used
+    diag(all_y) <- all_r # y_i^(i) = r_i
+    for(k in 2:p) {
+      new_y <- vapply(1:(k - 1), function(i1) all_y[i1, k - 1] + all_r[k]*all_y[k - i1, k - 1], numeric(1))
+      if(k == p) return(-c(new_y, all_r[p]))
+      all_y[1:(k - 1), k] <- new_y
     }
-    return(-ymat[,p])
   } else { # Draw from normal distribution
     return(rnorm(n=p, mean=0, sd=sd))
   }
 }
-
 
 
 #' @title Add random dfs to a vector
