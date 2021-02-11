@@ -10,8 +10,6 @@ warn_dfs(
   M,
   params,
   model = c("GMAR", "StMAR", "G-StMAR"),
-  restricted = FALSE,
-  constraints = NULL,
   warn_about = c("derivs", "errors")
 )
 }
@@ -65,22 +63,6 @@ the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.}
 
 \item{model}{is "GMAR", "StMAR", or "G-StMAR" model considered? In the G-StMAR model, the first \code{M1} components
 are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
-
-\item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
-to be the same for all regimes.}
-
-\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
-\describe{
-\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
-  satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
-  \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
-  \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
-  \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
-}
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal autoregressive order
-is always \code{p} for all regimes.
-Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
 
 \item{warn_about}{warn about inaccurate derivatives or standard errors?}
 }

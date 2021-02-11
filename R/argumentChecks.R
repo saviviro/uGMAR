@@ -466,19 +466,19 @@ check_data <- function(object) {
 #' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
 #'   larger than 100.
 
-warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, warn_about=c("derivs", "errors")) {
+warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), warn_about=c("derivs", "errors")) {
 
   if(!missing(object)) {
-    p <- object$model$p
     M <- object$model$M
     params <- object$params
     model <- object$model$model
-    restricted <- object$model$restricted
-    constraints <- object$model$constraints
   }
   if(model %in% c("StMAR", "G-StMAR")) {
-    pars <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-    dfs <- pick_dfs(p=p, M=M, params=pars, model=model)
-    if(any(dfs > 100)) warning("The model contains overly large degrees of freedom parameter values. Consider switching to a G-StMAR model by setting the corresponding regimes to be GMAR type with the function 'stmar_to_gstmar'.")
+    M2 <- ifelse(model == "G-StMAR", M[2], M)
+    d <- length(params)
+    dfs <- params[(d - M2 + 1):d]
+    if(any(dfs > 100)) {
+      warning("The model contains overly large degrees of freedom parameter values. Consider switching to a G-StMAR model by setting the corresponding regimes to be GMAR type with the function 'stmar_to_gstmar'.")
+    }
   }
 }

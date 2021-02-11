@@ -75,6 +75,7 @@
 * The package 'gsl' is now imported, and not a suggested package anymore, to ensure fast calculation of quantile residual tests for StMAR and G-StMAR models.
 * The function random_ind does not sort components anymore when constraints are employed (unless only "restricted" argument is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.
 * Removed to possibility to run quantile residual tests directly with the estimation function after the estimation, because it is a good practice to check first whether the estimates are appropriate. The tests can be ran afterwards with the function "quantile_residual_tests".
+* fitGSMAR now warns if some regime is almost nonstationary.
 * Improved some of the documentation and updated the examples.
 * Adjusted the plot methods.
 * Added new data: W10Y2Y

@@ -309,6 +309,14 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ret$all_estimates <- newtonEstimates
   ret$all_logliks <- loks
   ret$which_converged <- converged
+  ar_roots <- get_ar_roots(ret)
+  near_nonstat <- vapply(1:sum(M), function(i1) any(abs(ar_roots[[i1]]) < 1.005), logical(1))
+  if(any(near_nonstat)) {
+    my_string <- ifelse(sum(near_nonstat) == 1,
+                        paste("Regime", which(near_nonstat),"is almost nonstationary!"),
+                        paste("Regimes", paste(which(near_nonstat), collapse=" and ") ,"are almost nonstationary!"))
+    warning(paste(my_string, "Consider building a model from the next-best local maximum with the function 'alt_gsmar' by adjusting its argument 'which_largest'."))
+  }
 
   cat("Finished!\n")
   ret

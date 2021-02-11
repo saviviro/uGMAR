@@ -1,4 +1,4 @@
-#' @title Transform a StMAR model parameter vector to a corresponding G-StMAR model parameter vector
+#' @title Transform a StMAR or G-StMAR model parameter vector to a corresponding G-StMAR model parameter vector
 #'  with large dfs parameters reduced.
 #'
 #' @description \code{stmarpars_to_gstmar} transforms a StMAR model parameter vector to a corresponding
@@ -18,30 +18,45 @@
 #'  stmarpars_to_gstmar(1, 2, params12, maxdf=100)
 #' @export
 
-stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL, maxdf=100) {
-  check_pM(p, M, model="StMAR")
-  check_params_length(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
+stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
+                                restricted=FALSE, constraints=NULL, maxdf=100) {
+  if(!model %in% c("StMAR", "G-StMAR")) stop("Only StMAR and G-StMAR models are supported!")
+  check_pM(p, M, model=model)
+  check_params_length(p, M, params, model=model, restricted=restricted, constraints=constraints)
   check_constraint_mat(p, M, restricted=restricted, constraints=constraints)
+  M_orig <- M # Length two vector for G-StMAR model
+  M <- sum(M) # The number of regimes
+  if(model == "StMAR") {
+    M1 <- 0
+    M2 <- M
+  } else { # model == "G-StMAR"
+    M1 <- M_orig[1]
+    M2 <- M_orig[2]
+  }
 
-  dfs <- pick_dfs(p, M, params, model="StMAR")
+  dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
   if(!any(dfs > maxdf)) {
     warning("No degrees of freedom parameter is larger than 'maxdf'. The original model is returned.")
-    return(list(params=params, reg_order=1:M, M=c(0, M)))
+    if(model == "StMAR") {
+      ret_M <- c(0, M)
+    } else {
+      ret_M <- M_orig
+    }
+    return(list(params=params,
+                reg_order=1:M,
+                M=ret_M))
   }
-  regs_to_change <- which(dfs > maxdf)
-  if(length(regs_to_change) == M) message("All regimes are changed to GMAR type. The result is therefore a GMAR model and not a G-StMAR model.")
-  alphas <- pick_alphas(p, M, params, model="StMAR", restricted=restricted, constraints=constraints)
-  all_regs <- lapply(1:M, function(i1) {
-    reg <- extract_regime(p, M, params, model="StMAR", restricted=restricted,
-                         constraints=constraints, regime=i1, with_dfs=FALSE)
-    reg
-    })
+  regs_to_change <- which(dfs > maxdf) + M1
+  if(length(regs_to_change) == M2) message("All regimes are changed to GMAR type. The result is therefore a GMAR model and not a G-StMAR model.")
+  alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
+  all_regs <- lapply(1:M, function(i1) extract_regime(p=p, M=M_orig, params, model=model, restricted=restricted,
+                                                      constraints=constraints, regime=i1, with_dfs=FALSE))
   reg_order <- c(regs_to_change[order(alphas[regs_to_change], decreasing=TRUE)], # GMAR type regimes
     (1:M)[-regs_to_change][order(alphas[-regs_to_change], decreasing=TRUE)]) # StMAR type regimes
   tmp_pars <- unlist(all_regs[reg_order])
 
-  if(!is.null(constraints) & any(reg_order != 1:M)) {
-    message(paste0("Order of the constraint matrices for was changed to ", toString(reg_order), "."))
+  if(!is.null(constraints) && any(reg_order != 1:M)) {
+    message(paste0("The order of the constraint matrices for was changed to ", toString(reg_order), "."))
   }
   if(restricted) { # Add the missing AR parameters
     q <- ifelse(is.null(constraints), p, ncol(constraints))
@@ -49,14 +64,14 @@ stmarpars_to_gstmar <- function(p, M, params, restricted=FALSE, constraints=NULL
                   params[(M + 1):(M + q)],
                   tmp_pars[seq(from=2, to=2*M, by=2)])
   }
-  if(length(regs_to_change) == M) {
+  if(length(regs_to_change) == M2) {
     new_dfs <- numeric(0)
   } else {
-    new_dfs <- dfs[-regs_to_change][order(reg_order[(length(regs_to_change) + 1):M], decreasing=FALSE)]
+    new_dfs <- dfs[-(regs_to_change - M1)][order(reg_order[(length(regs_to_change) + 1 + M1):M], decreasing=FALSE)]
   }
   list(params=c(tmp_pars, alphas[reg_order][-M], new_dfs),
        reg_order=reg_order,
-       M=c(length(regs_to_change), M - length(regs_to_change)))
+       M=c(length(regs_to_change) + M1, M2 - length(regs_to_change)))
 }
 
 

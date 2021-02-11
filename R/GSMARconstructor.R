@@ -102,7 +102,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
       warning("Approximate standard errors can't be calculated without data")
       std_errors <- rep(NA, npars)
     } else {
-      warn_dfs(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+      warn_dfs(p=p, M=M, params=params, model=model)
       std_errors <- tryCatch(standard_errors(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                                             constraints=constraints, parametrization=parametrization, conditional=conditional,
                                             custom_h=custom_h, minval=-(10^(ceiling(log10(length(data))) + 1) - 1)),
@@ -254,8 +254,8 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
   if(estimate & is.null(gsmar$data)) stop("Can't estimate the model without data")
 
   new_params <- stmarpars_to_gstmar(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
-                                    restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
-                                    maxdf=maxdf)
+                                    model=gsmar$model$model, restricted=gsmar$model$restricted,
+                                    constraints=gsmar$model$constraints, maxdf=maxdf)
   if(is.null(gsmar$model$constraints) || gsmar$model$restricted) {
     new_constraints <- gsmar$model$constraints
   } else {
