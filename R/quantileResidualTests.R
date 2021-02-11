@@ -7,14 +7,14 @@
 #'  of the quantile residuals.
 #'
 #' @inheritParams simulateGSMAR
-#' @param lagsAC a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
-#' @param lagsCH a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
+#' @param lags_ac a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
+#' @param lags_ch a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
 #'  is tested.
 #' @param nsimu a positive integer specifying to how many simulated observations the covariance matrix Omega
 #'  (see Kalliovirta (2012)) should be based on. If smaller than data size, then omega will be based on the
 #'  given data and not on simulated data. Having the covariance matrix omega based on a large simulated sample
 #'  might improve the tests size properties.
-#' @param printRes a logical argument defining whether the results should be printed or not.
+#' @param print_res a logical argument defining whether the results should be printed or not.
 #' @details
 #'   For a correctly specified GSMAR model employing the maximum likelihood estimator, the quantile residuals
 #'   are asymptotically independent with standard normal distribution. They can hence be used in a similar
@@ -24,10 +24,6 @@
 #'   of autocorrelation and conditional heteroscedasticity tests, the returned object also contains the
 #'   associated individual statistics and their standard errors, discussed in \emph{Kalliovirta (2012)} at
 #'   the pages 369-370.
-#' @section Suggested packages:
-#'   Install the suggested package "gsl" for faster evaluations in the cases of StMAR and G-StMAR models.
-#'   For large StMAR and G-StMAR models with large data, the evaluations may take significantly long time
-#'   without the package "gsl".
 #' @inherit quantile_residuals_int references
 #' @seealso \code{\link{profile_logliks}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{diagnostic_plot}},
 #'  \code{\link{predict.gsmar}}, \code{\link{get_test_Omega}},
@@ -35,7 +31,7 @@
 #' \donttest{
 #' # GMAR model
 #' fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-#' qrt <- quantile_residual_tests(fit12, lagsAC=c(1, 5, 10, 15))
+#' qrt <- quantile_residual_tests(fit12, lags_ac=c(1, 5, 10, 15))
 #'
 #' # G-StMAR model
 #' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
@@ -44,22 +40,22 @@
 #'
 #' # Restricted GMAR model
 #' fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", restricted=TRUE)
-#' qrtest43gmr <- quantile_residual_tests(fit43gmr, lagsAC=1:10)
+#' qrtest43gmr <- quantile_residual_tests(fit43gmr, lags_ac=1:10)
 #' plot(qrtest43gmr)
 #'
 #' # Non-mixture version of StMAR model
 #' fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
-#' quantile_residual_tests(fit101t, lagsAC=c(1, 2, 5), printRes=FALSE)
+#' quantile_residual_tests(fit101t, lags_ac=c(1, 2, 5), print_res=FALSE)
 #'
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
 #' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
 #' fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-#' quantile_residual_tests(fit22c, lagsAC=c(1, 3), printRes=FALSE)
+#' quantile_residual_tests(fit22c, lags_ac=c(1, 3), print_res=FALSE)
 #' }
 #' @export
 
-quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
+quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_ac, nsimu=1, print_res=TRUE) {
   check_gsmar(gsmar)
   check_data(gsmar)
   data <- gsmar$data
@@ -75,7 +71,7 @@ quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC,
   if(!requireNamespace("gsl", quietly=TRUE) & model %in% c("StMAR", "G-StMAR")) {
     message("Suggested package 'gsl' not found and a StMAR or G-StMAR model is considered: performing the tests may take a while")
   }
-  if(max(c(lagsAC, lagsCH)) >= T_obs) stop("The lags are too large compared to the data size")
+  if(max(c(lags_ac, lags_ch)) >= T_obs) stop("The lags are too large compared to the data size")
   qresiduals <- quantile_residuals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
                                       constraints=constraints, parametrization=parametrization)
   if(nsimu > length(data)) {
@@ -143,7 +139,7 @@ quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC,
   pvalue <- 1 - pchisq(N, df=dim_g)
 
   # Results
-  if(printRes) cat(paste0("Normality test p-value: ", format_value3(pvalue)), "\n\n")
+  if(print_res) cat(paste0("Normality test p-value: ", format_value3(pvalue)), "\n\n")
   norm_res <- data.frame(testStat=N, df=dim_g, pvalue=pvalue, row.names=NULL)
 
   #############################################################
@@ -151,10 +147,10 @@ quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC,
   #############################################################
 
   # Storage for the results
-  tmp <- rep(NA, length(lagsAC))
-  ac_res <- data.frame(lags=lagsAC, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
-  tmp <- rep(NA, length(lagsCH))
-  ch_res <- data.frame(lags=lagsCH, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
+  tmp <- rep(NA, length(lags_ac))
+  ac_res <- data.frame(lags=lags_ac, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
+  tmp <- rep(NA, length(lags_ch))
+  ch_res <- data.frame(lags=lags_ch, testStat=tmp, df=tmp, pvalue=tmp, indStat=tmp, stdError=tmp)
   ret <- list(norm_res=norm_res,
               ac_res=ac_res,
               ch_res=ch_res)
@@ -178,9 +174,9 @@ quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC,
 
     # Which lags to go through
     if(which_test == "ac") {
-      lags_to_loop <- lagsAC
+      lags_to_loop <- lags_ac
     } else {
-      lags_to_loop <- lagsCH
+      lags_to_loop <- lags_ch
     }
 
     j1 <- 1 # Count iterations
@@ -204,7 +200,7 @@ quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC,
       pvalue <- 1 - pchisq(AorH, df=lag)
 
       # Store the results
-      if(printRes) print_resf(lag=lag, p_val=pvalue)
+      if(print_res) print_resf(lag=lag, p_val=pvalue)
       index <- ifelse(which_test == "ac", 2, 3) # Index in the list 'ret'
       ret[[index]]$testStat[j1] <<- AorH
       ret[[index]]$df[j1] <<- lag
@@ -215,10 +211,10 @@ quantile_residual_tests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC,
     }
   }
 
-  if(printRes) cat("Autocorrelation tests:\nlags | p-value\n")
+  if(print_res) cat("Autocorrelation tests:\nlags | p-value\n")
   test_ac_or_ch("ac")
 
-  if(printRes) cat("\nConditional heteroskedasticity tests:\nlags | p-value\n")
+  if(print_res) cat("\nConditional heteroskedasticity tests:\nlags | p-value\n")
   test_ac_or_ch("ch")
 
   structure(ret, class="qrtest")

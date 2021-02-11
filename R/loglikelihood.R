@@ -290,15 +290,15 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
                  })
       }
 
-      is_gsl <- requireNamespace("gsl", quietly = TRUE) # If 'gsl' available, calculate with hypergeometric function what can be calculated
+#      is_gsl <- requireNamespace("gsl", quietly = TRUE) # If 'gsl' available, calculate with hypergeometric function what can be calculated
       for(i1 in 1:M2) { # Go through StMAR type regimes
-        if(is_gsl) {
-          whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
-          whichNotDef <- (1:length(Y2))[-whichDef]
-        } else {
-          whichDef <- integer(0)
-          whichNotDef <- 1:length(Y2)
-        }
+      #  if(is_gsl) {
+        whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
+        whichNotDef <- (1:length(Y2))[-whichDef]
+       # } #else {
+        #  whichDef <- integer(0)
+        #  whichNotDef <- 1:length(Y2)
+        #}
 
         if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
           Y0 <- Y2[whichDef]

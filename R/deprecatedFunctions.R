@@ -186,7 +186,10 @@ quantileResiduals <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #'  of the quantile residuals. DEPRECATED, USE \code{quantile_residual_tests} INSTEAD!
 #'
 #' @inheritParams quantile_residual_tests
-#' @details DEPRECATED, USE \code{quantile_residual_tests} INSTEAD!
+#' @param lagsAC deprecated! Use \code{lags_ac} instead.
+#' @param lagsCH deprecated! Use \code{lags_ch} instead.
+#' @param printRes deprecated! Use \code{print_res} instead.
+#' @details DEPRECATED! USE \code{quantile_residual_tests} INSTEAD!
 #'
 #'   For a correctly specified GSMAR model employing the maximum likelihood estimator, the quantile residuals
 #'   are asymptotically independent with standard normal distribution. They can hence be used in a similar
@@ -201,7 +204,21 @@ quantileResiduals <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #'  \code{\link{predict.gsmar}}, \code{\link{get_test_Omega}},
 #' @export
 
-quantileResidualTests <- function(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, nsimu=1, printRes=TRUE) {
+quantileResidualTests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_ac, nsimu=1, print_res=TRUE,
+                                  lagsAC=NULL, lagsCH=NULL, printRes=NULL) {
+  if(!is.null(lagsAC)) {
+    print("The argument 'lagsAC' is deprecated! Use 'lags_ac' instead!")
+    lags_ac <- lagsAC
+  }
+  if(!is.null(lagsCH)) {
+    print("The argument 'lagsCH' is deprecated! Use 'lags_ch' instead!")
+    lags_ch <- lagsCH
+  }
+  if(!is.null(printRes)) {
+    print("The argument 'printRes' is deprecated! Use 'print_res' instead!")
+    print_res <- printRes
+  }
+
   .Deprecated("quantile_residual_tests")
-  quantile_residual_tests(gsmar, lagsAC=c(1, 3, 6, 12), lagsCH=lagsAC, nsimu=1, printRes=TRUE)
+  quantile_residual_tests(gsmar, lags_ac=lags_ac, lags_ch=lags_ch, nsimu=nsimu, print_res=print_res)
 }

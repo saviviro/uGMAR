@@ -118,7 +118,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     cat(paste("Regime", m))
     if(model == "G-StMAR") cat(paste0(" (", regime_type, " type)"))
 
-    if(summary_print) cat(paste("\nModulus of poly roots:", paste0(format_value(all_ar_roots[[m]]), collapse=", ")))
+    if(summary_print) cat(paste("\nModuli of AR poly roots:", paste0(format_value(all_ar_roots[[m]]), collapse=", ")))
 
     cat(paste("\nMix weight:", format_value(alphas[m])))
     print_err(alphas_err[m])

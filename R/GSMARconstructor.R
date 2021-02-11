@@ -139,8 +139,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                                   constraints=constraints, parametrization=parametrization),
                  all_estimates=NULL,
                  all_logliks=NULL,
-                 which_converged=NULL,
-                 qr_tests=NULL),
+                 which_converged=NULL),
             class="gsmar")
 }
 

@@ -9,14 +9,14 @@
 #' @param ngen a positive integer specifying the number of generations to be ran through in the genetic algorithm.
 #' @param popsize a positive even integer specifying the population size in the genetic algorithm.
 #'  Default is \code{10*d} where \code{d} is the number of parameters.
-#' @param smartMu a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
+#' @param smart_mu a positive integer specifying the generation after which the random mutations in the genetic algorithm are "smart".
 #'  This means that mutating individuals will mostly mutate fairly close (or partially close) to the best fitting individual so far.
-#' @param meanscale a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+#' @param mu_scale a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 #'  of the normal distribution from which the \eqn{\mu_{m}} mean-parameters are generated in random mutations in the genetic algorithm.
 #'  Default is \code{c(mean(data), sd(data))}.
 #'  Note that the genetic algorithm optimizes with mean-parametrization even when \code{parametrization=="intercept"}, but
 #'  input (in \code{initpop}) and output (return value) parameter vectors may be intercept-parametrized.
-#' @param sigmascale a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+#' @param sigma_scale a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
 #'  normal distribution from which the component variance parameters are generated in the random mutations in the genetic algorithm.
 #'  Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.
 #' @param initpop a list of parameter vectors from which the initial population of the genetic algorithm will be generated from.
@@ -72,6 +72,7 @@
 #'   The default is \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}, and one should be very careful if adjusting this.
 #' @param seed a single value, interpreted as an integer, or NULL, that sets seed for the random number generator in the beginning of
 #'   the function call. If calling \code{GAfit} from \code{fitGSMAR}, use the argument \code{seeds} instead of passing the argument \code{seed}.
+#' @param ... We currently use this to catch deprecated arguments.
 #' @details
 #'    The core of the genetic algorithm is mostly based on the description by \emph{Dorsey and Mayer (1995)}.
 #'    It utilizes a slightly modified version of the individually adaptive crossover and mutation rates described
@@ -102,8 +103,8 @@
 #' @export
 
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),
-                  conditional=TRUE, ngen=200, popsize, smartMu=min(100, ceiling(0.5*ngen)), meanscale, sigmascale, initpop=NULL, regime_force_scale=1,
-                  red_criteria=c(0.05, 0.01), to_return=c("alt_ind", "best_ind"), minval, seed=NULL) {
+                  conditional=TRUE, ngen=200, popsize, smart_mu=min(100, ceiling(0.5*ngen)), mu_scale, sigma_scale, initpop=NULL, regime_force_scale=1,
+                  red_criteria=c(0.05, 0.01), to_return=c("alt_ind", "best_ind"), minval, seed=NULL, ...) {
   set.seed(seed)
   model <- match.arg(model)
   check_model(model)
@@ -118,6 +119,23 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     M2 <- M[2]
     M <- sum(M)
   }
+
+  # Catch deprecated arguments
+  dot_params <- list(...)
+  if(!is.null(dot_params$smartMu)) {
+    warning("The argument 'smart_mu' is deprecated! Use 'smart_mu' instead!")
+    smart_mu <- dot_params$smartMu
+  }
+  if(!is.null(dot_params$meanscale)) {
+    warning("The argument 'meanscale' is deprecated! Use 'mu_scale' instead!")
+    mu_scale <- dot_params$meanscale
+  }
+  if(!is.null(dot_params$sigmascale)) {
+    warning("The argument 'sigmascale' is deprecated! Use 'sigma_scale' instead!")
+    sigma_scale <- dot_params$sigmascale
+  }
+
+
   # Check constraint matrices
   if(!is.null(constraints)) {
     check_constraint_mat(p, M, restricted=restricted, constraints=constraints)
@@ -133,14 +151,16 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
   # Default settings
   if(missing(popsize)) popsize <- 10*d
-  if(missing(meanscale)) meanscale <- c(mean(data), sd(data))
-  if(missing(sigmascale)) sigmascale <- var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)
+  if(missing(mu_scale)) mu_scale <- c(mean(data), sd(data))
+  if(missing(sigma_scale)) sigma_scale <- var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)
   if(missing(minval)) minval <- get_minval(data)
 
   # Argument checks
   stopifnot(is.numeric(red_criteria) & length(red_criteria) == 2)
-  if(!all_pos_ints(c(ngen, smartMu))) {
-    stop("The arguments 'ngen' and 'smartMu' should be strictly positive integers")
+  stopifnot(length(sigma_scale) == 1 && sigma_scale > 0)
+  stopifnot(length(mu_scale) == 2 && mu_scale[2] > 0)
+  if(!all_pos_ints(c(ngen, smart_mu))) {
+    stop("The arguments 'ngen' and 'smart_mu' should be strictly positive integers")
   } else if(popsize%%2 != 0 | popsize < 2) {
     stop("The population size has to be EVEN positive integer")
   } else if(length(regime_force_scale) != 1 | regime_force_scale < 0) {
@@ -153,7 +173,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     nattempts <- 100
     for(i1 in 1:nattempts) {
       G <- replicate(popsize, random_ind_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
-                                                   meanscale=meanscale, sigmascale=sigmascale), numeric(d))
+                                                   mu_scale=mu_scale, sigma_scale=sigma_scale), numeric(d))
       init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
                                                                     constraints=constraints, conditional=conditional, parametrization="mean",
                                                                     boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), numeric(1))
@@ -355,7 +375,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 
     # Mutate
     if(length(mutate) >= 1) {
-      if(i1 > smartMu) { # Smart mutations
+      if(i1 > smart_mu) { # Smart mutations
 
         # Smart mutate more if there are redundant (wasted) regimes
         if(length(which_redundant) > 0) {
@@ -452,13 +472,13 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         # Do smart mutations close to ind_to_use with random regimes (if any) given by rand_to_use
         H2[,mutate] <- vapply(1:length(mutate), function(i3) smart_ind_int(p=p, M=M_orig, params=ind_to_use, model=model,
                                                                                  restricted=restricted, constraints=constraints,
-                                                                                 meanscale=meanscale, sigmascale=sigmascale,
+                                                                                 mu_scale=mu_scale, sigma_scale=sigma_scale,
                                                                                  accuracy=accuracy[i3], whichRandom=rand_to_use,
                                                                                  forcestat=forcestat), numeric(d))
       } else { # Random mutations
         H2[,mutate] <- vapply(1:length(mutate), function(i3) random_ind_int(p, M_orig, model=model, restricted=restricted,
-                                                                                  constraints=constraints, meanscale=meanscale,
-                                                                                  sigmascale=sigmascale, forcestat=forcestat), numeric(d))
+                                                                                  constraints=constraints, mu_scale=mu_scale,
+                                                                                  sigma_scale=sigma_scale, forcestat=forcestat), numeric(d))
       }
     }
 
@@ -529,15 +549,15 @@ regime_distance <- function(regime_pars1, regime_pars2) {
 #' }
 #' @inherit random_arcoefs details references
 
-random_regime <- function(p, meanscale, sigmascale, restricted=FALSE, constraints=NULL, m, forcestat=FALSE) {
+random_regime <- function(p, mu_scale, sigma_scale, restricted=FALSE, constraints=NULL, m, forcestat=FALSE) {
   stopifnot(restricted == FALSE)
   if(!is.null(constraints)) {
     C0 <- as.matrix(constraints[[m]])
     q <- ncol(C0)
     scale <- sum(abs(C0))
-    return(c(rnorm(n=1, mean=meanscale[1], sd=meanscale[2]), rnorm(n=q, mean=0, sd=0.6/scale), abs(rnorm(n=1, mean=0, sd=sigmascale))))
+    return(c(rnorm(n=1, mean=mu_scale[1], sd=mu_scale[2]), rnorm(n=q, mean=0, sd=0.6/scale), abs(rnorm(n=1, mean=0, sd=sigma_scale))))
   } else {
-    return(c(rnorm(n=1, mean=meanscale[1], sd=meanscale[2]), random_arcoefs(p=p, forcestat=forcestat, sd=0.6/p), abs(rnorm(n=1, mean=0, sd=sigmascale))))
+    return(c(rnorm(n=1, mean=mu_scale[1], sd=mu_scale[2]), random_arcoefs(p=p, forcestat=forcestat, sd=0.6/p), abs(rnorm(n=1, mean=0, sd=sigma_scale))))
   }
 }
 
@@ -596,15 +616,15 @@ add_dfs <- function(x, how_many) {
 #'
 #' @inheritParams GAfit
 #' @inheritParams random_regime
-#' @param meanscale a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
+#' @param mu_scale a real valued vector of length two specifying the mean (the first element) and standard deviation (the second element)
 #'  of the normal distribution from which the \eqn{\phi_{m,0}} \strong{or} \eqn{\mu_{m}} (depending on the desired parametrization)
 #'  parameters (for random regimes) should be generated.
-#' @param sigmascale a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
+#' @param sigma_scale a positive real number specifying the standard deviation of the (zero mean, positive only by taking absolute value)
 #'  normal distribution from which the component variance parameters (for random regimes) should be generated.
 #' @inherit GAfit return
 #' @inherit random_regime references
 
-random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
+random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, mu_scale, sigma_scale, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -614,7 +634,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   }
 
   if(restricted == FALSE) {
-    ind <- unlist(lapply(1:M, function(m) random_regime(p=p, meanscale=meanscale, sigmascale=sigmascale,
+    ind <- unlist(lapply(1:M, function(m) random_regime(p=p, mu_scale=mu_scale, sigma_scale=sigma_scale,
                                                         restricted=restricted, constraints=constraints,
                                                         m=m, forcestat=forcestat)))
   } else { # If restricted == TRUE
@@ -626,7 +646,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
       q <- ncol(C0)
       scale <- sum(abs(C0))
     }
-    ind <- c(rnorm(n=M, mean=meanscale[1], sd=meanscale[2]), random_arcoefs(p=q, forcestat=forcestat, sd=0.6/scale), abs(rnorm(n=M, mean=0, sd=sigmascale)))
+    ind <- c(rnorm(n=M, mean=mu_scale[1], sd=mu_scale[2]), random_arcoefs(p=q, forcestat=forcestat, sd=0.6/scale), abs(rnorm(n=M, mean=0, sd=sigma_scale)))
   }
 
   if(M > 1) {
@@ -667,51 +687,51 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'   (instead of intercept terms \eqn{\phi_{m,0}}) is assumed.
 #' @examples
 #' # GMAR model parameter vector
-#' params22 <- random_ind(p=2, M=2, meanscale=c(0, 1), sigmascale=1)
+#' params22 <- random_ind(p=2, M=2, mu_scale=c(0, 1), sigma_scale=1)
 #' smart22 <- smart_ind(p=2, M=2, params22, accuracy=10)
 #' cbind(params22, smart22)
 #'
 #'
 #' # Restricted GMAR parameter vector
-#' params12r <- random_ind(1, 2, restricted=TRUE, meanscale=c(-2, 2), sigmascale=2)
+#' params12r <- random_ind(1, 2, restricted=TRUE, mu_scale=c(-2, 2), sigma_scale=2)
 #' smart12r <- smart_ind(1, 2, params12r, restricted=TRUE, accuracy=20)
 #' cbind(params12r, smart12r)
 #'
 #'
 #' # StMAR parameter vector: first regime is random in the "smart individual"
-#' params13t <- random_ind(1, 3, model="StMAR", meanscale=c(3, 1), sigmascale=3)
+#' params13t <- random_ind(1, 3, model="StMAR", mu_scale=c(3, 1), sigma_scale=3)
 #' smart13t <- smart_ind(1, 3, params13t, model="StMAR", accuracy=15,
-#'                             meanscale=c(3, 3), sigmascale=3, whichRandom=1)
+#'                             mu_scale=c(3, 3), sigma_scale=3, whichRandom=1)
 #' cbind(params13t, smart13t)
 #'
 #'
 #' # Restricted StMAR parameter vector
 #' params22tr <- random_ind(2, 2, model="StMAR", restricted=TRUE,
-#'                                meanscale=c(3, 2), sigmascale=0.5)
+#'                                mu_scale=c(3, 2), sigma_scale=0.5)
 #' smart22tr <- smart_ind(2, 2, params22tr, model="StMAR", restricted=TRUE,
 #'                              accuracy=30)
 #' cbind(params22tr, smart22tr)
 #'
 #'
 #' # G-StMAR parameter vector
-#' params12gs <- random_ind(1, c(1, 1), model="G-StMAR", meanscale=c(0, 1),
-#'                                sigmascale=1)
+#' params12gs <- random_ind(1, c(1, 1), model="G-StMAR", mu_scale=c(0, 1),
+#'                                sigma_scale=1)
 #' smart12gs <- smart_ind(1, c(1, 1), params12gs, model="G-StMAR", accuracy=20)
 #' cbind(params12gs, smart12gs)
 #'
 #'
 #' # Restricted G-StMAR parameter vector
 #' params23gsr <- random_ind(2, c(1, 2), model="G-StMAR", restricted=TRUE,
-#'                                 meanscale=c(-1, 1), sigmascale=3)
+#'                                 mu_scale=c(-1, 1), sigma_scale=3)
 #' smart23gsr <- smart_ind(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
-#'                               meanscale=c(0, 1), sigmascale=1, accuracy=20, whichRandom=2)
+#'                               mu_scale=c(0, 1), sigma_scale=1, accuracy=20, whichRandom=2)
 #' cbind(params23gsr, smart23gsr)
 #'
 #'
 #' # GMAR model as a mixture of AR(2) and AR(1) models
 #' C <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- random_ind(2, 2, constraints=C, meanscale=c(1, 1),
-#'                               sigmascale=1)
+#' params22c <- random_ind(2, 2, constraints=C, mu_scale=c(1, 1),
+#'                               sigma_scale=1)
 #' smart22c <- smart_ind(2, 2, params22c, constraints=C, accuracy=10)
 #' cbind(params22c, smart22c)
 #'
@@ -721,7 +741,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' C0 = matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
 #' C = list(C0, C0)
 #' params32c <- random_ind(3, 2, model="StMAR", constraints=C,
-#'                               meanscale=c(1, 1), sigmascale=1)
+#'                               mu_scale=c(1, 1), sigma_scale=1)
 #' smart32c <- smart_ind(3, 2, params32c, model="StMAR", constraints=C, accuracy=10)
 #' cbind(params32c, smart32c)
 #'
@@ -731,33 +751,33 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' # constrained to zero. Second regime is random in the "smart individual".
 #' params32trc <- random_ind(3, 2, model="StMAR", restricted=TRUE,
 #'                                 constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                                 meanscale=c(-2, 0.5), sigmascale=4)
+#'                                 mu_scale=c(-2, 0.5), sigma_scale=4)
 #' smart32trc <- smart_ind(3, 2, params32trc, model="StMAR", restricted=TRUE,
 #'                               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                               meanscale=c(0, 0.1), sigmascale=0.1, whichRandom=2,
+#'                               mu_scale=c(0, 0.1), sigma_scale=0.1, whichRandom=2,
 #'                               accuracy=20)
 #' cbind(params32trc, smart32trc)
 #' @export
 
-random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, meanscale, sigmascale, forcestat=FALSE) {
+random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, mu_scale, sigma_scale, forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
   check_pM(p=p, M=M, model=model)
-  if(length(meanscale) != 2) {
-    stop("meanscale is wrong dimension")
-  } else if(length(sigmascale) != 1) {
-    stop("sigmascale is wrong dimension")
-  } else if(meanscale[2] <= 0) {
-    stop("The second element of meanscale should be larger than zero")
-  } else if(sigmascale <= 0) {
-    stop("sigmascale should be larger than zero")
+  if(length(mu_scale) != 2) {
+    stop("mu_scale is wrong dimension")
+  } else if(length(sigma_scale) != 1) {
+    stop("sigma_scale is wrong dimension")
+  } else if(mu_scale[2] <= 0) {
+    stop("The second element of mu_scale should be larger than zero")
+  } else if(sigma_scale <= 0) {
+    stop("sigma_scale should be larger than zero")
   }
   if(!is.null(constraints)) {
     check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
   for(i1 in 1:42) {
-    ret <- random_ind_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, meanscale=meanscale,
-                                sigmascale=sigmascale, forcestat=forcestat)
+    ret <- random_ind_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, mu_scale=mu_scale,
+                                sigma_scale=sigma_scale, forcestat=forcestat)
     ret0 <- reform_constrained_pars(p=p, M=M, params=ret, model=model, restricted=restricted, constraints=constraints)
     if(is_stationary_int(p=p, M=M, params=ret0, restricted=restricted)) return(ret)
   }
@@ -778,7 +798,7 @@ random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FAL
 #' @inherit random_regime references
 
 smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                                meanscale, sigmascale, accuracy, whichRandom, forcestat=FALSE) {
+                                mu_scale, sigma_scale, accuracy, whichRandom, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -796,7 +816,7 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     for(i1 in 1:M) { # Run through components
       q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints[[i1]]))) # p for non-constrained models
       if(any(whichRandom == i1)) { # If regime should be random
-        ind <- c(ind, random_regime(p=p, meanscale=meanscale, sigmascale=sigmascale,
+        ind <- c(ind, random_regime(p=p, mu_scale=mu_scale, sigma_scale=sigma_scale,
                                     restricted=restricted, constraints=constraints,
                                     m=i1, forcestat=forcestat))
       } else {
@@ -816,7 +836,7 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
       ind <- numeric(0)
       for(i1 in 1:M) { # Generate phi0
         if(any(whichRandom == i1)) {
-          ind <- c(ind, rnorm(n=1, mean=meanscale[1], sd=meanscale[2]))
+          ind <- c(ind, rnorm(n=1, mean=mu_scale[1], sd=mu_scale[2]))
         } else {
           ind <- c(ind, rnorm(n=1, mean=params0[i1], sd=abs(params0[i1]/accuracy)))
         }
@@ -824,7 +844,7 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
       ind <- c(ind, rnorm(q, mean=params0[(M + 1):(M + q)], sd=abs(params0[(M + 1):(M + q)]/accuracy)))
       for(i1 in 1:M) { # Generate sigmas
         if(any(whichRandom == i1)) {
-          ind <- c(ind, abs(rnorm(n=1, mean=0, sd=sigmascale)))
+          ind <- c(ind, abs(rnorm(n=1, mean=0, sd=sigma_scale)))
         } else {
           ind <- c(ind, rnorm(n=1, mean=sigmas[i1], sd=abs(sigmas[i1]/accuracy)))
         }
@@ -881,7 +901,7 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 #' @export
 
 smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                            meanscale, sigmascale, accuracy, whichRandom=numeric(0), forcestat=FALSE) {
+                            mu_scale, sigma_scale, accuracy, whichRandom=numeric(0), forcestat=FALSE) {
   model <- match.arg(model)
   check_model(model)
   check_pM(p=p, M=M, model=model)
@@ -892,14 +912,14 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
     if(any(!whichRandom %in% 1:sum(M))) {
       stop("The elements of whichRandom should be positive integers in the clsoed interval [1, M]")
     } else if(length(whichRandom) > 0) {
-      if(length(meanscale) != 2) {
-        stop("meanscale is wrong dimension")
-      } else if(length(sigmascale) != 1) {
-        stop("sigmascale is wrong dimension")
-      } else if(meanscale[2] <= 0) {
-        stop("The second element of meanscale should be larger than zero")
-      } else if(sigmascale <= 0) {
-        stop("sigmascale should be larger than zero")
+      if(length(mu_scale) != 2) {
+        stop("mu_scale is wrong dimension")
+      } else if(length(sigma_scale) != 1) {
+        stop("sigma_scale is wrong dimension")
+      } else if(mu_scale[2] <= 0) {
+        stop("The second element of mu_scale should be larger than zero")
+      } else if(sigma_scale <= 0) {
+        stop("sigma_scale should be larger than zero")
       }
     }
   }
@@ -907,7 +927,7 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
     check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
   smart_ind_int(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                      meanscale=meanscale, sigmascale=sigmascale, accuracy=accuracy, whichRandom=whichRandom,
+                      mu_scale=mu_scale, sigma_scale=sigma_scale, accuracy=accuracy, whichRandom=whichRandom,
                       forcestat=forcestat)
 }
 

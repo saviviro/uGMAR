@@ -3,7 +3,7 @@ context("functions in MAINest")
 
 test_that("fitGSMAR does not throw errors", {
   fitGSMAR0 <- function(M, model) {
-    suppressMessages(fitGSMAR(simudata, p=1, M=M, model=model, ncalls=1, ncores=1, maxit=1, seeds=1, printRes=FALSE, ngen=2))
+    suppressMessages(fitGSMAR(simudata, p=1, M=M, model=model, ncalls=1, ncores=1, maxit=1, seeds=1, print_res=FALSE, ngen=2))
   }
   tmp <- fitGSMAR0(M=2, model="GMAR")
   tmp <- fitGSMAR0(M=1, model="StMAR")

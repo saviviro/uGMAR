@@ -66,12 +66,16 @@
 * Major speed improvement!
 * New exported function: 'Wald_test' for performing a Wald test.
 * New exported function: 'LR_test' for performing a likelihood ratio test.
-* The default lags in 'quantile_residualsTests' are not 1, 3, 6, and 12.
+* The default lags in quantile residual tests are now 1, 3, 6, and 12.
 * Fixed some typos in documentation.
 
 # uGMAR 3.3.0
 
-* Some functions were renamed from camelCase to lower_bar convention for consistency. Old functions are for now retained as deprecated.
-* The function randomInd does not sort components anymore when constraints are employed (unless only "restricted" argument is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.
+* This update (finally) renames functions and arguments so that they are consistent throughout uGMAR and in line with the package "gmvarkit". Namely, some functions were renamed from camelCase to lower_bar convention for consistency. Old functions are for now retained as deprecated. Also, some arguments were renamed from camelCase to lower_bar: print_res in fitGSMAR; print_res, lags_ac, and lags_ch in quantile_residual_tests; smart_mu, mean_scale, and sigma_scale in GAfit, 
+* The package 'gsl' is now imported, and not a suggested package anymore, to ensure fast calculation of quantile residual tests for StMAR and G-StMAR models.
+* The function random_ind does not sort components anymore when constraints are employed (unless only "restricted" argument is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.
+* Removed to possibility to run quantile residual tests directly with the estimation function after the estimation, because it is a good practice to check first whether the estimates are appropriate. The tests can be ran afterwards with the function "quantile_residual_tests".
+* Improved some of the documentation and updated the examples.
+* Adjusted the plot methods.
 * Added new data: W10Y2Y
 * Added new data: M10Y1Y

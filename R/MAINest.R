@@ -14,8 +14,7 @@
 #' @param maxit the maximum number of iterations for the variable metric algorithm.
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 #'   or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.
-#' @param printRes should the estimation results be printed?
-#' @param runTests should quantile residuals tests be performed after the estimation?
+#' @param print_res should the estimation results be printed?
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
 #' @details
 #'  Because of complexity and multimodality of the log-likelihood function, it's \strong{not guaranteed} that the estimation
@@ -23,7 +22,7 @@
 #'  some local maximum point instead, and therefore a number of estimation rounds is required for reliable results. Because
 #'  of the nature of the models, the estimation may fail particularly in the cases where the number of mixture components is
 #'  chosen too large. Note that the genetic algorithm is designed to avoid solutions with mixing weights of some regimes
-#'  too close to zero at almost all times ('redudant regimes') but the settings can, however, be adjusted (see ?GAfit).
+#'  too close to zero at almost all times ("redundant regimes") but the settings can, however, be adjusted (see ?GAfit).
 #'
 #'  If the iteration limit for the variable metric algorithm (\code{maxit}) is reached, one can continue the estimation by
 #'  iterating more with the function \code{iterate_more}.
@@ -36,10 +35,19 @@
 #'  The variable metric algorithm (or quasi-Newton method, Nash (1990, algorithm 21)) used in the second phase is implemented
 #'  with function the \code{optim} from the package \code{stats}.
 #'
+#'  \strong{Addiotional Notes about the estimates:}
+#'
+#'  Sometimes the found MLE is very close to the boundary of the stationarity region some regime, the related variance parameter
+#'  is very small, and the associated mixing weights are "spiky". This kind of estimates often maximize the log-likelihood function
+#'  for a technical reason that induces by the endogenously determined mixing weights. In such cases, it might be more appropriate
+#'  to consider the next-best local maximum point of the log-likelihood function that is well inside the parameter space. Models based
+#'  local-only maximum points can be built with the function \code{alt_gsmar} by adjusting the argument \code{which_largest}
+#'  accordingly.
+#'
 #'  Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters. Such parameters
 #'  are weakly identified and induce various numerical problems. However, mixture components with large degree of freedom parameters are
 #'  similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
-#'  components with large degrees of freedom parameter estimates to be GMAR type.
+#'  components with large degrees of freedom parameter estimates to be GMAR type with the function \code{stmar_to_gstmar}.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
 #'   estimated mixing weights, some conditional and unconditional moments, quantile residuals, and quantile residual test results
 #'   if the tests were performed. Note that the first p observations are taken as the initial values so the mixing weights, conditional
@@ -85,10 +93,6 @@
 #' @section S3 methods:
 #'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
 #'  \code{logLik}, \code{residuals}.
-#' @section Suggested packages:
-#'  For faster evaluation of the quantile residuals for StMAR and G-StMAR models, install the suggested package "gsl".
-#'  Note that for large StMAR and G-StMAR models with large data, performing the quantile residual tests may take
-#'  significantly long time without the package "gsl".
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
 #'  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
 #'   \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
@@ -169,7 +173,7 @@
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=min(2, ncalls, parallel::detectCores()),
-                     maxit=300, seeds=NULL, printRes=TRUE, runTests=FALSE, ...) {
+                     maxit=300, seeds=NULL, print_res=TRUE, ...) {
   on.exit(closeAllConnections())
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
@@ -184,6 +188,12 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   minval <- ifelse(is.null(dot_params$minval), get_minval(data), dot_params$minval)
   red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
+
+  # We check and warn about deprecated arguments found in dot arguments
+  if(!is.null(dot_params$printRes)) {
+    warning("The argument 'printRes' is deprecated! Use 'print_res' instead!")
+    print_res <- dot_params$printRes
+  }
 
   if(ncores > parallel::detectCores()) {
     ncores <- parallel::detectCores()
@@ -212,7 +222,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
                                                           parametrization=parametrization, boundaries=TRUE, checks=FALSE,
                                                           minval=minval), numeric(1))
 
-  if(printRes) {
+  if(print_res) {
     printloks <- function() {
         printfun <- function(txt, FUN) cat(paste(txt, round(FUN(loks), 3)), "\n")
         printfun("The lowest loglik: ", min)
@@ -274,7 +284,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     newtonEstimates <- lapply(1:ncalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], model=model, FUN=exp))
   }
 
-  if(printRes) {
+  if(print_res) {
     cat("Results from the variable metric algorithm:\n")
     printloks()
   }
@@ -292,17 +302,6 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   }
   if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual! Iterate more with the function 'iterate_more'.")
 
-  # Quantile residual tests
-  if(runTests) {
-    cat("Performing quantile residual tests...\n")
-    tmp_gsmar <- GSMAR(data, p, M, params=params, model=model, restricted=restricted, constraints=constraints,
-                       conditional=conditional, parametrization=parametrization, calc_std_errors=FALSE)
-    qr_tests <- quantile_residual_tests(tmp_gsmar, lagsAC=c(1, 2, 5, 10), lagsCH=c(1, 2, 5, 10), nsimu=2000, printRes=printRes)
-    if(printRes) cat("\n")
-  } else {
-    qr_tests <- NULL
-  }
-
   ### Wrap up ###
   ret <- GSMAR(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                conditional=conditional, parametrization=parametrization, calc_qresiduals=TRUE,
@@ -310,7 +309,6 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ret$all_estimates <- newtonEstimates
   ret$all_logliks <- loks
   ret$which_converged <- converged
-  ret$qrtests <- qr_tests
 
   cat("Finished!\n")
   ret
