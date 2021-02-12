@@ -20,7 +20,6 @@ format_valuef <- function(digits) {
 #'  standard errors for the estimates, log-likelihood, information criteria values,
 #'  modulus of the roots of the characteristic AR polynomias for each regime, and
 #'  several unconditional moments.
-#'  Supported for models that include data only.
 #' @export
 
 print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {

@@ -77,6 +77,7 @@
 * Removed to possibility to run quantile residual tests directly with the estimation function after the estimation, because it is a good practice to check first whether the estimates are appropriate. The tests can be ran afterwards with the function "quantile_residual_tests".
 * fitGSMAR now warns if some regime is almost nonstationary.
 * The function stmar_to_gstmar now supports also G-StMAR models with large degrees of freedom estimates.
+* The summary method for class 'gsmar' objects now supports models without data.
 * Fixed a bug in the one-step conditional variance of the process: it was incorrect in the previous versions.
 * Improved some of the documentation and updated the examples.
 * Adjusted the plot methods.

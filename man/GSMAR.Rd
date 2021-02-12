@@ -134,8 +134,7 @@ density with regimewise densities? See the details.}
 \item{summary_print}{if set to \code{TRUE} then the print will include approximate
 standard errors for the estimates, log-likelihood, information criteria values,
 modulus of the roots of the characteristic AR polynomias for each regime, and
-several unconditional moments.
-Supported for models that include data only.}
+several unconditional moments.}
 }
 \value{
 Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or G-StMAR model. If data is supplied,
