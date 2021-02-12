@@ -53,5 +53,5 @@ cond_moment_plot(gstmar42, which_moment="variance")
 }
 \seealso{
 \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},
- \code{\link{quantileResidualPlot}}
+ \code{\link{quantile_residual_plot}}
 }

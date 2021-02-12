@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of uGMAR is to provide tools for analysing Gaussian mixture autoregressive (GMAR), Student's t mixture Autoregressive (StMAR) and Gaussian and Student's t mixture autoregressive (G-StMAR) models. uGMAR provides functions for unconstrained and constrained maximum likelihood estimation of the model parameters, quantile residual based model diagnostics, simulation from the processes, and forecasting.
+uGMAR provides tools for estimating and analysing Gaussian mixture autoregressive (GMAR), Student's t mixture Autoregressive (StMAR) and Gaussian and Student's t mixture autoregressive (G-StMAR) models, including functions for unconstrained and constrained maximum likelihood estimation of the model parameters, quantile residual based model diagnostics, simulation from the processes, and forecasting.
 
 Installation
 ------------
@@ -38,12 +38,12 @@ devtools::install_github("saviviro/uGMAR")
 Example
 -------
 
-This is a basic example how to estimate a GMAR model to data. The example data is simulated from a GMAR p=1, M=2 process. The estimation process is computationally demanding and takes advantage of parallel computing. After estimating the model, it's shown by simple examples how to conduct some further analysis.
+This is a basic example how to estimate GSMAR model and further analyse it.. The example data is simulated from a GMAR p=1, M=2 process. The estimation process is computationally demanding and takes advantage of parallel computing.
 
 ``` r
 ## Estimate a GMAR(1, 2) model and examine the estimates
 data(simudata, package="uGMAR")
-fit <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncores=4)
+fit <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=10, seeds=1:10)
 fit
 summary(fit) # Approximate standard errors in brackets
 plot(fit)
@@ -53,7 +53,7 @@ get_soc(fit) # The second order condition (eigenvalues of approximated Hessian)
 profile_logliks(fit) # Plot the profile log-likelihood functions
 
 ## Quantile residual diagnostics
-quantileResidualPlot(fit)
+quantile_residual_plot(fit)
 diagnostic_plot(fit)
 qrt <- quantile_residual_tests(fit)
 
@@ -67,7 +67,7 @@ predict(fit, n_ahead=10, pi=c(0.95, 0.8))
 # Estimate a GMAR(1, 2) model with the autoregressive coefficients restricted
 # to be the same in both regimes:
 fitr <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", restricted=TRUE,
-                 ncores=4)
+                 ncalls=10, seeds=1:10)
 
 # Test with likelihood ratio tests whether the AR parameters are the same in
 # both regimes (see also the function 'Wald_test'):

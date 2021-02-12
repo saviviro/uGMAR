@@ -110,7 +110,7 @@ Use the function 'stmar_to_gstmar' in order to conveniently switch from a StMAR 
 ### Model diagnostics
 __uGMAR__ considers model diagnostics based on quantile residuals (see Kalliovirta 2012). Quantile residuals are asymptotically standard normal distributed if the model is correctly specified, and they can be hence used for graphical diagnostics and testing.
 
-The function `quantile_residual_tests` performs the quantile residual tests introduced by _Kalliovirta (2012)_, testing for normality, autocorrelation and conditional heteroscedasticity. For graphical diagnostics, one may use the functions `diagnostic_plot` and `quantileResidualPlot`.
+The function `quantile_residual_tests` performs the quantile residual tests introduced by _Kalliovirta (2012)_, testing for normality, autocorrelation and conditional heteroscedasticity. For graphical diagnostics, one may use the functions `diagnostic_plot` and `quantile_residual_plot`.
 
 Consider installing the suggested package `gsl` for much faster evaluations of quantile residuals in the cases of StMAR and G-StMAR models. If the model and data are both large, performing quantile residuals tests may take significantly long time for StMAR and G-StMAR models without the package `gsl` because numerical integration is used. It's not imported because, in our experience, it might not install to some platforms directly when installing __uGMAR__. 
 

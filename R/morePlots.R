@@ -11,7 +11,7 @@
 #'  of the conditional means/variances can be extracted from the model with the dollar sign.
 #' @inherit simulateGSMAR references
 #' @seealso \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},
-#'  \code{\link{quantileResidualPlot}}
+#'  \code{\link{quantile_residual_plot}}
 #' @examples
 #' # GMAR model
 #' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
