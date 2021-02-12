@@ -290,15 +290,9 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
                  })
       }
 
-#      is_gsl <- requireNamespace("gsl", quietly = TRUE) # If 'gsl' available, calculate with hypergeometric function what can be calculated
       for(i1 in 1:M2) { # Go through StMAR type regimes
-      #  if(is_gsl) {
         whichDef <- which(abs(mu_mt[, M1 + i1] - Y2) < sqrt(sigma_mt[,i1]*(dfs[i1] + p - 2))) # Which ones can be calculated with hypergeometric function
         whichNotDef <- (1:length(Y2))[-whichDef]
-       # } #else {
-        #  whichDef <- integer(0)
-        #  whichNotDef <- 1:length(Y2)
-        #}
 
         if(length(whichDef) > 0) { # Calculate the CDF values at y_t using hypergeometric function whenever it's defined
           Y0 <- Y2[whichDef]
@@ -356,8 +350,8 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
     if(to_return == "regime_cvars") {
       return(sigma_mt)
-    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS 2018, eq.(13))
-      return(rowSums(alpha_mt*sigma_mt) - rowSums(alpha_mt*(mu_mt - rowSums(alpha_mt*mu_mt))^2))
+    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS 2018, eq.(13), Virolainen 2020, ea. (2.19))
+      return(rowSums(alpha_mt*sigma_mt) + rowSums(alpha_mt*(mu_mt - rowSums(alpha_mt*mu_mt))^2))
     }
   }
 
