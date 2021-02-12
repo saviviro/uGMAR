@@ -81,5 +81,4 @@
 * Fixed a bug in the one-step conditional variance of the process: it was incorrect in the previous versions.
 * Improved some of the documentation and updated the examples.
 * Adjusted the plot methods.
-* Added new data: W10Y2Y
 * Added new data: M10Y1Y
