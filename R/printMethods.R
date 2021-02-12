@@ -26,7 +26,6 @@ format_valuef <- function(digits) {
 print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   gsmar <- x
   stopifnot(digits >= 0 & digits %% 1 == 0)
-  if(summary_print) check_data(gsmar)
 
   # Help functions
   format_value <- format_valuef(digits)
@@ -63,7 +62,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   if(summary_print) {
     all_ar_roots <- get_ar_roots(gsmar)
     std_errors <- remove_all_constraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
-                                       constraints=constraints) # These errors are valid only if there is no multiplications or summations
+                                         constraints=constraints) # These errors are valid only if there is no multiplications or summations
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err <- pick_alphas(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err[sum(M)] <- NA

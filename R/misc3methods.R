@@ -16,7 +16,6 @@ residuals.gsmar <- function(object, ...) object$quantile_residuals
 #' @export
 summary.gsmar <- function(object, ..., digits=2) {
   gsmar <- object
-  check_data(gsmar)
   structure(list(gsmar=gsmar,
                  regime_means=get_regime_means(gsmar),
                  regime_vars=get_regime_vars(gsmar),
