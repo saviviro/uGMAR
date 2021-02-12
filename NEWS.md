@@ -79,6 +79,6 @@
 * The function stmar_to_gstmar now supports also G-StMAR models with large degrees of freedom estimates.
 * The summary method for class 'gsmar' objects now supports models without data.
 * Fixed a bug in the one-step conditional variance of the process: it was incorrect in the previous versions.
-* Improved some of the documentation and updated the examples.
+* Updated the examples.
 * Adjusted the plot methods.
 * Added new data: M10Y1Y

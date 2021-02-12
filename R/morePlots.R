@@ -13,23 +13,19 @@
 #' @seealso \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},
 #'  \code{\link{quantileResidualPlot}}
 #' @examples
-#' \donttest{
 #' # GMAR model
-#' fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-#' cond_moment_plot(fit12, which_moment="mean")
-#' cond_moment_plot(fit12, which_moment="variance")
+#' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+#' gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
+#' cond_moment_plot(gmar12, which_moment="mean")
+#' cond_moment_plot(gmar12, which_moment="variance")
 #'
-#' # Restricted StMAR model: plot also the individual statistics with
-#' # their approximate critical bounds using the given data
-#' fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
-#' cond_moment_plot(fit42r, which_moment="mean")
-#' cond_moment_plot(fit42r, which_moment="variance")
-#'
-#' # G-StMAR model with one GMAR type and one StMAR type regime
-#' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-#' cond_moment_plot(fit42g, which_moment="mean")
-#' cond_moment_plot(fit42g, which_moment="variance")
-#' }
+#' # G-StMAR model
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' gstmar42 <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gs,
+#'                   model="G-StMAR")
+#' cond_moment_plot(gstmar42, which_moment="mean")
+#' cond_moment_plot(gstmar42, which_moment="variance")
 #' @export
 
 cond_moment_plot <- function(gsmar, which_moment=c("mean", "variance")) {
@@ -44,17 +40,18 @@ cond_moment_plot <- function(gsmar, which_moment=c("mean", "variance")) {
     total_moments <- gsmar$total_cmeans
     mw_x_reg <- gsmar$mixing_weights*gsmar$regime_cmeans
     vals <- c(as.vector(mw_x_reg), data)
+    ymin <- floor(min(vals))
   } else {
     total_moments <- gsmar$total_cvars
     mw_x_reg <- gsmar$mixing_weights*gsmar$regime_cvars
     vals <- mw_x_reg
+    ymin <- 0
   }
 
   old_par <- par(no.readonly=TRUE)
   on.exit(par(old_par))
   par(mar=c(2.6, 2.6, 2.6, 2.6))
-  ymin <- floor(min(vals))
-  ymax <- ceiling(max(vals))
+  ymax <- max(vals)
   make_ts <- function(dat) ts(c(rep(NA, p), dat), start=start(data), frequency=frequency(data))
 
   if(which_moment == "mean") {

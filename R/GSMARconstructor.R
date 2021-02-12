@@ -23,28 +23,27 @@
 #' @inherit is_stationary references
 #' @examples
 #' # GMAR model without data
-#' params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-#' gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
-#' gmar12
+#' params22 <- c(0.9, 0.4, 0.2, 0.5, 0.7, 0.5, -0.2, 0.7, 0.7)
+#' gmar22 <- GSMAR(p=2, M=2, params=params22, model="GMAR")
+#' gmar22
 #'
 #' # StMAR model, without data
 #' params12t <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 300, 3.6)
 #' stmar12t <- GSMAR(p=1, M=2, params=params12t, model="StMAR")
 #' stmar12t
 #'
-#' # Restricted G-StMAR-model
-#' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' gstmar42r <- GSMAR(data=T10Y1Y, p=4, M=c(1, 1), params=params42gsr,
-#'  model="G-StMAR", restricted=TRUE)
-#' gstmar42r
+#' # G-StMAR model with data
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' gstmar42 <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gs,
+#'                   model="G-StMAR")
+#' gstmar42
 #'
-#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
-#' # of the second regime contrained to zero.
-#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
-#' gmar22c <- GSMAR(T10Y1Y, p=2, M=2, params=params22c,
-#'  model="GMAR", constraints=constraints)
-#' gmar22c
+#' # Restricted G-StMAR model with data
+#' params42gsr <- c(0.13, 0.03, 1.29, -0.4, 0.25, -0.2, 0.03, 0.05, 0.51, 2.76)
+#' gstmar42r <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gsr,
+#'                    model="G-StMAR", restricted=TRUE)
+#' gstmar42r
 #' @export
 
 GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
@@ -158,15 +157,15 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #'  \code{\link{get_regime_means}}, \code{\link{swap_parametrization}}, \code{\link{stmar_to_gstmar}}
 #' @inherit is_stationary references
 #' @examples
-#' # Restricted G-StMAR-model without data
-#' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' gstmar42r <- GSMAR(p=4, M=c(1, 1), params=params42gsr,
-#'  model="G-StMAR", restricted=TRUE)
-#' gstmar42r
+#' # G-StMAR model without data
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' gstmar42 <- GSMAR(p=4, M=c(1, 1), params=params42gs, model="G-StMAR")
+#' gstmar42
 #'
 #' # Add data to the model
-#' gstmar42r <- add_data(data=T10Y1Y, gstmar42r)
-#' gstmar42r
+#' gstmar42 <- add_data(data=M10Y1Y, gsmar=gstmar42)
+#' gstmar42
 #' @export
 
 add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=FALSE, custom_h=NULL) {
@@ -194,15 +193,16 @@ add_data <- function(data, gsmar, calc_qresiduals=TRUE, calc_cond_moments=TRUE, 
 #' @inherit GSMAR references return
 #' @inherit add_data seealso
 #' @examples
-#' # Restricted G-StMAR-model with intercept paarametrization
-#' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' gstmar42r <- GSMAR(data=T10Y1Y, p=4, M=c(1, 1), params=params42gsr,
-#'  model="G-StMAR", restricted=TRUE)
-#' summary(gstmar42r)
+#' # G-StMAR model with intercept parametrization
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' gstmar42 <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gs,
+#'                   model="G-StMAR")
+#' summary(gstmar42)
 #'
 #' # Swap to mean parametrization
-#' gstmar42r <- swap_parametrization(gstmar42r)
-#' summary(gstmar42r)
+#' gstmar42 <- swap_parametrization(gstmar42)
+#' summary(gstmar42)
 #' @export
 
 swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
@@ -239,11 +239,13 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
 #' @inherit add_data seealso
 #' @examples
 #' \donttest{
-#'  # These are long running examples and use parallel computing
-#'  fit43t <- fitGSMAR(T10Y1Y, 4, 3, model="StMAR", ncalls=2, seeds=1:2)
-#'  fit43t
-#'  fit43gst <- stmar_to_gstmar(fit43t)
-#'  fit43gst
+#'  # These are long running example that take approximately 15 seconds to run.
+#'  fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=1, seeds=6)
+#'  fit42t # Overly large degrees of freedom estimate!
+#'
+#'  # Switch to the appropriate G-StMAR model:
+#'  fit42gs <- stmar_to_gstmar(fit42t)
+#'  fit42gs
 #' }
 #' @export
 
@@ -308,11 +310,18 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' @inherit add_data seealso
 #' @examples
 #' \donttest{
-#'  # These are long running examples and use parallel computing
-#'  fit43t <- fitGSMAR(T10Y1Y, 4, 3, model="StMAR", ncalls=2, seeds=1:2)
-#'  fit43t
-#'  fit43t2 <- alt_gsmar(fit43t, which_largest=2)
-#'  fit43t2
+#'  # These are long running examples that take approximately ...
+#'  fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=2,
+#'                     seeds=c(1, 6))
+#'  fit42t # Bad estimate in the boundary of the stationarity region!
+#'
+#'  # So we build a model based on the next-best local maximum point:
+#'  fit42t_alt <- alt_gsmar(fit42t, which_largest=2)
+#'  fit42t_alt # Overly large degrees of freedom paramter estimate
+#'
+#'  # Switch to the appropriate G-StMAR model:
+#'  fit42gs <- stmar_to_gstmar(fit42t_alt)
+#'  fit42gs
 #' }
 #' @export
 

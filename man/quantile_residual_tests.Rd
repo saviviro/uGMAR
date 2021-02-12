@@ -68,29 +68,24 @@ heteroskedasticity tests.
 
 \examples{
 \donttest{
+## The below examples take approximately 30 seconds to run.
+
+# G-StMAR model with one GMAR type and one StMAR type regime
+fit42gs <- fitGSMAR(data=M10Y1Y, p=4, M=c(1, 1), model="G-StMAR",
+                    ncalls=1, seeds=4)
+
+# Tests based on the observed data (without simulation procedure) with the
+# default lags:
+qrt1 <- quantile_residual_tests(fit42gs)
+
+# Tests based on the simulation procedure using sample size 10000 and with
+# the lags specified by hand:
+set.seed(1)
+qrt2 <- quantile_residual_tests(fit42gs, lags_ac=c(1, 6), nsimu=10000)
+
 # GMAR model
-fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-qrt <- quantile_residual_tests(fit12, lags_ac=c(1, 5, 10, 15))
-
-# G-StMAR model
-fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-qrtest42g <- quantile_residual_tests(fit42g)
-plot(qrtest42g)
-
-# Restricted GMAR model
-fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", restricted=TRUE)
-qrtest43gmr <- quantile_residual_tests(fit43gmr, lags_ac=1:10)
-plot(qrtest43gmr)
-
-# Non-mixture version of StMAR model
-fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
-quantile_residual_tests(fit101t, lags_ac=c(1, 2, 5), print_res=FALSE)
-
-# Two-regime GMAR p=2 model with the second AR coeffiecient of
-# of the second regime contrained to zero.
-constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-quantile_residual_tests(fit22c, lags_ac=c(1, 3), print_res=FALSE)
+fit12 <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=1, seeds=1)
+qrt3 <- quantile_residual_tests(fit12, lags_ac=c(1, 5, 10, 15))
 }
 }
 \references{

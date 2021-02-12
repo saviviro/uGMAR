@@ -117,56 +117,61 @@
 #'  }
 #' @examples
 #' \donttest{
-#' ## These are long running examples that use parallel computing
+#' ## These are long running examples that use parallel computing.
+#' ## The below examples take approximately 90 seconds to run.
+#'
+#' ## Note that the number of estimation rounds (ncalls) is relatively small
+#' ## in the below examples. For reliable results, a large number of estimation
+#' ## rounds is recommended!
 #'
 #' # GMAR model
-#' fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR", ncalls=8, seeds=1:8)
+#' fit12 <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=4, seeds=1:4)
 #' summary(fit12)
 #' plot(fit12)
 #' profile_logliks(fit12)
+#' diagnostic_plot(fit12)
 #'
-#' # StMAR model
-#' fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR",
-#'                   ncalls=16, seeds=1:16)
-#' fit42
-#' summary(fit42)
-#' plot(fit42)
+#' # StMAR model (boundary estimate + large degrees of freedom)
+#' fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=6, seeds=1:6)
+#' summary(fit42t, digits=4) # Four almost-unit roots in the 2nd regime!
+#' plot(fit42t) # Spiky mixing weights!
+#' fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # Second largest local max
+#' summary(fit42t_alt) # Overly large 2nd regime degrees of freedom estimate!
+#' fit42gs <- stmar_to_gstmar(fit42t_alt) # Switch to G-StMAR model
+#' summary(fit42gs) # Finally, an appropriate model!
+#' plot(fit42gs)
 #'
 #' # Restricted StMAR model
-#' fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
+#' fit42r <- fitGSMAR(M10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE,
+#'                    ncalls=2, seeds=1:2)
 #' fit42r
-#' plot(fit42)
 #'
 #' # G-StMAR model with one GMAR type and one StMAR type regime
-#' fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-#' diagnostic_plot(fit42g)
-#'
-#' # Restricted GMAR model
-#' fit43gmr <- fitGSMAR(T10Y1Y, p=4, M=3, model="GMAR", ncalls=12,
-#'   restricted=TRUE, seeds=1:12)
-#' fit43gmr
-#'
+#' fit42gs <- fitGSMAR(M10Y1Y, p=4, M=c(1, 1), model="G-StMAR",
+#'                     ncalls=1, seeds=4)
+#' fit42gs
 #'
 #' # The following three examples demonstrate how to apply linear constraints
-#' # to the AR parameters.
+#' # to the autoregressive (AR) parameters.
 #'
 #' # Two-regime GMAR p=2 model with the second AR coeffiecient of
 #' # of the second regime contrained to zero.
-#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' fit22c <- fitGSMAR(T10Y1Y, p=2, M=2, constraints=constraints)
+#' C22 <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
+#' fit22c <- fitGSMAR(M10Y1Y, p=2, M=2, constraints=C22, ncalls=1, seeds=6)
 #' fit22c
 #'
-#' # Such constrained StMAR(3, 1) model that the second order AR coefficient
-#' # is constrained to zero.
-#' constraints <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-#' fit31tc <- fitGSMAR(T10Y1Y, p=3, M=1, model="StMAR", constraints=constraints)
+#' # StMAR(3, 1) model with the second order AR coefficient constrained to zero.
+#' C31 <- list(matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' fit31tc <- fitGSMAR(M10Y1Y, p=3, M=1, model="StMAR", constraints=C31,
+#'                     ncalls=1, seeds=1)
 #' fit31tc
 #'
-#' # Such StMAR(3,2) that the AR coefficients are restricted to be
-#' # the same for both regimes and that the second AR coefficients are
+#' # Such StMAR(3, 2) model that the AR coefficients are restricted to be
+#' # the same for both regimes and the second AR coefficients are
 #' # constrained to zero.
-#' fit32rc <- fitGSMAR(T10Y1Y, p=3, M=2, model="StMAR", restricted=TRUE,
-#'  constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
+#' fit32rc <- fitGSMAR(M10Y1Y, p=3, M=2, model="StMAR", restricted=TRUE,
+#'                     constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
+#'                     ncalls=1, seeds=1)
 #' fit32rc
 #' }
 #' @export
@@ -342,14 +347,13 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' @inherit GSMAR references
 #' @examples
 #' \donttest{
-#' # Estimate GMAR model with only 50 generations of genetic algorithm and
-#' # only 1 iteration in variable metric algorithm
-#' fit13 <- fitGSMAR(T10Y1Y, 1, 3, maxit=1, ngen=50, ncalls=1, seeds=1)
-#' fit13
+#' # Estimate GMAR model with on only 1 iteration in variable metric algorithm
+#' fit12 <- fitGSMAR(simudata, p=1, M=2, maxit=1, ncalls=1, seeds=1)
+#' fit12
 #'
 #' # Iterate more since iteration limit was reached
-#' fit13 <- iterate_more(fit13)
-#' fit13
+#' fit12 <- iterate_more(fit12)
+#' fit12
 #' }
 #' @export
 

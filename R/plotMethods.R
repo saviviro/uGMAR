@@ -9,14 +9,6 @@
 #' @param add_grid should grid a be added to the plots?
 #' @param ... arguments passed to function \code{grid}.
 #' @details This method is intended for plotting forecasts of GSMAR processes.
-#' @examples
-#'  \donttest{
-#'  # GMAR model
-#'  params12 <- c(1.7, 0.85, 0.3, 4.12, 0.73, 1.98, 0.63)
-#'  gmar12 <- GSMAR(simudata, 1, 2, params12)
-#'  pred <- predict(gmar12, n_ahead=10, plotRes=FALSE, pi=c(0.8, 0.9, 0.99), pi_type="two-sided")
-#'  plot(pred, nt=50)
-#'  }
 #' @export
 
 plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {

@@ -47,35 +47,23 @@ Sometimes the individual statistics are not plotted because it was not (numerica
 
 \examples{
 \donttest{
-# StMAR model
-fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
-diagnostic_plot(fit42)
+## The below examples the approximately 30 seconds to run.
+
+# G-StMAR model with one GMAR type and one StMAR type regime
+fit42gs <- fitGSMAR(M10Y1Y, p=4, M=c(1, 1), model="G-StMAR",
+                    ncalls=1, seeds=4)
+diagnostic_plot(fit42gs)
 
 # Restricted StMAR model: plot also the individual statistics with
-# their approximate critical bounds using the given data
-fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
-diagnostic_plot(fit42r, nlags=10, nsimu=1, plot_indstats=TRUE)
+# their approximate critical bounds using the given data (and not
+# simulation procedure)
+fit42tr <- fitGSMAR(M10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE,
+                    ncalls=1, seeds=1)
+diagnostic_plot(fit42tr, nlags=10, nsimu=1, plot_indstats=TRUE)
 
-# Non-mixture version of StMAR model
-fit101t <- fitGSMAR(T10Y1Y, p=10, M=1, model="StMAR", ncores=1, ncalls=1)
-diagnostic_plot(fit101t)
-
-# G-StMAR model
-fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-diagnostic_plot(fit42g)
-
-# Two-regime GMAR p=2 model with the second AR coeffiecient of
-# of the second regime contrained to zero.
-constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-fit22c <- fitGSMAR(T10Y1Y, p=2, M=2, constraints=constraints)
-diagnostic_plot(fit22c)
-
-# Such StMAR(3,2) that the AR coefficients are restricted to be
-# the same for both regimes and that the second AR coefficients are
-# constrained to zero.
-fit32rc <- fitGSMAR(T10Y1Y, p=3, M=2, model="StMAR", restricted=TRUE,
- constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-diagnostic_plot(fit32rc)
+# GMAR model, plot 30 lags.
+fit12 <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=1, seeds=1)
+diagnostic_plot(fit12, nlags=30)
 }
 }
 \references{

@@ -50,11 +50,13 @@ If a StMAR model contains large estimates for the degrees of freedom parameters,
 }
 \examples{
 \donttest{
- # These are long running examples and use parallel computing
- fit43t <- fitGSMAR(T10Y1Y, 4, 3, model="StMAR", ncalls=2, seeds=1:2)
- fit43t
- fit43gst <- stmar_to_gstmar(fit43t)
- fit43gst
+ # These are long running example that take approximately 15 seconds to run.
+ fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=1, seeds=6)
+ fit42t # Overly large degrees of freedom estimate!
+
+ # Switch to the appropriate G-StMAR model:
+ fit42gs <- stmar_to_gstmar(fit42t)
+ fit42gs
 }
 }
 \references{

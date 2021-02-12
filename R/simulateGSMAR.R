@@ -30,38 +30,38 @@
 #'  \code{\link{add_data}}, \code{\link{cond_moments}}, \code{\link{mixing_weights}}
 #' @inherit loglikelihood references
 #' @examples
-#'  \donttest{
-#'  # GMAR model:
-#'  params12 <- c(0.18, 0.93, 0.01, 0.86, 0.68, 0.02, 0.88)
-#'  gmar12 <- GSMAR(p=1, M=2, params=params12, model="GMAR")
-#'  sim12 <- simulateGSMAR(gmar12, nsimu=500)
-#'  ts.plot(sim12$sample)
-#'  ts.plot(sim12$component)
-#'  ts.plot(sim12$mixing_weights, col=rainbow(2), lty=2)
+#' set.seed(1)
+#'
+#' # GMAR model:
+#' params22 <- c(0.9, 0.4, 0.2, 0.5, 0.7, 0.5, -0.2, 0.7, 0.7)
+#' mod22 <- GSMAR(p=2, M=2, params=params22, model="GMAR")
+#' mysim <- simulateGSMAR(mod22, nsimu=500)
+#' ts.plot(mysim$sample)
+#' ts.plot(mysim$component)
+#' ts.plot(mysim$mixing_weights, col=rainbow(2), lty=2)
 #'
 #'
-#'  # G-StMAR model, with initial values:
-#'  params12gs <- c(1.38, 0.88, 0.27, 3.8, 0.74, 3.15, 0.8, 3.6)
-#'  gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs,
-#'  model="G-StMAR")
-#'  sim12gs <- simulateGSMAR(gstmar12, nsimu=500, init_values=5:6)
-#'  ts.plot(sim12gs$sample)
-#'  ts.plot(sim12gs$component)
-#'  ts.plot(sim12gs$mixing_weights, col=rainbow(2), lty=2)
+#' # G-StMAR model, with initial values:
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' gstmar42 <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gs,
+#'                   model="G-StMAR")
+#' sim42gs <- simulateGSMAR(gstmar42, nsimu=500, init_values=1:4)
+#' ts.plot(sim42gs$sample)
+#' ts.plot(sim42gs$component)
+#' ts.plot(sim42gs$mixing_weights, col=rainbow(2), lty=2)
 #'
 #'
-#'  # FORECASTING EXAMPLE:
-#'  # Restricted GMAR model, 10000 sets of simulations with initial values 6 and 6.2.
-#'  params22r <- c(1.4, 1.8, 0.8, -0.1, 0.29, 3.18, 0.84)
-#'  gmar22r <- GSMAR(p=2, M=2, params=params22r, model="GMAR",
-#'   restricted=TRUE)
-#'  sim22r <- simulateGSMAR(gmar22r, nsimu=5, initval=c(6, 6.2), ntimes=10000)
-#'  apply(sim22r$sample, 1, median) # Point forecast
-#'  apply(sim22r$sample, 1, quantile, probs=c(0.025, 0.975)) # 95% interval
-#'  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=median) # mix.weight point forecast
-#'  apply(sim22r$mixing_weights, MARGIN=1:2, FUN=quantile,
-#'   probs=c(0.025, 0.975)) # mix.weight 95% intervals
-#' }
+#' # FORECASTING EXAMPLE:
+#' # GMAR model, 1000 sets of simulations with initial values from the data:
+#' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+#' gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
+#' sim12 <- simulateGSMAR(gmar12, nsimu=5, init_val=gmar12$data, ntimes=1000)
+#' apply(sim12$sample, MARGIN=1, FUN=median) # Point prediction
+#' apply(sim12$sample, MARGIN=1, FUN=quantile, probs=c(0.025, 0.975)) # 95% pi
+#' apply(sim12$mixing_weights, MARGIN=1:2, FUN=median) # mix.weight point pred
+#' apply(sim12$mixing_weights, MARGIN=1:2, FUN=quantile,
+#'       probs=c(0.025, 0.975)) # mix.weight 95% prediction intervals
 #' @export
 
 simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {

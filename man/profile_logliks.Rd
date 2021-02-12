@@ -32,23 +32,16 @@ The red vertical line points the estimate.
 }
 \examples{
 \donttest{
-# StMAR model
-fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR")
-profile_logliks(fit42)
+## The below examples the approximately 15 seconds to run.
 
-# Non-mixture version of StMAR model
-fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
-profile_logliks(fit101t)
+# G-StMAR model with one GMAR type and one StMAR type regime
+fit42gs <- fitGSMAR(M10Y1Y, p=4, M=c(1, 1), model="G-StMAR",
+                    ncalls=1, seeds=4)
+profile_logliks(fit42gs)
 
-# G-StMAR model
-fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
-profile_logliks(fit42g)
-
-# Two-regime GMAR p=2 model with the second AR coeffiecient of
-# of the second regime contrained to zero.
-constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-fit22c <- fitGSMAR(T10Y1Y, 2, 2, constraints=constraints)
-profile_logliks(fit22c)
+# GMAR model, graphs zoomed in closer.
+fit12 <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=1, seeds=1)
+profile_logliks(fit12, scale=0.001)
 }
 }
 \references{

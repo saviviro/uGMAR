@@ -18,7 +18,7 @@ Returns a list with \code{M} elements each containing the absolute values of the
   characteristic polynomials for each mixture component.
 }
 \examples{
-params12 <- c(1.7, 0.85, 0.3, 4.12, 0.73, 1.98, 0.63)
+params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
 gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
 get_ar_roots(gmar12)
 }

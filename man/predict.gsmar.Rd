@@ -65,33 +65,42 @@ Returns a class \code{'gsmarpred'} object containing, among the specifications,.
 }
 \examples{
 \donttest{
-# StMAR model
-fit42 <- fitGSMAR(data=T10Y1Y, p=4, M=2, model="StMAR", ncores=4)
-pred42 <- predict(fit42, n_ahead=10, pi=c(0.95, 0.8))
-pred42
+## These examples take approximately 30 seconds to run.
 
-# Non-mixture StMAR model, upper prediction intervals
-fit101t <- fitGSMAR(T10Y1Y, 10, 1, model="StMAR", ncores=1, ncalls=1)
-predict(fit101t, n_ahead=10, pi_type="upper", pi=0.9)
+# G-StMAR model with one GMAR type and one StMAR type regime
+fit42gs <- fitGSMAR(M10Y1Y, p=4, M=c(1, 1), model="G-StMAR",
+                    ncalls=1, seeds=4)
 
-# G-StMAR model, no prediction intervals
-fit42g <- fitGSMAR(T10Y1Y, 4, M=c(1, 1), model="G-StMAR")
-pred42gs <- predict(fit42g, n_ahead=2, pred_type="median",
- pi_type="none", plot_res=FALSE)
-pred42gs
-plot(pred42gs)
+# Forecast 12 steps ahead based on 10000 simulated sample paths, prediction
+# interval confidence levels 0.95 and 0.8, prediction based on sample median,
+# and two-sided prediction intevals:
+mypred <- predict(fit42gs, n_ahead=12, nsimu=10000, pi=c(0.95, 0.8),
+                  pred_type="median", pi_type="two-sided")
+mypred
+plot(mypred)
 
-# Restricted GMAR model, one-step conditional mean prediction
-fit43gmr <- fitGSMAR(T10Y1Y, 4, 3, model="GMAR", restricted=TRUE)
-pred43gmr <- predict(fit43gmr, pred_type="cond_mean", plot_res=FALSE)
-pred43gmr
+# Forecast 24 steps ahead based on 1000 simulated sample paths, prediction
+# interval confidence level 0.99 and 0.9, prediction based on sample mean,
+# and upper prediction intevals:
+mypred2 <- predict(fit42gs, n_ahead=24, nsimu=1000, pi=c(0.99, 0.9),
+                   pred_type="mean", pi_type="upper")
 
-# Such StMAR(3,2) that the AR coefficients are restricted to be
-# the same for both regimes and that the second AR coefficients are
-# constrained to zero.
-fit32rc <- fitGSMAR(T10Y1Y, 3, 2, model="StMAR", restricted=TRUE,
- constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2))
-predict(fit32rc, n_ahead=3, pi_type="lower")
+# Forecast 24 steps ahead based on 1000 simulated sample paths, prediction
+# interval confidence level 0.99, 0.95, 0.9 and 0.8, prediction based on
+# sample median, and lower prediction intevals:
+mypred3 <- predict(fit42gs, n_ahead=24, nsimu=1000, pi=c(0.99, 0.95, 0.9, 0.8),
+                   pred_type="median", pi_type="lower")
+
+# GMAR model
+params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
+pred12 <- predict(gmar12, n_ahead=10, nsimu=1000, pi=c(0.95, 0.9, 0.8),
+                  pred_type="median", pi_type="two-sided")
+pred12
+plot(pred12)
+
+# One-step prediction based on the exact conditional mean:
+predict(gmar12, n_ahead=1, pred_type="cond_mean", plot_res=FALSE)
 }
 }
 \references{

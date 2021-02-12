@@ -49,11 +49,18 @@ It's sometimes useful to examine other estimates than the one with the highest l
 }
 \examples{
 \donttest{
- # These are long running examples and use parallel computing
- fit43t <- fitGSMAR(T10Y1Y, 4, 3, model="StMAR", ncalls=2, seeds=1:2)
- fit43t
- fit43t2 <- alt_gsmar(fit43t, which_largest=2)
- fit43t2
+ # These are long running examples that take approximately ...
+ fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=2,
+                    seeds=c(1, 6))
+ fit42t # Bad estimate in the boundary of the stationarity region!
+
+ # So we build a model based on the next-best local maximum point:
+ fit42t_alt <- alt_gsmar(fit42t, which_largest=2)
+ fit42t_alt # Overly large degrees of freedom paramter estimate
+
+ # Switch to the appropriate G-StMAR model:
+ fit42gs <- stmar_to_gstmar(fit42t_alt)
+ fit42gs
 }
 }
 \references{

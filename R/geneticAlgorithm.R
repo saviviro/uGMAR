@@ -686,76 +686,48 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' @details These functions can be used, for example, to create initial populations for the genetic algorithm. Mean-parametrization
 #'   (instead of intercept terms \eqn{\phi_{m,0}}) is assumed.
 #' @examples
+#' set.seed(1)
+#'
 #' # GMAR model parameter vector
 #' params22 <- random_ind(p=2, M=2, mu_scale=c(0, 1), sigma_scale=1)
 #' smart22 <- smart_ind(p=2, M=2, params22, accuracy=10)
 #' cbind(params22, smart22)
 #'
-#'
 #' # Restricted GMAR parameter vector
-#' params12r <- random_ind(1, 2, restricted=TRUE, mu_scale=c(-2, 2), sigma_scale=2)
-#' smart12r <- smart_ind(1, 2, params12r, restricted=TRUE, accuracy=20)
+#' params12r <- random_ind(p=1, M=2, restricted=TRUE, mu_scale=c(-2, 2), sigma_scale=2)
+#' smart12r <- smart_ind(p=1, M=2, params12r, restricted=TRUE, accuracy=20)
 #' cbind(params12r, smart12r)
 #'
-#'
 #' # StMAR parameter vector: first regime is random in the "smart individual"
-#' params13t <- random_ind(1, 3, model="StMAR", mu_scale=c(3, 1), sigma_scale=3)
-#' smart13t <- smart_ind(1, 3, params13t, model="StMAR", accuracy=15,
-#'                             mu_scale=c(3, 3), sigma_scale=3, which_random=1)
+#' params13t <- random_ind(p=1, M=3, model="StMAR", mu_scale=c(3, 1), sigma_scale=3)
+#' smart13t <- smart_ind(p=1, M=3, params13t, model="StMAR", accuracy=15,
+#'                       mu_scale=c(3, 3), sigma_scale=3, which_random=1)
 #' cbind(params13t, smart13t)
 #'
-#'
 #' # Restricted StMAR parameter vector
-#' params22tr <- random_ind(2, 2, model="StMAR", restricted=TRUE,
-#'                                mu_scale=c(3, 2), sigma_scale=0.5)
-#' smart22tr <- smart_ind(2, 2, params22tr, model="StMAR", restricted=TRUE,
-#'                              accuracy=30)
+#' params22tr <- random_ind(p=2, M=2, model="StMAR", restricted=TRUE,
+#'                          mu_scale=c(3, 2), sigma_scale=0.5)
+#' smart22tr <- smart_ind(p=2, M=2, params22tr, model="StMAR", restricted=TRUE,
+#'                        accuracy=30)
 #' cbind(params22tr, smart22tr)
 #'
-#'
 #' # G-StMAR parameter vector
-#' params12gs <- random_ind(1, c(1, 1), model="G-StMAR", mu_scale=c(0, 1),
-#'                                sigma_scale=1)
-#' smart12gs <- smart_ind(1, c(1, 1), params12gs, model="G-StMAR", accuracy=20)
+#' params12gs <- random_ind(p=1, M=c(1, 1), model="G-StMAR", mu_scale=c(0, 1),
+#'                          sigma_scale=1)
+#' smart12gs <- smart_ind(p=1, M=c(1, 1), params12gs, model="G-StMAR",
+#'                        accuracy=20)
 #' cbind(params12gs, smart12gs)
-#'
-#'
-#' # Restricted G-StMAR parameter vector
-#' params23gsr <- random_ind(2, c(1, 2), model="G-StMAR", restricted=TRUE,
-#'                                 mu_scale=c(-1, 1), sigma_scale=3)
-#' smart23gsr <- smart_ind(2, c(1, 2), params23gsr, model="G-StMAR", restricted=TRUE,
-#'                               mu_scale=c(0, 1), sigma_scale=1, accuracy=20, which_random=2)
-#' cbind(params23gsr, smart23gsr)
-#'
-#'
-#' # GMAR model as a mixture of AR(2) and AR(1) models
-#' C <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- random_ind(2, 2, constraints=C, mu_scale=c(1, 1),
-#'                               sigma_scale=1)
-#' smart22c <- smart_ind(2, 2, params22c, constraints=C, accuracy=10)
-#' cbind(params22c, smart22c)
-#'
-#'
-#' # Such constrained StMAR(3, 2) model that the second order AR coefficients
-#' # are constrained to zero.
-#' C0 = matrix(c(1, 0, 0, 0, 0, 1), ncol=2)
-#' C = list(C0, C0)
-#' params32c <- random_ind(3, 2, model="StMAR", constraints=C,
-#'                               mu_scale=c(1, 1), sigma_scale=1)
-#' smart32c <- smart_ind(3, 2, params32c, model="StMAR", constraints=C, accuracy=10)
-#' cbind(params32c, smart32c)
-#'
 #'
 #' # Such StMAR(3,2) that the AR coefficients are restricted to be
 #' # the same for both regimes and that the second AR coefficients are
 #' # constrained to zero. Second regime is random in the "smart individual".
-#' params32trc <- random_ind(3, 2, model="StMAR", restricted=TRUE,
-#'                                 constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                                 mu_scale=c(-2, 0.5), sigma_scale=4)
-#' smart32trc <- smart_ind(3, 2, params32trc, model="StMAR", restricted=TRUE,
-#'                               constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
-#'                               mu_scale=c(0, 0.1), sigma_scale=0.1, which_random=2,
-#'                               accuracy=20)
+#' params32trc <- random_ind(p=3, M=2, model="StMAR", restricted=TRUE,
+#'                           constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
+#'                           mu_scale=c(-2, 0.5), sigma_scale=4)
+#' smart32trc <- smart_ind(p=3, M=2, params32trc, model="StMAR", restricted=TRUE,
+#'                         constraints=matrix(c(1, 0, 0, 0, 0, 1), ncol=2),
+#'                         mu_scale=c(0, 0.1), sigma_scale=0.1, which_random=2,
+#'                         accuracy=20)
 #' cbind(params32trc, smart32trc)
 #' @export
 

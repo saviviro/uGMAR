@@ -62,26 +62,24 @@ In particular, the functions \code{get_foc} and \code{get_soc} can be used to ch
 }
 
 \examples{
- # Simple function
- foo <- function(x) x^2 + x
- calc_gradient(x=1, fn=foo)
- calc_gradient(x=-0.5, fn=foo)
- calc_hessian(x=2, fn=foo)
+# Simple function
+foo <- function(x) x^2 + x
+calc_gradient(x=1, fn=foo)
+calc_gradient(x=-0.5, fn=foo)
+calc_hessian(x=2, fn=foo)
 
- # More complicated function
- foo <- function(x, a, b) a*x[1]^2 - b*x[2]^2
- calc_gradient(x=c(1, 2), fn=foo, a=0.3, b=0.1)
- calc_hessian(x=c(1, 2), fn=foo, a=0.3, b=0.1)
+# More complicated function
+foo <- function(x, a, b) a*x[1]^2 - b*x[2]^2
+calc_gradient(x=c(1, 2), fn=foo, a=0.3, b=0.1)
+calc_hessian(x=c(1, 2), fn=foo, a=0.3, b=0.1)
 
- # StMAR model:
-params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
- -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
-  0.57, 0.22, 8.05, 2.02, 1000)
- stmar43 <- GSMAR(T10Y1Y, 4, 3, params43, model="StMAR")
- get_gradient(stmar43)
- get_foc(stmar43)
- get_hessian(stmar43)
- get_soc(stmar43)
+# GMAR model
+params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
+get_gradient(gmar12)
+get_foc(gmar12)
+get_hessian(gmar12)
+get_soc(gmar12)
 }
 \seealso{
 \code{\link{profile_logliks}}

@@ -104,23 +104,14 @@ Returns the log-likelihood value or the terms described in \code{return_terms}.
   Use \code{minval} to control what happens when the parameter vector is outside the parameter space.
 }
 \examples{
-# StMAR model
-params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
- -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
-  0.57, 0.22, 8.05, 2.02, 10000)
-loglikelihood(T10Y1Y, p=4, M=3, params=params43, model="StMAR")
+# GMAR model
+params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+loglikelihood(simudata, p=1, M=2, params=params12, model="GMAR")
 
-# Restricted G-StMAR-model
-params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-loglikelihood(T10Y1Y, p=4, M=c(1, 1), params=params42gsr, model="G-StMAR",
-  restricted=TRUE)
-
-# Two-regime GMAR p=2 model with the second AR coeffiecient of
-# of the second regime contrained to zero.
-constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
-loglikelihood(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
- constraints=constraints)
+# G-StMAR-model
+params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+                0.2, -0.15, 0.04, 0.19, 9.75)
+loglikelihood(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR")
 }
 \references{
 \itemize{

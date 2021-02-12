@@ -111,9 +111,9 @@ Wald_test <- function(gsmar, A, c, h=6e-6) {
 #' # GMAR p=1, M=2 model AR parameters restricted to be the same in both
 #' # regimes:
 #' fit12r <- fitGSMAR(simudata, p=1, M=2, model="GMAR", restricted=TRUE,
-#'  ncalls=1, seeds=1)
+#'                    ncalls=1, seeds=1)
 #'
-#' # Test with likelihood ratio test whether the AR parameter are the same in
+#' # Test with likelihood ratio test whether the AR parameters are the same in
 #' # both regimes:
 #' LR_test(fit12, fit12r)
 #' }

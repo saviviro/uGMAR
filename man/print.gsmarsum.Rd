@@ -18,12 +18,3 @@
  created with the summary method \code{summary.gsmar}. Approximate standard errors
  are printed in brackets.
 }
-\examples{
-\donttest{
-# GMAR model
-fit12 <- fitGSMAR(simudata, 1, 2, ncalls=4)
-gsmarsum12 <- summary(fit12)
-gsmarsum12
-print(gsmarsum12, digits=4)
-}
-}

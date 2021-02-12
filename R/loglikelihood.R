@@ -452,23 +452,14 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residuals}},
 #'  \code{\link{mixing_weights}}, \code{\link{calc_gradient}}
 #' @examples
-#' # StMAR model
-#' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
-#'  -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
-#'   0.57, 0.22, 8.05, 2.02, 10000)
-#' loglikelihood(T10Y1Y, p=4, M=3, params=params43, model="StMAR")
+#' # GMAR model
+#' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+#' loglikelihood(simudata, p=1, M=2, params=params12, model="GMAR")
 #'
-#' # Restricted G-StMAR-model
-#' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' loglikelihood(T10Y1Y, p=4, M=c(1, 1), params=params42gsr, model="G-StMAR",
-#'   restricted=TRUE)
-#'
-#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
-#' # of the second regime contrained to zero.
-#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
-#' loglikelihood(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
-#'  constraints=constraints)
+#' # G-StMAR-model
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' loglikelihood(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR")
 #' @export
 
 loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
@@ -521,23 +512,14 @@ mixing_weights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-S
 #' @inheritParams mixing_weights_int
 #' @inherit mixing_weights_int return details references
 #' @examples
-#' # StMAR model
-#' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
-#'  -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
-#'   0.57, 0.22, 8.05, 2.02, 10000)
-#' mixing_weights(T10Y1Y, p=4, M=3, params=params43, model="StMAR")
+#' # GMAR model
+#' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+#' mixing_weights(simudata, p=1, M=2, params=params12, model="GMAR")
 #'
-#' # Restricted G-StMAR-model
-#' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' mixing_weights(T10Y1Y, p=4, M=c(1, 1), params=params42gsr, model="G-StMAR",
-#'   restricted=TRUE)
-#'
-#' # Two-regime GMAR p=2 model with the second AR coeffiecient of
-#' # of the second regime contrained to zero.
-#' constraints <- list(diag(1, ncol=2, nrow=2), as.matrix(c(1, 0)))
-#' params22c <- c(0.03, 1.27, -0.29, 0.03, -0.01, 0.91, 0.34, 0.88)
-#' mixing_weights(T10Y1Y, p=2, M=2, params=params22c, model="GMAR",
-#'  constraints=constraints)
+#' # G-StMAR-model
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' mixing_weights(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR")
 #' @export
 
 mixing_weights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
@@ -574,28 +556,20 @@ mixing_weights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR
 #'   \item{if \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
 #'  }
 #' @examples
-#' # GMAR model
-#' params12 <- c(0.01, 0.99, 0.02, 0.03, 0.91, 0.32, 0.86)
-#' rcm12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="regime_cmeans")
-#' rcv12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="regime_cvars")
-#' tcm12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="total_cmeans")
-#' tcv12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="total_cvars")
+#' # GMAR model, regimewise conditional means and variances
+#' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+#' cond_moments(simudata, p=1, M=2, params=params12, model="GMAR",
+#'              to_return="regime_cmeans")
+#' cond_moments(simudata, p=1, M=2, params=params12, model="GMAR",
+#'              to_return="regime_cvars")
 #'
-#' # StMAR model
-#' params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
-#'  -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
-#'   0.57, 0.22, 8.05, 2.02, 10000)
-#' rcm43t <- cond_moments(T10Y1Y, 4, 3, params43, model="StMAR",
-#'  to_return="regime_cmeans")
-#' rcv43t <- cond_moments(T10Y1Y, 4, 3, params43, model="StMAR",
-#'  to_return="regime_cvars")
-#'
-#' # G-StMAR model
-#' params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-#' rcv42gsr <- cond_moments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
-#'  restricted=TRUE, to_return="regime_cvars")
-#' tcv42gs <- cond_moments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
-#'  restricted=TRUE, to_return="total_cvars")
+#' # G-StMAR-model, total conditional means and variances
+#' params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+#'                 0.2, -0.15, 0.04, 0.19, 9.75)
+#' cond_moments(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR",
+#'              to_return="total_cmeans")
+#' cond_moments(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR",
+#'              to_return="total_cvars")
 #' @export
 
 cond_moments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,

@@ -130,6 +130,7 @@ get_regime_autocovs <- function(gsmar) {
 #' gstmar12 <- GSMAR(p=1, M=c(1, 1), params=params12gs, model="G-StMAR")
 #' get_regime_vars(gstmar12)
 #' @export
+
 get_regime_vars <- function(gsmar) {
   reg_autocovs <- get_regime_autocovs(gsmar)
   p <- gsmar$model$p

@@ -104,28 +104,20 @@ Note that the first p observations are taken as the initial values so the condit
  conditional means and variances of the specified GMAR, StMAR or G-StMAR model.
 }
 \examples{
-# GMAR model
-params12 <- c(0.01, 0.99, 0.02, 0.03, 0.91, 0.32, 0.86)
-rcm12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="regime_cmeans")
-rcv12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="regime_cvars")
-tcm12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="total_cmeans")
-tcv12 <- cond_moments(T10Y1Y, 1, 2, params12, to_return="total_cvars")
+# GMAR model, regimewise conditional means and variances
+params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+cond_moments(simudata, p=1, M=2, params=params12, model="GMAR",
+             to_return="regime_cmeans")
+cond_moments(simudata, p=1, M=2, params=params12, model="GMAR",
+             to_return="regime_cvars")
 
-# StMAR model
-params43 <- c(0.09, 1.31, -0.46, 0.33, -0.23, 0.04, 0.01, 1.15,
- -0.3, -0.03, 0.03, 1.54, 0.06, 1.19, -0.3, 0.42, -0.4, 0.01,
-  0.57, 0.22, 8.05, 2.02, 10000)
-rcm43t <- cond_moments(T10Y1Y, 4, 3, params43, model="StMAR",
- to_return="regime_cmeans")
-rcv43t <- cond_moments(T10Y1Y, 4, 3, params43, model="StMAR",
- to_return="regime_cvars")
-
-# G-StMAR model
-params42gsr <- c(0.11, 0.03, 1.27, -0.39, 0.24, -0.17, 0.03, 1.01, 0.3, 2.03)
-rcv42gsr <- cond_moments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
- restricted=TRUE, to_return="regime_cvars")
-tcv42gs <- cond_moments(T10Y1Y, 4, c(1, 1), params42gsr, model="G-StMAR",
- restricted=TRUE, to_return="total_cvars")
+# G-StMAR-model, total conditional means and variances
+params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+                0.2, -0.15, 0.04, 0.19, 9.75)
+cond_moments(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR",
+             to_return="total_cmeans")
+cond_moments(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR",
+             to_return="total_cvars")
 }
 \references{
 \itemize{

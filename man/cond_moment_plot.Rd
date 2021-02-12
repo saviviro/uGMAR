@@ -24,23 +24,19 @@ cond_moment_plot(gsmar, which_moment = c("mean", "variance"))
 The conditional mean plot works best if the data contains positive values only.
 }
 \examples{
-\donttest{
 # GMAR model
-fit12 <- fitGSMAR(simudata, p=1, M=2, model="GMAR")
-cond_moment_plot(fit12, which_moment="mean")
-cond_moment_plot(fit12, which_moment="variance")
+params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
+gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
+cond_moment_plot(gmar12, which_moment="mean")
+cond_moment_plot(gmar12, which_moment="variance")
 
-# Restricted StMAR model: plot also the individual statistics with
-# their approximate critical bounds using the given data
-fit42r <- fitGSMAR(T10Y1Y, p=4, M=2, model="StMAR", restricted=TRUE)
-cond_moment_plot(fit42r, which_moment="mean")
-cond_moment_plot(fit42r, which_moment="variance")
-
-# G-StMAR model with one GMAR type and one StMAR type regime
-fit42g <- fitGSMAR(T10Y1Y, p=4, M=c(1, 1), model="G-StMAR")
-cond_moment_plot(fit42g, which_moment="mean")
-cond_moment_plot(fit42g, which_moment="variance")
-}
+# G-StMAR model
+params42gs <- c(0.04, 1.34, -0.59, 0.54, -0.36, 0.01, 0.06, 1.28, -0.36,
+                0.2, -0.15, 0.04, 0.19, 9.75)
+gstmar42 <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gs,
+                  model="G-StMAR")
+cond_moment_plot(gstmar42, which_moment="mean")
+cond_moment_plot(gstmar42, which_moment="variance")
 }
 \references{
 \itemize{
