@@ -248,7 +248,7 @@ swap_parametrization <- function(gsmar, calc_std_errors=TRUE, custom_h=NULL) {
 #' @export
 
 stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=100, custom_h=NULL) {
-  if(gsmar$model$model != "StMAR") stop("Only StMAR models are supported as input")
+  if(!gsmar$model$model %in% c("StMAR", "G-StMAR")) stop("Only StMAR and G-StMAR models are supported")
   if(missing(estimate)) estimate <- ifelse(is.null(gsmar$data), FALSE, TRUE)
   if(missing(calc_std_errors)) calc_std_errors <- ifelse(is.null(gsmar$data), FALSE, TRUE)
   if(estimate & is.null(gsmar$data)) stop("Can't estimate the model without data")
