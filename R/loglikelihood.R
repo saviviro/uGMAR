@@ -93,6 +93,8 @@
 #'   \item{If \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
 #'     second element contains the mixing weights.}
 #'   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
+#'   \item{If \code{to_return=="term_densities"}:}{a size ((n_obs-p)xM) matrix containing the conditional densities that summed over
+#'     in the terms \eqn{l_{t}}, as \code[t, m].}
 #'   \item{If \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
 #'   \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
 #'   \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
@@ -114,7 +116,7 @@
 
 loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               conditional=TRUE, parametrization=c("intercept", "mean"), boundaries=TRUE, checks=TRUE,
-                              to_return=c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "regime_cmeans", "regime_cvars",
+                              to_return=c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "term_densities", "regime_cmeans", "regime_cvars",
                                           "total_cmeans", "total_cvars", "qresiduals"), minval) {
   epsilon <- round(log(.Machine$double.xmin) + 10)
   model <- match.arg(model)
@@ -325,6 +327,10 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   } else { # model == "G-StMAR
     lt_tmp <- as.matrix(cbind(lt_tmpM1, lt_tmpM2))
   }
+  if(to_return == "term_densities") {
+    return(lt_tmp/alpha_mt)
+  }
+
   l_t <- rowSums(lt_tmp)
 
   # Return quantile residuals (note that l_t is different if qresiduals are not to be returned)

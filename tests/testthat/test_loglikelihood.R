@@ -116,6 +116,11 @@ test_that("Loglikelihood gives correct value for constrained models", {
   expect_equal(loglikelihood_int(0.7*simudata, p=3, M=2, params=params32cr, restricted=TRUE, constraints=R1, conditional=FALSE), -2643.472, tolerance=1e-3)
 })
 
+test_that("loglikelihood_int returns correct term densities", {
+  expect_equal(loglikelihood_int(simudata, p=1, M=c(1, 1), params=params12gs, model="G-StMAR", to_return="term_densities")[100,], c(0.2746934, 0.4311288), tolerance=1e-4)
+  expect_equal(loglikelihood_int(simudata, p=2, M=2, params=params22t, model="StMAR", to_return="term_densities")[1,], c(0.01987246, 0.22068467), tolerance=1e-4)
+  expect_equal(loglikelihood_int(simudata, p=2, M=3, params=params23r, model="GMAR", restricted=TRUE, to_return="term_densities")[13,], c(0.02127638, 0.15452417, 0.16614735), tolerance=1e-4)
+})
 
 test_that("mixing_weights gives correct values for non-restricted models", {
   expect_equal(mixing_weights_int(simudata, p=1, M=c(1, 1), params=params12gs, model="G-StMAR")[10, 2], 0.9631588, tolerance=1e-3)
