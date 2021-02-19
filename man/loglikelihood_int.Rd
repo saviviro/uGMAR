@@ -16,8 +16,9 @@ loglikelihood_int(
   parametrization = c("intercept", "mean"),
   boundaries = TRUE,
   checks = TRUE,
-  to_return = c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "regime_cmeans",
-    "regime_cvars", "total_cmeans", "total_cvars", "qresiduals"),
+  to_return = c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms",
+    "term_densities", "regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars",
+    "qresiduals"),
   minval
 )
 }
@@ -124,6 +125,8 @@ Note that the first p observations are taken as the initial values so the mixing
   \item{If \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
     second element contains the mixing weights.}
   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
+  \item{If \code{to_return=="term_densities"}:}{a size ((n_obs-p)xM) matrix containing the conditional densities that summed over
+    in the terms \eqn{l_{t}}, as \code[t, m].}
   \item{If \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
   \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
   \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
