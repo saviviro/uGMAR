@@ -44,7 +44,7 @@ are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes.}
 
-\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
+\item{constraints}{specifies linear constraints imposed to each regime's autoregressive parameters separately.
 \describe{
 \item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
   satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
@@ -53,12 +53,12 @@ to be the same for all regimes.}
   \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal autoregressive order
+The symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the autoregressive order
 is always \code{p} for all regimes.
-Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
+Ignore or set to \code{NULL} if applying linear constraints is not desired.}
 
 \item{parametrization}{is the model parametrized with the "intercepts" \eqn{\phi_{m,0}} or
-"means" \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
+"means" \eqn{\mu_{m} = \phi_{m,0}/(1-\sum\phi_{i,m})}?}
 
 \item{conditional}{a logical argument specifying whether the conditional or exact log-likelihood function should be used.}
 
@@ -81,41 +81,40 @@ normal distribution from which the component variance parameters are generated i
 Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
 
 \item{initpop}{a list of parameter vectors from which the initial population of the genetic algorithm will be generated from.
- The parameter vectors should be of form...
-\describe{
-  \item{For \strong{non-restricted} models:}{
-    \describe{
-      \item{For \strong{GMAR} model:}{Size \eqn{(M(p+3)-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-        \eqn{\alpha_{1},...,\alpha_{M-1}}), where \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,
-        \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
-      \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
-      \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-        \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
-      \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
-        matrices \strong{C} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
-        \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-    }
-  }
-  \item{For \strong{restricted} models:}{
-    \describe{
-      \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
-      \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
-      \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-        \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
-      \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
-        \strong{\eqn{C}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where
-        \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
-    }
-  }
-}
-Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{v} a degrees of
-freedom parameter.
-Note that in the case \strong{M=1}, the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
-the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
-If not specified (or \code{FALSE} as is default), the initial population will be drawn randomly.}
+  The parameter vectors should be of form...
+ \describe{
+   \item{For \strong{non-restricted} models:}{
+     Size \eqn{(M(p+3)+M-M1-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
+     \eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}) where
+     \itemize{
+       \item \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,}\eqn{\sigma_{m}^2)}
+       \item \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}
+       \item \strong{\eqn{\nu}}\eqn{=(\nu_{M1+1},...,\nu_{M})}
+       \item \eqn{M1} is the number of GMAR type regimes.
+     }
+     In the \strong{GMAR} model, \eqn{M1=M} and the parameter \strong{\eqn{\nu}} dropped. In the \strong{StMAR} model, \eqn{M1=0}.
+
+     If the model imposes \strong{linear constraints} on the autoregressive parameters:
+     Replace the vectors \strong{\eqn{\phi_{m}}} with the vectors \strong{\eqn{\psi_{m}}} that satisfy
+      \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} (see the argument \code{constraints}).
+     }
+   \item{For \strong{restricted} models:}{
+     Size \eqn{(3M+M-M1+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
+     \eqn{\sigma_{1}^2,...,\sigma_{M}^2,}\eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}), where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}
+     contains the AR coefficients, which are common for all regimes.
+
+     If the model imposes \strong{linear constraints} on the autoregressive parameters:
+     Replace the vector \strong{\eqn{\phi}} with the vector \strong{\eqn{\psi}} that satisfies
+      \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}} (see the argument \code{constraints}).
+   }
+ }
+ Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
+ freedom parameter. If \code{parametrization=="mean"}, just replace each intercept term \eqn{\phi_{m,0}} with the regimewise mean
+ \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type}
+ and the rest \code{M2} components are \emph{StMAR type}.
+ Note that in the case \strong{M=1}, the mixing weight parameters \eqn{\alpha} are dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
+ the degrees of freedom parameters \eqn{\nu} have to be larger than \eqn{2}.
+ If not specified (or \code{NULL} as is default), the initial population will be drawn randomly.}
 
 \item{regime_force_scale}{a non-negative real number specifying how much should natural selection favour individuals
 with less regimes that have almost all mixing weights (practically) at zero (see \code{red_criteria}), i.e., with

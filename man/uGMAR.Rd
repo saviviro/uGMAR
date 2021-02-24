@@ -11,5 +11,5 @@
   diagnostics, forecasting, and simulation, to name a few.
 
   Many of the functions documented are not exported but for intended internal use only.
-  The readme file is a good place to start.
+  The readme file or the vignette is a good place to start.
 }

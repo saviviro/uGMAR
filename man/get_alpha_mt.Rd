@@ -32,9 +32,8 @@ get_alpha_mt(
 
 \item{to_return}{should the returned object be the log-likelihood value, mixing weights, mixing weights including
 value for \eqn{alpha_{m,T+1}}, a list containing log-likelihood value and mixing weights, the terms \eqn{l_{t}: t=1,..,T}
-in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), regimewise conditional means, regimewise conditional variances,
-total conditional means, total conditional variances, or quantile residuals?
-Default is the log-likelihood value (\code{"loglik"}).}
+in the log-likelihood function (see \emph{KMS 2015, eq.(13)}), the densities in the terms, regimewise conditional means,
+regimewise conditional variances, total conditional means, total conditional variances, or quantile residuals?}
 
 \item{also_l_0}{return also l_0 (the first term in the exact log-likelihood function)?}
 }

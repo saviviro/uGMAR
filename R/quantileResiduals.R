@@ -6,6 +6,7 @@
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns a \eqn{(Tx1)} numeric vector containing the quantile residuals of the specified GMAR, StMAR or G-StMAR model.
+#'  Note that there are no quantile residuals for the first \code{p} observations as they are the initial values.
 #' @details Numerical integration is employed if the quantile residuals cannot be obtained analytically with the
 #'  hypergeometric function using the package 'gsl'.
 #' @references

@@ -83,6 +83,8 @@
 * Adjusted the plot methods.
 * Added new data: M10Y1Y
 
-# uGMAR 3.3.0
+# uGMAR 3.3.1
 
 * Now the functions "iterate_more" and "alt_gsmar" also warn about near-unit-roots and return results from all the estimation rounds.
+* Summary and print methods now display the number of parameters and observations.
+* Updated some of the documentation

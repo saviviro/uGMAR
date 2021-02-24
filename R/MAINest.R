@@ -49,47 +49,10 @@
 #'  similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
 #'  components with large degrees of freedom parameter estimates to be GMAR type with the function \code{stmar_to_gstmar}.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
-#'   estimated mixing weights, some conditional and unconditional moments, quantile residuals, and quantile residual test results
-#'   if the tests were performed. Note that the first p observations are taken as the initial values so the mixing weights, conditional
-#'   moments, and quantile residuals start from the p+1:th observation (interpreted as t=1).In addition, the returned object contains
-#'   the estimates and log-likelihood values from all of the estimation rounds.
-#'   The estimated parameter vector can be obtained as \code{gsmar$params} (and the corresponding approximate standard errors as
-#'   \code{gsmar$std_errors}) and it's...
-#'  \describe{
-#'    \item{For \strong{non-restricted} models:}{
-#'      \describe{
-#'        \item{For \strong{GMAR} model:}{Size \eqn{(M(p+3)-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-#'          \eqn{\alpha_{1},...,\alpha_{M-1}}), where \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,
-#'          \sigma_{m}^2)} and \strong{\eqn{\phi_{m}}}=\eqn{(\phi_{m,1},...,\phi_{m,p}), m=1,...,M}.}
-#'        \item{For \strong{StMAR} model:}{Size \eqn{(M(p+4)-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-#'          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M}}).}
-#'        \item{For \strong{G-StMAR} model:}{Size \eqn{(M(p+3)+M2-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=}(\strong{\eqn{\upsilon_{1}}},...,\strong{\eqn{\upsilon_{M}}},
-#'          \eqn{\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M}}).}
-#'        \item{With \strong{linear constraints}:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}} and provide a  list of constraint
-#'          matrices \strong{C} that satisfy \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
-#'          \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-#'      }
-#'    }
-#'    \item{For \strong{restricted} models:}{
-#'      \describe{
-#'        \item{For \strong{GMAR} model:}{Size \eqn{(3M+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1})}, where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}.}
-#'        \item{For \strong{StMAR} model:}{Size \eqn{(4M+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{1},...,\nu_{M})}.}
-#'        \item{For \strong{G-StMAR} model:}{Size \eqn{(3M+M2+p-1x1)} vector (\strong{\eqn{\theta, \nu}})\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,
-#'          \sigma_{1}^2,...,\sigma_{M}^2,\alpha_{1},...,\alpha_{M-1}, \nu_{M1+1},...,\nu_{M})}.}
-#'        \item{With \strong{linear constraints}:}{Replace the vector \strong{\eqn{\phi}} with vector \strong{\eqn{\psi}} and provide a constraint matrix
-#'          \strong{\eqn{C}} that satisfies \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where
-#'          \strong{\eqn{\psi}}\eqn{=(\psi_{1},...,\psi_{q})}.}
-#'      }
-#'    }
-#'  }
-#'  Symbol \eqn{\phi} denotes an AR coefficient, \eqn{\sigma^2} a variance, \eqn{\alpha} a mixing weight, and \eqn{\nu} a degrees of
-#'  freedom parameter. If \code{parametrization=="mean"} just replace each intercept term \eqn{\phi_{m,0}} with regimewise mean
-#'  \eqn{\mu_m = \phi_{m,0}/(1-\sum\phi_{i,m})}. In the \strong{G-StMAR} model, the first \code{M1} components are \emph{GMAR type}
-#'  and the rest \code{M2} components are \emph{StMAR type}.
-#'  Note that in the case \strong{M=1} the parameter \eqn{\alpha} is dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model
-#'  the degrees of freedom parameters \eqn{\nu_{m}} have to be larger than \eqn{2}.
+#'   estimated mixing weights, some conditional and unconditional moments, and quantile residuals. Note that the first \code{p}
+#'   observations are taken as the initial values, so the mixing weights, conditional moments, and quantile residuals start from
+#'   the \code{p+1}:th observation (interpreted as t=1). In addition, the returned object contains the estimates and log-likelihoods
+#'   from all of the estimation rounds. See \code{?GSMAR} for the form of the parameter vector, if needed.
 #' @section S3 methods:
 #'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
 #'  \code{logLik}, \code{residuals}.
@@ -134,7 +97,7 @@
 #' # StMAR model (boundary estimate + large degrees of freedom)
 #' fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=6, seeds=1:6)
 #' summary(fit42t, digits=4) # Four almost-unit roots in the 2nd regime!
-#' plot(fit42t) # Spiky mixing weights!
+#' plot(fit42t) # Spiking mixing weights!
 #' fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # The second largest local max
 #' summary(fit42t_alt) # Overly large 2nd regime degrees of freedom estimate!
 #' fit42gs <- stmar_to_gstmar(fit42t_alt) # Switch to G-StMAR model

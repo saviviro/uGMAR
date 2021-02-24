@@ -30,7 +30,7 @@ Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
 \item{restricted}{a logical argument stating whether the AR coefficients \eqn{\phi_{m,1},...,\phi_{m,p}} are restricted
 to be the same for all regimes.}
 
-\item{constraints}{specifies linear constraints applied to the autoregressive parameters.
+\item{constraints}{specifies linear constraints imposed to each regime's autoregressive parameters separately.
 \describe{
 \item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
   satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
@@ -39,9 +39,9 @@ to be the same for all regimes.}
   \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
-Symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the nominal autoregressive order
+The symbol \eqn{\phi} denotes an AR coefficient. Note that regardless of any constraints, the autoregressive order
 is always \code{p} for all regimes.
-Ignore or set to \code{NULL} if applying linear constraints is \strong{not} desired.}
+Ignore or set to \code{NULL} if applying linear constraints is not desired.}
 
 \item{m}{which regime? This is required for models with constraints for which a list of possibly differing
 constraint matrices is provided.}

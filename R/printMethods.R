@@ -45,6 +45,8 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   restricted <- gsmar$model$restricted
   constraints <- gsmar$model$constraints
   all_mu <- get_regime_means(gsmar)
+  npars <- length(params)
+  nobs <- ifelse(is.null(gsmar$data), NA, length(gsmar$data))
   if(summary_print) all_vars <- get_regime_vars(gsmar)  # Unconditional regime variances
 
   if(gsmar$model$parametrization == "mean") {
@@ -52,7 +54,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
                                      constraints=constraints, change_to="intercept")
   }
   params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted,
-                                 constraints=constraints)
+                                   constraints=constraints)
   all_phi0 <- pick_phi0(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
@@ -81,7 +83,9 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   } else {
     cat(paste0("M = ", M, ", "))
   }
-  cat(ifelse(gsmar$model$conditional, "conditional,", "exact,"),
+  cat(paste0("#parameters = " , npars, ","),
+      ifelse(is.na(nobs), "\n", paste0("#observations = ", nobs, ",\n")),
+      ifelse(gsmar$model$conditional, "conditional,", "exact,"),
       ifelse(gsmar$model$parametrization == "mean", "mean parametrization,", "intercept parametrization,"),
       ifelse(restricted, "AR parameters restricted,", "not restricted,"),
       ifelse(is.null(constraints), "no constraints.", "linear constraints imposed."), "\n")
@@ -134,11 +138,11 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     if(summary_print) cat("\nReg var: ", format_value(all_vars[m])) # Unconditional regime variances
     cat("\n\n")
 
-    cat(paste0("Y = [", format_value(all_phi0[m]), "]"))
+    cat(paste0("y = [", format_value(all_phi0[m]), "]"))
     add_string(const_spaces=4, all_phi0[m], phi0_err[m])
 
     for(i1 in seq_len(p)) {
-      cat(paste0(" + [", format_value(pars[1 + i1, m]), "]Y.", i1))
+      cat(paste0(" + [", format_value(pars[1 + i1, m]), "]y.", i1))
       nspaces <- ifelse(i1 == 1, 3, 6)
       if(!is.null(constraints) && (any(constraints[[m]] != 1 & constraints[[m]] != 0) | any(rowSums(constraints[[m]]) > 1))) {
         # The constrained AR parameter standard errors multiplied open in 'pars_err' are valid only
