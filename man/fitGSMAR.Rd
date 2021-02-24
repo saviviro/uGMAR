@@ -180,7 +180,7 @@ diagnostic_plot(fit12)
 fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=6, seeds=1:6)
 summary(fit42t, digits=4) # Four almost-unit roots in the 2nd regime!
 plot(fit42t) # Spiky mixing weights!
-fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # Second largest local max
+fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # The second largest local max
 summary(fit42t_alt) # Overly large 2nd regime degrees of freedom estimate!
 fit42gs <- stmar_to_gstmar(fit42t_alt) # Switch to G-StMAR model
 summary(fit42gs) # Finally, an appropriate model!

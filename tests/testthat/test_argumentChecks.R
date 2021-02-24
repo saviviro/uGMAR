@@ -123,3 +123,10 @@ test_that("check_gsmar works correctly", {
   check_gsmar(structure(list(1), class="gsmar")) # no error
   expect_error(check_gsmar(list(1)))
 })
+
+
+mod12 <- GSMAR(p=1, M=2, params=c(1, 0.5, 1, 2, 0.999, 2, 0.7), model="GMAR")
+
+test_that("warn_ar_roots works correctly", {
+  expect_warning(warn_ar_roots(mod12, tol=0.005))
+})

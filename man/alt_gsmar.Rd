@@ -21,7 +21,7 @@ alt_gsmar(
 
 \item{which_largest}{based on estination round with which largest log-likelihood should the model be constructed?
 An integer value in 1,...,\code{ncalls}. For example, \code{which_largest=2} would take the second largest log-likelihood
-and construct the model based on the corresponding estimates. If used, then \code{which_round} is ignored.}
+and construct the model based on the corresponding estimates. If specified, then \code{which_round} is ignored.}
 
 \item{calc_qresiduals}{should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.}
 

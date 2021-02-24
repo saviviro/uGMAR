@@ -135,7 +135,7 @@
 #' fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=6, seeds=1:6)
 #' summary(fit42t, digits=4) # Four almost-unit roots in the 2nd regime!
 #' plot(fit42t) # Spiky mixing weights!
-#' fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # Second largest local max
+#' fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # The second largest local max
 #' summary(fit42t_alt) # Overly large 2nd regime degrees of freedom estimate!
 #' fit42gs <- stmar_to_gstmar(fit42t_alt) # Switch to G-StMAR model
 #' summary(fit42gs) # Finally, an appropriate model!
@@ -314,15 +314,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ret$all_estimates <- newtonEstimates
   ret$all_logliks <- loks
   ret$which_converged <- converged
-  ar_roots <- get_ar_roots(ret)
-  near_nonstat <- vapply(1:sum(M), function(i1) any(abs(ar_roots[[i1]]) < 1.005), logical(1))
-  if(any(near_nonstat)) {
-    my_string <- ifelse(sum(near_nonstat) == 1,
-                        paste("Regime", which(near_nonstat),"is almost nonstationary!"),
-                        paste("Regimes", paste(which(near_nonstat), collapse=" and ") ,"are almost nonstationary!"))
-    warning(paste(my_string, "Consider building a model from the next-best local maximum with the function 'alt_gsmar' by adjusting its argument 'which_largest'."))
-  }
-
+  warn_ar_roots(ret)
   cat("Finished!\n")
   ret
 }
@@ -381,10 +373,15 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
   res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
   if(res$convergence == 1) message("The maximum number of iterations was reached! Consider iterating more.")
 
-  GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
-        restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
-        conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
-        calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, custom_h=custom_h)
+  ret <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
+               restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
+               conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
+               calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, custom_h=custom_h)
+  ret$all_estimates <- gsmar$all_estimates
+  ret$all_logliks <- gsmar$all_logliks
+  ret$which_converged <- gsmar$which_converged
+  warn_ar_roots(ret)
+  ret
 }
 
 

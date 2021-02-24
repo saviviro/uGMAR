@@ -469,3 +469,24 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
     }
   }
 }
+
+
+#' @title Warn about near-unit-roots in some regimes
+#'
+#' @description \code{warn_ar_roots} warns if the model contains near-unit-roots in some regimes
+#'
+#' @inheritParams simulateGSMAR
+#' @param tol if some root is smaller that \code{1 + tol}, a warning is thrown
+#' @details Warns if some moduli of the autoregressive polynomial's roots are close to one.
+#' @return Doesn't return anything.
+
+warn_ar_roots <- function(gsmar, tol=0.005) {
+  ar_roots <- get_ar_roots(gsmar)
+  near_nonstat <- vapply(1:sum(gsmar$model$M), function(i1) any(abs(ar_roots[[i1]]) < 1 + tol), logical(1))
+  if(any(near_nonstat)) {
+    my_string <- ifelse(sum(near_nonstat) == 1,
+                        paste("Regime", which(near_nonstat),"is almost nonstationary!"),
+                        paste("Regimes", paste(which(near_nonstat), collapse=" and ") ,"are almost nonstationary!"))
+    warning(paste(my_string, "Consider building a model from the next-largest local maximum with the function 'alt_gsmar' by adjusting its argument 'which_largest'."))
+  }
+}

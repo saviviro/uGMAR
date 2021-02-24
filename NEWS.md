@@ -73,12 +73,16 @@
 
 * This update (finally) renames functions and arguments so that they are consistent throughout uGMAR and in line with the package "gmvarkit". Namely, some functions were renamed from camelCase to lower_bar convention for consistency. Old functions are for now retained as deprecated. Also, some arguments were renamed from camelCase to lower_bar: print_res in fitGSMAR; print_res, lags_ac, and lags_ch in quantile_residual_tests; smart_mu, mean_scale, and sigma_scale in GAfit; plot_res in predict.gsmar; init_values in simulateGSMAR; and others.
 * The package 'gsl' is now imported, and not a suggested package anymore, to ensure fast calculation of quantile residual tests for StMAR and G-StMAR models.
-* The function random_ind does not sort components anymore when constraints are employed (unless only "restricted" argument is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.
+* The function random_ind does not sort components anymore when constraints are employed (unless only the argument "restricted" is used). Consequently, estimation results (with a specific seed) might differ from previous versions for the models employing constraints.
 * Removed to possibility to run quantile residual tests directly with the estimation function after the estimation, because it is a good practice to check first whether the estimates are appropriate. The tests can be ran afterwards with the function "quantile_residual_tests".
 * fitGSMAR now warns if some regime is almost nonstationary.
-* The function stmar_to_gstmar now supports also G-StMAR models with large degrees of freedom estimates.
+* The function "stmar_to_gstmar"" now supports also G-StMAR models with large degrees of freedom estimates.
 * The summary method for class 'gsmar' objects now supports models without data.
 * Fixed a bug in the one-step conditional variance of the process: it was incorrect in the previous versions.
 * Updated the examples.
 * Adjusted the plot methods.
 * Added new data: M10Y1Y
+
+# uGMAR 3.3.0
+
+* Now the functions "iterate_more" and "alt_gsmar" also warn about near-unit-roots and return results from all the estimation rounds.
