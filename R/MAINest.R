@@ -262,7 +262,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   bestfit <- NEWTONresults[[bestind]]
   params <- newtonEstimates[[bestind]]
   mw <- mixing_weights_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
-                          parametrization=parametrization, to_return="mw")
+                           parametrization=parametrization, to_return="mw")
 
   # Warnings and notifications
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1] > red_criteria[1]) < red_criteria[2]*length(data), logical(1)))) {
@@ -277,6 +277,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   ret$all_estimates <- newtonEstimates
   ret$all_logliks <- loks
   ret$which_converged <- converged
+  ret$which_round <- bestind # Which estimation round induced the largest log-likelihood?
   warn_ar_roots(ret)
   cat("Finished!\n")
   ret
@@ -340,9 +341,16 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
                restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
                calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, custom_h=custom_h)
+
   ret$all_estimates <- gsmar$all_estimates
   ret$all_logliks <- gsmar$all_logliks
   ret$which_converged <- gsmar$which_converged
+  if(!is.null(gsmar$which_round)) {
+    ret$which_round <- gsmar$which_round
+    ret$all_estimates[[gsmar$which_round]] <- ret$params
+    ret$all_logliks[gsmar$which_round] <- ret$loglik
+    ret$which_converged[gsmar$which_round] <- res$convergence == 0
+  }
   warn_ar_roots(ret)
   ret
 }

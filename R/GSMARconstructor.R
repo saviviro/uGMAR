@@ -138,7 +138,8 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
                                                   constraints=constraints, parametrization=parametrization),
                  all_estimates=NULL,
                  all_logliks=NULL,
-                 which_converged=NULL),
+                 which_converged=NULL,
+                 which_round=NULL),
             class="gsmar")
 }
 
@@ -338,9 +339,13 @@ alt_gsmar <- function(gsmar, which_round=1, which_largest, calc_qresiduals=TRUE,
                conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
                calc_qresiduals=calc_qresiduals, calc_cond_moments=calc_cond_moments, calc_std_errors=calc_std_errors,
                custom_h=custom_h)
+
   ret$all_estimates <- gsmar$all_estimates
   ret$all_logliks <- gsmar$all_logliks
   ret$which_converged <- gsmar$which_converged
+  if(!is.null(gsmar$which_round)) {
+    ret$which_round <- which_round
+  }
   warn_ar_roots(ret)
   ret
 }
