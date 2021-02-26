@@ -446,7 +446,7 @@ warn_ar_roots <- function(gsmar, tol=0.005) {
   near_nonstat <- vapply(1:sum(gsmar$model$M), function(i1) any(abs(ar_roots[[i1]]) < 1 + tol), logical(1))
   if(any(near_nonstat)) {
     my_string <- ifelse(sum(near_nonstat) == 1,
-                        paste("Regime", which(near_nonstat),"is almost nonstationary!"),
+                        paste("Regime", which(near_nonstat),"has near-unit-roots!"),
                         paste("Regimes", paste(which(near_nonstat), collapse=" and ") ,"are almost nonstationary!"))
     warning(paste(my_string, "Consider building a model from the next-largest local maximum with the function 'alt_gsmar' by adjusting its argument 'which_largest'."))
   }
