@@ -275,7 +275,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
                         boundaries=TRUE, checks=FALSE, minval=NA)
     }, numeric(1))
 
-    if(sum(is.na(logliks)) == precission) stop("Profile log-likelihood function is too peaky - increase precission (also estimates might be peculiar)")
+    if(sum(is.na(logliks)) == precission) stop("Profile log-likelihood function is too peaky - increase precission (also the estimates might be peculiar)")
 
     # In order to get the labels right, we first determine which parameter is in question.
     # For readability of the code, we do the cases of restricted and unrestricted models
