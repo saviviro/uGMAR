@@ -206,11 +206,11 @@ quantile_residual_plot <- function(gsmar) {
 #' @param nrows how many rows should be in the plot-matrix? The default is \code{max(ceiling(log2(nparams) - 1), 1)}.
 #' @param ncols how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
 #'   Note that \code{nrows*ncols} should not be smaller than the number of parameters.
-#' @param precission at how many points should each profile log-likelihood be evaluated at?
+#' @param precision at how many points should each profile log-likelihood be evaluated at?
 #' @details The red vertical line points the estimate.
 #'
 #'   Be aware that the profile log-likelihood function is subject to a numerical error due to limited float-point
-#'   precission when considering extremely large parameter values, say, overly large degrees freedom estimates.
+#'   precision when considering extremely large parameter values, say, overly large degrees freedom estimates.
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit loglikelihood references
 #' @seealso  \code{\link{quantile_residual_plot}}, \code{\link{diagnostic_plot}}, \code{\link{cond_moment_plot}}, \code{\link{GSMAR}},
@@ -230,7 +230,7 @@ quantile_residual_plot <- function(gsmar) {
 #' }
 #' @export
 
-profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
+profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precision=200) {
   check_gsmar(gsmar)
   check_data(gsmar)
   p <- gsmar$model$p
@@ -266,7 +266,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
   for(i1 in seq_len(npars)) { # Go though the parameters
     pars <- params
     range <- abs(scale*pars[i1])
-    vals <- seq(from=pars[i1] - range, to=pars[i1] + range, length.out=precission) # Loglik to be evaluated at these values of the parameter considered
+    vals <- seq(from=pars[i1] - range, to=pars[i1] + range, length.out=precision) # Loglik to be evaluated at these values of the parameter considered
     logliks <- vapply(vals, function(val) {
       new_pars <- pars
       new_pars[i1] <- val # Change the single parameter value
@@ -275,7 +275,7 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precission=200) {
                         boundaries=TRUE, checks=FALSE, minval=NA)
     }, numeric(1))
 
-    if(sum(is.na(logliks)) == precission) stop("Profile log-likelihood function is too peaky - increase precission (also the estimates might be peculiar)")
+    if(sum(is.na(logliks)) == precision) stop("Profile log-likelihood function is too peaky - increase precision (also the estimates might be peculiar)")
 
     # In order to get the labels right, we first determine which parameter is in question.
     # For readability of the code, we do the cases of restricted and unrestricted models

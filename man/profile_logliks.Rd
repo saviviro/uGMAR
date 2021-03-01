@@ -4,7 +4,7 @@
 \alias{profile_logliks}
 \title{Plot profile log-likehoods around the estimates}
 \usage{
-profile_logliks(gsmar, scale = 0.02, nrows, ncols, precission = 200)
+profile_logliks(gsmar, scale = 0.02, nrows, ncols, precision = 200)
 }
 \arguments{
 \item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
@@ -16,7 +16,7 @@ profile_logliks(gsmar, scale = 0.02, nrows, ncols, precission = 200)
 \item{ncols}{how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
 Note that \code{nrows*ncols} should not be smaller than the number of parameters.}
 
-\item{precission}{at how many points should each profile log-likelihood be evaluated at?}
+\item{precision}{at how many points should each profile log-likelihood be evaluated at?}
 }
 \value{
 Only plots to a graphical device and doesn't return anything.
@@ -28,7 +28,7 @@ Only plots to a graphical device and doesn't return anything.
 The red vertical line points the estimate.
 
   Be aware that the profile log-likelihood function is subject to a numerical error due to limited float-point
-  precission when considering extremely large parameter values, say, overly large degrees freedom estimates.
+  precision when considering extremely large parameter values, say, overly large degrees freedom estimates.
 }
 \examples{
 \donttest{

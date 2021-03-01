@@ -88,3 +88,4 @@
 * Now the functions "iterate_more" and "alt_gsmar" also warn about near-unit-roots and return results from all the estimation rounds.
 * Summary and print methods now display the number of parameters and observations.
 * Updated some of the documentation
+* Fixed the argument "precission" in profile_logliks to "precision".
