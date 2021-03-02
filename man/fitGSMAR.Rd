@@ -14,7 +14,7 @@ fitGSMAR(
   conditional = TRUE,
   parametrization = c("intercept", "mean"),
   ncalls = round(10 + 9 * log(sum(M))),
-  ncores = min(2, ncalls, parallel::detectCores()),
+  ncores = 2,
   maxit = 300,
   seeds = NULL,
   print_res = TRUE,
