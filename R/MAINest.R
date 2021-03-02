@@ -140,8 +140,8 @@
 #' @export
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
-                     parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=min(2, ncalls, parallel::detectCores()),
-                     maxit=300, seeds=NULL, print_res=TRUE, ...) {
+                     parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=2, maxit=300,
+                     seeds=NULL, print_res=TRUE, ...) {
   on.exit(closeAllConnections())
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
