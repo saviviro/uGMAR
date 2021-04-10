@@ -15,6 +15,7 @@
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 #'   or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.
 #' @param print_res should the estimation results be printed?
+#' @param close_connections should \code{closeAllConnections()} be run on exit? Set \code{FALSE} when using from Rmarkdown.
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
 #' @details
 #'  Because of complexity and multimodality of the log-likelihood function, it's \strong{not guaranteed} that the estimation
@@ -141,8 +142,8 @@
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=2, maxit=300,
-                     seeds=NULL, print_res=TRUE, ...) {
-  on.exit(closeAllConnections())
+                     seeds=NULL, print_res=TRUE, close_connections=TRUE, ...) {
+  if(close_connections) on.exit(closeAllConnections())
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
   model <- match.arg(model)
