@@ -54,11 +54,11 @@
 #'  Note that in the case \strong{M=1}, the mixing weight parameters \eqn{\alpha} are dropped, and in the case of \strong{StMAR} or \strong{G-StMAR} model,
 #'  the degrees of freedom parameters \eqn{\nu} have to be larger than \eqn{2}.
 #'  If not specified (or \code{NULL} as is default), the initial population will be drawn randomly.
-#' @param regime_force_scale a non-negative real number specifying how much should natural selection favour individuals
+#' @param regime_force_scale a non-negative real number specifying how much should natural selection favor individuals
 #'   with less regimes that have almost all mixing weights (practically) at zero (see \code{red_criteria}), i.e., with
 #'   less "redundant regimes".
-#'   Set to zero for no favouring or large number for heavy favouring. Without any favouring the genetic algorithm gets more often stuck
-#'   in an area of the parameter space where some regimes are wasted, but with too much favouring the best genes might never mix into the
+#'   Set to zero for no favoring or large number for heavy favoring. Without any favoring the genetic algorithm gets more often stuck
+#'   in an area of the parameter space where some regimes are wasted, but with too much favoring the best genes might never mix into the
 #'   population and the algorithm might converge poorly. Default is \code{1} and it gives \eqn{2x} larger surviving probability weights for
 #'   individuals with no wasted regimes compared to individuals with one wasted regime. Number \code{2} would give \eqn{3x} larger probabilities etc.
 #' @param red_criteria a length 2 numeric vector specifying the criteria that is used to determine whether a regime is redundant or not.
@@ -301,7 +301,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
       surviveProbs <- rep(1, popsize)
     } else {
       T_values <- logliks[i1,] + abs(min(logliks[i1,])) # Function T giving surviving weights, as described by Dorsey R. E. and Mayer W. J., 1995
-      T_values <- T_values/(1 + regime_force_scale*redundants[i1,]) # Favour individuals with less redundant regimes
+      T_values <- T_values/(1 + regime_force_scale*redundants[i1,]) # favor individuals with less redundant regimes
       surviveProbs <- T_values/sum(T_values) # The surviving probability weights
     }
     survivors <- sample(1:popsize, size=popsize, replace=TRUE, prob=surviveProbs)

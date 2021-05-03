@@ -1,4 +1,4 @@
-#' @title Calculate standard errors for estimates of a GMAR, StMAR, or GStMAR model
+#' @title Calculate standard errors for estimates of a GMAR, StMAR, or G-StMAR model
 #'
 #' @description \code{standard_errors} numerically approximates standard errors for the given estimates of GMAR, StMAR, or GStMAR model.
 #'

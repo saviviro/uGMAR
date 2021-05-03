@@ -37,18 +37,18 @@
 * Tidier code for some parts.
 * Improved comments and documentation.
 * Bug fix: the function 'add_data' did not identify the model type correctly. 
-* Bug fix: simulateGSMAR simulated some initial values from slighly wrong distribution; did not have affect on forecasts.
+* Bug fix: simulateGSMAR simulated some initial values from sligthly wrong distribution; did not have affect on forecasts.
 * Minor update on the summary print for the models
 
 # uGMAR 3.2.3
 
 * Updated the plot method for class 'gsmar' objects: now includes a density plot by default (can be removed).
 * Updated the predict method for class 'gsmar' objects: now includes predictions for the mixing weights (can be removed from the plot).
-* Fixed 'profile_logliks' to show correct headlines with mean parametrization + improved the default method for choosing the number of rows and colums in the plot-matrix.
+* Fixed 'profile_logliks' to show correct headlines with mean parametrization + improved the default method for choosing the number of rows and columns in the plot-matrix.
 * Now standard errors are printed correctly for models imposing all kinds of constraints. In the earlier versions, constrained AR parameter standard errors were printed incorrectly if the constraints involved multiplications or summations. 
 * Removed redundant reinitialization of a PSOCK cluster in the function 'fitGSMAR'. 
 * In the function quantile_residual_tests the default argument for 'nsimu' is now 1 so that the tests are based on the given data only (and not on simulation).
-* Added interest rate spead (10-Year minus 1-Year treasury) data.
+* Added interest rate spread (10-Year minus 1-Year treasury) data.
 
 # uGMAR 3.2.4
 

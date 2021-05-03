@@ -60,7 +60,7 @@ get_regime_means <- function(gsmar) {
 #'            arXiv:1805.04010 \strong{[econ.EM]}.
 #'    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
 #'            theoretical properties similar to the GMAR and StMAR models.
-#'    \item Lutkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
+#'    \item Lütkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
 #'            \emph{Springer}.
 #'  }
 #' @examples
@@ -86,7 +86,7 @@ get_regime_autocovs <- function(gsmar) {
   pars <- pick_pars(p=p, M=M, params=gsmar$params, model=gsmar$model$model,
                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
   ret <- matrix(nrow=p, ncol=sum(M))
-  for(i1 in 1:sum(M)) { # Formula from Lutkepohl (2005) eq. (2.1.39)
+  for(i1 in 1:sum(M)) { # Formula from Lütkepohl (2005) eq. (2.1.39)
     phi <- pars[2:(p + 1), i1]
     if(p == 1) {
       A <- as.matrix(phi)

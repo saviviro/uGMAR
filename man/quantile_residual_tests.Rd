@@ -23,7 +23,7 @@ quantile_residual_tests(
 \item{x}{object of class \code{'qrtest'} created with the function \code{quantile_residual_tests}.}
 
 \item{...}{graphical parameters passed to \code{segments} in \code{plot.qrtest}.
-Currectly not used in \code{print.qrtest}}
+Currently not used in \code{print.qrtest}}
 
 \item{digits}{the number of digits to be print}
 

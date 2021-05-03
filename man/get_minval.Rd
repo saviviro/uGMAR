@@ -16,7 +16,7 @@ Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 \code{get_minval} returns the default smallest allowed log-likelihood for given data.
 }
 \details{
-This function exists simply to avoid dublication inside the package.
+This function exists simply to avoid duplication inside the package.
 }
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GAfit}}

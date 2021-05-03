@@ -2,7 +2,7 @@
 % Please edit documentation in R/standardErrors.R
 \name{standard_errors}
 \alias{standard_errors}
-\title{Calculate standard errors for estimates of a GMAR, StMAR, or GStMAR model}
+\title{Calculate standard errors for estimates of a GMAR, StMAR, or G-StMAR model}
 \usage{
 standard_errors(
   data,

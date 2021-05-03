@@ -2,7 +2,7 @@
 % Please edit documentation in R/diagnosticPlot.R
 \name{profile_logliks}
 \alias{profile_logliks}
-\title{Plot profile log-likehoods around the estimates}
+\title{Plot profile log-likelihoods around the estimates}
 \usage{
 profile_logliks(gsmar, scale = 0.02, nrows, ncols, precision = 200)
 }

@@ -87,12 +87,12 @@ Returns \code{TRUE} or \code{FALSE} accordingly.
 }
 \details{
 \code{is_stationary_int} does not support models imposing linear constraints. In order to use it for a model imposing linear
- constraints, one needs to expand the constraints first to obtain a nonconstrained parameters vector.
+ constraints, one needs to expand the constraints first to obtain an unconstrained parameter vector.
 
  Note that \code{is_stationary_int} returns \code{FALSE} for stationary parameter vectors if they are extremely close to the boundary
  of the stationarity region.
 
- \code{is_identifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no dublicate
+ \code{is_identifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no duplicate
  regimes.
 }
 \section{Warning}{

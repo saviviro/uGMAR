@@ -197,7 +197,7 @@ quantile_residual_plot <- function(gsmar) {
 #' @import graphics
 #' @importFrom grDevices rgb
 #'
-#' @title Plot profile log-likehoods around the estimates
+#' @title Plot profile log-likelihoods around the estimates
 #'
 #' @description \code{profile_logliks} plots profile log-likelihoods around the estimates.
 #'

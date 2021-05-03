@@ -75,7 +75,7 @@ reform_constrained_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-St
 #'  non-restricted parameter vector.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns such parameter vector corresponding to the input vector that is the form describted in \code{params}
+#' @return Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 #' for non-restricted models (for non-constrained models). Linear constraints are not supported.
 
 reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {

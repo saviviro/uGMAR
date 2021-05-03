@@ -106,7 +106,7 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
  The variable metric algorithm (or quasi-Newton method, Nash (1990, algorithm 21)) used in the second phase is implemented
  with function the \code{optim} from the package \code{stats}.
 
- \strong{Addiotional Notes about the estimates:}
+ \strong{Additional Notes about the estimates:}
 
  Sometimes the found MLE is very close to the boundary of the stationarity region some regime, the related variance parameter
  is very small, and the associated mixing weights are "spiky". This kind of estimates often maximize the log-likelihood function

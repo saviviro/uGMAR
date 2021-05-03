@@ -36,7 +36,7 @@
 #'  The variable metric algorithm (or quasi-Newton method, Nash (1990, algorithm 21)) used in the second phase is implemented
 #'  with function the \code{optim} from the package \code{stats}.
 #'
-#'  \strong{Addiotional Notes about the estimates:}
+#'  \strong{Additional Notes about the estimates:}
 #'
 #'  Sometimes the found MLE is very close to the boundary of the stationarity region some regime, the related variance parameter
 #'  is very small, and the associated mixing weights are "spiky". This kind of estimates often maximize the log-likelihood function
@@ -204,9 +204,10 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   ### Optimization with the variable metric algorithm ###
 
-  # Logarithmize dfs to get overly large dfs values to the same range as other parameters.
-  # This adjusts the difference 'h' larger for larger dfs parameters in non-log scale to
-  # avoid numerical problems associated with overly large degrees of freedom values.
+  # Logarithmize dfs to get overly large degrees of freedom parameters to the same range
+  # as other parameters. This adjusts the difference 'h' larger for larger df parameters
+  # in non-log scale to avoid numerical problems associated with overly large degrees of
+  # freedom parameters.
   manipulateDFS <- function(M, params, model, FUN) {
     FUN <- match.fun(FUN)
     M2 <- ifelse(model == "StMAR", M, M[2])
@@ -363,7 +364,7 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
 #' @description \code{get_minval} returns the default smallest allowed log-likelihood for given data.
 #'
 #' @inheritParams GAfit
-#' @details This function exists simply to avoid dublication inside the package.
+#' @details This function exists simply to avoid duplication inside the package.
 #' @return Returns \code{-(10^(ceiling(log10(length(data))) + 1) - 1)}
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{GAfit}}
 

@@ -175,12 +175,12 @@ plot.qrtest <- function(x, ...) {
 #'
 #'   By the model implied stationary density we mean the stationary one-dimensional mixture
 #'   density of M regimes (see KMS 2015, Theorem 1 and the discussion following it for the Gaussian
-#'   case and Theorem 2 in PMS 2018 for the Studen's t case). The regimewise densities (i.e. each
+#'   case and Theorem 2 in PMS 2018 for the Student's t case). The regimewise densities (i.e. each
 #'   density 1,...,M in the stationary mixture density) are multiplied with the mixing weight
 #'   parameters accordingly.
 #'
 #'   In the density plot black represents the kernel density estimate of the data, grey dashed line the
-#'   model implied density, and the colored dotter lines the regime wise densities.
+#'   model implied density, and the colored dotted lines the regime wise densities.
 #' @export
 
 plot.gsmar <- function(x, ..., include_dens=TRUE) {

@@ -116,11 +116,11 @@ Default is \code{var(stats::ar(data, order.max=10)$resid, na.rm=TRUE)}.}
  the degrees of freedom parameters \eqn{\nu} have to be larger than \eqn{2}.
  If not specified (or \code{NULL} as is default), the initial population will be drawn randomly.}
 
-\item{regime_force_scale}{a non-negative real number specifying how much should natural selection favour individuals
+\item{regime_force_scale}{a non-negative real number specifying how much should natural selection favor individuals
 with less regimes that have almost all mixing weights (practically) at zero (see \code{red_criteria}), i.e., with
 less "redundant regimes".
-Set to zero for no favouring or large number for heavy favouring. Without any favouring the genetic algorithm gets more often stuck
-in an area of the parameter space where some regimes are wasted, but with too much favouring the best genes might never mix into the
+Set to zero for no favoring or large number for heavy favoring. Without any favoring the genetic algorithm gets more often stuck
+in an area of the parameter space where some regimes are wasted, but with too much favoring the best genes might never mix into the
 population and the algorithm might converge poorly. Default is \code{1} and it gives \eqn{2x} larger surviving probability weights for
 individuals with no wasted regimes compared to individuals with one wasted regime. Number \code{2} would give \eqn{3x} larger probabilities etc.}
 

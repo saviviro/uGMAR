@@ -18,7 +18,7 @@ format_valuef <- function(digits) {
 #' @param digits number of digits to be printed (max 20)
 #' @param summary_print if set to \code{TRUE} then the print will include approximate
 #'  standard errors for the estimates, log-likelihood, information criteria values,
-#'  modulus of the roots of the characteristic AR polynomias for each regime, and
+#'  modulus of the roots of the characteristic AR polynomials for each regime, and
 #'  several unconditional moments.
 #' @export
 
@@ -253,7 +253,7 @@ print.gsmarpred <- function(x, ..., digits=2) {
 #' @describeIn quantile_residual_tests Print method for class 'qrtest' objects
 #' @param x object of class \code{'qrtest'} created with the function \code{quantile_residual_tests}.
 #' @param ... graphical parameters passed to \code{segments} in \code{plot.qrtest}.
-#'  Currectly not used in \code{print.qrtest}
+#'  Currently not used in \code{print.qrtest}
 #' @param digits the number of digits to be print
 #' @export
 print.qrtest <- function(x, ..., digits=3) {

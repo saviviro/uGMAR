@@ -42,7 +42,7 @@ uncond_moments(gstmar12)
            arXiv:1805.04010 \strong{[econ.EM]}.
    \item There are currently no published references for the G-StMAR model, but it's a straightforward generalization with
            theoretical properties similar to the GMAR and StMAR models.
-   \item Lutkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
+   \item Lütkepohl H. 2005. New Introduction to Multiple Time Series Analysis.
            \emph{Springer}.
  }
 }

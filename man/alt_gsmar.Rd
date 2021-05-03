@@ -19,7 +19,7 @@ alt_gsmar(
 
 \item{which_round}{based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.}
 
-\item{which_largest}{based on estination round with which largest log-likelihood should the model be constructed?
+\item{which_largest}{based on estimation round with which largest log-likelihood should the model be constructed?
 An integer value in 1,...,\code{ncalls}. For example, \code{which_largest=2} would take the second largest log-likelihood
 and construct the model based on the corresponding estimates. If specified, then \code{which_round} is ignored.}
 

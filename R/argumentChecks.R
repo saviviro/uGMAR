@@ -5,12 +5,12 @@
 #'
 #' @inheritParams loglikelihood_int
 #' @details \code{is_stationary_int} does not support models imposing linear constraints. In order to use it for a model imposing linear
-#'  constraints, one needs to expand the constraints first to obtain a nonconstrained parameters vector.
+#'  constraints, one needs to expand the constraints first to obtain an unconstrained parameter vector.
 #'
 #'  Note that \code{is_stationary_int} returns \code{FALSE} for stationary parameter vectors if they are extremely close to the boundary
 #'  of the stationarity region.
 #'
-#'  \code{is_identifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no dublicate
+#'  \code{is_identifiable} checks that the regimes are sorted according to the mixing weight parameters and that there are no duplicate
 #'  regimes.
 #' @return Returns \code{TRUE} or \code{FALSE} accordingly.
 #' @section Warning:
@@ -338,7 +338,7 @@ n_params <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE
 
 
 
-#' @title Check whether all arguments are stricly positive natural numbers
+#' @title Check whether all arguments are strictly positive natural numbers
 #'
 #' @description \code{all_pos_ints} tells whether all the elements in a vector
 #'   are strictly positive natural numbers.

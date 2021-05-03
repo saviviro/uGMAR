@@ -302,7 +302,7 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' @inheritParams simulateGSMAR
 #' @inheritParams GSMAR
 #' @param which_round based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.
-#' @param which_largest based on estination round with which largest log-likelihood should the model be constructed?
+#' @param which_largest based on estimation round with which largest log-likelihood should the model be constructed?
 #'   An integer value in 1,...,\code{ncalls}. For example, \code{which_largest=2} would take the second largest log-likelihood
 #'   and construct the model based on the corresponding estimates. If specified, then \code{which_round} is ignored.
 #' @details It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function

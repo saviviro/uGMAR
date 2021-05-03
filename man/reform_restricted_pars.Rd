@@ -62,7 +62,7 @@ are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.}
 to be the same for all regimes.}
 }
 \value{
-Returns such parameter vector corresponding to the input vector that is the form describted in \code{params}
+Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 for non-restricted models (for non-constrained models). Linear constraints are not supported.
 }
 \description{

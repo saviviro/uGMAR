@@ -89,7 +89,7 @@ Returns a list with three elements: \code{$params} contains the corresponding G-
 }
 \description{
 \code{stmarpars_to_gstmar} transforms a StMAR model parameter vector to a corresponding
- G-StMAR model parameter vector with large dfs parameters reduced by swicthing the related regimes
+ G-StMAR model parameter vector with large dfs parameters reduced by switching the related regimes
  to be GMAR type.
 }
 \examples{
