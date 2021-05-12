@@ -15,7 +15,6 @@
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 #'   or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.
 #' @param print_res should the estimation results be printed?
-#' @param close_connections should \code{closeAllConnections()} be run on exit? Set \code{FALSE} when using from Rmarkdown.
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
 #' @details
 #'  Because of complexity and multimodality of the log-likelihood function, it's \strong{not guaranteed} that the estimation
@@ -67,8 +66,8 @@
 #'          \strong{13}, 53-66.
 #'    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
 #'          \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-#'    \item Meitz M., Preve D., Saikkonen P. 2018. A mixture autoregressive model based on Student's t-distribution.
-#'          arXiv:1805.04010 \strong{[econ.EM]}.
+#'    \item Meitz M., Preve D., Saikkonen P. forthcoming. A mixture autoregressive model based on Student's t-distribution.
+#'          \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
 #'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
 #'          \emph{Biometrica} \strong{71}, 403-404.
 #'    \item Nash J. 1990. Compact Numerical Methods for Computers. Linear algebra and Function Minimization.
@@ -77,7 +76,7 @@
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
 #'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
-#'    \item Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distribution.	arXiv:2003.05221 [econ.EM].
+#'    \item Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distributions. arXiv:2003.05221 [econ.EM].
 #'  }
 #' @examples
 #' \donttest{
@@ -142,8 +141,7 @@
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=2, maxit=300,
-                     seeds=NULL, print_res=TRUE, close_connections=TRUE, ...) {
-  if(close_connections) on.exit(closeAllConnections())
+                     seeds=NULL, print_res=TRUE, ...) {
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
   model <- match.arg(model)
@@ -177,7 +175,9 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   ### Optimization with the genetic algorithm ###
 
+
   cl <- parallel::makeCluster(ncores)
+  on.exit(try(parallel::stopCluster(cl), silent=TRUE)) # Close the cluster on exit, if not already closed.
   parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir=environment(fitGSMAR)) # assign all variables from package:uGMAR
   parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
 

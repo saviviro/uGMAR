@@ -18,7 +18,6 @@ fitGSMAR(
   maxit = 300,
   seeds = NULL,
   print_res = TRUE,
-  close_connections = TRUE,
   ...
 )
 }
@@ -69,8 +68,6 @@ and the randomness associated with the genetic algorithm.}
 or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.}
 
 \item{print_res}{should the estimation results be printed?}
-
-\item{close_connections}{should \code{closeAllConnections()} be run on exit? Set \code{FALSE} when using from Rmarkdown.}
 
 \item{...}{additional settings passed to the function \code{GAfit} employing the genetic algorithm.}
 }
