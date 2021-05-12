@@ -88,6 +88,7 @@
 * New, improved vignette.
 * Now the functions "iterate_more" and "alt_gsmar" also warn about near-unit-roots and return results from all the estimation rounds.
 * Summary and print methods now display the number of parameters and observations.
+* Updated the reference to the StMAR model
 * Updated some of the documentation
 * fitGSMAR does not call closeAllConnections() on exit anymore; instead, it only closes the connections it opened.
 * Fixed the argument "precission" in profile_logliks to "precision".

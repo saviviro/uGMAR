@@ -69,7 +69,7 @@ It's sometimes useful to examine other estimates than the one with the highest l
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
    \item Meitz M., Preve D., Saikkonen P. forthcoming. A mixture autoregressive model based on Student's t-distribution.
            \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
-   \item Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distribution. arXiv:2003.05221 [econ.EM].
+   \item Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distributions. arXiv:2003.05221 [econ.EM].
  }
 }
 \seealso{
