@@ -92,3 +92,7 @@
 * Updated some of the documentation
 * fitGSMAR does not call closeAllConnections() on exit anymore; instead, it only closes the connections it opened.
 * Fixed the argument "precission" in profile_logliks to "precision".
+
+# uGMAR 3.3.2
+
+* Minor update to the vignette.

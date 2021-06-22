@@ -157,7 +157,7 @@ Virolainen S (2020{\natexlab{b}}).
 Virolainen S (2021).
 \newblock \emph{gmvarkit: Estimate Gaussian Mixture Vector Autoregressive
   Model}.
-\newblock \proglang{R} package version 1.4.1,
+\newblock \proglang{R} package version 1.4.2,
   \urlprefix\url{https://CRAN.R-project.org/package=gmvarkit}.
 
 \bibitem[{Wong and Li(2000)}]{Wong+Li:2000}
