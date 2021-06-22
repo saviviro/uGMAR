@@ -50,12 +50,13 @@ calc_gradient <- function(x, fn, h=6e-06, varying_h=NULL, ...) {
   fn <- match.fun(fn)
   n <- length(x)
   I <- diag(1, nrow=n, ncol=n)
-  if(is.null(varying_h)) {
+  if(is.null(varying_h)) { # The same difference h for all parameters
     h <- rep(h, times=n)
-  } else {
+  } else { # Varying h
     stopifnot(length(varying_h) == length(x))
     h <- varying_h
   }
+  # Calculate the central difference approximation
   vapply(1:n, function(i1) (fn(x + h[i1]*I[i1,], ...) - fn(x - h[i1]*I[i1,], ...))/(2*h[i1]), numeric(1))
 }
 
@@ -66,14 +67,14 @@ calc_hessian <- function(x, fn, h=6e-06, varying_h=NULL, ...) {
   fn <- match.fun(fn)
   n <- length(x)
   I <- diag(1, nrow=n, ncol=n)
-  if(is.null(varying_h)) {
+  if(is.null(varying_h)) { # The same difference h for all parameters
     h <- rep(h, times=n)
-  } else {
+  } else { # Varying h
     stopifnot(length(varying_h) == length(x))
     h <- varying_h
   }
   Hess <- matrix(ncol=n, nrow=n)
-  for(i1 in 1:n) {
+  for(i1 in 1:n) { # Calcute the central difference approximation for the Hessian
     for(i2 in i1:n) {
       dr1 <- (fn(x + h[i1]*I[i1,] + h[i2]*I[i2,], ...) - fn(x - h[i1]*I[i1,] + h[i2]*I[i2,], ...))/(2*h[i1])
       dr2 <- (fn(x + h[i1]*I[i1,] - h[i2]*I[i2,], ...) - fn(x - h[i1]*I[i1,] - h[i2]*I[i2,], ...))/(2*h[i1])
@@ -89,19 +90,22 @@ calc_hessian <- function(x, fn, h=6e-06, varying_h=NULL, ...) {
 #' @export
 get_gradient <- function(gsmar, custom_h=NULL) {
   check_gsmar(gsmar)
-  if(is.null(custom_h)) {
+  if(is.null(custom_h)) { # Adjust h for overly large degrees of freedom parameters
     varying_h <- get_varying_h(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model)
-  } else {
+  } else { # Utilize user-specified h
     stopifnot(length(custom_h) == length(gsmar$params))
     varying_h <- custom_h
   }
 
+  # Function to differentiate
   foo <- function(x) {
     loglikelihood(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=x, model=gsmar$model$model,
                   restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                   conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
                   minval = NA)
   }
+
+  # Calculate the gradient
   calc_gradient(x=gsmar$params, fn=foo, varying_h=varying_h)
 }
 
@@ -115,28 +119,31 @@ get_foc <- function(gsmar, custom_h=NULL) {
 #' @export
 get_hessian <- function(gsmar, custom_h=NULL) {
   check_gsmar(gsmar)
-  if(is.null(custom_h)) {
+  if(is.null(custom_h)) { # Adjust h for overly large degrees of freedom parameters
     varying_h <- get_varying_h(p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params, model=gsmar$model$model)
-  } else {
+  } else { # Utilize user-specified h
     stopifnot(length(custom_h) == length(gsmar$params))
     varying_h <- custom_h
   }
 
+  # Function to differentiate
   foo <- function(x) {
     loglikelihood(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=x, model=gsmar$model$model,
                   restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                   conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
                   minval = NA)
   }
+
+  # Calculate the Hessian
   calc_hessian(x=gsmar$params, fn=foo, varying_h=varying_h)
 }
 
 #' @rdname calc_gradient
 #' @export
 get_soc <- function(gsmar, custom_h=NULL) {
-  hess <- get_hessian(gsmar, custom_h=custom_h)
+  hess <- get_hessian(gsmar, custom_h=custom_h) # Calculate the Hessian
   if(anyNA(hess)) stop("Missing values in the Hessian matrix. Are estimates at the border of the parameter space?")
-  eigen(hess)$value
+  eigen(hess)$value # Return the eigenvalues
 }
 
 
@@ -157,10 +164,10 @@ get_varying_h <- function(p, M, params, model) {
   if(model != "GMAR") {
     dfs <- pick_dfs(p=p, M=M, params=params, model=model)
     adj_diffs <- numeric(length(dfs))
-    adj_diffs[dfs <= 100] <- 6e-6
-    adj_diffs[dfs > 100] <- signif(dfs[dfs > 100]/1000, digits=2)
-    varying_h <- c(rep(6e-6, times=length(params) - length(dfs)), adj_diffs)
-  } else {
+    adj_diffs[dfs <= 100] <- 6e-6 # h is not adjusted for dfs not larger than hundred
+    adj_diffs[dfs > 100] <- signif(dfs[dfs > 100]/1000, digits=2) # The adjusted differences h
+    varying_h <- c(rep(6e-6, times=length(params) - length(dfs)), adj_diffs) # Difference h for all parameters
+  } else { # No degrees of freedom parameters in GMAR model, so the default difference is used
     varying_h <- rep(6e-6, times=length(params))
   }
   varying_h

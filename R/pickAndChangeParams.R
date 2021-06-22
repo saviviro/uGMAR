@@ -20,6 +20,8 @@
 
 stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
                                 restricted=FALSE, constraints=NULL, maxdf=100) {
+
+  # Checks etc
   if(!model %in% c("StMAR", "G-StMAR")) stop("Only StMAR and G-StMAR models are supported!")
   check_pM(p, M, model=model)
   check_params_length(p, M, params, model=model, restricted=restricted, constraints=constraints)
@@ -34,10 +36,10 @@ stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
     M2 <- M_orig[2]
   }
 
-  dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
+  dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model) # Degrees of freedom parameters
   if(!any(dfs > maxdf)) {
     warning("No degrees of freedom parameter is larger than 'maxdf'. The original model is returned.")
-    if(model == "StMAR") {
+    if(model == "StMAR") { # M in the returned model (note: used inside the function stmar_to_gstmar)
       ret_M <- c(0, M)
     } else {
       ret_M <- M_orig
@@ -46,11 +48,13 @@ stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
                 reg_order=1:M,
                 M=ret_M))
   }
-  regs_to_change <- which(dfs > maxdf) + M1
+  regs_to_change <- which(dfs > maxdf) + M1 # Which regimes to change to GMAR type
   if(length(regs_to_change) == M2) message("All regimes are changed to GMAR type. The result is therefore a GMAR model and not a G-StMAR model.")
   alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=constraints)
-  all_regs <- lapply(1:M, function(i1) extract_regime(p=p, M=M_orig, params, model=model, restricted=restricted,
+  all_regs <- lapply(1:M, function(i1) extract_regime(p=p, M=M_orig, params, model=model, restricted=restricted, # Extract the regime parameters
                                                       constraints=constraints, regime=i1, with_dfs=FALSE))
+
+  # Obtain the wew params excluding degrees of freedom and mixing weights
   if(model == "StMAR") {
     gmar_regs <- regs_to_change
   } else { # model == "G-StMAR
@@ -58,23 +62,27 @@ stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
   }
   reg_order <- c(gmar_regs[order(alphas[gmar_regs], decreasing=TRUE)], # GMAR type regimes
                  (1:M)[-gmar_regs][order(alphas[-gmar_regs], decreasing=TRUE)]) # StMAR type regimes
-  tmp_pars <- unlist(all_regs[reg_order])
+  tmp_pars <- unlist(all_regs[reg_order]) # New params excluding degrees of freedom and mixing weights
 
-  if(!is.null(constraints) && any(reg_order != 1:M)) {
+  if(!is.null(constraints) && any(reg_order != 1:M)) { # If constraints and regimes are sorted -> also sort constraint matrices
     message(paste0("The order of the constraint matrices for was changed to ", toString(reg_order), "."))
   }
   if(restricted) { # Add the missing AR parameters
-    q <- ifelse(is.null(constraints), p, ncol(constraints))
-    tmp_pars <- c(tmp_pars[seq(from=1, to=2*M, by=2)],
+    q <- ifelse(is.null(constraints), p, ncol(constraints)) # The number of  AR coefficients
+    tmp_pars <- c(tmp_pars[seq(from=1, to=2*M, by=2)],  # New params excluding degrees of freedom and mixing weights
                   params[(M + 1):(M + q)],
                   tmp_pars[seq(from=2, to=2*M, by=2)])
   }
+
+  # Degrees of freedom params on the new model
   if(length(regs_to_change) == M2) {
     new_dfs <- numeric(0)
   } else {
     new_dfs <- dfs[-(regs_to_change - M1)][order(reg_order[(length(regs_to_change) + 1 + M1):M], decreasing=FALSE)]
   }
-  list(params=c(tmp_pars, alphas[reg_order][-M], new_dfs),
+
+  # Return the new parameter vector, new regime order, and new order M
+  list(params=c(tmp_pars, alphas[reg_order][-M], new_dfs), # add alphas and degrees of freedoms
        reg_order=reg_order,
        M=c(length(regs_to_change) + M1, M2 - length(regs_to_change)))
 }
@@ -89,7 +97,7 @@ stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #'  parametrization.
 
 pick_phi0 <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
-  if(!is.null(constraints)) {
+  if(!is.null(constraints)) { # Remove constraints, if any
     params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   }
   M <- sum(M)
@@ -117,8 +125,8 @@ pick_dfs <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")) {
   } else {
     M2 <- M
   }
-  d <- length(params)
-  params[(d - M2 + 1):d]
+  d <- length(params) # The total number of params
+  params[(d - M2 + 1):d] # The last d - M2 params are degrees of freedom params
 }
 
 
@@ -136,17 +144,19 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
   if(sum(M) == 1) {
     return(1)
   } else {
-    if(!is.null(constraints)) {
+    if(!is.null(constraints)) { # Remove constraints, if any
       params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
     }
     M <- sum(M)
+
+    # Pick the alphas from the parameter vector
     if(restricted == FALSE) {
       alphas <- params[(M*(p + 2) + 1):(M*(p + 3) - 1)]
-    } else {
+    } else { # Restricted == TRUE
       alphas <- params[(p + 2*M + 1):(3*M + p - 1)]
     }
   }
-  c(alphas, 1-sum(alphas))
+  c(alphas, 1-sum(alphas)) # Add the unparametrized alpha
 }
 
 
@@ -161,8 +171,8 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #'  for \eqn{\phi_1}, ..., the second to last row for \eqn{\phi_p}, and the last row for \eqn{\sigma^2}.
 
 pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
-  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  matrix(params[1:(sum(M)*(p + 2))], ncol=sum(M))
+  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints) # Remove all constraints
+  matrix(params[1:(sum(M)*(p + 2))], ncol=sum(M)) # Return the appropriate parameters in a matrix
 }
 
 
@@ -187,9 +197,9 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
   change_to <- match.arg(change_to)
   stopifnot(change_to == "intercept" | change_to == "mean")
   params_orig <- params
-  params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted,
+  params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, # Remove constraints
                                   constraints=constraints)
-  pars <- reform_parameters(p=p, M=M, params=params, model=model, restricted=restricted)$pars
+  pars <- reform_parameters(p=p, M=M, params=params, model=model, restricted=restricted)$pars # Reform the parameter vector to the standard form
   M <- sum(M)
 
   if(change_to == "intercept") { # Current parametrization is "mean"
@@ -200,19 +210,19 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 
   if(restricted == FALSE) {
     if(is.null(constraints)) {
-      all_q <- rep(p, times=M)
+      all_q <- rep(p, times=M) # Numbers of AR parameters in each regime
     } else {
-      all_q <- vapply(1:M, function(m) ncol(as.matrix(constraints[[m]])), numeric(1))
+      all_q <- vapply(1:M, function(m) ncol(as.matrix(constraints[[m]])), numeric(1)) # Numbers of AR parameters in each regime
     }
     j <- 0
     for(m in 1:M) {
-      params_orig[j + 1] <- new_pars[m]
+      params_orig[j + 1] <- new_pars[m] # Insert the new phi/mu parameters
       j <- j + all_q[m] + 2
     }
   } else {
-    params_orig[1:M] <- new_pars
+    params_orig[1:M] <- new_pars # Insert the new phi/mu parameters
   }
-  params_orig
+  params_orig # The new parameter vector
 }
 
 
@@ -236,11 +246,11 @@ get_ar_roots <- function(gsmar) {
   check_gsmar(gsmar)
   p <- gsmar$model$p
   M <- gsmar$model$M
-  params <- remove_all_constraints(p=p, M=M, params=gsmar$params, model=gsmar$model$model,
-                                 restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
+  params <- remove_all_constraints(p=p, M=M, params=gsmar$params, model=gsmar$model$model, # Remove all constraints
+                                   restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
   M <- sum(M)
   pars <- matrix(params[1:(M*(p + 2))], ncol=M)
-  lapply(1:M, function(i1) abs(polyroot(c(1, -pars[2:(p + 1), i1]))))
+  lapply(1:M, function(i1) abs(polyroot(c(1, -pars[2:(p + 1), i1])))) # Calculate the moduli roots of the AR polynomials
 }
 
 

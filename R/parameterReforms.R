@@ -18,7 +18,7 @@
 
 reform_parameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   model <- match.arg(model)
-  params <- reform_restricted_pars(p=p, M=M, params=params, model=model, restricted=restricted)
+  params <- reform_restricted_pars(p=p, M=M, params=params, model=model, restricted=restricted) # Parameters on the non-restricted form
   list(params=params,
        pars=pick_pars(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL),
        alphas=pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL),
@@ -45,21 +45,21 @@ reform_constrained_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-St
     M <- sum(M)
     if(restricted == FALSE) {
       params0 <- numeric(0)
-      j <- 0
-      for(i1 in 1:M) {
+      j <- 0 # Controls where we at in the parameter vector
+      for(i1 in 1:M) { # Go through the regimes
         C_m <- as.matrix(constraints[[i1]])
-        q_m <- ncol(C_m)
+        q_m <- ncol(C_m) # Number of AR parameters in the regime
         psi_m <- params[(j + 2):(j + q_m + 1)]
-        params0 <- c(params0, params[j + 1], C_m%*%psi_m, params[j + q_m + 2])
-        j <- j + q_m + 2
+        params0 <- c(params0, params[j + 1], C_m%*%psi_m, params[j + q_m + 2]) # Expand the constraints to the AR coefficients
+        j <- j + q_m + 2 # Update the counter
       }
       if(M > 1) {
         params0 <- c(params0, params[(j + 1):(j + M - 1)]) # add alphas
       }
     } else { # If restricted==TRUE
-      q <- ncol(as.matrix(constraints))
+      q <- ncol(as.matrix(constraints)) # Number of AR parameters
       psi <- params[(M + 1):(M + q)]
-      params0 <- c(params[1:M], constraints%*%psi, params[(M + q + 1):(2*M + q)])
+      params0 <- c(params[1:M], constraints%*%psi, params[(M + q + 1):(2*M + q)]) # Expand the constraints to the AR coefficients
       if(M > 1) {
         params0 <- c(params0, params[(2*M + q + 1):(3*M + q - 1)]) # add alphas
       }
@@ -83,6 +83,8 @@ reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
     return(params)
   }
   model <- match.arg(model)
+
+  # Pick the parameter values
   M_orig <- M
   M <- sum(M)
   phi0 <- params[1:M]
@@ -91,6 +93,8 @@ reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
   pars <- rbind(phi0, arcoefs, sigmas)
   alphas <- params[(p + 2*M + 1):(3*M + p - 1)]
   dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
+
+  # Collect parameters together in the "standard" form
   c(as.vector(pars), alphas, dfs)
 }
 
@@ -105,8 +109,8 @@ reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 
 remove_all_constraints <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
-  params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
-  reform_restricted_pars(p=p, M=M, params=params, model=model, restricted=restricted)
+  params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints) # Remove constraints
+  reform_restricted_pars(p=p, M=M, params=params, model=model, restricted=restricted) # Remove "restricted" -type constraints
 }
 
 
@@ -129,7 +133,9 @@ sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
       return(params)
     }
     alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=restricted, constraints=NULL)
-    sortedByAlphas <- order(alphas, decreasing=TRUE)
+    sortedByAlphas <- order(alphas, decreasing=TRUE) # The new ordering of the regimes
+
+    # Sort the regimes
     alphas <- alphas[sortedByAlphas]
     pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=NULL)
     pars <- pars[,sortedByAlphas]
@@ -138,6 +144,7 @@ sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
       dfs <- dfs[sortedByAlphas]
     }
 
+    # Remove the mixing weight parameter of the last regime
     if(restricted == FALSE) {
       return(c(as.vector(pars), alphas[-M], dfs))
     } else { # If restricted == TRUE
@@ -150,26 +157,28 @@ sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
     if(restricted == FALSE) {
       pars0 <- numeric(0) # Collect pars in here
       alphas0 <- numeric(0) # Collect alphas in here
-      for(i1 in 1:2) { # Go through GMAR and StMAR parts
-        if(i1 == 1) {
+      for(i1 in 1:2) { # Go through GMAR and StMAR parts separately; GMAR == 1, StMAR == 2
+        if(i1 == 1) { # GMAR type
           pars <- matrix(params[1:(M1*(p + 2))], ncol=M1)
-        } else {
+        } else { # StMAR type
           pars <- matrix(params[((M1*(p + 2)) + 1):(Msum*(p + 2))], ncol=M2)
         }
         if(M[i1] > 1) { # If only one component of a given type, no need to sort
-          if(i1 == 1) {
+          if(i1 == 1) { # GMAR type
             alphas <- params[(Msum*(p + 2) + 1):(Msum*(p + 2) + M1)]
-          } else {
+          } else { # StMAR type
             alphas <- params[(Msum*(p + 2) + M1 + 1):(Msum*(p + 3) - 1)]
             dfs <- pick_dfs(p=p, M=M, params=params, model=model)
           }
           if(i1 == 2) { # If i1 == 2, add the non-parametrized alpha
             alphas <- c(alphas, 1 - (sum(alphas) + sum(alphas0)))
           }
-          sortedByAlphas <- order(alphas, decreasing=TRUE)
+          sortedByAlphas <- order(alphas, decreasing=TRUE) # The new ordering of the GMAR/StMAR type regimes
+
+          # Reorder the regimes of the given type
           pars <- pars[,sortedByAlphas]
           alphas <- alphas[sortedByAlphas]
-          if(i1 == 2) {
+          if(i1 == 2) { # StMAR type
             dfs <- dfs[sortedByAlphas]
             alphas <- alphas[-M2] # Delete the last alpha
           }
@@ -190,25 +199,27 @@ sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
       sigmas0 <- numeric(0)
       alphas0 <- numeric(0)
       arcoefs <- params[(Msum + 1):(Msum + p)]
-      for(i1 in 1:2) {
-        if(i1 == 1) {
+      for(i1 in 1:2) { # Go through GMAR and StMAR parts separately; GMAR == 1, StMAR == 2
+        if(i1 == 1) { # GMAR type
           phi0 <- params[1:M1]
           sigmas <- params[(Msum + p + 1):(Msum + p + M1)]
-        } else {
+        } else { # StMAR type
           phi0 <- params[(M1 + 1):Msum]
           sigmas <- params[(Msum + p + M1 + 1):(2*Msum + p)]
           dfs <- params[(3*Msum + p):(3*Msum + M2 + p - 1)]
         }
         if(M[i1] > 1) { # if M[i1]==1, no need to sort
-          if(i1 == 1) {
+          if(i1 == 1) { # GMAR type
             alphas <- params[(2*Msum + p + 1):(2*Msum + p + M1)]
-          } else {
+          } else { # StMAR type
             alphas <- params[(2*Msum + p + M1 + 1):(3*Msum + p - 1)]
           }
           if(i1 == 2) { # If i1 == 2, add the non-parametrized alpha
             alphas <- c(alphas, 1 - (sum(alphas) + sum(alphas0)))
           }
-          sortedByAlphas <- order(alphas, decreasing=TRUE)
+          sortedByAlphas <- order(alphas, decreasing=TRUE) # New ordering of regimes
+
+          # Reorder the regimes
           phi0 <- phi0[sortedByAlphas]
           sigmas <- sigmas[sortedByAlphas]
           alphas <- alphas[sortedByAlphas]
@@ -216,7 +227,6 @@ sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
             dfs <- dfs[sortedByAlphas]
             alphas <- alphas[-M2] # Delete the last alpha
           }
-          # }
         } else { # If only one component, no sort but collect alphas
           if(i1 == 1) {
             alphas <- params[2*Msum + p + 1]
@@ -224,11 +234,11 @@ sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
             alphas <- NULL # No alphas if only one StMAR-component
           }
         }
-        phi00 <- c(phi00, phi0)
-        sigmas0 <- c(sigmas0, sigmas)
-        alphas0 <- c(alphas0, alphas)
+        phi00 <- c(phi00, phi0) # All intercepts
+        sigmas0 <- c(sigmas0, sigmas) # All variance parameters
+        alphas0 <- c(alphas0, alphas) # All alphas
       }
-      return(c(phi00, arcoefs, sigmas0, alphas0, dfs))
+      return(c(phi00, arcoefs, sigmas0, alphas0, dfs)) # Collect the sorted parameters
     }
   }
 }

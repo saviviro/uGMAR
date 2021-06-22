@@ -28,12 +28,12 @@ is_stationary_int <- function(p, M, params, restricted=FALSE) {
   M <- sum(M)
   if(restricted == FALSE) {
     pars <- matrix(params[1:(M*(p + 2))], ncol=M)
-    for(i1 in 1:M) {
-      if(any(abs(polyroot(c(1, -pars[2:(p + 1), i1]))) <= 1 + 1e-8)) {
+    for(i1 in 1:M) { # Go through regimes
+      if(any(abs(polyroot(c(1, -pars[2:(p + 1), i1]))) <= 1 + 1e-8)) { # The stationarity condition with num tol 1e-8
         return(FALSE)
       }
     }
-  } else {
+  } else { # restricted -> common AR coefficients in all regimes
     absroots <- abs(polyroot(c(1, -params[(M + 1):(M + p)])))
     if(any(absroots <= 1 + 1e-8)) {
       return(FALSE)
@@ -45,6 +45,8 @@ is_stationary_int <- function(p, M, params, restricted=FALSE) {
 
 #' @rdname is_stationary_int
 is_identifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+
+  # Pick parameters etc
   model <- match.arg(model)
   params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   M_orig <- M
@@ -73,6 +75,8 @@ is_identifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
     alphas2 <- alphas[(M1 + 1):M]
   }
 
+  # Functions for determining are mixing weight parameters in the decreasing order
+  # or are there regimes with identical parameter values
   alphas_unsorted <- function(alps) is.unsorted(rev(alps), strictly=TRUE)
   pars_dublicates <- function(prs0) anyDuplicated(t(prs0)) != 0
 
@@ -136,6 +140,7 @@ is_identifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), r
 #' @export
 
 is_stationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+  # Pick and check parameter values
   model <- match.arg(model)
   check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
@@ -143,7 +148,7 @@ is_stationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
     params <- reform_constrained_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   }
-  is_stationary_int(p=p, M=M, params=params, restricted=restricted)
+  is_stationary_int(p=p, M=M, params=params, restricted=restricted) # Call the internal function to determine whether the process is stationary
 }
 
 
@@ -156,9 +161,9 @@ is_stationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 #' @return Returns the data as a class 'ts' object.
 
 check_and_correct_data <- function(data, p) {
-  if(anyNA(data)) {
+  if(anyNA(data)) { # Check if there are problems with the data
     stop("The data contains NA values")
-  } else if(length(data) < p+2) {
+  } else if(length(data) < p + 2) {
     stop("The data must contain at least p+2 values")
   } else if(!is.numeric(data)) {
     stop("The data should be numeric")
@@ -168,7 +173,7 @@ check_and_correct_data <- function(data, p) {
       stop("Only univariate time series are supported! For multivariate analysis, try the package 'gmvarkit'.")
     }
   }
-  if(!is.ts(data)) {
+  if(!is.ts(data)) { # Make data a class ts object it is not already
     data <- as.ts(data)
   }
   data
@@ -185,6 +190,8 @@ check_and_correct_data <- function(data, p) {
 #' @return Throws an informative error if any check fails. Does not return anything.
 
 parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
+
+  # Pick the parameter values
   model <- match.arg(model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
@@ -192,6 +199,7 @@ parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
   alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M, params=params, model=model)
 
+  # Check degrees of freedom parameters for StMAR and G-StMAR models
   if(model == "StMAR" | model == "G-StMAR") {
     if(any(dfs <= 2)) {
       stop("The degrees of freedom parameters have to be larger than 2")
@@ -205,6 +213,7 @@ parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
     }
   }
 
+  # Check assumptions regarding the rest of the parameters
   if(sum(M) >= 2 & sum(alphas[-sum(M)]) >= 1) {
     stop("The mixing weight parameters don't sum to one")
   } else if(any(alphas <= 0)) {
@@ -224,7 +233,7 @@ parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #' @return Doesn't return anything but throws an informative error if finds out that something is wrong.
 
 check_constraint_mat <- function(p, M, restricted=FALSE, constraints=NULL) {
-  if(!is.null(constraints)) {
+  if(!is.null(constraints)) { # Check only if constraints are imposed
     M <- sum(M)
     if(restricted == TRUE) { # 'constraints' is a single matrix
       if(!is.matrix(constraints)) {
@@ -240,7 +249,7 @@ check_constraint_mat <- function(p, M, restricted=FALSE, constraints=NULL) {
       if(!is.list(constraints) | length(constraints) != M) {
         stop("The argument constraints should be a list of M constraint matrices - one for each mixture component")
       }
-      for(i1 in 1:M) {
+      for(i1 in 1:M) { # Go through the regimes and check constraints for each of them separately
         C0 <- as.matrix(constraints[[i1]])
         q <- ncol(C0)
         if(nrow(C0) != p) {
@@ -264,14 +273,14 @@ check_constraint_mat <- function(p, M, restricted=FALSE, constraints=NULL) {
 
 check_pM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
   model <- match.arg(model)
-  if(model == "G-StMAR") {
+  if(model == "G-StMAR") { # Check that M is correctly set for G-StMAR model
     if(length(M) != 2 | !all_pos_ints(M)) {
       stop("For a G-StMAR model the argument M should be a length 2 positive integer vector")
     }
-  } else if(!all_pos_ints(M) | length(M) != 1) {
+  } else if(!all_pos_ints(M) | length(M) != 1) { # Check that M is correctly set for GMAR and StMAR models
       stop("Argument M has to be positive integer")
   }
-  if(!all_pos_ints(p) | length(p) != 1) {
+  if(!all_pos_ints(p) | length(p) != 1) { # Check that p is a positive integer
     stop("Argument p has to be positive integer")
   }
 }
@@ -285,7 +294,9 @@ check_pM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
 
 n_params <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
+  # We go through case by case as the number of parameters is different with different types of constraints
   if(restricted == FALSE) {
+    # Function to calculate the number of AR parameters in each regime when constraints are employed
     n_const_pars <- function(M, constraints) sum(vapply(1:M, function(i1) ncol(as.matrix(constraints[[i1]])), numeric(1)))
     if(model == "StMAR") {
       if(is.null(constraints)) {
@@ -416,12 +427,12 @@ check_data <- function(object) {
 
 warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), warn_about=c("derivs", "errors")) {
 
-  if(!missing(object)) {
+  if(!missing(object)) { # If the model is given as class gsmar object, extract the required information from it.
     M <- object$model$M
     params <- object$params
     model <- object$model$model
   }
-  if(model %in% c("StMAR", "G-StMAR")) {
+  if(model %in% c("StMAR", "G-StMAR")) { # Check whether there are large degrees of freedom parameters in some regime
     M2 <- ifelse(model == "G-StMAR", M[2], M)
     d <- length(params)
     dfs <- params[(d - M2 + 1):d]
@@ -442,9 +453,9 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #' @return Doesn't return anything.
 
 warn_ar_roots <- function(gsmar, tol=0.005) {
-  ar_roots <- get_ar_roots(gsmar)
-  near_nonstat <- vapply(1:sum(gsmar$model$M), function(i1) any(abs(ar_roots[[i1]]) < 1 + tol), logical(1))
-  if(any(near_nonstat)) {
+  ar_roots <- get_ar_roots(gsmar) # Roots of the AR-polynomials
+  near_nonstat <- vapply(1:sum(gsmar$model$M), function(i1) any(abs(ar_roots[[i1]]) < 1 + tol), logical(1)) # Which are near the boundary of the stationarity region
+  if(any(near_nonstat)) { # If some are near the boundary, throw a warning
     my_string <- ifelse(sum(near_nonstat) == 1,
                         paste("Regime", which(near_nonstat),"has near-unit-roots!"),
                         paste("Regimes", paste(which(near_nonstat), collapse=" and ") ,"have near-unit-roots!"))

@@ -120,9 +120,9 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   to_return <- match.arg(to_return)
   M_orig <- M
   if(model == "G-StMAR") {
-    M1 <- M[1]
-    M2 <- M[2]
-    M <- sum(M)
+    M1 <- M[1] # The number of GMAR type components
+    M2 <- M[2] # The number of StMAR type components
+    M <- sum(M) # The total number of mixture components
   } else if(model == "GMAR") {
     M1 <- M
     M2 <- 0
@@ -155,6 +155,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
+  # Check data and parameter vector
   if(checks) {
     data <- check_and_correct_data(data=data, p=p)
     parameter_checks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
@@ -175,8 +176,8 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
   Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1))
 
-  # Calculate inverse Gamma_m (see the covariance matrix Gamma_p in MPS 2018, p.3 - we calculate this for all mixture components using
-  # the inverse formula in Galbraith and Galbraith 1974). Also, calculate the matrix products in multivariate normal and t-distribution
+  # Calculate inverse Gamma_m. See the covariance matrix Gamma_p in MPS forthcoming, p.3 - we calculate this for all mixture components using
+  # the inverse formula in Galbraith and Galbraith 1974. Also, calculate the matrix products in multivariate normal and t-distribution
   # densities.
   matProd <- matrix(nrow=n_obs - p + 1, ncol=M)
   invG <- array(dim=c(p, p, M))
@@ -199,7 +200,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
-  # Calculate the multivariate normal or student's t values (KMS 2015, eq.(7) and MPS 2018, Theorem 1) in log for each vector y_t and for each m=1,..,M.
+  # Calculate the multivariate normal or student's t values (KMS 2015, eq.(7) and MPS forthcoming, Theorem 1) in log for each vector y_t and for each m=1,..,M.
   # First row for initial values \bm{y}_0 (as denoted by KMS 2015) and i:th row for \bm{y}_(i-1). First column for component m=1 and j:th column for m=j.
   logmv_values <- matrix(nrow=(n_obs - p + 1), ncol=M)
   if(model == "GMAR" | model == "G-StMAR") { # Multinormals
@@ -216,7 +217,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
-  # Calculate the mixing weights alpha_mt (KMS 2015, eq.(8) and MPS 2018, eq.(11)).
+  # Calculate the mixing weights alpha_mt (KMS 2015, eq.(8) and MPS forthcoming, eq.(11)).
   # First row for t=1, second for t=2, and i:th for t=i. First column for m=1, second for m=2 and j:th column for m=j.
   if(to_return != "mw_tplus1") {
     logmv_values0 <- logmv_values[1:(n_obs - p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
@@ -235,18 +236,18 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     return(alpha_mt)
   }
 
-  # Calculate the conditional means mu_mt (KMS 2015, eq.(2), MPS 2018, eq.(5)). First row for t=1, second for t=2 etc. First column for m=1,
+  # Calculate the conditional means mu_mt (KMS 2015, eq.(2), MPS forthcoming, eq.(5)). First row for t=1, second for t=2 etc. First column for m=1,
   # second column for m=2 etc.
   mu_mt <- t(pars[1,] + t(Y[-nrow(Y),]%*%pars[2:(p + 1), , drop=FALSE]))
 
   # Calculate/return conditional means
   if(to_return == "regime_cmeans") {
     return(mu_mt)
-  } else if(to_return == "total_cmeans") { # KMS 2015, eq.(4), MPS 2018, eq.(13)
+  } else if(to_return == "total_cmeans") { # KMS 2015, eq.(4), MPS forthcoming, eq.(13)
     return(rowSums(alpha_mt*mu_mt))
   }
 
-  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15)) or quantile residuals
+  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS forthcoming, eq.(14)-(15)) or quantile residuals
   Y2 <- Y[2:nrow(Y), 1] # Only the first column and rows 2...T are needed
 
   # GMAR type components
@@ -352,7 +353,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
     if(to_return == "regime_cvars") {
       return(sigma_mt)
-    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS 2018, eq.(13), Virolainen 2020, ea. (2.19))
+    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS forthcoming, eq.(13), Virolainen 2020, ea. (2.19))
       return(rowSums(alpha_mt*sigma_mt) + rowSums(alpha_mt*(mu_mt - rowSums(alpha_mt*mu_mt))^2))
     }
   }
@@ -362,7 +363,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   } else if(to_return == "loglik_and_mw") {
     ret <- list(loglik=l_0 + sum(log(l_t)), mw=alpha_mt)
   } else {
-    ret <- l_0 + sum(log(l_t)) # KMS 2015, eq.(12)-(13), MPS 2018, eq.(14)-(15)
+    ret <- l_0 + sum(log(l_t)) # KMS 2015, eq.(12)-(13), MPS forthcoming, eq.(14)-(15)
   }
   ret
 }
@@ -394,33 +395,34 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
   } else {
     if(!is.matrix(log_mvnvalues)) log_mvnvalues <- t(as.matrix(log_mvnvalues)) # Only one time point but multiple regimes
 
-    log_mvnvalues_orig <- log_mvnvalues
-    small_logmvns <- log_mvnvalues < epsilon
+    log_mvnvalues_orig <- log_mvnvalues # Log densities of each regime for each t
+    small_logmvns <- log_mvnvalues < epsilon # Densities too small to calculate in the non-log scale
     if(any(small_logmvns)) {
-      # If too small or large non-log-density values are present (i.e., that would yield -Inf or Inf),
-      # we replace them with ones that are not too small or large but imply the same mixing weights
+      # If log-densities too small to be handled in the non-log-scale are present,
+      # we replace them with ones that are not too small but imply the same mixing weights
       # up to negligible numerical tolerance.
       which_change <- rowSums(small_logmvns) > 0 # Which rows contain too small  values
-      to_change <- log_mvnvalues[which_change, , drop=FALSE]
+      to_change <- log_mvnvalues[which_change, , drop=FALSE] # The log-densities to be changed
       largest_vals <- do.call(pmax, split(to_change, f=rep(1:ncol(to_change), each=nrow(to_change)))) # The largest values of those rows
       diff_to_largest <- to_change - largest_vals # Differences to the largest value of the row
 
       # For each element in each row, check the (negative) distance from the largest value of the row. If the difference
-      # is smaller than epsilon, replace the with epsilon. The results are then the new log_mvn values.
+      # is smaller than epsilon, replace the different with epsilon. The results are then the new log_mvn values.
       diff_to_largest[diff_to_largest < epsilon] <- epsilon
 
       # Replace the old log_mvnvalues with the new ones
       log_mvnvalues[which_change,] <- diff_to_largest
     }
 
+    # Calculate the mixing weights
     mvnvalues <- exp(log_mvnvalues)
     denominator <- as.vector(mvnvalues%*%alphas)
     alpha_mt <- (mvnvalues/denominator)%*%diag(alphas)
   }
 
-  if(!also_l_0) {
+  if(!also_l_0) { # Only return mixing weights
     return(alpha_mt)
-  } else {
+  } else { # Also calculate and return l_0
     # First term of the exact log-likelihood (Kalliovirta et al. 2016, eq.(9))
     l_0 <- 0
     if(M == 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
@@ -466,12 +468,15 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
 
 loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                           conditional=TRUE, parametrization=c("intercept", "mean"), return_terms=FALSE, minval=NA) {
+  # Checks etc
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
   check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
   to_ret <- ifelse(return_terms, "terms", "loglik")
+
+  # Calculate the log-likelihood
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     conditional=conditional, parametrization=parametrization, boundaries=TRUE, checks=FALSE,
                     to_return=to_ret, minval=minval)
@@ -526,13 +531,16 @@ mixing_weights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-S
 
 mixing_weights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                           parametrization=c("intercept", "mean")) {
+  # Checks etc
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
   check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+
+  # Calculate the mixing weights
   mixing_weights_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
-                    constraints=constraints, parametrization=parametrization, checks=TRUE, to_return="mw")
+                     constraints=constraints, parametrization=parametrization, checks=TRUE, to_return="mw")
 }
 
 
@@ -576,11 +584,14 @@ mixing_weights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR
 
 cond_moments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                         parametrization=c("intercept", "mean"), to_return=c("regime_cmeans", "regime_cvars", "total_cmeans", "total_cvars")) {
+  # Checks etc
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
   check_pM(p=p, M=M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+
+  # Calculate the conditional moments
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     conditional=TRUE, parametrization=parametrization, boundaries=FALSE, checks=TRUE, to_return=to_return)
 }

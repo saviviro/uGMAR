@@ -36,35 +36,36 @@ cond_moment_plot <- function(gsmar, which_moment=c("mean", "variance")) {
   M <- sum(gsmar$model$M)
   data <- gsmar$data
 
-  if(which_moment == "mean") {
+  if(which_moment == "mean") { # Obtain the conditional means
     total_moments <- gsmar$total_cmeans
     mw_x_reg <- gsmar$mixing_weights*gsmar$regime_cmeans
     vals <- c(as.vector(mw_x_reg), data)
     ymin <- floor(min(vals))
-  } else {
+  } else { # Obtain the conditional varainces
     total_moments <- gsmar$total_cvars
     mw_x_reg <- gsmar$mixing_weights*gsmar$regime_cvars
     vals <- mw_x_reg
     ymin <- 0
   }
 
+  # Graphical settings
   old_par <- par(no.readonly=TRUE)
   on.exit(par(old_par))
   par(mar=c(2.6, 2.6, 2.6, 2.6))
   ymax <- max(vals)
   make_ts <- function(dat) ts(c(rep(NA, p), dat), start=start(data), frequency=frequency(data))
 
-  if(which_moment == "mean") {
+  if(which_moment == "mean") { # Plot the conditional means
     plot(data, ylim=c(ymin, ymax), xlab="", ylab="", main="Conditional means")
     lines(make_ts(total_moments), col="grey", lty=2, lwd=2)
-  } else {
+  } else { # Plot the conditional variances
     plot(data, xlab="", ylab="", main="Conditional variances")
     par(new=TRUE)
     plot(make_ts(total_moments), ylim=c(ymin, ymax), col="grey", lty=2, lwd=2, xlab="", ylab="", yaxt="n", xaxt="n")
     axis(side=4, col="grey", lwd=2)
   }
   colpal <- grDevices::colorRampPalette(c("blue", "turquoise1", "green", "red"))(M)
-  for(i1 in 1:M) {
+  for(i1 in 1:M) { # Plot the scaled regimewise conditional moments
     lines(make_ts(mw_x_reg[,i1]), col=colpal[i1], lty=3)
   }
   legend("topleft", legend=c("total", paste0("regime ", 1:M)), bty="n", col=c("grey", colpal),

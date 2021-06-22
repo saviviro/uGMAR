@@ -63,6 +63,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   data <- gsmar$data
   n_obs <- ifelse(gsmar$model$conditional, length(data) - gsmar$model$p, length(data))
 
+  # Pick and check the quantile residuals
   if(is.null(gsmar$quantile_residuals)) {
     qresiduals <- quantile_residuals_int(data=data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                         model=gsmar$model$mode, restricted=gsmar$model$restricted,
@@ -75,6 +76,8 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
     qresiduals <- qresiduals[!is.na(qresiduals)]
     warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
   }
+
+  # Graphical settings
   old_par <- par(no.readonly=TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   if(plot_indstats) {
@@ -100,6 +103,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   ticks1 <- round(seq(-yaxt0, yaxt0, by=0.1), 1)
   ticks2 = seq(-yaxt0, yaxt0, by=0.05)
 
+  # Function to plot sample autocorrelations
   plot_qr_acf <- function(vals_to_plot, main) {
     plot(0, 0, type="n", yaxt="n", xlim=c(0, nlags + 0.1), ylim=c(-yaxt0, yaxt0), xlab="", ylab="", main=main)
     axis(2, at=ticks1, labels=ticks1)
@@ -111,6 +115,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
     abline(h=c(-1.96*n_obs^{-1/2}, 1.96*n_obs^{-1/2}), col=rgb(0, 0, 1, 0.8), lty=2)
   }
 
+  # Plot the sample autocorrelations for quantile residuals and squared quantile residuals
   plot_qr_acf(qr_acf, main="Qres ACF")
   plot_qr_acf(qrsquare_acf, main="Qres^2 ACF")
 
@@ -118,6 +123,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
     # Obtain tests statistics
     qrtest <- quantile_residual_tests(gsmar, lags_ac=1:nlags, lags_ch=1:nlags, nsimu=nsimu, print_res=FALSE)
 
+    # Function to plot the "individiual autocorrelation/condition het.sked. statistics" (see Kalliovirta 2012 p.369)
     plot_inds <- function(which_ones) { # ac_res or ch_res
       res <- qrtest[[which(names(qrtest) == which_ones)]]
       inds_normalized <- res$indStat/res$stdError
@@ -170,6 +176,8 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 quantile_residual_plot <- function(gsmar) {
   check_gsmar(gsmar)
   check_data(gsmar)
+
+  # Pick and check the quantile residuals
   if(is.null(gsmar$quantile_residuals)) {
     qresiduals <- quantile_residuals_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=gsmar$params,
                                         model=gsmar$model$mode, restricted=gsmar$model$restricted,
@@ -182,9 +190,13 @@ quantile_residual_plot <- function(gsmar) {
     qresiduals <- qresiduals[!is.na(qresiduals)]
     warning(paste(n_na, "missing values removed from quantile residuals. Check the parameter estimates for possible problems (border of the prm space, large dfs, etc)?"))
   }
+
+  # Graphical settings
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   par(mfrow=c(2, 1), mar=c(2.6, 2.6, 2.1, 1.6))
+
+  # Plot the quantile residual time series and histogram
   plot(qresiduals, type="l", ylab="", xlab="", main="Quantile residuals")
   abline(h=c(-1.96, 0, 1.96), lty=2, col="red")
   hs <- hist(qresiduals, breaks="Scott", probability=TRUE, col="skyblue", plot=TRUE, ylim=c(0, 0.5))
@@ -231,6 +243,8 @@ quantile_residual_plot <- function(gsmar) {
 #' @export
 
 profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precision=200) {
+
+  # Pick the parameter values etc
   check_gsmar(gsmar)
   check_data(gsmar)
   p <- gsmar$model$p
@@ -245,11 +259,12 @@ profile_logliks <- function(gsmar, scale=0.02, nrows, ncols, precision=200) {
   if(missing(ncols)) ncols <- ceiling(npars/nrows)
   stopifnot(all_pos_ints(c(nrows, ncols)) && nrows*ncols >= npars)
 
+  # Graphical settings
   old_par <- par(no.readonly = TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
   par(mar=c(2.1, 2.1, 1.6, 1.1), mfrow=c(nrows, ncols))
 
-  # In order to get the labels right, we first determine which indeces in params
+  # In order to get the labels right, we first determine which indices in params
   # correspond to which parameters: different procedure for restricted model.
   if(restricted == FALSE) {
     if(!is.null(constraints)) {

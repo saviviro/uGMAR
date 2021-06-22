@@ -104,6 +104,8 @@
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),
                   conditional=TRUE, ngen=200, popsize, smart_mu=min(100, ceiling(0.5*ngen)), mu_scale, sigma_scale, initpop=NULL, regime_force_scale=1,
                   red_criteria=c(0.05, 0.01), to_return=c("alt_ind", "best_ind"), minval, seed=NULL, ...) {
+
+  # Check arguments
   set.seed(seed)
   model <- match.arg(model)
   check_model(model)
@@ -171,12 +173,13 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
   if(is.null(initpop)) {
     nattempts <- 100
     for(i1 in 1:nattempts) {
+      # Draw random parameter vectors and calculate the log-likelihoods
       G <- replicate(popsize, random_ind_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
                                                    mu_scale=mu_scale, sigma_scale=sigma_scale), numeric(d))
       init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
                                                                     constraints=constraints, conditional=conditional, parametrization="mean",
                                                                     boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), numeric(1))
-      if(any(init_loks > minval)) break
+      if(any(init_loks > minval)) break # Stop if good enough parameter vectors are found
       if(i1 == nattempts) stop("Failed to create initial population with good enough individuals. Consider setting up the initial population by hand using the argument 'initpop' of the function 'GAfit'.")
     }
   } else {
@@ -211,6 +214,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
         initpop[[i1]] <- sort_components(p=p, M=M_orig, params=params, model=model, restricted=restricted)
       }
     }
+    # Draw initial population from the parameter vectors given in the argument initpop
     G <- replicate(popsize, initpop[[sample.int(length(initpop), size=1)]])
     init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
                                                                   constraints=constraints, conditional=conditional, parametrization="mean",
@@ -516,7 +520,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 #'   to the same magnitude before calculating the "distance". Read the source code for details.
 
 regime_distance <- function(regime_pars1, regime_pars2) {
-  scale_fun <- function(x) {
+  scale_fun <- function(x) { # Function to scale values to the same magnitude
     x <- abs(x)
     if(x < 1) {
       return(1)
@@ -526,7 +530,7 @@ regime_distance <- function(regime_pars1, regime_pars2) {
   }
   scales1 <- vapply(regime_pars1, scale_fun, numeric(1))
   scales2 <- vapply(regime_pars2, scale_fun, numeric(1))
-  sqrt(crossprod(regime_pars1/scales1 - regime_pars2/scales2))
+  sqrt(crossprod(regime_pars1/scales1 - regime_pars2/scales2)) # Calculate the distance between scaled regime parameter values
 }
 
 
@@ -550,12 +554,12 @@ regime_distance <- function(regime_pars1, regime_pars2) {
 
 random_regime <- function(p, mu_scale, sigma_scale, restricted=FALSE, constraints=NULL, m, forcestat=FALSE) {
   stopifnot(restricted == FALSE)
-  if(!is.null(constraints)) {
+  if(!is.null(constraints)) { # Constraints employed, so the algorithm to force stationarity is not utilized
     C0 <- as.matrix(constraints[[m]])
-    q <- ncol(C0)
-    scale <- sum(abs(C0))
+    q <- ncol(C0) # number of AR coefficients in each regime
+    scale <- sum(abs(C0)) # Scale for the standard deviation of the normal distribution
     return(c(rnorm(n=1, mean=mu_scale[1], sd=mu_scale[2]), rnorm(n=q, mean=0, sd=0.6/scale), abs(rnorm(n=1, mean=0, sd=sigma_scale))))
-  } else {
+  } else { # Without constraints, random AR coefficients are obtained from the function random_arcoefs
     return(c(rnorm(n=1, mean=mu_scale[1], sd=mu_scale[2]), random_arcoefs(p=p, forcestat=forcestat, sd=0.6/p), abs(rnorm(n=1, mean=0, sd=sigma_scale))))
   }
 }
@@ -602,7 +606,7 @@ random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
 #' @return Returns \code{c(x, dfs)} with \code{how_many} dfs-elements.
 
 add_dfs <- function(x, how_many) {
-  c(x, 2 + rgamma(how_many, shape=0.3, rate=0.007))
+  c(x, 2 + rgamma(how_many, shape=0.3, rate=0.007)) # 2 + something positive yields dfs that are larger than two
 }
 
 
@@ -633,6 +637,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   }
 
   if(restricted == FALSE) {
+    # Not restricted -> draw the parameter vector (excluding mixing weight and df parameters)
     ind <- unlist(lapply(1:M, function(m) random_regime(p=p, mu_scale=mu_scale, sigma_scale=sigma_scale,
                                                         restricted=restricted, constraints=constraints,
                                                         m=m, forcestat=forcestat)))
@@ -640,14 +645,16 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     if(is.null(constraints)) {
       q <- p
       scale <- p
-    } else {
+    } else { # Constraints employed
       C0 <- as.matrix(constraints)
-      q <- ncol(C0)
+      q <- ncol(C0) # The number AR parameters in each regime
       scale <- sum(abs(C0))
     }
+    # Draw the parameter vector (excluding mixing weight and df parameters)
     ind <- c(rnorm(n=M, mean=mu_scale[1], sd=mu_scale[2]), random_arcoefs(p=q, forcestat=forcestat, sd=0.6/scale), abs(rnorm(n=M, mean=0, sd=sigma_scale)))
   }
 
+  # Draw the mixing weight parameters
   if(M > 1) {
     alphas <- runif(n=M)
     alphas <- alphas/sum(alphas)
@@ -664,6 +671,7 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     ind <- c(ind, alphas)
   }
 
+  # Draw the df parameters
   if(model == "StMAR") {
     ind <- add_dfs(ind, how_many=M)
   } else if(model == "G-StMAR") {
@@ -730,7 +738,10 @@ random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #' cbind(params32trc, smart32trc)
 #' @export
 
-random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, mu_scale, sigma_scale, forcestat=FALSE) {
+random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, mu_scale,
+                       sigma_scale, forcestat=FALSE) {
+
+  # Checks
   model <- match.arg(model)
   check_model(model)
   check_pM(p=p, M=M, model=model)
@@ -746,11 +757,13 @@ random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FAL
   if(!is.null(constraints)) {
     check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
+
+  # Try to create a stationary parameter vector 42 times
   for(i1 in 1:42) {
     ret <- random_ind_int(p=p, M=M, model=model, restricted=restricted, constraints=constraints, mu_scale=mu_scale,
                                 sigma_scale=sigma_scale, forcestat=forcestat)
     ret0 <- reform_constrained_pars(p=p, M=M, params=ret, model=model, restricted=restricted, constraints=constraints)
-    if(is_stationary_int(p=p, M=M, params=ret0, restricted=restricted)) return(ret)
+    if(is_stationary_int(p=p, M=M, params=ret0, restricted=restricted)) return(ret) # Return the parameter vector if it is stationary
   }
   message("Failed to generate stationary parameter vector")
   ret
@@ -769,7 +782,7 @@ random_ind <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FAL
 #' @inherit random_regime references
 
 smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                                mu_scale, sigma_scale, accuracy, which_random, forcestat=FALSE) {
+                          mu_scale, sigma_scale, accuracy, which_random, forcestat=FALSE) {
   model <- match.arg(model)
   M_orig <- M
   if(model == "G-StMAR") {
@@ -872,7 +885,9 @@ smart_ind_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 #' @export
 
 smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
-                            mu_scale, sigma_scale, accuracy, which_random=numeric(0), forcestat=FALSE) {
+                      mu_scale, sigma_scale, accuracy, which_random=numeric(0), forcestat=FALSE) {
+
+  # Checks
   model <- match.arg(model)
   check_model(model)
   check_pM(p=p, M=M, model=model)
@@ -897,9 +912,11 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
   if(!is.null(constraints)) {
     check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
   }
+
+  # Draw the "smart" random parameter vector
   smart_ind_int(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
-                      mu_scale=mu_scale, sigma_scale=sigma_scale, accuracy=accuracy, which_random=which_random,
-                      forcestat=forcestat)
+                mu_scale=mu_scale, sigma_scale=sigma_scale, accuracy=accuracy, which_random=which_random,
+                forcestat=forcestat)
 }
 
 
@@ -953,6 +970,8 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
       }
       j <- j + q + 2
     }
+
+    # Extract also degrees of freedom parameters, if needed
     if(model == "StMAR" & with_dfs) {
       params0 <- c(params0, params[j + M - 1 + regime]) # dfs
     } else if(model == "G-StMAR" & with_dfs) {
@@ -963,11 +982,13 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
     return(params0)
   } else { # If restricted == TRUE
     if(!is.null(constraints)) {
-      q <- ncol(as.matrix(constraints))
+      q <- ncol(as.matrix(constraints)) # The number of AR parameters in to q
     } else {
       q <- p
     }
     params0 <- c(params[regime], params[M + q + regime])
+
+    # Extract also degrees of freedom parameters, if needed
     if(model == "StMAR" & with_dfs) {
       params0 <- c(params0, params[3*M + q - 1 + regime]) # dfs
     } else if(model == "G-StMAR" & with_dfs) {
@@ -1019,11 +1040,12 @@ change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
   } else {
     M1 <- 0 # Exists for tidier code below
   }
+
   if(restricted == FALSE) {
     params0 <- numeric(0)
     j <- 0 # Indicates where we at
     for(i1 in 1:M) { # Go through regimes
-      q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints[[i1]])))
+      q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints[[i1]]))) # The number of AR parameters in the regime
       if(i1 == regime) { # Change the parameters
         if(model == "StMAR" | (model == "G-StMAR" & regime > M1)) {
           regimeDfs <- regime_params[length(regime_params)]
@@ -1038,7 +1060,7 @@ change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     if(M > 1) {
       params0 <- c(params0, params[(j + 1):(j + M - 1)]) # Add alphas
     }
-    if(model == "StMAR" | model == "G-StMAR") {
+    if(model == "StMAR" | model == "G-StMAR") { # Are there degrees of freedom parameters to change?
       dfs <- params[(j + M):(j + 2*M - 1 - M1)]
       if(model == "StMAR" | (model == "G-StMAR" & regime > M1)) {
         dfs[regime - M1] <- regimeDfs # Change the dfs
@@ -1047,7 +1069,7 @@ change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
     }
     return(params0)
   } else { # Restricted == TRUE
-    q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints)))
+    q <- ifelse(is.null(constraints), p, ncol(as.matrix(constraints))) # The number of AR parameters
     params0 <- params
     params0[regime] <- regime_params[1] # phi0
     params0[M + q + regime] <- regime_params[2] # sigma^2

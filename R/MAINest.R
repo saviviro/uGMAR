@@ -142,6 +142,7 @@
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                      parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=2, maxit=300,
                      seeds=NULL, print_res=TRUE, ...) {
+  # Checks etc
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
   model <- match.arg(model)
@@ -153,6 +154,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
   d <- n_params(p=p, M=M, model=model, restricted=restricted, constraints=constraints)
   dot_params <- list(...)
 
+  # Obtain minval and red_criteria from the dot parameters (if supplied)
   minval <- ifelse(is.null(dot_params$minval), get_minval(data), dot_params$minval)
   red_criteria <- ifelse(rep(is.null(dot_params$red_criteria), 2), c(0.05, 0.01), dot_params$red_criteria)
 
@@ -162,6 +164,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     print_res <- dot_params$printRes
   }
 
+  # The number of CPU cores
   if(ncores > parallel::detectCores()) {
     ncores <- parallel::detectCores()
     message("ncores was set to be larger than the number of detected: using ncores = parallel::detectCores()")
@@ -175,22 +178,25 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   ### Optimization with the genetic algorithm ###
 
-
+  # Set up the cluster
   cl <- parallel::makeCluster(ncores)
   on.exit(try(parallel::stopCluster(cl), silent=TRUE)) # Close the cluster on exit, if not already closed.
   parallel::clusterExport(cl, ls(environment(fitGSMAR)), envir=environment(fitGSMAR)) # assign all variables from package:uGMAR
   parallel::clusterEvalQ(cl, c(library(Brobdingnag), library(pbapply)))
 
+  # Call the genetic algorithm ncalls times
   cat("Optimizing with a genetic algorithm...\n")
   GAresults <- pbapply::pblapply(1:ncalls, function(i1) GAfit(data=data, p=p, M=M, model=model, restricted=restricted,
                                                              constraints=constraints, conditional=conditional,
                                                              parametrization=parametrization, seed=seeds[i1], ...), cl=cl)
 
+  # Log-likelihoods of the preliminary estimates
   loks <- vapply(1:ncalls, function(i1) loglikelihood_int(data=data, p=p, M=M, params=GAresults[[i1]], model=model,
                                                           restricted=restricted, constraints=constraints, conditional=conditional,
                                                           parametrization=parametrization, boundaries=TRUE, checks=FALSE,
                                                           minval=minval), numeric(1))
 
+  # Print results from the preliminary estimation
   if(print_res) {
     printloks <- function() {
         printfun <- function(txt, FUN) cat(paste(txt, round(FUN(loks), 3)), "\n")
@@ -204,21 +210,21 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   ### Optimization with the variable metric algorithm ###
 
-  # Logarithmize dfs to get overly large degrees of freedom parameters to the same range
-  # as other parameters. This adjusts the difference 'h' larger for larger df parameters
-  # in non-log scale to avoid numerical problems associated with overly large degrees of
-  # freedom parameters.
-  manipulateDFS <- function(M, params, model, FUN) {
+  # Logarithmize degrees of freedom parameters to get overly large degrees of freedom parameters
+  # value to the same range as other parameters. This adjusts the difference 'h' to be larger
+  # for larger df parameters in non-log scale to avoid the numerical problems associated with overly
+  # large degrees of freedom parameters.
+  manipulateDFS <- function(M, params, model, FUN) { # The function to log/exp the dfs
     FUN <- match.fun(FUN)
     M2 <- ifelse(model == "StMAR", M, M[2])
     params[(d - M2 + 1):d] <- FUN(params[(d - M2 + 1):d])
     params
   }
-  if(model == "StMAR" | model == "G-StMAR") {
+  if(model == "StMAR" | model == "G-StMAR") { # Logarithmize the degrees of freedom parameters
     GAresults <- lapply(1:ncalls, function(i1) manipulateDFS(M=M, params=GAresults[[i1]], model=model, FUN=log))
   }
 
-  # Function to maximize loglikelihood
+  # Function to maximize log-likelihood
   f <- function(params) {
      if(model == "StMAR" | model == "G-StMAR") {
        params <- manipulateDFS(M=M, params=params, model=model, FUN=exp) # Unlogarithmize dfs for calculating log-likelihood
@@ -235,25 +241,28 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     vapply(1:d, function(i1) (f(params + I[i1,]*h) - f(params - I[i1,]*h))/(2*h), numeric(1))
   }
 
+  # Run the variable metric algorithm
   cat("Optimizing with a variable metric algorithm...\n")
   NEWTONresults <- pbapply::pblapply(1:ncalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method="BFGS",
                                                                   control=list(fnscale=-1, maxit=maxit)), cl=cl)
   parallel::stopCluster(cl=cl)
 
-  loks <- vapply(1:ncalls, function(i1) NEWTONresults[[i1]]$value, numeric(1))
-  converged <- vapply(1:ncalls, function(i1) NEWTONresults[[i1]]$convergence == 0, logical(1))
+  loks <- vapply(1:ncalls, function(i1) NEWTONresults[[i1]]$value, numeric(1)) # Log-likelihoods
+  converged <- vapply(1:ncalls, function(i1) NEWTONresults[[i1]]$convergence == 0, logical(1)) # Which converged
 
-  if(is.null(constraints)) {
+  # Pick the parameter estimates
+  if(is.null(constraints)) { # Sort regimes by mixing weight parameters if no constraints employed
     newtonEstimates <- lapply(1:ncalls, function(i1) sort_components(p=p, M=M, params=NEWTONresults[[i1]]$par, model=model, restricted=restricted))
-  } else {
+  } else { # Do not sort if constraints are employed (as constraint matrices would then need to be sorted as well)
     newtonEstimates <- lapply(1:ncalls, function(i1) NEWTONresults[[i1]]$par)
   }
 
-  # Unlogarithmize dfs
+  # Unlogarithmize degrees of freedom parameters
   if(model == "StMAR" | model == "G-StMAR") {
     newtonEstimates <- lapply(1:ncalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], model=model, FUN=exp))
   }
 
+  # Print the estimation results
   if(print_res) {
     cat("Results from the variable metric algorithm:\n")
     printloks()
@@ -319,14 +328,17 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
   check_gsmar(gsmar)
   stopifnot(maxit %% 1 == 0 & maxit >= 1)
   if(!is.null(custom_h)) stopifnot(length(custom_h) == length(gsmar$params))
-  minval <- get_minval(gsmar$data)
+  minval <- get_minval(gsmar$data) # The smallest log-likelihood to be considered
 
+  # Log-likelihood function to maximize with respect to the parameter vector
   fn <- function(params) {
     tryCatch(loglikelihood_int(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=params,
                                model=gsmar$model$model, restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                                conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
                                boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), error=function(e) minval)
   }
+
+  # The gradient of the log-likelihood function
   gr <- function(params) {
     if(is.null(custom_h)) {
       varying_h <- get_varying_h(p=gsmar$model$p, M=gsmar$model$M, params=params, model=gsmar$model$model)
@@ -336,14 +348,17 @@ iterate_more <- function(gsmar, maxit=100, custom_h=NULL, calc_std_errors=TRUE) 
     calc_gradient(x=params, fn=fn, varying_h=varying_h)
   }
 
+  # Run the variable metric algorithm
   res <- optim(par=gsmar$params, fn=fn, gr=gr, method=c("BFGS"), control=list(fnscale=-1, maxit=maxit))
   if(res$convergence == 1) message("The maximum number of iterations was reached! Consider iterating more.")
 
+  # Build the model based on the estimates
   ret <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=gsmar$model$M, params=res$par, model=gsmar$model$model,
                restricted=gsmar$model$restricted, constraints=gsmar$model$constraints,
                conditional=gsmar$model$conditional, parametrization=gsmar$model$parametrization,
                calc_qresiduals=TRUE, calc_cond_moments=TRUE, calc_std_errors=calc_std_errors, custom_h=custom_h)
 
+  # Obtain statistics related to the original estimation
   ret$all_estimates <- gsmar$all_estimates
   ret$all_logliks <- gsmar$all_logliks
   ret$which_converged <- gsmar$which_converged
