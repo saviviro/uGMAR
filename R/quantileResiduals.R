@@ -24,6 +24,7 @@
 
 quantile_residuals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                                   constraints=NULL, parametrization=c("intercept", "mean")) {
+  # Quantile residuals are calculate with the same function as the log-likelihood
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     parametrization=parametrization, checks=TRUE, boundaries=FALSE, to_return="qresiduals", minval=NA)
 }
@@ -50,11 +51,14 @@ quantile_residuals_int <- function(data, p, M, params, model=c("GMAR", "StMAR", 
 
 quantile_residuals <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                               constraints=NULL, parametrization=c("intercept", "mean")) {
+  # Checks
   model <- match.arg(model)
   check_model(model)
   parametrization <- match.arg(parametrization)
   check_pM(p, M, model=model)
   check_params_length(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
+
+  # Quantile residuals are calculate with the same function as the log-likelihood
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     parametrization=parametrization, checks=TRUE, boundaries=TRUE, to_return="qresiduals", minval=NA)
 }

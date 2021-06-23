@@ -65,6 +65,8 @@
 #' @export
 
 simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
+
+  # Collect relevant statistics etc
   epsilon <- round(log(.Machine$double.xmin) + 10)
   check_gsmar(gsmar)
   p <- gsmar$model$p
@@ -81,6 +83,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
     M1 <- M
   }
 
+  # Checks
   if(!missing(init_values)) {
     if(length(init_values) < p) {
       stop("The length of initial values vector has to be at least p")
@@ -113,7 +116,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   # Calculate inverses of covariance matrices Gamma_m and their determinants
   invG <- array(dim=c(p, p, M))
   detG <- numeric(M)
-  if(p == 1) { # Inverse formula by Galbraith, R., Galbraith, J., (1974)
+  if(p == 1) { # Inverse formula by Galbraith, R. and Galbraith, J., (1974)
     for(i1 in 1:M) {
       invG[, , i1] <- (1 - pars[p + 1, i1]^2)/sigmas[i1]
       detG[i1] <- 1/invG[, , i1, drop=TRUE]
@@ -145,7 +148,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
       L <- t(chol(Gamma_m))
       mv_samples <- mu_mp[,m] + L%*%rnorm(p) # sample from N(mu_mp, Gamma_m)
     } else { # model == "StMAR" || (model == "G-StMAR" && m > M1); Draw from StMAR type component
-      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), dfs (see MPS 2018, Supplementary material).
+      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), dfs (see MPS forthcoming, Supplementary material).
       Gamma_m <- solve(invG[, , m])
       L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m)) # M1 = 0 for StMAR models
       Z <- L%*%rnorm(p) # Sample from N(0, ((v - 2)/v)/Gamma_m)
@@ -167,7 +170,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
 
     ### Start simulation ###
     for(i1 in 1:nsimu) {
-      # Calculate log multinormal values (KMS 2015, eq.(7)) or log Student's t values (PMS 2018, p.5); for each regime 1,...,M.
+      # Calculate log multinormal values (KMS 2015, eq.(7)) or log Student's t values (MPS forthcoming, p.5); for each regime 1,...,M.
       matProd <- vapply(1:M, function(i2) crossprod(Y[i1,] - mu_mp[,i2], as.matrix(invG[, , i2]))%*%(Y[i1,] - mu_mp[,i2]), numeric(1))
       if(model == "GMAR" || model == "G-StMAR") { # GMAR type regimes, M1 = M for GMAR models
         logmv_valuesM1 <- vapply(1:M1, function(i2) -0.5*p*log(2*base::pi) - 0.5*log(detG[i2]) - 0.5*matProd[i2], numeric(1))
@@ -183,7 +186,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
       }
       logmv_values <- c(logmv_valuesM1, logmv_valuesM2)
 
-      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), PMS 2018, eq.(11)).
+      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), MPS forthcoming, eq.(11)).
       alpha_mt <- get_alpha_mt(M=M, log_mvnvalues=logmv_values, alphas=alphas,
                                epsilon=epsilon, also_l_0=FALSE)
 
@@ -210,6 +213,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
     }
   }
 
+  # Wrap-up
   if(ntimes == 1 & drop) {
     sample <- as.vector(sample)
     component <- as.vector(component)

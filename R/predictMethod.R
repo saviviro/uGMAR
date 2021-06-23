@@ -79,6 +79,7 @@
 
 predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pred_type=c("median", "mean", "cond_mean"),
                          pi_type=c("two-sided", "upper", "lower", "none"), plot_res=TRUE, mix_weights=TRUE, nt) {
+  # Checks etc
   gsmar <- object
   pred_type <- match.arg(pred_type)
   pi_type <- match.arg(pi_type)
@@ -89,6 +90,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
   data <- gsmar$data
   n_obs <- length(data)
 
+  # Pick the relevant statistics etc
   p <- gsmar$model$p
   M <- gsmar$model$M
   params <- gsmar$params
@@ -96,6 +98,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
   restricted <- gsmar$model$restricted
   constraints <- gsmar$model$constraints
 
+  # More checks and default settings
   if(pred_type == "cond_mean") {
     if(missing(n_ahead)) {
       n_ahead <- 1
@@ -118,10 +121,10 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
   if(!is.null(constraints)) check_constraint_mat(p=p, M=M, restricted=restricted, constraints=constraints)
 
   # Calculate the prediction
-  if(pred_type == "cond_mean") { # Exact conditional mean
+  if(pred_type == "cond_mean") { # Prediction by the exact conditional mean
 
     # Collect parameter values and calculate mixing weights
-    if(gsmar$model$parametrization == "mean") {
+    if(gsmar$model$parametrization == "mean") { # Change to intercept parametrization
       params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
                                        constraints=constraints, change_to="intercept")
     }
@@ -130,8 +133,8 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints)
 
     # Calculate the conditional mean
-    pred <- sum(mw[nrow(mw),]*(pars[1,] + t(rev(data[(n_obs - p + 1):n_obs]))%*%pars[2:(2 + p - 1),]))
-    pred_ints <- NULL
+    pred <- sum(mw[nrow(mw),]*(pars[1,] + t(rev(data[(n_obs - p + 1):n_obs]))%*%pars[2:(2 + p - 1),])) # Point prediction using the formula
+    pred_ints <- NULL # No prediction intervals etc when using the exact conditional mean
     pi <- NULL
     pi_type <- "none"
     q_tocalc <- numeric(0)
@@ -165,10 +168,11 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
       q_tocalc <- numeric(0)
       pi <- NULL
     }
-    q_tocalc <- sort(q_tocalc, decreasing=FALSE)
-    pred_ints <- apply(sample, 1, FUN=quantile, probs=q_tocalc)
-    mix_pred_ints <- apply(alpha_mt, MARGIN=1:2, FUN=quantile, probs=q_tocalc)
+    q_tocalc <- sort(q_tocalc, decreasing=FALSE) # The quantiles to calculate for prediction intervals
+    pred_ints <- apply(sample, 1, FUN=quantile, probs=q_tocalc) # Calculate the empirical quantile points
+    mix_pred_ints <- apply(alpha_mt, MARGIN=1:2, FUN=quantile, probs=q_tocalc) # Quantile points of mixing weight predictions
 
+    # Re-store the results in a matrix/array that contains the intervals in a more intuitive form (see the return value)
     if(pi_type != "none") {
       if(length(q_tocalc) == 1) {
         pred_ints <- as.matrix(pred_ints)
@@ -182,6 +186,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
     }
   }
 
+  # Wrap-up and plot
   ret <- structure(list(gsmar=gsmar,
                         pred=pred,
                         pred_ints=pred_ints,

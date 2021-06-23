@@ -26,8 +26,8 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   gsmar <- x
   stopifnot(digits >= 0 & digits %% 1 == 0)
 
-  # Help functions
-  format_value <- format_valuef(digits)
+  # Helper functions
+  format_value <- format_valuef(digits) # Function to format values for printing
   print_err <- function(val) { # Function for printing standard errors in brackets
     if(summary_print) cat(paste0(" (", format_value(val),")"))
   }
@@ -38,6 +38,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     }
   }
 
+  # Collect the relevant statistics etc
   p <- gsmar$model$p
   M <- gsmar$model$M
   params <- gsmar$params
@@ -49,24 +50,25 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   nobs <- ifelse(is.null(gsmar$data), NA, length(gsmar$data))
   if(summary_print) all_vars <- get_regime_vars(gsmar)  # Unconditional regime variances
 
-  if(gsmar$model$parametrization == "mean") {
+  if(gsmar$model$parametrization == "mean") { # Change to intercept parametrization
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
                                      constraints=constraints, change_to="intercept")
   }
-  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted,
+  params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, # Remove all constraints
                                    constraints=constraints)
   all_phi0 <- pick_phi0(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=FALSE, constraints=NULL)
   dfs <- pick_dfs(p=p, M=M, params=params, model=model)
 
+  # Obtain the standard errors if called from the summary method: pick them from the std error vector similarly to the parameter estimates
   if(summary_print) {
     all_ar_roots <- get_ar_roots(gsmar)
     std_errors <- remove_all_constraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
-                                         constraints=constraints) # These errors are valid only if there is no multiplications or summations
+                                         constraints=constraints) # These errors are valid ONLY IF there is NO multiplications or summations
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err <- pick_alphas(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
-    alphas_err[sum(M)] <- NA
+    alphas_err[sum(M)] <- NA # The last mixing weight parameter is not parametrized
     dfs_err <- pick_dfs(p=p, M=M, params=std_errors, model=model)
     if(gsmar$model$parametrization == "mean") {
       mu_err <- pick_phi0(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
@@ -77,6 +79,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     }
   }
 
+  # Print the statistics related to the model
   cat("Model:\n", paste0(model, ", p = ", p, ", "))
   if(model == "G-StMAR") {
     cat(paste0("M1 = ", M[1], ", M2 = ", M[2], ", "))
@@ -100,10 +103,13 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
                     sep=", "), "\n")
   }
 
-  if(restricted & !is.null(constraints)) { # So that no need to make special case for restricted models
+  # Constraints are replicated for each regime so that there is no need to make special case for restricted models
+  if(restricted & !is.null(constraints)) {
     constraints <- replicate(n=M, expr=constraints, simplify=FALSE)
   }
-  for(m in seq_len(sum(M))) {
+
+  # Print the regime statistics, parameter estimates, and standard errors.
+  for(m in seq_len(sum(M))) { # Go through the regimes
     cat("\n")
     count <- 1
     err_string <- list()
@@ -141,17 +147,20 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     cat(paste0("y = [", format_value(all_phi0[m]), "]"))
     add_string(const_spaces=4, all_phi0[m], phi0_err[m])
 
-    for(i1 in seq_len(p)) {
+    for(i1 in seq_len(p)) { # Go through the lags
       cat(paste0(" + [", format_value(pars[1 + i1, m]), "]y.", i1))
       nspaces <- ifelse(i1 == 1, 3, 6)
       if(!is.null(constraints) && (any(constraints[[m]] != 1 & constraints[[m]] != 0) | any(rowSums(constraints[[m]]) > 1))) {
         # The constrained AR parameter standard errors multiplied open in 'pars_err' are valid only
-        # iff the constraint matrix (for the current regime) contains zeros and ones only, and
-        # there is at most one one in each row (no multiplications or summations).
+        # if the constraint matrix (for the current regime) contains zeros and ones only, and
+        # there is at most one one in each row (no multiplications or summations). The above if-sentece is
+        # TRUE if that is the case -> we may print the standard errors
         add_string(const_spaces=nspaces, pars[1 + i1, m], NA)
         sep_AR <- TRUE
       } else {
-        # No constraints or the standard errors expanded from constraints are valid for this regime.
+        # Standard errors expanded from constraints are not valid in this regime.
+        # -> AR parameter standard errors cannot be printed in brackets next to the AR coefficients as
+        # the standard errors are related to the constraint parameters and not the AR coefficients.
         add_string(const_spaces=nspaces, pars[1 + i1, m], pars_err[1 + i1, m])
         sep_AR <- FALSE
       }
@@ -161,14 +170,17 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     if(regime_type == "GMAR") {
       cat(paste0("[sqrt(", format_value(pars[nrow(pars), m]), ")]eps"))
       add_string(const_spaces=11, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
-    } else {
+    } else { # StMAR or G-StMAR regime -> time-varying conditional error variance
       cat("[cond_sd]eps")
     }
     cat("\n")
+
+    # Print the standard errors
     if(summary_print) cat(paste0(err_string, collapse=""), '\n')
     if(summary_print && sep_AR) cat(paste0("AR parameter std errors: ", paste0(format_value(pars_err[2:(p + 1), m]), collapse=", ")), "\n")
   }
 
+  # Print unconditional moments
   if(summary_print) {
     um <- gsmar$uncond_moments
     cat("\nProcess mean:", format_value(um$uncond_mean), "\n")
@@ -210,8 +222,9 @@ print.gsmarsum <- function(x, ..., digits) {
 print.gsmarpred <- function(x, ..., digits=2) {
   gsmarpred <- x
   stopifnot(digits >= 0 & digits %% 1 == 0)
-  format_value <- format_valuef(digits)
+  format_value <- format_valuef(digits) # Function to formal values for printing
 
+  # Different prints for different types of prediction intervals
   if(gsmarpred$pred_type == "cond_mean") {
     cat("One-step-ahead prediction by exact conditional mean, no prediction intervals.\n")
     cat("Forecast:", paste0(format_value(gsmarpred$pred), collapse=", "), "\n")
@@ -221,12 +234,13 @@ print.gsmarpred <- function(x, ..., digits=2) {
     cat(paste0("Forecast ", gsmarpred$n_ahead, " steps ahead, based on ", gsmarpred$nsimu, " simulations.\n"))
     print(data.frame(pred=gsmarpred$pred))
 
-  } else {
+  } else { # pi_type == two-sided, upper, or lower
     cat(paste0("Prediction by ", gsmarpred$pred_type, ", ", gsmarpred$pi_type,
                " prediction intervals with levels ", paste(gsmarpred$pi, collapse=", "), "."), "\n")
     cat(paste0("Forecast ", gsmarpred$n_ahead, " steps ahead, based on ", gsmarpred$nsimu, " simulations.\n"))
-
     cat("\n")
+
+    # Create data frame that contains the point prediction and pi's, and then print it
     q <- gsmarpred$q
     pred_ints <- gsmarpred$pred_ints
     pred_type <- gsmarpred$pred_type
@@ -256,9 +270,10 @@ print.gsmarpred <- function(x, ..., digits=2) {
 #'  Currently not used in \code{print.qrtest}
 #' @param digits the number of digits to be print
 #' @export
+
 print.qrtest <- function(x, ..., digits=3) {
   qrtest <- x
-  format_value <- format_valuef(digits)
+  format_value <- format_valuef(digits) # Function to formal values for printing
   format_lag <- format_valuef(0)
   cat(paste("Normality test p-value:", format_value(qrtest$norm_res$pvalue)), "\n\n")
 
@@ -272,6 +287,7 @@ print.qrtest <- function(x, ..., digits=3) {
     }
   }
 
+  # Print the statistics
   cat("Autocorrelation tests:\nlags | p-value\n")
   print_res("ac")
 
@@ -289,8 +305,9 @@ print.qrtest <- function(x, ..., digits=3) {
 print.wald <- function(x, ..., digits=4) {
   wald <- x
   stopifnot(digits >= 0 & digits%%1 == 0)
-  format_value <- function(a) format(a, digits=digits)
+  format_value <- function(a) format(a, digits=digits) # Function to format values for printing
 
+  # Print the test results
   cat("Wald test:\n",
       paste0("test stat = ", format_value(wald$test_stat),
              ", df = ", wald$df,
@@ -308,8 +325,9 @@ print.wald <- function(x, ..., digits=4) {
 print.lr <- function(x, ..., digits=4) {
   lr <- x
   stopifnot(digits >= 0 & digits%%1 == 0)
-  format_value <- function(a) format(a, digits=digits)
+  format_value <- function(a) format(a, digits=digits) # Function to format values for printing
 
+  # Print the test results
   cat("Likelihood ratio test:\n",
       paste0("test stat = ", format_value(lr$test_stat),
              ", df = ", lr$df,

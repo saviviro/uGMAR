@@ -13,6 +13,7 @@
 
 plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
 
+  # Pick statistics etc
   gsmarpred <- x
   data <- as.ts(gsmarpred$gsmar$data)
   n_obs <- length(data)
@@ -31,6 +32,7 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
     par(mfrow=c(1, 1), mar=c(2.6, 2.6, 2.1, 1.1))
   }
 
+  # How many observations to plot preceding the prediction
   if(missing(nt)) {
     nt <- round(length(data)*0.15)
   } else {
@@ -40,29 +42,38 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
       nt <- length(data)
     }
   }
-  make_ts <- function(a, mix=FALSE, m) { # a is vector of values; if mix == TRUE, give component m in 1,...,M
+
+  # Function that creates ts objects to plot
+  make_ts <- function(a, mix=FALSE, m) { # a is vector of values; if mix == TRUE, use component m mixing weight last observation as the first value
     last_obs <- ifelse(mix, mixing_weights[n_mix, m], data[n_obs])
     ts(c(last_obs, a), start=time(data)[n_obs], frequency=frequency(data))
   }
+
+  # Prediction time series and all values
   ts_pred <- make_ts(gsmarpred$pred)
   ts_dat <- ts(data[(n_obs - nt + 1):n_obs], start=time(data)[n_obs - nt + 1], frequency=frequency(data))
   t0 <- time(ts_pred)
   all_val <- c(ts_dat, ts_pred, gsmarpred$pred_ints)
 
+  # Prediction invervals
   if(gsmarpred$pi_type == "two-sided") {
+    # Functions that create prediction interval time series
     ts1_lapply <- function(pred_ints, mix=FALSE, m) lapply(1:(length(q)/2), function(i1) make_ts(pred_ints[,i1], mix, m)) # Lower bounds
     ts2_lapply <- function(pred_ints, mix=FALSE, m) lapply((length(q)/2 + 1):length(q), function(i1) make_ts(pred_ints[,i1], mix, m)) # Upper bounds
 
-    ints1 <- gsmarpred$pred_ints
-    ints1_mix <- gsmarpred$mix_pred_ints
+    ints1 <- gsmarpred$pred_ints # Process pi
+    ints1_mix <- gsmarpred$mix_pred_ints # Mixing weight pi
 
-  } else {
+  } else { # pi_type = upper, lower, or none
+    # If upper/lower/none pi, at least one of the "bounds" is just constants
     what_to_rep <- ifelse(gsmarpred$pi_type == "upper", round(min(all_val)) - 3, round(max(all_val)) + 3) # Otherwise "lower" or "none"
     what_to_rep_mix <- ifelse(gsmarpred$pi_type == "upper", 0, 1)
 
+    # Functions that create prediction interval time series
     ts1_lapply <- function(pred_ints, mix=FALSE, m) lapply(seq_along(q), function(i1) make_ts(pred_ints[,i1], mix, m)[-1]) # Upper or lower graphical device box bound (redundant argument)
     ts2_lapply <- function(pred_ints, mix=FALSE, m) lapply(seq_along(q), function(i1) make_ts(pred_ints[,i1], mix, m)) # Make upper or lower prediction bound
 
+    # Constant lower or upper "bound" for one-sided prediction intervals
     ints1 <- matrix(rep(what_to_rep, times=length(q)*length(ts_pred)), ncol=length(q))
     ints1_mix <- array(rep(what_to_rep_mix, times=length(ts_pred)*length(q)*M), dim=c(length(ts_pred), length(q), M))
   }
@@ -71,6 +82,7 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
   ts1 <- ts1_lapply(ints1)
   ts2 <- ts2_lapply(gsmarpred$pred_ints)
 
+  # Mixing weight prediction intervals
   if(mix_weights) {
     ts1_mw <- vector(mode="list", length=M) # Sublist for each regime
     ts2_mw <- vector(mode="list", length=M)
@@ -80,13 +92,14 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
     }
   }
 
+  # Plot the point predictions
   ts.plot(ts_dat, ts_pred, gpars=list(col=c("black", "blue"), lty=1:2,
                                       ylim=c(round(min(all_val)) - 1,
                                              round(max(all_val)) + 1),
                                       main=paste("Forecast", gsmarpred$n_ahead, "steps ahead")))
   if(add_grid) grid(...)
 
-  # Draw the prediction intervals
+  # Plot the prediction intervals
   draw_poly <- function(ts1_or_ts2, pred_ts, col) polygon(x=c(t0, rev(t0)), y=c(ts1_or_ts2, rev(pred_ts)), col=col, border=NA)
   col_pred <- grDevices::rgb(0, 0, 1, 0.2)
   if(gsmarpred$pi_type %in% c("two-sided", "upper", "lower")) {
@@ -96,10 +109,10 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
     }
   }
 
-  # Plot mixing weight forecasts
+  # Plot mixing weight predictions
   if(mix_weights) {
 
-    # Point forecasts
+    # Plot point predictions
     colpal_mw <- grDevices::colorRampPalette(c("blue", "turquoise1", "green", "red"))(M)
     colpal_mw2 <- grDevices::adjustcolor(colpal_mw, alpha.f=0.5)
     mix_ts <- ts(mixing_weights[(n_mix - nt + 1):n_mix,], start=time(data)[n_obs - nt + 1],
@@ -111,9 +124,9 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
            text.font=2, cex=0.70, x.intersp=0.5, y.intersp=1)
     if(add_grid) grid(...)
 
-    # Individual prediction intervals as for the mixing weights
+    # Plot mixing weight prediction intervals
     colpal_mw3 <- grDevices::adjustcolor(colpal_mw, alpha.f=0.2)
-    if(gsmarpred$pi_type %in% c("two-sided", "upper", "lower")) {
+    if(gsmarpred$pi_type %in% c("two-sided", "upper", "lower")) { # Don't plot if pi_type == "none"
       for(m in 1:M) { # Go through regimes
         for(i1 in 1:length(gsmarpred$pi)) { # Go through the prediction intervals
           draw_poly(ts1_mw[[m]][[i1]], mix_pred_ts[, m], col=colpal_mw3[m])
@@ -134,11 +147,13 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
 #' @export
 
 plot.qrtest <- function(x, ...) {
+  # Graphical settings
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
   qrtest <- x
   par(mfrow=c(1, 2), mar=c(5.1, 3.1, 3.1, 1.1))
 
+  # Function to plot p-values
   plot_pvalues <- function(which_ones) { # ac_res, ch_res
     res <- qrtest[[which(names(qrtest) == which_ones)]]
     pvals <- res$pvalue
@@ -155,8 +170,9 @@ plot.qrtest <- function(x, ...) {
     points(pvals)
   }
 
-  plot_pvalues("ac_res")
-  plot_pvalues("ch_res")
+  # Plot the p-values
+  plot_pvalues("ac_res") # Autocorrelation tests
+  plot_pvalues("ch_res") # Conditional heteroskedasticity tests
   invisible(qrtest)
 }
 
@@ -184,6 +200,8 @@ plot.qrtest <- function(x, ...) {
 #' @export
 
 plot.gsmar <- function(x, ..., include_dens=TRUE) {
+
+  # Pick the relevant statistics etc
   gsmar <- x
   check_data(gsmar)
   data <- as.ts(gsmar$data)
@@ -193,6 +211,7 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
   ts_mw <- ts(rbind(matrix(NA, nrow=p, ncol=M), as.matrix(gsmar$mixing_weights)),
               start=start(data), frequency=frequency(data)) # First p observations are starting values
 
+  # Graphical settings
   old_par <- par(no.readonly=TRUE)
   on.exit(par(old_par))
   if(include_dens) {
@@ -203,6 +222,7 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
   }
   colpal_mw <- grDevices::colorRampPalette(c("blue", "turquoise1", "green", "red"))(M)
 
+  # Plot the time series and mixing weights
   ts.plot(data, gpars=list(main="Time series"))
   ts.plot(ts_mw, gpars=list(main="Mixing weights", ylim=c(0, 1), col=colpal_mw, lty=2))
   legend("topleft", legend=paste0("regime ", 1:M), bty="n", col=colpal_mw, lty=1, lwd=2,
@@ -211,7 +231,7 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
   # Plot kernel density estimate of the data with the model implied density
   if(include_dens) {
 
-    # Collected the required statistics
+    # Collect the required statistics
     params <- gsmar$params
     M_orig <- gsmar$model$M
     model <- gsmar$model$model
@@ -235,7 +255,7 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
     if(model %in% c("StMAR", "G-StMAR")) {
       dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
 
-      # The student's density as in the model definition
+      # The student's density function as in the model definition
       my_dt <- function(y, mean, var, df) {
         tmp <- lgamma(0.5*(1 + df)) - lgamma(0.5*df) - 0.5*log(pi*(df - 2)) - 0.5*log(var) -
           0.5*(1 + df)*log(1 + (y - mean)^2/(var*(df - 2)))

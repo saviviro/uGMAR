@@ -37,6 +37,7 @@
 #' @export
 
 Wald_test <- function(gsmar, A, c, h=6e-6) {
+  # Checks
   check_gsmar(gsmar)
   params <- gsmar$params
   stopifnot(is.matrix(A) && ncol(A) == length(params) && nrow(A) <= ncol(A))
@@ -66,7 +67,7 @@ Wald_test <- function(gsmar, A, c, h=6e-6) {
   })
   if(anyNA(inv_Hess)) stop("Couldn't invert Hessian matrix of the log-likelihood function. This might happen when the mixing weights are very close to zero for some regime (if so, reduce the redundant regime from the model).")
 
-  # Calculate the test statistic
+  # Calculate the Wald test statistic
   test_stat <- as.numeric(crossprod(A%*%params - c, solve(-tcrossprod(A%*%inv_Hess, A), A%*%params - c))) # t(A%*%params - c)%*%solve(-A%*%inv_Hess%*%t(A))%*%(A%*%params - c)
 
   # Calculate the p-value
@@ -120,11 +121,13 @@ Wald_test <- function(gsmar, A, c, h=6e-6) {
 #' @export
 
 LR_test <- function(gsmar1, gsmar2) {
+  # Checks
   check_gsmar(gsmar1, object_name="gsmar1")
   check_gsmar(gsmar2, object_name="gsmar2")
   stopifnot(length(gsmar1$params) > length(gsmar2$params))
   stopifnot(gsmar1$loglik >= gsmar2$loglik)
 
+  # Calculate the likelihood ratio test
   test_stat <- as.numeric(2*(gsmar1$loglik - gsmar2$loglik))
   df <- length(gsmar1$params) - length(gsmar2$params)
   p_value <- pchisq(test_stat, df=df, lower.tail=FALSE)

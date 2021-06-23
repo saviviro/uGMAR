@@ -51,6 +51,8 @@
 #' @export
 
 quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_ac, nsimu=1, print_res=TRUE) {
+
+  # Checks + collect the relevant statistics etc
   check_gsmar(gsmar)
   check_data(gsmar)
   data <- gsmar$data
@@ -62,19 +64,20 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
   constraints <- gsmar$model$constraints
   parametrization <- gsmar$model$parametrization
   T_obs <- length(data) - p
-
-  if(!requireNamespace("gsl", quietly=TRUE) & model %in% c("StMAR", "G-StMAR")) {
-    message("Suggested package 'gsl' not found and a StMAR or G-StMAR model is considered: performing the tests may take a while")
-  }
   if(max(c(lags_ac, lags_ch)) >= T_obs) stop("The lags are too large compared to the data size")
+
+  # Obtain the quantile residuals
   qresiduals <- quantile_residuals_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted,
-                                      constraints=constraints, parametrization=parametrization)
+                                       constraints=constraints, parametrization=parametrization)
+
+  # Sample used in calculation of Omega: either simulated or the data
   if(nsimu > length(data)) {
     omegaData <- as.matrix(simulateGSMAR(gsmar, nsimu=nsimu)$sample)
   } else {
     omegaData <- data
   }
 
+  # Function to calculate the Omega matrix (that is presented in Kalliovirta 2012, Lemma 2.2); calls the function get_test_Omega
   try_to_get_omega <- function(g, dim_g, which_test, which_lag=NA) {
     print_message <- function(because_of) {
       if(which_test == "norm") {
@@ -109,6 +112,7 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
     omg
   }
 
+  # Functions to format values and print the results
   format_value0 <- format_valuef(0)
   format_value3 <- format_valuef(3)
   print_resf <- function(lag, p_val) {
@@ -117,9 +121,10 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
   }
 
   ####################
-  ## Test normality ## (Kalliovirta 2012 sec. 3.3)
+  ## Test normality ## (Kalliovirta 2012, Section 3.3)
   ####################
 
+  # The function 'g' of Kalliovirta 2012, Section 3.3
   g <- function(r) {
     cbind(r^2 - 1, r^3, r^4 - 3)
   }
@@ -138,7 +143,7 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
   norm_res <- data.frame(testStat=N, df=dim_g, pvalue=pvalue, row.names=NULL)
 
   #############################################################
-  ## Test autocorrelation and conditional heteroscedasticity ## (Kalliovirta 2012 sec. 3.1 and 3.2)
+  ## Test autocorrelation and conditional heteroscedasticity ## (Kalliovirta 2012, Sections 3.1 and 3.2)
   #############################################################
 
   # Storage for the results
@@ -150,7 +155,7 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
               ac_res=ac_res,
               ch_res=ch_res)
 
-  # Returns the function 'g' for a given lag and function FUN to be applied.
+  # Returns the function 'g' for a given lag and function FUN to be applied (see Kalliovirta 2012, Sections 3.1 and 3.2 for the 'g').
   get_g <- function(lag, FUN) {
     FUN <- match.fun(FUN)
     function(r) {  # Takes in quantile residuals vector r, returns a (T - lag x lag) matrix. (lag = dim_g)
@@ -163,7 +168,8 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
     }
   }
 
-  # Apart from the function 'g', the test statistics are similar for AC and CH tests
+  # Apart from the function 'g', the test statistics are similar for AC and CH tests.
+  # Function to calculate ac and ch tests
   test_ac_or_ch <- function(which_test=c("ac", "ch")) {
     which_test <- match.arg(which_test)
 
@@ -184,13 +190,13 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
         g <- get_g(lag, FUN=function(r, i1, i2) (r[i1]^2 - 1)*r[i1 - i2]^2) # FUN = (r[i1]^2 - 1)*r[i1 - i2]^2
       }
 
-      # Omega (Kalliovirta 2013 eq.(2.4))
+      # Omega (Kalliovirta 2012, Lemma 2.2)
       Omega <- try_to_get_omega(g=g, dim_g=lag, which_test=which_test, which_lag=lag)
 
       # Test statistics: sample autocorrelation c_k/h.sked statistic d_k for of the current lag, standard error, and p-value
       sumg <- as.matrix(colSums(g(qresiduals)))
       AorH <- crossprod(sumg, solve(Omega, sumg))/(T_obs - lag) # See A ("ac") and H ("ch") test statistics in Kalliovirta 2012, pp.369-370
-      indStat <- sumg[lag]/(T_obs - lag) # c_k ("ac") or d_k ("ch")
+      indStat <- sumg[lag]/(T_obs - lag) # c_k ("ac") or d_k ("ch") of Kalliovirta 2012
       stdError <- sqrt(Omega[lag, lag]/T_obs) # See Kalliovirta 2012, pp.369-370
       pvalue <- 1 - pchisq(AorH, df=lag)
 
@@ -206,6 +212,7 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
     }
   }
 
+  # Calculate the tests and print the results
   if(print_res) cat("Autocorrelation tests:\nlags | p-value\n")
   test_ac_or_ch("ac")
 

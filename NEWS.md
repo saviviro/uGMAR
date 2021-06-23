@@ -96,3 +96,4 @@
 # uGMAR 3.3.2
 
 * Minor update to the vignette.
+* Added more comments in the source code
