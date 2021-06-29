@@ -625,7 +625,7 @@ In the GSMAR models, the empirical counterparts of the error terms $\varepsilon_
 R_t=\Phi^{-1}(F(y_t|\mathcal{F}_{t-1})), \quad t=1,2,...,T,
 \end{equation}
 %
-where $\Phi^{-1}(\cdot)$ is the standard normal quantile function and $F(\cdot|\mathcal{F}_{t-1})$ is the conditional cumulative distribution function of the considered GSMAR process (conditional on the previous observations). %, given as
+where $\Phi^{-1}(\cdot)$ is the standard normal quantile function and $F(\cdot|\mathcal{F}_{t-1})$ is the conditional cumulative distribution function of the considered GSMAR process (conditional on the previous observations). Closed form expressions for the quantile residuals of the GSMAR processes are presented in Appendix~\ref{sec:qresexpr}.
 %
 
 The empirical counterparts of the quantile residuals are calculated by using the parameter estimate and the observed data in (\ref{eq:qres}). For a correctly specified GSMAR model, the empirical counterparts of the quantile residuals based on the ML estimator are asymptotically independent with standard normal distributions \citep[Lemma 2.1]{Kalliovirta:2012}. Hence, quantile residuals can be used for graphical analysis similarly to the conventional Pearson's residuals.
@@ -896,6 +896,78 @@ R> fit22_alt <- alt_gsmar(fit22, which_largest = 3)
 The corresponding estimate is presented on the third row of Table~\ref{tab:simuexp} ($\hat{\boldsymbol{\theta}}_2$). This local maximum point is substantially closer to the true parameter value in the second regime. The resemblance to the true parameter value is also highlighted in Figure~\ref{fig:simuexp} (top panel), where the second regime's estimated mixing weights (blue dashed line) are presented together with the true mixing weights (black solid line).
 
 Finally, note that the estimate $\hat{\boldsymbol{\theta}}_1$ presented in Table~\ref{tab:simuexp} is not the accurate maximum likelihood estimate, which can be noticed by examining graphs of the related profile log-likelihood functions with the command \code{profile_logliks(fit22)} (not shown). The numerical estimation using numerical approximation for the gradient of the log-likelihood function can be inaccurate near the boundary of a multidimensional parameter space subject to several constraints. Consequently, other similar near-the-boundary points that induce larger log-likelihood than $\hat{\boldsymbol{\theta}}_1$ can be found by running more estimation rounds. It should also be noted that sometimes the estimate is near the boundary of the stationarity region because the series is very persistent, and being near the boundary does not hence necessarily imply that the MLE is inappropriate.
+
+\section{Closed form expressions of quantile residuals}\label{sec:qresexpr}
+This section derives closed form expressions for the quantile residuals utilized by \pkg{uGMAR} and discussed in Section~\ref{sec:qres}. For the GSMAR models, the quantile residuals are defined as
+%
+\begin{equation}\label{eq:qres1}
+R_t=\Phi^{-1}(F(y_t|\mathcal{F}_{t-1})), \quad t=1,2,...,T,
+\end{equation}
+%
+where $\Phi^{-1}(\cdot)$ is the standard normal quantile function,
+%
+\begin{equation}\label{eq:condcum}
+F(y_t|\mathcal{F}_{t-1})= \sum_{m=1}^M\alpha_{m,t}\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1})du_t
+\end{equation}
+%
+is the conditional cumulative distribution function of the considered GSMAR process (conditional on the previous observations),
+and $f_m(\cdot|\mathcal{F}_{t-1})$ is the conditional density function of the $m$th component process. To find a closed form expression for the quantile residuals defined in Equations (\ref{eq:qres1}) and (\ref{eq:condcum}), it therefore suffices to solve the integrals $\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1})du_t$, $m=1,...,M$, for GMAR type and StMAR type mixture components.
+%
+
+In the case of a GMAR type component, the conditional density function is the Gaussian density function with mean $\mu_{m,t}$ and variance $\sigma_m^2$. For $m\leq M_1$ in Equation~(\ref{eq:condcum}), we therefore have
+%
+\begin{equation}
+\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1})du_t = \int_{-\infty}^{y_t}n_1(u_t;\mu_{m,t},\sigma_m^2) du_t= \Phi\left(\frac{u_t - \mu_{m,t}}{\sigma_m}\right),
+\end{equation}
+%
+where $\Phi (\cdot)$ is the standard normal cumulative distribution function.
+
+In the case of a StMAR type component, the conditional density function is the Student's $t$ density function with mean $\mu_{m,t}$, variance $\sigma_{m,t}^2$, and $\nu_m + p$ degrees of freedom given as \cite[Appendix A]{Meitz+Preve+Saikkonen:2018}
+%
+\begin{equation}
+t_1(u_t;\mu_{m,t},\sigma_{m,t}^2,\nu_m+p) = \frac{\Gamma\left(\frac{1 + \nu_m + p}{2}\right)}{\sqrt{\pi(\nu_m + p - 2)}\Gamma\left(\frac{\nu_m + p}{2}\right)}\sigma_{m,t}^{-1}\left(1 + \frac{(u_t - \mu_{m,t})^2}{(\nu_m + p - 2)\sigma_{m,t}^2} \right)^{-(1 + \nu_m + p)/2},
+\end{equation}
+%
+where $\Gamma\left(\cdot\right)$ is the gamma function. Taking use of the symmetry of the Student's $t$ distribution about its mean $\mu_{m,t}$, we obtain
+%
+\begin{equation}\label{eq:int1}
+\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1})du_t = \frac{1}{2} + \int_{\mu_{m,t}}^{y_t}t_1(u_t;\mu_{m,t},\sigma_{m,t}^2,\nu_m+p) du_t.
+\end{equation}
+%
+
+By applying the change of variables $\tilde{u}_{m,t}\equiv u_t - \mu_{m,t}$ in the integral, the RHS of Equation~(\ref{eq:int1}) can be expressed as
+%
+\begin{equation}\label{eq:int2}
+\frac{1}{2} + \frac{\Gamma\left(\frac{1 + \nu_m + p}{2}\right)}{\sqrt{\pi(\nu_m + p - 2)}\Gamma\left(\frac{\nu_m + p}{2}\right)}\sigma_{m,t}^{-1} \int_{0}^{\tilde{y}_{m,t}}\left(1 + \frac{\tilde{u}_{m,t}^2}{a_{m,t}} \right)^{-b_m} d \tilde{u}_{m,t},
+\end{equation}
+%
+where $\tilde{y}_{m,t} \equiv y_t - \mu_{m,t}$, $a_{m,t}\equiv (\nu_m + p - 2)\sigma_{m,t}^2$, and $b_{m}\equiv (1 + \nu_m + p)/2$. Then, by applying the change of variables $z_{m,t}\equiv \tilde{u}_{m,t}^2/\tilde{y}_{m,t}$, we can express the integral in the expression (\ref{eq:int2}) as
+%
+\begin{equation}\label{eq:int3}
+\int_{0}^{\tilde{y}_{m,t}}\left(1 + \frac{\tilde{u}_{m,t}^2}{a_{m,t}} \right)^{-b_m} d \tilde{u}_{m,t} = \frac{1}{2} \int_{0}^{\tilde{y}_{m,t}} \left(\frac{\tilde{y}_{m,t}}{z_{m,t}}\right)^{1/2}\left(1 + \frac{z_{m,t}\tilde{y}_{m,t}}{a_{m,t}}\right)^{-b_m}d z_{m,t}.
+\end{equation}
+%
+By applying the third change of variables $x_{m,t}\equiv z_{m,t}/\tilde{y}_{m,t}$ and using the properties of the gamma function, the RHS of Equation~(\ref{eq:int3}) can be expressed using a hypergeometric function as
+%
+\begin{equation}
+\frac{\tilde{y}_{m,t}}{2}\int_{0}^{1}x_{m,t}^{-1/2}\left(1-x_{m,t}\left(-\frac{\tilde{y}_{m,t}^2}{a_{m,t}} \right) \right)^{-b_{m}} dx_{m,t}=\tilde{y}_{m,t} \times {}_2\text{F}_1\left(\frac{1}{2},b_{m},\frac{3}{2};-\frac{\tilde{y}_{m,t}^2}{a_{m,t}} \right),
+\end{equation}
+%
+where the hypergeometric function is defined as \citep[Section 1.3.1]{Aomoto+Kita:2011}
+\begin{equation}
+{}_2\text{F}_1\left(a,b,c;x \right) = \frac{\Gamma(c)}{\Gamma(a)\Gamma(c-a)}\int_{0}^{1}s^{a-1}(1-s)^{c-a-1}(1-sx)^{-b} ds,
+\end{equation}
+when $|x|<1$, $a>0$, and $c-a>0$ ($a,c\in\mathbb{R}$).
+
+Using the above result, we have
+\begin{equation}\label{eq:int4}
+\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1}) = \frac{1}{2} + \frac{\Gamma\left(\frac{1 + \nu_m + p}{2}\right)}{\sqrt{\pi(\nu_m + p - 2)}\Gamma\left(\frac{\nu_m + p}{2}\right)}\sigma_{m,t}^{-1} \tilde{y}_{m,t} \times {}_2\text{F}_1\left(\frac{1}{2},b_{m},\frac{3}{2};-\frac{\tilde{y}_{m,t}^2}{a_{m,t}}\right)
+\end{equation}
+for $m>M_1$, whenever $\left|-\frac{\tilde{y}_{m,t}^2}{a_{m,t}}\right|<1$. That is, the closed form expression (\ref{eq:int4}) exists when
+\begin{equation}\label{eq:qrescond}
+|y_t - \mu_{m,t}| < \sqrt{(\nu_m + p - 2)\sigma_{m,t}^2}.
+\end{equation}
+If this condition does not hold, \pkg{uGMAR} calculates the quantile residual by numerically integrating the conditional density function $f_m(\cdot|\mathcal{F}_{t-1})$.
 \end{appendix}
 
 %% -----------------------------------------------------------------------------
