@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.16)  29 JUN 2021 12:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.16)  29 JUN 2021 12:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -709,7 +709,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 
 [25] (./uGMARpaper.bbl
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 39.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 45.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 26 []
@@ -730,7 +730,7 @@ Overfull \hbox (6.69774pt too wide) in paragraph at lines 864--873
  [][] 
  []
 
-<figures/figsimuexp.png, id=519, 803.0pt x 401.5pt>
+<figures/figsimuexp.png, id=521, 803.0pt x 401.5pt>
 File: figures/figsimuexp.png Graphic file (type png)
 <use figures/figsimuexp.png>
 Package pdftex.def Info: figures/figsimuexp.png  used on input line 879.
@@ -758,13 +758,6 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [31]
-
-Package natbib Warning: Citation `Aomoto+Kita:2011' on page 32 undefined on inp
-ut line 956.
-
-
-Package natbib Warning: There were undefined citations.
-
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 976.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -786,10 +779,10 @@ Package rerunfilecheck Info: File `uGMARpaper.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 976.
  ) 
 Here is how much of TeX's memory you used:
- 8710 strings out of 480608
- 132007 string characters out of 5903630
- 402032 words of memory out of 5000000
- 24249 multiletter control sequences out of 15000+600000
+ 8715 strings out of 480608
+ 132119 string characters out of 5903630
+ 402067 words of memory out of 5000000
+ 24253 multiletter control sequences out of 15000+600000
  636459 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,15n,38p,1440b,490s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -817,10 +810,10 @@ local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texli
 ve/2020/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2020/te
 xmf-dist/fonts/type1/public/lm/lmtto10.pfb></usr/local/texlive/2020/texmf-dist/
 fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on uGMARpaper.pdf (33 pages, 799243 bytes).
+Output written on uGMARpaper.pdf (33 pages, 799967 bytes).
 PDF statistics:
- 690 PDF objects out of 1000 (max. 8388607)
- 608 compressed objects within 7 object streams
- 126 named destinations out of 1000 (max. 500000)
+ 695 PDF objects out of 1000 (max. 8388607)
+ 613 compressed objects within 7 object streams
+ 127 named destinations out of 1000 (max. 500000)
  170 words of extra memory for PDF output out of 10000 (max. 10000000)
 

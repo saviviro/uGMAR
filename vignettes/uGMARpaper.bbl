@@ -1,4 +1,4 @@
-\begin{thebibliography}{24}
+\begin{thebibliography}{25}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -8,6 +8,12 @@
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Aomoto and Kita(2011)}]{Aomoto+Kita:2011}
+Aomoto K, Kita M (2011).
+\newblock \emph{Theory of Hypergeometric Functions}.
+\newblock 1st edition. Springer, Springer Tokyo.
+\newblock \doi{10.1007/978-4-431-53938-4}.
 
 \bibitem[{Dorsey and Mayer(1995)}]{Dorsey+Mayer:1995}
 Dorsey R, Mayer W (1995).
