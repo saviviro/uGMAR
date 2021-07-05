@@ -95,9 +95,9 @@ Meitz M, Preve D, Saikkonen P (2018).
   Autoregressive Models}.
 \newblock \doi{10.2139/ssrn.3237368}.
 
-\bibitem[{Meitz \emph{et~al.}(forthcoming)Meitz, Preve, and
-  Saikkonen}]{Meitz+Preve+Saikkonen:2018}
-Meitz M, Preve D, Saikkonen P (forthcoming).
+\bibitem[{Meitz \emph{et~al.}(2021)Meitz, Preve, and
+  Saikkonen}]{Meitz+Preve+Saikkonen:2021}
+Meitz M, Preve D, Saikkonen P (2021).
 \newblock \enquote{A Mixture Autoregressive Model Based on Student's
   $t$-Distribution.}
 \newblock \emph{Communications in Statistics - Theory and Methods}.
@@ -163,8 +163,7 @@ Virolainen S (2021).
 Virolainen S (forthcoming).
 \newblock \enquote{A Mixture Autoregressive Model Based on Gaussian and
   Student's $t$-distributions.}
-\newblock \emph{Studies in Nonlinear Dynamics & Econometrics, preprint
-  available as arXiv:2003.05221}.
+\newblock \emph{Studies in Nonlinear Dynamics \& Econometrics}.
 
 \bibitem[{Wong and Li(2000)}]{Wong+Li:2000}
 Wong C, Li W (2000).
