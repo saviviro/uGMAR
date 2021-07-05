@@ -3,7 +3,7 @@
 \docType{data}
 \name{T10Y1Y}
 \alias{T10Y1Y}
-\title{Spread between 10-Year and 1-Year treasury rates: T10Y1Y}
+\title{Spread between 10-Year and 1-Year Treasury rates: T10Y1Y}
 \format{
 A class 'ts' time series object containing 803 observations.
 }
