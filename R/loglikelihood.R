@@ -105,16 +105,17 @@
 #'            \emph{The Econometrics Journal}, \strong{15}, 358-393.
 #'    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
 #'            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-#'    \item Meitz M., Preve D., Saikkonen P. forthcoming. A mixture autoregressive model based on Student's t-distribution.
+#'    \item Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive model based on Student's t-distribution.
 #'            \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
-#'    \item Virolainen S. 2020. A mixture autoregressive model based on Gaussian and Student's t-distributions. arXiv:2003.05221 [econ.EM].
+#'    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
+#'          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
 #'  }
 
 loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               conditional=TRUE, parametrization=c("intercept", "mean"), boundaries=TRUE, checks=TRUE,
                               to_return=c("loglik", "mw", "mw_tplus1", "loglik_and_mw", "terms", "term_densities", "regime_cmeans", "regime_cvars",
                                           "total_cmeans", "total_cvars", "qresiduals"), minval) {
-  epsilon <- round(log(.Machine$double.xmin) + 10)
+  epsilon <- round(log(.Machine$double.xmin) + 10) # The smallest log-number that can be handled in non-log-scale (+10 for some tolerance)
   model <- match.arg(model)
   parametrization <- match.arg(parametrization)
   to_return <- match.arg(to_return)
@@ -255,7 +256,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     invsqrt_sigmasM1 <- sigmas[1:M1]^(-1/2) # M1 = M for the GMAR model
     smat <- diag(x=invsqrt_sigmasM1, nrow=length(invsqrt_sigmasM1), ncol=length(invsqrt_sigmasM1))
 
-    if(to_return == "qresiduals") { # Calculate quantile residuals; see Kalliovirta 2012 for the general formulas and framework
+    if(to_return == "qresiduals") { # Calculate quantile residuals; see also Kalliovirta (2012) for the general formulas and framework
       resM1 <- alpha_mt[,1:M1]*pnorm((Y2 - mu_mt[,1:M1])%*%smat)
       lt_tmpM1 <- resM1 # We exploit the same names
     } else {
@@ -400,7 +401,7 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
     if(any(small_logmvns)) {
       # If log-densities too small to be handled in the non-log-scale are present,
       # we replace them with ones that are not too small but imply the same mixing weights
-      # up to negligible numerical tolerance.
+      # up to negligible numerical error.
       which_change <- rowSums(small_logmvns) > 0 # Which rows contain too small  values
       to_change <- log_mvnvalues[which_change, , drop=FALSE] # The log-densities to be changed
       largest_vals <- do.call(pmax, split(to_change, f=rep(1:ncol(to_change), each=nrow(to_change)))) # The largest values of those rows
@@ -423,7 +424,7 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
   if(!also_l_0) { # Only return mixing weights
     return(alpha_mt)
   } else { # Also calculate and return l_0
-    # First term of the exact log-likelihood (Kalliovirta et al. 2016, eq.(9))
+    # First term of the exact log-likelihood (Kalliovirta et al. 2015, eq.(9)) + see also Meitz et al (2021) and Virolainen (forthcoming)
     l_0 <- 0
     if(M == 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
       l_0 <- log_mvnvalues[1]
@@ -505,6 +506,8 @@ mixing_weights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-S
                               parametrization=c("intercept", "mean"), checks=TRUE, to_return=c("mw", "mw_tplus1")) {
   to_ret <- match.arg(to_return)
   parametrization <- match.arg(parametrization)
+
+  # Calculate the mixing weights
   loglikelihood_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                     parametrization=parametrization, boundaries=FALSE, checks=checks, to_return=to_ret, minval=NA)
 }

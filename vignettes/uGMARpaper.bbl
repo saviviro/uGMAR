@@ -146,15 +146,8 @@ Solymos P, Zawadzki Z (2020).
 \newblock R package version 1.4-3,
   \urlprefix\url{https://CRAN.R-project.org/package=pbapply}.
 
-\bibitem[{Virolainen(2020{\natexlab{a}})}]{Virolainen:2020}
-Virolainen S (2020{\natexlab{a}}).
-\newblock \enquote{A Mixture Autoregressive Model Based on Gaussian and
-  Student's $t$-distributions.}
-\newblock \emph{Unpublished working paper, available as arXiv:2003.05221}.
-\newblock \urlprefix\url{https://arxiv.org/abs/2003.05221}.
-
-\bibitem[{Virolainen(2020{\natexlab{b}})}]{Virolainen2:2020}
-Virolainen S (2020{\natexlab{b}}).
+\bibitem[{Virolainen(2020)}]{Virolainen2:2020}
+Virolainen S (2020).
 \newblock \enquote{Structural Gaussian Mixture Vector Autoregressive Model.}
 \newblock \emph{Unpublished working paper, available as arXiv:2007.04713}.
 \newblock \urlprefix\url{https://arxiv.org/abs/2007.04713}.
@@ -165,6 +158,13 @@ Virolainen S (2021).
   Model}.
 \newblock \proglang{R} package version 1.4.2,
   \urlprefix\url{https://CRAN.R-project.org/package=gmvarkit}.
+
+\bibitem[{Virolainen(forthcoming)}]{Virolainen:2020}
+Virolainen S (forthcoming).
+\newblock \enquote{A Mixture Autoregressive Model Based on Gaussian and
+  Student's $t$-distributions.}
+\newblock \emph{Studies in Nonlinear Dynamics & Econometrics, preprint
+  available as arXiv:2003.05221}.
 
 \bibitem[{Wong and Li(2000)}]{Wong+Li:2000}
 Wong C, Li W (2000).

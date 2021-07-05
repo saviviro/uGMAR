@@ -22,7 +22,7 @@ G-StMAR model.
 \references{
 \itemize{
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
-     Studies in Nonlinear Dynamics & Econometrics.
+         Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
 }
 \keyword{datasets}

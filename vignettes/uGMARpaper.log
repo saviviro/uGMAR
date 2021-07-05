@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.16)  29 JUN 2021 12:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.16)  5 JUL 2021 13:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -588,12 +588,12 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [12]
-<figures/plotfit42gs.png, id=330, 803.0pt x 451.6875pt>
+<figures/plotfit42gs.png, id=331, 803.0pt x 451.6875pt>
 File: figures/plotfit42gs.png Graphic file (type png)
 <use figures/plotfit42gs.png>
 Package pdftex.def Info: figures/plotfit42gs.png  used on input line 437.
 (pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
-<figures/proflogfit42gs.png, id=332, 803.0pt x 451.6875pt>
+<figures/proflogfit42gs.png, id=333, 803.0pt x 451.6875pt>
 File: figures/proflogfit42gs.png Graphic file (type png)
 <use figures/proflogfit42gs.png>
 Package pdftex.def Info: figures/proflogfit42gs.png  used on input line 444.
@@ -635,7 +635,7 @@ sid-u-als can be an-a-lyzed graph-i-cally with the func-tion \T1/lmtt/m/n/10.95
  diagnostic_plot\T1/lmr/m/n/10.95 ,
  []
 
-<figures/diagplotfit42gs.png, id=382, 803.0pt x 451.6875pt>
+<figures/diagplotfit42gs.png, id=383, 803.0pt x 451.6875pt>
 File: figures/diagplotfit42gs.png Graphic file (type png)
 <use figures/diagplotfit42gs.png>
 Package pdftex.def Info: figures/diagplotfit42gs.png  used on input line 647.
@@ -679,7 +679,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [23]
-<figures/predictfit42gs.png, id=439, 803.0pt x 451.6875pt>
+<figures/predictfit42gs.png, id=440, 803.0pt x 451.6875pt>
 File: figures/predictfit42gs.png Graphic file (type png)
 <use figures/predictfit42gs.png>
 Package pdftex.def Info: figures/predictfit42gs.png  used on input line 786.
@@ -716,6 +716,19 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [26]
+! Misplaced alignment tab character &.
+<argument> Studies in Nonlinear Dynamics &
+                                           Econometrics, preprint available ...
+l.167   available as arXiv:2003.05221}
+                                      .
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 27
  []
@@ -730,7 +743,7 @@ Overfull \hbox (6.69774pt too wide) in paragraph at lines 864--873
  [][] 
  []
 
-<figures/figsimuexp.png, id=521, 803.0pt x 401.5pt>
+<figures/figsimuexp.png, id=519, 803.0pt x 401.5pt>
 File: figures/figsimuexp.png Graphic file (type png)
 <use figures/figsimuexp.png>
 Package pdftex.def Info: figures/figsimuexp.png  used on input line 879.
@@ -781,7 +794,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 976.
 Here is how much of TeX's memory you used:
  8715 strings out of 480608
  132119 string characters out of 5903630
- 402067 words of memory out of 5000000
+ 402068 words of memory out of 5000000
  24253 multiletter control sequences out of 15000+600000
  636459 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -810,10 +823,10 @@ local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texli
 ve/2020/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2020/te
 xmf-dist/fonts/type1/public/lm/lmtto10.pfb></usr/local/texlive/2020/texmf-dist/
 fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on uGMARpaper.pdf (33 pages, 799967 bytes).
+Output written on uGMARpaper.pdf (33 pages, 799947 bytes).
 PDF statistics:
- 695 PDF objects out of 1000 (max. 8388607)
- 613 compressed objects within 7 object streams
+ 693 PDF objects out of 1000 (max. 8388607)
+ 611 compressed objects within 7 object streams
  127 named destinations out of 1000 (max. 500000)
  170 words of extra memory for PDF output out of 10000 (max. 10000000)
 
