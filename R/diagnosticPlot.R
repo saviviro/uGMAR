@@ -80,10 +80,11 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   # Graphical settings
   old_par <- par(no.readonly=TRUE) # Save old settings
   on.exit(par(old_par)) # Restore the settings before quitting
+  par(las=1)
   if(plot_indstats) {
-    par(mfrow=c(3, 2), mar=c(2.1, 2.1, 2.1, 0.8))
+    par(mfrow=c(3, 2), mar=c(2.1, 2.6, 2.1, 0.8))
   } else {
-    par(mfrow=c(2, 2), mar=c(2.1, 2.1, 2.1, 0.8))
+    par(mfrow=c(2, 2), mar=c(2.1, 2.6, 2.1, 0.8))
   }
 
   # Plot quantile residuals time series and qq-plot
@@ -93,7 +94,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
   axis(2, at=yaxt1:yaxt2, labels=yaxt1:yaxt2)
   abline(h=0, col=rgb(1, 0, 0, 0.3), lwd=2)
   qqnorm(qresiduals, yaxt="n", ylab="", xlab="", main="Normal QQ-plot")
-  axis(2, at=yaxt1:yaxt2, labels=FALSE)
+  axis(2, at=yaxt1:yaxt2, labels=yaxt1:yaxt2)
   qqline(qresiduals, col=rgb(1, 0, 0, 0.8))
 
   # Plot autocorrelation function of quantile residuals and their squares

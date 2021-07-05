@@ -84,7 +84,8 @@
 #' ## The below examples take approximately 90 seconds to run.
 #'
 #' ## Note that the number of estimation rounds (ncalls) is relatively small
-#' ## in the below examples. For reliable results, a large number of estimation
+#' ## in the below examples to reduce the time required for running the examples.
+#' ## For reliable results, a large number of estimation
 #' ## rounds is recommended!
 #'
 #' # GMAR model
