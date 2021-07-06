@@ -96,7 +96,7 @@
 # uGMAR 3.3.2
 
 * Added a new appendix to the vignette.
-* Added more comments in the source code
+* Added more comments to the source code
 * Added new data: TBFF which the interest rate spread between the 3-month Treasury bill rate and the effective federal funds rate that was studied in the empirical application of Virolainen (forthcoming) itroducing the G-StMAR model.
 * Adjusted graphics in the function diagnostic_plot
 * Updated the reference information to the G-StMAR model.
