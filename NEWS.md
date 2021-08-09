@@ -103,4 +103,5 @@
 
 # uGMAR 3.4.0
 
+* Removed the documentation of internal functions from the manual.
 * Updated doi to the reference to the G-StMAR model (Virolainen, 2021).
