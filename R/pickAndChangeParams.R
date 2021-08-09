@@ -95,6 +95,7 @@ stmarpars_to_gstmar <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @inheritParams loglikelihood_int
 #' @return Returns a vector of length \code{M} containing the phi0 or mean parameters depending
 #'  parametrization.
+#' @keywords internal
 
 pick_phi0 <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   if(!is.null(constraints)) { # Remove constraints, if any
@@ -116,6 +117,7 @@ pick_phi0 <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns a vector of length \code{M} or \code{M2} containing the degrees of freedom parameters.
+#' @keywords internal
 
 pick_dfs <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")) {
   if(model == "GMAR") {
@@ -138,6 +140,7 @@ pick_dfs <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")) {
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns a vector of length \code{M} containing the mixing weight parameters \eqn{\alpha_m}.
+#' @keywords internal
 
 pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
@@ -169,6 +172,7 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' @return Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component.
 #'  The first row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization, the second row
 #'  for \eqn{\phi_1}, ..., the second to last row for \eqn{\phi_p}, and the last row for \eqn{\sigma^2}.
+#'  @keywords internal
 
 pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   params <- remove_all_constraints(p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints) # Remove all constraints
@@ -190,6 +194,7 @@ pick_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 #' @section Warning:
 #'  No argument checks!
 #' @inherit is_stationary references
+#' @keywords internal
 
 change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE,
                                    constraints=NULL, change_to=c("intercept", "mean")) {

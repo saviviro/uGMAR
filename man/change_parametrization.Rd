@@ -103,3 +103,4 @@ Returns parameter vector described in \code{params} but with parametrization cha
            Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
 }
+\keyword{internal}

@@ -66,3 +66,4 @@ Returns a vector with the same length as \code{params}. For other parameters tha
 This function is used for approximating gradient and Hessian of a StMAR or G-StMAR model. Large
   degrees of freedom parameters cause significant numerical error if too small differences are used.
 }
+\keyword{internal}

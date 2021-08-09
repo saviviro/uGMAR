@@ -83,3 +83,4 @@ Returns a vector of length \code{M} containing the mixing weight parameters \eqn
   (including the non-parametrized one for the last component) from the given
   parameter vector.
 }
+\keyword{internal}

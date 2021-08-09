@@ -116,6 +116,7 @@ predict(gmar12, n_ahead=1, pred_type="cond_mean", plot_res=FALSE)
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
+ @keywords internal
 }
 \seealso{
 \code{\link{simulateGSMAR}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},

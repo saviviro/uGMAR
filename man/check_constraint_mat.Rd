@@ -37,3 +37,4 @@ Doesn't return anything but throws an informative error if finds out that someth
 \description{
 \code{check_constraint_mat} checks for some parts that the constraint matrices are correctly set.
 }
+\keyword{internal}

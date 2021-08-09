@@ -20,3 +20,4 @@ Doesn't return anything.
 \details{
 Warns if some moduli of the autoregressive polynomial's roots are close to one.
 }
+\keyword{internal}

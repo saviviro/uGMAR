@@ -519,6 +519,7 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
 #' @param regime_pars2 a numeric vector representing another regime, same length as \code{regime_pars1}
 #' @return Returns "distance" between \code{regime_pars1} and \code{regime_pars2}. Values are scaled
 #'   to the same magnitude before calculating the "distance". Read the source code for details.
+#' @keywords internal
 
 regime_distance <- function(regime_pars1, regime_pars2) {
   scale_fun <- function(x) { # Function to scale values to the same magnitude
@@ -552,6 +553,7 @@ regime_distance <- function(regime_pars1, regime_pars2) {
 #'   \item{Constrained models:}{Replace the vectors \strong{\eqn{\phi_{m}}} with vectors \strong{\eqn{\psi_{m}}}.}
 #' }
 #' @inherit random_arcoefs details references
+#' @keywords internal
 
 random_regime <- function(p, mu_scale, sigma_scale, restricted=FALSE, constraints=NULL, m, forcestat=FALSE) {
   stopifnot(restricted == FALSE)
@@ -579,6 +581,7 @@ random_regime <- function(p, mu_scale, sigma_scale, restricted=FALSE, constraint
 #'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
 #'          \emph{Biometrica} \strong{71}, 403-404.
 #'  }
+#' @keywords internal
 
 random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
   if(forcestat == TRUE) { # Algorithm by Mohanan (1984)
@@ -605,11 +608,11 @@ random_arcoefs <- function(p, forcestat=FALSE, sd=0.6/p) {
 #' @param how_many how many dfs?
 #' @details Read the source code for details.
 #' @return Returns \code{c(x, dfs)} with \code{how_many} dfs-elements.
+#' @keywords internal
 
 add_dfs <- function(x, how_many) {
   c(x, 2 + rgamma(how_many, shape=0.3, rate=0.007)) # 2 + something positive yields dfs that are larger than two
 }
-
 
 
 #' @title Create random GMAR, StMAR, or G-StMAR model compatible parameter vector
@@ -627,6 +630,7 @@ add_dfs <- function(x, how_many) {
 #'  normal distribution from which the component variance parameters (for random regimes) should be generated.
 #' @inherit GAfit return
 #' @inherit random_regime references
+#' @keywords internal
 
 random_ind_int <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, mu_scale, sigma_scale, forcestat=FALSE) {
   model <- match.arg(model)
@@ -948,6 +952,7 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 #'      }
 #'    }
 #'  }
+#' @keywords internal
 
 extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                           regime, with_dfs=TRUE) {
@@ -1030,6 +1035,7 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 #'  }
 #' @param regime a positive integer in the interval [1, M] defining which regime should be changed.
 #' @return Returns modified parameter vector of the form described in \code{params}.
+#' @keywords internal
 
 change_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, regime_params, regime) {
   model <- match.arg(model)

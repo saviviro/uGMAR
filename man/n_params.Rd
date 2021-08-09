@@ -46,3 +46,4 @@ Returns the number of parameters.
 \description{
 \code{n_params} calculates the number of parameters that should be in the parameter vector.
 }
+\keyword{internal}

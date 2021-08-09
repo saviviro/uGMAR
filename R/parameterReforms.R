@@ -15,6 +15,7 @@
 #'   \item{\code{$dfs}}{numeric vector containing degrees of freedom parameters for all of components.
 #'     Returned only if \code{model == "StMAR"} or \code{model == "G-StMAR"}.}
 #'  }
+#'  @keywords internal
 
 reform_parameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   model <- match.arg(model)
@@ -35,6 +36,7 @@ reform_parameters <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"),
 #' @return Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 #' for non-restricted or restricted models (for non-constrained models), and can hence be used just as the
 #' parameter vectors of non-constrained models.
+#' @keywords internal
 
 reform_constrained_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   if(is.null(constraints)) {
@@ -77,6 +79,7 @@ reform_constrained_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-St
 #' @inheritParams loglikelihood_int
 #' @return Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 #' for non-restricted models (for non-constrained models). Linear constraints are not supported.
+#' @keywords internal
 
 reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   if(restricted == FALSE) {
@@ -106,6 +109,7 @@ reform_restricted_pars <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 #' @inheritParams loglikelihood_int
 #' @return Returns such parameter vector corresponding to the input vector that is the form described in \code{params}
 #' for non-restricted and non-constrained models.
+#' @keywords internal
 
 remove_all_constraints <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
@@ -125,6 +129,7 @@ remove_all_constraints <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 #' @details This function does not support models imposing linear constraints.
 #' @return Returns a parameter vector sorted according to its mixing weight parameters,
 #'   described in \code{params}.
+#' @keywords internal
 
 sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   model <- match.arg(model)

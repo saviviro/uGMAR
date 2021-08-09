@@ -73,3 +73,4 @@ Doesn't return anything but throws a warning if any degrees of freedom parameter
 \details{
 Either provide a class 'gsmar' object or specify the model by hand.
 }
+\keyword{internal}

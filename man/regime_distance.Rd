@@ -19,3 +19,4 @@ Returns "distance" between \code{regime_pars1} and \code{regime_pars2}. Values a
 \code{regime_distance} scales each regime parameter to the same magnitude
  and then calculates distance between scaled \code{regime_pars1} and \code{regime_pars2}.
 }
+\keyword{internal}

@@ -104,3 +104,4 @@ Differs from the function \code{uncond_moments} in arguments. This function exis
    \item Lütkepohl H. 2005. New Introduction to Multiple Time Series Analysis. \emph{Springer}.
  }
 }
+\keyword{internal}

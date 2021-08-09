@@ -159,6 +159,7 @@ get_soc <- function(gsmar, custom_h=NULL) {
 #' @return Returns a vector with the same length as \code{params}. For other parameters than degrees
 #'   of freedom parameters larger than 100, the differences will be \code{6e-6}. For the large degrees of
 #'   freedom parameters, the difference will be \code{signif(df/1000, digits=2)}.
+#' @keywords internal
 
 get_varying_h <- function(p, M, params, model) {
   if(model != "GMAR") {

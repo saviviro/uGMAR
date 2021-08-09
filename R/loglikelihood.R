@@ -110,6 +110,7 @@
 #'    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
 #'          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
 #'  }
+#'  @keywords internal
 
 loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               conditional=TRUE, parametrization=c("intercept", "mean"), boundaries=TRUE, checks=TRUE,
@@ -388,6 +389,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
 #'   that the t:th row is for the time point t and m:th column is for the regime m.
 #' @inherit loglikelihood_int references
 #' @seealso \code{\link{loglikelihood_int}}
+#' @keywords internal
 
 get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_return, also_l_0=FALSE) {
   if(M == 1) {
@@ -501,6 +503,7 @@ loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #'     The last row is for \eqn{\alpha_{m,T+1}}}.
 #'  }
 #' @inherit loglikelihood_int references
+#' @keywords internal
 
 mixing_weights_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                               parametrization=c("intercept", "mean"), checks=TRUE, to_return=c("mw", "mw_tplus1")) {
@@ -608,6 +611,7 @@ cond_moments <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR")
 #' @param npars the number of (freely estimated) parameters in the model.
 #' @param obs the number of observations with initial values excluded for conditional models.
 #' @return Returns a data frame containing the information criteria values.
+#' @keywords internal
 
 get_IC <- function(loglik, npars, obs) {
   AIC <- -2*loglik + 2*npars

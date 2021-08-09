@@ -79,6 +79,7 @@ Ignore or set to \code{NULL} if applying linear constraints is not desired.}
 Returns a \eqn{(Mx(p+2))} matrix containing the parameters, column for each component.
  The first row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization, the second row
  for \eqn{\phi_1}, ..., the second to last row for \eqn{\phi_p}, and the last row for \eqn{\sigma^2}.
+ @keywords internal
 }
 \description{
 \code{pick_pars} picks \eqn{\phi_0}/\eqn{\mu}, AR-coefficients, and variance parameters from

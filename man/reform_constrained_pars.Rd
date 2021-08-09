@@ -84,3 +84,4 @@ parameter vectors of non-constrained models.
 \code{reform_constrained_pars} reforms the parameter vector of a model with linear constrains
   to the "standard form" so that it's comparable with non-constrained models.
 }
+\keyword{internal}

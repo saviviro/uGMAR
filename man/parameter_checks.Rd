@@ -83,3 +83,4 @@ Throws an informative error if any check fails. Does not return anything.
   of a GMAR, StMAR, or G-StMAR model. Throws an error if any check fails. Does NOT consider the identifiability
   condition!
 }
+\keyword{internal}

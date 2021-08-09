@@ -8,6 +8,7 @@
 #'   parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other parameters.
 #' @inheritParams fitGSMAR
 #' @return Returns approximate standard errors of the parameter values in a numeric vector.
+#' @keywords internal
 
 standard_errors <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
                            parametrization=c("intercept", "mean"), custom_h=NULL, minval) {

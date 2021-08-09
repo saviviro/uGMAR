@@ -107,3 +107,4 @@ Returns a numeric vector corresponding to the regime with...
 \code{extract_regime} extracts the specified regime from the GMAR, StMAR, or G-StMAR model parameter vector.
  Doesn't extract mixing weight parameter \eqn{\alpha}.
 }
+\keyword{internal}

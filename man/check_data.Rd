@@ -15,3 +15,4 @@ Doesn't return anything but throws and error if something is wrong.
 \description{
 \code{check_data} checks that a given object contains data.
 }
+\keyword{internal}

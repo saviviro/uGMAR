@@ -17,3 +17,4 @@ Doesn't return anything but throws and error if something is wrong.
 \description{
 \code{check_gsmar} checks that the given object has class attribute 'gsmar'.
 }
+\keyword{internal}

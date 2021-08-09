@@ -28,3 +28,4 @@ If \code{forcestat==TRUE}, then the AR coefficients are relatively large, otherw
          \emph{Biometrica} \strong{71}, 403-404.
  }
 }
+\keyword{internal}

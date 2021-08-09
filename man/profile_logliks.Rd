@@ -57,6 +57,7 @@ profile_logliks(fit12, scale=0.001)
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
+ @keywords internal
 }
 \seealso{
 \code{\link{quantile_residual_plot}}, \code{\link{diagnostic_plot}}, \code{\link{cond_moment_plot}}, \code{\link{GSMAR}},

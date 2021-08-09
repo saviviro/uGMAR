@@ -18,3 +18,4 @@ Returns the data as a class 'ts' object.
 \code{check_and_correct_data} checks that the data is set correctly and
  throws an error if there is something wrong with the data.
 }
+\keyword{internal}

@@ -123,3 +123,4 @@ Returns estimated parameter vector with the form described in \code{initpop}.
          \emph{Biometrica} \strong{71}, 403-404.
  }
 }
+\keyword{internal}

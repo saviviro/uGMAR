@@ -69,3 +69,4 @@ for non-restricted models (for non-constrained models). Linear constraints are n
 \code{reform_restricted_pars} reforms parameter vector with restricted autoregressive parameters to correspond
  non-restricted parameter vector.
 }
+\keyword{internal}

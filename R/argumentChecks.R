@@ -24,6 +24,7 @@
 #'    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
 #'            Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
 #'  }
+#' @keywords internal
 
 is_stationary_int <- function(p, M, params, restricted=FALSE) {
   M <- sum(M)
@@ -45,6 +46,7 @@ is_stationary_int <- function(p, M, params, restricted=FALSE) {
 
 
 #' @rdname is_stationary_int
+
 is_identifiable <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
 
   # Pick parameters etc
@@ -160,6 +162,7 @@ is_stationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), res
 #'
 #' @inheritParams loglikelihood_int
 #' @return Returns the data as a class 'ts' object.
+#' @keywords internal
 
 check_and_correct_data <- function(data, p) {
   if(anyNA(data)) { # Check if there are problems with the data
@@ -189,6 +192,7 @@ check_and_correct_data <- function(data, p) {
 #'
 #' @inheritParams loglikelihood_int
 #' @return Throws an informative error if any check fails. Does not return anything.
+#' @keywords internal
 
 parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
 
@@ -232,6 +236,7 @@ parameter_checks <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #' @description \code{check_constraint_mat} checks for some parts that the constraint matrices are correctly set.
 #' @inheritParams loglikelihood_int
 #' @return Doesn't return anything but throws an informative error if finds out that something is wrong.
+#' @keywords internal
 
 check_constraint_mat <- function(p, M, restricted=FALSE, constraints=NULL) {
   if(!is.null(constraints)) { # Check only if constraints are imposed
@@ -271,6 +276,7 @@ check_constraint_mat <- function(p, M, restricted=FALSE, constraints=NULL) {
 #' @description \code{check_pM} checks that the arguments p and M are correctly set.
 #' @inheritParams loglikelihood_int
 #' @return Doesn't return anything but throws an informative error if something is wrong.
+#' @keywords internal
 
 check_pM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
   model <- match.arg(model)
@@ -292,6 +298,7 @@ check_pM <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR")) {
 #' @description \code{n_params} calculates the number of parameters that should be in the parameter vector.
 #' @inheritParams loglikelihood_int
 #' @return Returns the number of parameters.
+#' @keywords internal
 
 n_params <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   model <- match.arg(model)
@@ -349,7 +356,6 @@ n_params <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE
 }
 
 
-
 #' @title Check whether all arguments are strictly positive natural numbers
 #'
 #' @description \code{all_pos_ints} tells whether all the elements in a vector
@@ -357,6 +363,7 @@ n_params <- function(p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE
 #'
 #' @param x a vector containing the elements to be tested.
 #' @return Returns \code{TRUE} or \code{FALSE} accordingly.
+#' @keywords internal
 
 all_pos_ints <- function(x) {
   all(vapply(x, function(x)  x %% 1 == 0 & length(x) == 1 & x >= 1, logical(1)))
@@ -369,6 +376,7 @@ all_pos_ints <- function(x) {
 #'
 #' @inheritParams loglikelihood_int
 #' @return Doesn't return anything but throws and error if something is wrong.
+#' @keywords internal
 
 check_model <- function(model) {
   if(!model %in% c("GMAR", "StMAR", "G-StMAR")) {
@@ -381,6 +389,7 @@ check_model <- function(model) {
 #' @description \code{check_model} checks that the parameter vector has the correct dimension.
 #' @inheritParams loglikelihood_int
 #' @inherit check_model return
+#' @keywords internal
 
 check_params_length <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL) {
   if(length(params) != n_params(p=p, M=M, model=model, restricted=restricted, constraints=constraints)) {
@@ -396,6 +405,7 @@ check_params_length <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @param object an object to be tested
 #' @param object_name the name of the tested object
 #' @inherit check_model return
+#' @keywords internal
 
 check_gsmar <- function(object, object_name="gsmar") {
   if(!any(class(object) == "gsmar")) stop(paste("The argument", object_name, "has to be an object of class 'gsmar', often created with function 'fitGSMAR' or 'GSMAR'."))
@@ -408,6 +418,7 @@ check_gsmar <- function(object, object_name="gsmar") {
 #'
 #' @inheritParams check_gsmar
 #' @inherit check_gsmar return
+#' @keywords internal
 
 check_data <- function(object) {
   if(is.null(object$data)) stop("The model has to contain data! Data can be added with the function add_data.")
@@ -425,6 +436,7 @@ check_data <- function(object) {
 #' @details Either provide a class 'gsmar' object or specify the model by hand.
 #' @return Doesn't return anything but throws a warning if any degrees of freedom parameters have value
 #'   larger than 100.
+#' @keywords internal
 
 warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), warn_about=c("derivs", "errors")) {
 
@@ -452,6 +464,7 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #' @param tol if some root is smaller that \code{1 + tol}, a warning is thrown
 #' @details Warns if some moduli of the autoregressive polynomial's roots are close to one.
 #' @return Doesn't return anything.
+#' @keywords internal
 
 warn_ar_roots <- function(gsmar, tol=0.005) {
   ar_roots <- get_ar_roots(gsmar) # Roots of the AR-polynomials

@@ -20,3 +20,4 @@ Returns \code{c(x, dfs)} with \code{how_many} dfs-elements.
 \details{
 Read the source code for details.
 }
+\keyword{internal}

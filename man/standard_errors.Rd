@@ -99,3 +99,4 @@ Returns approximate standard errors of the parameter values in a numeric vector.
 \description{
 \code{standard_errors} numerically approximates standard errors for the given estimates of GMAR, StMAR, or GStMAR model.
 }
+\keyword{internal}

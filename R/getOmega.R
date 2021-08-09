@@ -11,6 +11,7 @@
 #' @seealso \code{\link{quantile_residual_tests}}
 #' @return Returns size (\code{dim_g}x\code{dim_g}) covariance matrix Omega.
 #' @inherit quantile_residual_tests references
+#' @keywords internal
 
 get_test_Omega <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL,
                      parametrization=c("intercept", "mean"), g, dim_g) {

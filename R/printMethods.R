@@ -6,6 +6,7 @@
 #' @param digits number of digits to use
 #' @return Returns a function that takes an atomic vector as its argument
 #'   and returns it formatted to character with \code{digits} decimals.
+#' @keywords internal
 
 format_valuef <- function(digits) {
   function(x) format(round(x, digits), nsmall=digits)

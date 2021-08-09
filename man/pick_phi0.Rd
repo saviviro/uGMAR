@@ -82,3 +82,4 @@ Returns a vector of length \code{M} containing the phi0 or mean parameters depen
 \description{
 \code{pick_phi0} picks and returns the phi0 or mean parameters from parameter vector.
 }
+\keyword{internal}

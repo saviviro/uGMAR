@@ -21,3 +21,4 @@ This function exists simply to avoid duplication inside the package.
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GAfit}}
 }
+\keyword{internal}

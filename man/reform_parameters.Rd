@@ -71,6 +71,7 @@ Returns a list with...
   \item{\code{$dfs}}{numeric vector containing degrees of freedom parameters for all of components.
     Returned only if \code{model == "StMAR"} or \code{model == "G-StMAR"}.}
  }
+ @keywords internal
 }
 \description{
 \code{reform_parameters} takes a parameter vector of any (non-constrained) GMAR, StMAR, or G-StMAR model

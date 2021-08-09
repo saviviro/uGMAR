@@ -88,6 +88,7 @@ apply(sim12$mixing_weights, MARGIN=1:2, FUN=quantile,
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
+ @keywords internal
 }
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{predict.gsmar}},

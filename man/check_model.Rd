@@ -16,3 +16,4 @@ Doesn't return anything but throws and error if something is wrong.
 \description{
 \code{check_model} checks that the argument 'model' is correctly specified.
 }
+\keyword{internal}

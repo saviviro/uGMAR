@@ -107,3 +107,4 @@ Returns modified parameter vector of the form described in \code{params}.
 \code{change_regime} changes the specified regime of the parameter vector to correspond the given
  regime-parameter vector and returns the modified parameter vector. Does not affect mixing weight parameters.
 }
+\keyword{internal}

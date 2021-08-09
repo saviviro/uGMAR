@@ -82,3 +82,4 @@ for non-restricted and non-constrained models.
 \description{
 \code{remove_all_constraints} transforms constrained and restricted parameter vector into the regular form.
 }
+\keyword{internal}

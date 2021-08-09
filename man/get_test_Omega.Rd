@@ -114,3 +114,4 @@ This function is used for quantile residuals tests in \code{quantile_residual_te
 \seealso{
 \code{\link{quantile_residual_tests}}
 }
+\keyword{internal}

@@ -19,3 +19,4 @@ Returns a data frame containing the information criteria values.
 \description{
 \code{get_IC} calculates AIC, HQIC and BIC
 }
+\keyword{internal}

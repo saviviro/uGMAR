@@ -59,3 +59,4 @@ Returns a vector of length \code{M} or \code{M2} containing the degrees of freed
 \code{pick_dfs} picks and returns the degrees of freedom parameters from
   the given parameter vector.
 }
+\keyword{internal}

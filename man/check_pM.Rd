@@ -24,3 +24,4 @@ Doesn't return anything but throws an informative error if something is wrong.
 \description{
 \code{check_pM} checks that the arguments p and M are correctly set.
 }
+\keyword{internal}

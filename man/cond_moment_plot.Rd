@@ -51,6 +51,7 @@ cond_moment_plot(gstmar42, which_moment="variance")
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
+ @keywords internal
 }
 \seealso{
 \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},

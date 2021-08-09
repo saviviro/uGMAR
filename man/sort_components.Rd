@@ -73,3 +73,4 @@ Returns a parameter vector sorted according to its mixing weight parameters,
 \details{
 This function does not support models imposing linear constraints.
 }
+\keyword{internal}

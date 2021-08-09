@@ -123,6 +123,7 @@ loglikelihood(M10Y1Y, p=4, M=c(1, 1), params=params42gs, model="G-StMAR")
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
+ @keywords internal
 }
 \seealso{
 \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residuals}},

@@ -110,3 +110,4 @@ Returns \code{TRUE} or \code{FALSE} accordingly.
            Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
 }
+\keyword{internal}

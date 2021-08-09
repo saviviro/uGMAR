@@ -16,3 +16,4 @@ Returns \code{TRUE} or \code{FALSE} accordingly.
 \code{all_pos_ints} tells whether all the elements in a vector
   are strictly positive natural numbers.
 }
+\keyword{internal}
