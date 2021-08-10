@@ -103,5 +103,6 @@
 
 # uGMAR 3.4.0
 
+* Re-used the class 'htest' for the objects returned by the functions Wald_test and LR_test.
 * Removed the documentation of internal functions from the manual.
 * Updated doi to the reference to the G-StMAR model (Virolainen, 2021).

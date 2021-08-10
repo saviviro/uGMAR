@@ -13,9 +13,9 @@ c1 <- c(0.1, -2.4)
 wald1 <- Wald_test(mod12, A1, c1)
 
 test_that("Wald_test works correctly", {
-  expect_equal(wald1$df, 2)
-  expect_equal(wald1$test_stat, 1.32194, tolerance=1e-1)
-  expect_equal(wald1$p_value, 0.5163504, tolerance=1e-1)
+  expect_equal(unname(wald1$parameter), 2)
+  expect_equal(unname(wald1$statistic), 1.32194, tolerance=1e-1)
+  expect_equal(wald1$p.value, 0.5163504, tolerance=1e-1)
 })
 
 
@@ -27,7 +27,7 @@ mod12r <- GSMAR(simudata, p=1, M=2, params=params12r, model="GMAR", restricted=T
 lr1 <- LR_test(mod12, mod12r)
 
 test_that("LR_test works correctly", {
-  expect_equal(lr1$df, 1)
-  expect_equal(lr1$test_stat, 1.378559, tolerance=1e-4)
-  expect_equal(lr1$p_value, 0.2403468, tolerance=1e-4)
+  expect_equal(unname(lr1$parameter), 1)
+  expect_equal(unname(lr1$statistic), 1.378559, tolerance=1e-4)
+  expect_equal(lr1$p.value, 0.2403468, tolerance=1e-4)
 })
