@@ -39,7 +39,7 @@ isStationary <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), rest
 #'   For large StMAR and G-StMAR models with large data the calculations to obtain the individual statistics
 #'   may take a significantly long time without the package "gsl".
 #' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{cond_moment_plot}}, \code{\link{quantile_residual_tests}},
-#'  \code{\link{quantile_residual_plot}}, \code{\link{simulateGSMAR}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+#'  \code{\link{quantile_residual_plot}}, \code{\link{simulate.gsmar}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 #' @export
 
 diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
@@ -53,11 +53,11 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 #' @description \code{quantileResidualsPlot} plots quantile residual time series and histogram.
 #'  DEPRECATED, USE \code{quantile_residual_plot} INSTEAD!
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @details DEPRECATED, USE \code{quantile_residual_plot} INSTEAD!
 #' @inherit quantile_residual_plot return references
 #' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
-#'  \code{\link{quantile_residual_tests}}, \code{\link{simulateGSMAR}}
+#'  \code{\link{quantile_residual_tests}}, \code{\link{simulate.gsmar}}
 #' @export
 
 quantileResidualPlot <- function(gsmar) {

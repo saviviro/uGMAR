@@ -99,8 +99,8 @@ Differs from the function \code{uncond_moments} in arguments. This function exis
            \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
    \item Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive model based on Student's t-distribution.
          \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
-   \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
-         Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
+   \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions.
+         Studies in Nonlinear Dynamics & Econometrics, doi: 10.1515/snde-2020-0060
    \item Lütkepohl H. 2005. New Introduction to Multiple Time Series Analysis. \emph{Springer}.
  }
 }

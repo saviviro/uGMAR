@@ -84,9 +84,8 @@ Wald_test <- function(gsmar, A, c, h=6e-6) {
   df <- nrow(A)
   p_value <- pchisq(test_stat, df=df, lower.tail=FALSE)
 
+  # Return
   dname <- paste0(deparse(substitute(gsmar)),", ", deparse(substitute(A)), ", ", deparse(substitute(c)))
-
-
   structure(list(statistic=c("W"=test_stat),
                  parameter=c("df"=df),
                  p.value=p_value,
@@ -158,15 +157,8 @@ LR_test <- function(gsmar1, gsmar2) {
   df <- length(gsmar1$params) - length(gsmar2$params)
   p_value <- pchisq(test_stat, df=df, lower.tail=FALSE)
 
-#  structure(list(gsmar1=gsmar1,
-#                 gsmar2=gsmar2,
-#                 test_stat=test_stat,
-#                 df=df,
-#                 p_value=p_value),
-#            class="lr")
-
+  # Return
   dname <- paste(deparse(substitute(gsmar1)), "and", deparse(substitute(gsmar2)))
-
   structure(list(statistic=c("LR"=test_stat),
                  parameter=c("df"=df),
                  p.value=p_value,

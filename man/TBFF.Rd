@@ -16,13 +16,13 @@ TBFF
 \description{
 A dataset containing the monthly U.S. interest rate spread between the 3-month Treasury bill secondary
 market rate and the effective federal funds rate from 1954 July to 2019 July (781 observations).
-This series was studied in the empirical application of Virolainen (forthcoming) introducing the
+This series was studied in the empirical application of Virolainen (2021) introducing the
 G-StMAR model.
 }
 \references{
 \itemize{
-   \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
-         Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
+   \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions.
+         Studies in Nonlinear Dynamics & Econometrics, doi: 10.1515/snde-2020-0060
  }
 }
 \keyword{datasets}
