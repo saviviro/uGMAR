@@ -100,6 +100,14 @@
 #'    \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions.
 #'          Studies in Nonlinear Dynamics & Econometrics, doi: 10.1515/snde-2020-0060
 #'  }
+#' @examples
+#' \donttest{
+#' ## These are long running examples
+#'
+#' # Preliminary estimation of GMAR p=1, M=2, model with the genetic algorithm
+#' # using only 100 generations (200 is recommended):
+#' pars12_ga <- GAfit(data=simudata, p=1, M=2, model="GMAR", ngen=100, seed=1)
+#' pars12_ga # Returns a parameter vector, not a class 'gsmar' object.
 #' @export
 
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),
