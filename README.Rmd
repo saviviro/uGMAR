@@ -58,7 +58,7 @@ diagnostic_plot(fit)
 qrt <- quantile_residual_tests(fit)
 
 ## Simulate a sample path from the estimated process
-sim <- simulateGSMAR(fit, nsimu=100)
+sim <- simulate(fit, nsim=100)
 plot.ts(sim$sample)
 
 ## Forecast future values of the process
@@ -84,4 +84,4 @@ References
 
 -   Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series. *Journal of Time Series Analysis*, **36**, 247-266.
 -  Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive model based on Student's t-distribution. *Communications in Statistics - Theory and Methods*, doi: 10.1080/03610926.2021.1916531
--  \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions. *Studies in Nonlinear Dynamics & Econometrics*, (preprint available as arXiv:2003.05221).
+-  \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions. *Studies in Nonlinear Dynamics & Econometrics*, doi: 10.1515/snde-2020-0060

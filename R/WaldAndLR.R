@@ -170,7 +170,7 @@ LR_test <- function(gsmar1, gsmar2) {
   structure(list(statistic=c("LR"=test_stat),
                  parameter=c("df"=df),
                  p.value=p_value,
-                 alternative=paste("the true parameter does not satisfy the constraints in", deparse(substitute(gsmar2))),
+                 alternative=paste("the true parameter does not satisfy the constraints imposed in", deparse(substitute(gsmar2))),
                  data.name=dname,
                  method="Likelihood ratio test",
                  gsmar1=gsmar1,

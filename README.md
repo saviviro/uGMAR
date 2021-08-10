@@ -55,7 +55,7 @@ diagnostic_plot(fit)
 qrt <- quantile_residual_tests(fit)
 
 ## Simulate a sample path from the estimated process
-sim <- simulateGSMAR(fit, nsimu=100)
+sim <- simulate(fit, nsim=100)
 plot.ts(sim$sample)
 
 ## Forecast future values of the process
@@ -85,6 +85,6 @@ cond_moment_plot(fit, which_moment="variance")
     model based on Student’s t-distribution. *Communications in
     Statistics - Theory and Methods*, doi: 10.1080/03610926.2021.1916531
 
-  - Virolainen S. forthcoming. A mixture autoregressive model based on
-    Gaussian and Student’s t-distributions. *Studies in Nonlinear
-    Dynamics & Econometrics*, (preprint available as arXiv:2003.05221).
+  - Virolainen S. 2021. A mixture autoregressive model based on Gaussian
+    and Student’s t-distributions. *Studies in Nonlinear Dynamics &
+    Econometrics*, doi: 10.1515/snde-2020-0060
