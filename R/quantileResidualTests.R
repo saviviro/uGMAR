@@ -6,7 +6,7 @@
 #'  and G-StMAR models, testing normality, autocorrelation, and conditional heteroscedasticity
 #'  of the quantile residuals.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @param lags_ac a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
 #' @param lags_ch a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
 #'  is tested.

@@ -157,6 +157,16 @@ The core of the genetic algorithm is mostly based on the description by \emph{Do
    The model with redundant regimes would have approximately the same log-likelihood value without the redundant regimes
    and there is no purpose to have redundant regimes in the model.
 }
+\examples{
+\donttest{
+## These are long running examples
+
+# Preliminary estimation of GMAR p=1, M=2, model with the genetic algorithm
+# using only 100 generations (200 is recommended):
+pars12_ga <- GAfit(data=simudata, p=1, M=2, model="GMAR", ngen=100, seed=1)
+pars12_ga # Returns a parameter vector, not a class 'gsmar' object.
+}
+}
 \references{
 \itemize{
    \item Dorsey R. E. and Mayer W. J. 1995. Genetic algorithms for estimation problems with multiple optima,

@@ -237,7 +237,7 @@ change_parametrization <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 #' @description \code{get_ar_roots} calculates the absolute values of the roots of the AR
 #'   characteristic polynomials for each mixture component.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @return Returns a list with \code{M} elements each containing the absolute values of the roots
 #'  of the AR characteristic polynomial corresponding to each mixture component.
 #' @inherit is_stationary references

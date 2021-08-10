@@ -3,7 +3,7 @@
 #' @description \code{get_regime_means} calculates the regime means \eqn{\mu_{m} = \phi_{m,0}/(1-\sum\phi_{i,m})}
 #'   for the given GMAR, StMAR, or G-StMAR model
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @return Returns a length \code{M} vector containing the regime mean \eqn{\mu_{m}} in the m:th element.
 #' @inherit is_stationary references
 #' @family moment functions
@@ -48,7 +48,7 @@ get_regime_means <- function(gsmar) {
 #' @description \code{get_regime_autocovs} calculates the first p regime specific autocovariances \strong{\eqn{\gamma}}\eqn{_{m,p}}
 #'   for the given GMAR, StMAR, or G-StMAR model.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @return Returns a size \eqn{(pxM)} matrix containing the first p autocovariances of the components processes:
 #'  i:th autocovariance in the i:th row and m:th component process in the m:th column.
 #' @family moment functions
@@ -112,7 +112,7 @@ get_regime_autocovs <- function(gsmar) {
 #' @description \code{get_regime_vars} calculates the unconditional regime specific variances \eqn{\gamma_{m,0}}
 #'   for the given GMAR, StMAR, or G-StMAR model.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @return Returns a length M vector containing the unconditional variances of the components processes:
 #'   m:th element for the m:th regime.
 #' @inherit get_regime_autocovs references
@@ -197,7 +197,7 @@ uncond_moments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")
 #' @description \code{uncond_moments} calculates the unconditional mean, variance, and the first p autocovariances
 #'  and autocorrelations of the GSMAR process.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @inherit uncond_moments_int return references
 #' @family moment functions
 #' @examples

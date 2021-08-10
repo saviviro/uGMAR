@@ -53,7 +53,7 @@ diagnosticPlot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 #' @description \code{quantileResidualsPlot} plots quantile residual time series and histogram.
 #'  DEPRECATED, USE \code{quantile_residual_plot} INSTEAD!
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @details DEPRECATED, USE \code{quantile_residual_plot} INSTEAD!
 #' @inherit quantile_residual_plot return references
 #' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
@@ -256,16 +256,9 @@ quantileResidualTests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_ac
 #' @description \code{simulateGSMAR} simulates observations from the specified GMAR, StMAR, or G-StMAR process.
 #'  Can be utilized for forecasting future values of the process. DEPRECATED, USE \code{simulate.gsmar} INSTEAD!
 #'
-#' @param object object of class \code{'gsmar'}, typically created with the function \code{fitGSMAR} or \code{GSMAR}.
-#' @param nsim a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.
-#' @param seed an integer that specifies the seed for the random number generator. Ignored if \code{NULL}.
-#' @param ... currently not in use.
-#' @param init_values a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
-#'  element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
-#'  If not \code{NULL}, initial values will be simulated from the process's stationary distribution.
-#' @param ntimes a positive integer specifying how many sets of simulations should be performed.
-#' @param drop if \code{TRUE} (default) then the components of the returned list are coerced to lower dimension if \code{ntimes==1},
-#'   i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.
+#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
+#' @param nsimu a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.
 #' @details DEPRECATED, USE \code{simulate.gsmar} INSTEAD!
 #'
 #'  The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating its

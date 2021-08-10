@@ -4,7 +4,7 @@
 #'  the time series contained in the model (e.g. the time series the model was fitted to). Also plots
 #'  the regimewise conditional means/variances multiplied with the mixing weights.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @param which_moment should conditional means or variances be plotted?
 #' @details The conditional mean plot works best if the data contains positive values only.
 #' @return \code{cond_moment_plot} only plots to a graphical device and does not return anything. Numerical values

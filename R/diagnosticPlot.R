@@ -9,7 +9,7 @@
 #'  associated with the quantile residual tests (for autocorrelation and conditional heteroskedasticity) divided by
 #'  their approximate standard errors with their approximate 95\% critical bounds (see Kalliovirta 2012, Section 3).
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @param nlags a positive integer specifying how many lags should be calculated for the autocorrelation and
 #'  conditional heteroscedasticity statistics.
 #' @param nsimu a positive integer specifying to how many simulated values from the process the covariance
@@ -154,7 +154,7 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 #'
 #' @description \code{quantile_residualsPlot} plots quantile residual time series and histogram.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit quantile_residuals references
 #' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
@@ -214,7 +214,7 @@ quantile_residual_plot <- function(gsmar) {
 #'
 #' @description \code{profile_logliks} plots profile log-likelihoods around the estimates.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @param scale a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.
 #' @param nrows how many rows should be in the plot-matrix? The default is \code{max(ceiling(log2(nparams) - 1), 1)}.
 #' @param ncols how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.

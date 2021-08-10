@@ -108,6 +108,7 @@
 #' # using only 100 generations (200 is recommended):
 #' pars12_ga <- GAfit(data=simudata, p=1, M=2, model="GMAR", ngen=100, seed=1)
 #' pars12_ga # Returns a parameter vector, not a class 'gsmar' object.
+#' }
 #' @export
 
 GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, parametrization=c("intercept", "mean"),

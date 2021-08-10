@@ -303,7 +303,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'  estimation of a GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has
 #'  preliminary estimates.
 #'
-#' @inheritParams simulate.gsmar
+#' @inheritParams add_data
 #' @inheritParams fitGSMAR
 #' @inheritParams GSMAR
 #' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize
