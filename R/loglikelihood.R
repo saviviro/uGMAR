@@ -178,7 +178,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   # Observed data: y_(-p+1),...,y_0,y_1,...,y_(n_obs-p). First row denotes vector y_0, i:th row vector y_[i-1] and last row denotes the vector y_T.
   Y <- vapply(1:p, function(i1) data[(p - i1 + 1):(n_obs - i1 + 1)], numeric(n_obs - p + 1))
 
-  # Calculate inverse Gamma_m. See the covariance matrix Gamma_p in MPS forthcoming, p.3 - we calculate this for all mixture components using
+  # Calculate inverse Gamma_m. See the covariance matrix Gamma_p in MPS 2021, p.3 - we calculate this for all mixture components using
   # the inverse formula in Galbraith and Galbraith 1974. Also, calculate the matrix products in multivariate normal and t-distribution
   # densities.
   matProd <- matrix(nrow=n_obs - p + 1, ncol=M)
@@ -202,7 +202,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
-  # Calculate the multivariate normal or student's t values (KMS 2015, eq.(7) and MPS forthcoming, Theorem 1) in log for each vector y_t and for each m=1,..,M.
+  # Calculate the multivariate normal or student's t values (KMS 2015, eq.(7) and MPS 2021, Theorem 1) in log for each vector y_t and for each m=1,..,M.
   # First row for initial values \bm{y}_0 (as denoted by KMS 2015) and i:th row for \bm{y}_(i-1). First column for component m=1 and j:th column for m=j.
   logmv_values <- matrix(nrow=(n_obs - p + 1), ncol=M)
   if(model == "GMAR" | model == "G-StMAR") { # Multinormals
@@ -219,7 +219,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
   }
 
-  # Calculate the mixing weights alpha_mt (KMS 2015, eq.(8) and MPS forthcoming, eq.(11)).
+  # Calculate the mixing weights alpha_mt (KMS 2015, eq.(8) and MPS 2021, eq.(11)).
   # First row for t=1, second for t=2, and i:th for t=i. First column for m=1, second for m=2 and j:th column for m=j.
   if(to_return != "mw_tplus1") {
     logmv_values0 <- logmv_values[1:(n_obs - p),] # The last row is not needed because alpha_mt uses vector Y_(t-1)
@@ -238,18 +238,18 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     return(alpha_mt)
   }
 
-  # Calculate the conditional means mu_mt (KMS 2015, eq.(2), MPS forthcoming, eq.(5)). First row for t=1, second for t=2 etc. First column for m=1,
+  # Calculate the conditional means mu_mt (KMS 2015, eq.(2), MPS 2021, eq.(5)). First row for t=1, second for t=2 etc. First column for m=1,
   # second column for m=2 etc.
   mu_mt <- t(pars[1,] + t(Y[-nrow(Y),]%*%pars[2:(p + 1), , drop=FALSE]))
 
   # Calculate/return conditional means
   if(to_return == "regime_cmeans") {
     return(mu_mt)
-  } else if(to_return == "total_cmeans") { # KMS 2015, eq.(4), MPS forthcoming, eq.(13)
+  } else if(to_return == "total_cmeans") { # KMS 2015, eq.(4), MPS 2021, eq.(13)
     return(rowSums(alpha_mt*mu_mt))
   }
 
-  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS forthcoming, eq.(14)-(15)) or quantile residuals
+  # Calculate "the second term" of the log-likelihood (KMS 2015, eq.(12)-(13), MPS 2021, eq.(14)-(15)) or quantile residuals
   Y2 <- Y[2:nrow(Y), 1] # Only the first column and rows 2...T are needed
 
   # GMAR type components
@@ -355,7 +355,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
     }
     if(to_return == "regime_cvars") {
       return(sigma_mt)
-    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS forthcoming, eq.(13), Virolainen 2020, ea. (2.19))
+    } else { # Calculate and return the total conditional variances (KMS 2015, eq.(5), MPS 2021, eq.(13), Virolainen 2021, ea. (2.19))
       return(rowSums(alpha_mt*sigma_mt) + rowSums(alpha_mt*(mu_mt - rowSums(alpha_mt*mu_mt))^2))
     }
   }
@@ -365,7 +365,7 @@ loglikelihood_int <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-St
   } else if(to_return == "loglik_and_mw") {
     ret <- list(loglik=l_0 + sum(log(l_t)), mw=alpha_mt)
   } else {
-    ret <- l_0 + sum(log(l_t)) # KMS 2015, eq.(12)-(13), MPS forthcoming, eq.(14)-(15)
+    ret <- l_0 + sum(log(l_t)) # KMS 2015, eq.(12)-(13), MPS 2021, eq.(14)-(15)
   }
   ret
 }
@@ -426,7 +426,7 @@ get_alpha_mt <- function(M, log_mvnvalues, alphas, epsilon, conditional, to_retu
   if(!also_l_0) { # Only return mixing weights
     return(alpha_mt)
   } else { # Also calculate and return l_0
-    # First term of the exact log-likelihood (Kalliovirta et al. 2015, eq.(9)) + see also Meitz et al (2021) and Virolainen (forthcoming)
+    # First term of the exact log-likelihood (Kalliovirta et al. 2015, eq.(9)) + see also Meitz et al (2021) and Virolainen (2021)
     l_0 <- 0
     if(M == 1 && conditional == FALSE && (to_return == "loglik" | to_return == "loglik_and_mw")) {
       l_0 <- log_mvnvalues[1]

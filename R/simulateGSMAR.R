@@ -153,7 +153,7 @@ simulate.gsmar <- function(object, nsim=1, seed=NULL, ...,  init_values=NULL, nt
       L <- t(chol(Gamma_m))
       mv_samples <- mu_mp[,m] + L%*%rnorm(p) # sample from N(mu_mp, Gamma_m)
     } else { # model == "StMAR" || (model == "G-StMAR" && m > M1); Draw from StMAR type component
-      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), dfs (see MPS forthcoming, Supplementary material).
+      # Note that we use Student's t parametrization: mean, covariance (=v/(v - 2)*Scale), dfs (see MPS 2021, Supplementary material).
       Gamma_m <- solve(invG[, , m])
       L <- t(chol((dfs[m - M1] - 2)/dfs[m - M1]*Gamma_m)) # M1 = 0 for StMAR models
       Z <- L%*%rnorm(p) # Sample from N(0, ((v - 2)/v)/Gamma_m)
@@ -175,7 +175,7 @@ simulate.gsmar <- function(object, nsim=1, seed=NULL, ...,  init_values=NULL, nt
 
     ### Start simulation ###
     for(i1 in 1:nsim) {
-      # Calculate log multinormal values (KMS 2015, eq.(7)) or log Student's t values (MPS forthcoming, p.5); for each regime 1,...,M.
+      # Calculate log multinormal values (KMS 2015, eq.(7)) or log Student's t values (MPS 2021, p.5); for each regime 1,...,M.
       matProd <- vapply(1:M, function(i2) crossprod(Y[i1,] - mu_mp[,i2], as.matrix(invG[, , i2]))%*%(Y[i1,] - mu_mp[,i2]), numeric(1))
       if(model == "GMAR" || model == "G-StMAR") { # GMAR type regimes, M1 = M for GMAR models
         logmv_valuesM1 <- vapply(1:M1, function(i2) -0.5*p*log(2*base::pi) - 0.5*log(detG[i2]) - 0.5*matProd[i2], numeric(1))
@@ -191,7 +191,7 @@ simulate.gsmar <- function(object, nsim=1, seed=NULL, ...,  init_values=NULL, nt
       }
       logmv_values <- c(logmv_valuesM1, logmv_valuesM2)
 
-      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), MPS forthcoming, eq.(11)).
+      # Calculate the alpha_mt mixing weights (KMS 2015, eq.(8), MPS 2021, eq.(11)).
       alpha_mt <- get_alpha_mt(M=M, log_mvnvalues=logmv_values, alphas=alphas,
                                epsilon=epsilon, also_l_0=FALSE)
 

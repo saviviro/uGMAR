@@ -142,7 +142,7 @@ get_regime_vars <- function(gsmar) {
                     restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
 
   # Calculate the regime variances
-  colSums(pars[-c(1, p + 2),]*reg_autocovs) + pars[p + 2,] # MPS forthcoming, eq.(4) and Theorem 1 (it is the same for GMAR and G-StMAR models also; see Virolainen 2020, Section 2.1)
+  colSums(pars[-c(1, p + 2),]*reg_autocovs) + pars[p + 2,] # MPS 2021, eq.(4) and Theorem 1 (it is the same for GMAR and G-StMAR models also; see Virolainen 2020, Section 2.1)
 }
 
 
@@ -179,7 +179,7 @@ uncond_moments_int <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR")
                         restricted=gsmar$model$restricted, constraints=gsmar$model$constraints)
   reg_means <- get_regime_means(gsmar) # Regimewise unconditional means
 
-  # Calculate the unconditional moments: KMS 2015, p.251, MPS forthcoming, p.6., Virolainen 2020 p.8.
+  # Calculate the unconditional moments: KMS 2015, p.251, MPS 2021, p.6., Virolainen 2021 p.8.
   uncond_mean <- sum(alphas*reg_means)
   tmp <- sum(alphas*(reg_means - uncond_mean)^2)
   uncond_var <- sum(alphas*get_regime_vars(gsmar)) + tmp
