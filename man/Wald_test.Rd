@@ -7,8 +7,6 @@
 Wald_test(gsmar, A, c, h = 6e-06)
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{A}{a size \eqn{(k x n_params)} matrix with full row rank specifying a part of the null hypothesis,
 where \eqn{n_params} is the number of parameters in the (unconstrained) model.
 See details for more information.}

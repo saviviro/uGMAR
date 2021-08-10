@@ -14,8 +14,6 @@ stmar_to_gstmar(
 )
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{maxdf}{regimes with degrees of freedom parameter value larger than this will be turned into
 GMAR type.}
 

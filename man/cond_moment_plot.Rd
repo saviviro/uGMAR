@@ -7,8 +7,6 @@
 cond_moment_plot(gsmar, which_moment = c("mean", "variance"))
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{which_moment}{should conditional means or variances be plotted?}
 }
 \value{
@@ -51,7 +49,6 @@ cond_moment_plot(gstmar42, which_moment="variance")
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
- @keywords internal
 }
 \seealso{
 \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},

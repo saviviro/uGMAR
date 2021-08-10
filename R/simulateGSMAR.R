@@ -1,15 +1,17 @@
 #' @import stats
 #'
-#' @title Simulate values from GMAR, StMAR, and G-StMAR processes
+#' @title Simulate obsercations from GMAR, StMAR, and G-StMAR processes
 #'
-#' @description \code{simulateGSMAR} simulates values from the specified GMAR, StMAR, or G-StMAR process.
+#' @description \code{simulate.gsmar} simulates observations from the specified GMAR, StMAR, or G-StMAR process.
 #'  Can be utilized for forecasting future values of the process.
 #'
-#' @param gsmar object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.
-#' @param nsimu a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.
+#' @param object object of class \code{'gsmar'}, typically created with the function \code{fitGSMAR} or \code{GSMAR}.
+#' @param nsim a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.
+#' @param seed an integer that specifies the seed for the random number generator. Ignored if \code{NULL}.
+#' @param ... currently not in use.
 #' @param init_values a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
 #'  element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
-#'  If not specified, initial values will be simulated from the process's stationary distribution.
+#'  If \code{NULL}, initial values will be simulated from the process's stationary distribution.
 #' @param ntimes a positive integer specifying how many sets of simulations should be performed.
 #' @param drop if \code{TRUE} (default) then the components of the returned list are coerced to lower dimension if \code{ntimes==1},
 #'   i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.
@@ -17,12 +19,12 @@
 #'  possible future values. One can perform a large number of sets of simulations and calculate the sample quantiles from
 #'  the simulated values to obtain prediction intervals. See the forecasting example below for a hand-on demonstration.
 #' @return If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
-#'  and \code{$mixing_weights} is a (\code{nsimu}\eqn{xM}) matrix. Otherwise, returns a list with...
+#'  and \code{$mixing_weights} is a (\code{nsim}\eqn{xM}) matrix. Otherwise, returns a list with...
 #'   \describe{
-#'     \item{\code{$sample}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
-#'     \item{\code{$component}}{a size (\code{nsimu}\eqn{x}\code{ntimes}) matrix containing the information from which
+#'     \item{\code{$sample}}{a size (\code{nsim}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
+#'     \item{\code{$component}}{a size (\code{nsim}\eqn{x}\code{ntimes}) matrix containing the information from which
 #'      mixture component each value was generated from.}
-#'     \item{\code{$mixing_weights}}{a size (\code{nsimu}\eqn{xMx}\code{ntimes}) array containing the mixing weights corresponding to the
+#'     \item{\code{$mixing_weights}}{a size (\code{nsim}\eqn{xMx}\code{ntimes}) array containing the mixing weights corresponding to the
 #'      sample: the dimension \code{[i, , ]} is the time index, the dimension \code{[, i, ]} indicates the regime, and the dimension
 #'      \code{[, , i]} indicates the i:th set of simulations.}
 #'   }
@@ -35,7 +37,7 @@
 #' # GMAR model:
 #' params22 <- c(0.9, 0.4, 0.2, 0.5, 0.7, 0.5, -0.2, 0.7, 0.7)
 #' mod22 <- GSMAR(p=2, M=2, params=params22, model="GMAR")
-#' mysim <- simulateGSMAR(mod22, nsimu=500)
+#' mysim <- simulate(mod22, nsim=500)
 #' ts.plot(mysim$sample)
 #' ts.plot(mysim$component)
 #' ts.plot(mysim$mixing_weights, col=rainbow(2), lty=2)
@@ -46,7 +48,7 @@
 #'                 0.2, -0.15, 0.04, 0.19, 9.75)
 #' gstmar42 <- GSMAR(data=M10Y1Y, p=4, M=c(1, 1), params=params42gs,
 #'                   model="G-StMAR")
-#' sim42gs <- simulateGSMAR(gstmar42, nsimu=500, init_values=1:4)
+#' sim42gs <- simulate(gstmar42, nsim=500, init_values=1:4)
 #' ts.plot(sim42gs$sample)
 #' ts.plot(sim42gs$component)
 #' ts.plot(sim42gs$mixing_weights, col=rainbow(2), lty=2)
@@ -56,7 +58,7 @@
 #' # GMAR model, 1000 sets of simulations with initial values from the data:
 #' params12 <- c(1.70, 0.85, 0.30, 4.12, 0.73, 1.98, 0.63)
 #' gmar12 <- GSMAR(data=simudata, p=1, M=2, params=params12, model="GMAR")
-#' sim12 <- simulateGSMAR(gmar12, nsimu=5, init_val=gmar12$data, ntimes=1000)
+#' sim12 <- simulate(gmar12, nsim=5, init_val=gmar12$data, ntimes=1000)
 #' apply(sim12$sample, MARGIN=1, FUN=median) # Point prediction
 #' apply(sim12$sample, MARGIN=1, FUN=quantile, probs=c(0.025, 0.975)) # 95% pi
 #' apply(sim12$mixing_weights, MARGIN=1:2, FUN=median) # mix.weight point pred
@@ -64,11 +66,14 @@
 #'       probs=c(0.025, 0.975)) # mix.weight 95% prediction intervals
 #' @export
 
-simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
+simulate.gsmar <- function(object, nsim=1, seed=NULL, ...,  init_values=NULL, ntimes=1, drop=TRUE) {
 
   # Collect relevant statistics etc
+  gsmar <- object
+  nsim <- nsim
   epsilon <- round(log(.Machine$double.xmin) + 10)
   check_gsmar(gsmar)
+  if(!is.null(seed)) set.seed(seed)
   p <- gsmar$model$p
   M <- gsmar$model$M
   model <- gsmar$model$model
@@ -84,15 +89,15 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   }
 
   # Checks
-  if(!missing(init_values)) {
+  if(!is.null(init_values)) {
     if(length(init_values) < p) {
       stop("The length of initial values vector has to be at least p")
     }
   }
-  if(nsimu < 1) {
+  if(nsim < 1) {
     stop("The number of simulations has to be equal or larger than one")
-  } else if(nsimu%%1 != 0) {
-    stop("Argument nsimu has to be positive integer")
+  } else if(nsim%%1 != 0) {
+    stop("Argument nsim has to be positive integer")
   } else if(ntimes < 1 | ntimes%%1 != 0) {
     stop("The argument ntimes should be a positive integer")
   }
@@ -110,8 +115,8 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   parameter_checks(p=p, M=M_orig, params=params, model=model, restricted=FALSE, constraints=NULL)
 
   # Create a container for the simulated values and initial values.
-  # First row for initival values vector, and t+1:th row for (Y_t,Y_[t-1],...,Y_[t-p+1]), t=1,...,nsimu
-  Y <- matrix(nrow=nsimu + 1, ncol=p)
+  # First row for initival values vector, and t+1:th row for (Y_t,Y_[t-1],...,Y_[t-p+1]), t=1,...,nsim
+  Y <- matrix(nrow=nsim + 1, ncol=p)
 
   # Calculate inverses of covariance matrices Gamma_m and their determinants
   invG <- array(dim=c(p, p, M))
@@ -140,7 +145,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   mu_mp <- tcrossprod(rep(1, p), mu) # \mu_m*1_p, column for each component
 
   # If initial values are missing simulate them from the processes stationary distribution
-  if(missing(init_values)) {
+  if(is.null(init_values)) {
     mv_samples <- numeric(p)
     m <- sample.int(M, size=1, prob=alphas) # From which mixture component the p-dimensional initial value is drawn from
     if(model == "GMAR" || (model == "G-StMAR" && m <= M1)) { # Draw from GMAR type component
@@ -162,14 +167,14 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   }
 
   # Initialize data storages
-  sample <- matrix(nrow=nsimu, ncol=ntimes)
-  component <- matrix(nrow=nsimu, ncol=ntimes)
-  mixing_weights <- array(dim=c(nsimu, M, ntimes))
+  sample <- matrix(nrow=nsim, ncol=ntimes)
+  component <- matrix(nrow=nsim, ncol=ntimes)
+  mixing_weights <- array(dim=c(nsim, M, ntimes))
 
   for(j1 in 1:ntimes) { # For each set of simulations...
 
     ### Start simulation ###
-    for(i1 in 1:nsimu) {
+    for(i1 in 1:nsim) {
       # Calculate log multinormal values (KMS 2015, eq.(7)) or log Student's t values (MPS forthcoming, p.5); for each regime 1,...,M.
       matProd <- vapply(1:M, function(i2) crossprod(Y[i1,] - mu_mp[,i2], as.matrix(invG[, , i2]))%*%(Y[i1,] - mu_mp[,i2]), numeric(1))
       if(model == "GMAR" || model == "G-StMAR") { # GMAR type regimes, M1 = M for GMAR models
@@ -217,7 +222,7 @@ simulateGSMAR <- function(gsmar, nsimu, init_values, ntimes=1, drop=TRUE) {
   if(ntimes == 1 & drop) {
     sample <- as.vector(sample)
     component <- as.vector(component)
-    mixing_weights <- matrix(mixing_weights, ncol=M, nrow=nsimu, byrow=FALSE)
+    mixing_weights <- matrix(mixing_weights, ncol=M, nrow=nsim, byrow=FALSE)
   }
   list(sample=sample,
        component=component,

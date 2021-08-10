@@ -247,3 +247,55 @@ quantileResidualTests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_ac
   .Deprecated("quantile_residual_tests")
   quantile_residual_tests(gsmar, lags_ac=lags_ac, lags_ch=lags_ch, nsimu=nsimu, print_res=print_res)
 }
+
+
+#' @import stats
+#'
+#' @title DEPRECATED, USE \code{simulate.gsmar} INSTEAD! Simulate observations from GMAR, StMAR, and G-StMAR processes
+#'
+#' @description \code{simulateGSMAR} simulates observations from the specified GMAR, StMAR, or G-StMAR process.
+#'  Can be utilized for forecasting future values of the process. DEPRECATED, USE \code{simulate.gsmar} INSTEAD!
+#'
+#' @param object object of class \code{'gsmar'}, typically created with the function \code{fitGSMAR} or \code{GSMAR}.
+#' @param nsim a positive integer specifying how many values (ahead from \code{init_values}) will be simulated.
+#' @param seed an integer that specifies the seed for the random number generator. Ignored if \code{NULL}.
+#' @param ... currently not in use.
+#' @param init_values a numeric vector with length \code{>=p} specifying the initial values for the simulation. The \strong{last}
+#'  element will be used as the initial value for the first lag, the second last element will be initial value for the second lag, etc.
+#'  If not \code{NULL}, initial values will be simulated from the process's stationary distribution.
+#' @param ntimes a positive integer specifying how many sets of simulations should be performed.
+#' @param drop if \code{TRUE} (default) then the components of the returned list are coerced to lower dimension if \code{ntimes==1},
+#'   i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_weights} will be matrix.
+#' @details DEPRECATED, USE \code{simulate.gsmar} INSTEAD!
+#'
+#'  The argument \code{ntimes} is intended for forecasting: a GSMAR process can be forecasted by simulating its
+#'  possible future values. One can perform a large number of sets of simulations and calculate the sample quantiles from
+#'  the simulated values to obtain prediction intervals. See the forecasting example below for a hand-on demonstration.
+#' @return If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
+#'  and \code{$mixing_weights} is a (\code{nsim}\eqn{xM}) matrix. Otherwise, returns a list with...
+#'   \describe{
+#'     \item{\code{$sample}}{a size (\code{nsim}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
+#'     \item{\code{$component}}{a size (\code{nsim}\eqn{x}\code{ntimes}) matrix containing the information from which
+#'      mixture component each value was generated from.}
+#'     \item{\code{$mixing_weights}}{a size (\code{nsim}\eqn{xMx}\code{ntimes}) array containing the mixing weights corresponding to the
+#'      sample: the dimension \code{[i, , ]} is the time index, the dimension \code{[, i, ]} indicates the regime, and the dimension
+#'      \code{[, , i]} indicates the i:th set of simulations.}
+#'   }
+#' @seealso \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{predict.gsmar}},
+#'  \code{\link{add_data}}, \code{\link{cond_moments}}, \code{\link{mixing_weights}}
+#' @inherit loglikelihood references
+#' @export
+
+simulateGSMAR <- function(object, nsim, init_values=NULL, ntimes=1, drop=TRUE, gsmar=NULL, nsimu=NULL) {
+  if(!is.null(gsmar)) {
+    print("The argument 'gsmar' is deprecated! Use 'gsmar' instead!")
+    object <- gsmar
+  }
+  if(!is.null(nsimu)) {
+    print("The argument 'nsimu' is deprecated! Use 'nsim' instead!")
+    nsim <- nsimu
+  }
+  .Deprecated("simulate.gsmar")
+
+  simulate.gsmar(object=object, nsim=nsim, seed=NULL, init_values=init_values, ntimes=ntimes, drop=drop)
+}

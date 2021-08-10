@@ -321,6 +321,9 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #'   and construct the model based on the corresponding estimates. If specified, then \code{which_round} is ignored.
 #' @details It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
 #'   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
+#'
+#'   In addition to the S3 methods listed under the topic "Methods (by generic)", the \code{predict} and {simulate} methods
+#'   are also available for the class 'gsmar' objects (see \code{?predict.gsmar} and \code{?simulate.gsmar}).
 #' @inherit GSMAR references return
 #' @inherit add_data seealso
 #' @examples

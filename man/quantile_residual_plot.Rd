@@ -6,9 +6,6 @@
 \usage{
 quantile_residual_plot(gsmar)
 }
-\arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-}
 \value{
 Only plots to a graphical device and doesn't return anything.
 }

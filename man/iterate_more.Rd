@@ -7,8 +7,6 @@
 iterate_more(gsmar, maxit = 100, custom_h = NULL, calc_std_errors = TRUE)
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{maxit}{the maximum number of iterations for the variable metric algorithm.}
 
 \item{custom_h}{A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference

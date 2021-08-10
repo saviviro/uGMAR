@@ -6,9 +6,6 @@
 \usage{
 get_regime_autocovs(gsmar)
 }
-\arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-}
 \value{
 Returns a size \eqn{(pxM)} matrix containing the first p autocovariances of the components processes:
  i:th autocovariance in the i:th row and m:th component process in the m:th column.

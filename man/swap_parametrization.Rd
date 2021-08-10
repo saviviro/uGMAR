@@ -7,8 +7,6 @@
 swap_parametrization(gsmar, calc_std_errors = TRUE, custom_h = NULL)
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{calc_std_errors}{should approximate standard errors be calculated?}
 
 \item{custom_h}{A numeric vector with same the length as the parameter vector: i:th element of custom_h is the difference

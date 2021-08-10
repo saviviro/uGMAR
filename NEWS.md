@@ -105,4 +105,6 @@
 
 * Re-used the class 'htest' for the objects returned by the functions Wald_test and LR_test.
 * Removed the documentation of internal functions from the manual.
+* Added legend to the density plot in the plot method for class 'gsmar' objects.
 * Updated doi to the reference to the G-StMAR model (Virolainen, 2021).
+* Updated the vignette.

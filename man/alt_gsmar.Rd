@@ -15,8 +15,6 @@ alt_gsmar(
 )
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{which_round}{based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.}
 
 \item{which_largest}{based on estimation round with which largest log-likelihood should the model be constructed?
@@ -46,6 +44,9 @@ Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or
 \details{
 It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
+
+  In addition to the S3 methods listed under the topic "Methods (by generic)", the \code{predict} and {simulate} methods
+  are also available for the class 'gsmar' objects (see \code{?predict.gsmar} and \code{?simulate.gsmar}).
 }
 \examples{
 \donttest{

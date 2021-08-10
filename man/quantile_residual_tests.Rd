@@ -27,8 +27,6 @@ Currently not used in \code{print.qrtest}}
 
 \item{digits}{the number of digits to be print}
 
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{lags_ac}{a numeric vector of positive integers specifying the lags for which autocorrelation is tested.}
 
 \item{lags_ch}{a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity

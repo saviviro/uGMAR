@@ -16,8 +16,6 @@ add_data(
 \arguments{
 \item{data}{a numeric vector or class \code{'ts'} object containing the data. \code{NA} values are not supported.}
 
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{calc_qresiduals}{should quantile residuals be calculated? Default is \code{TRUE} iff the model contains data.}
 
 \item{calc_cond_moments}{should conditional means and variances be calculated? Default is \code{TRUE} iff the model contains data.}

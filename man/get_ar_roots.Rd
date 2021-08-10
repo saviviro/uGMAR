@@ -6,9 +6,6 @@
 \usage{
 get_ar_roots(gsmar)
 }
-\arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-}
 \value{
 Returns a list with \code{M} elements each containing the absolute values of the roots
  of the AR characteristic polynomial corresponding to each mixture component.

@@ -6,9 +6,6 @@
 \usage{
 get_regime_means(gsmar)
 }
-\arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-}
 \value{
 Returns a length \code{M} vector containing the regime mean \eqn{\mu_{m}} in the m:th element.
 }

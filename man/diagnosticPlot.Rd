@@ -7,8 +7,6 @@
 diagnosticPlot(gsmar, nlags = 20, nsimu = 1, plot_indstats = FALSE)
 }
 \arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{nlags}{a positive integer specifying how many lags should be calculated for the autocorrelation and
 conditional heteroscedasticity statistics.}
 

@@ -246,7 +246,7 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
     } else if(model == "StMAR") {
       M1 <- 0
       M2 <- M
-    } else { # Model == "G-StMAR"
+    } else { # model == "G-StMAR"
       M1 <- M_orig[1]
       M2 <- M_orig[2]
     }
@@ -289,12 +289,17 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
     y1 <- max(c(data_dens$y, mod_dens))
 
     # Plot the densities
+    col_seriesdens <- "black"
+    col_modeldens <- "darkgrey"
     plot(x=data_dens$x, y=data_dens$y, xlim=c(x0, x1), ylim=c(y0, y1), main="Density",
-         ylab="", xlab="", cex.axis=0.8, font.axis=2, type="l")
-    lines(x=xpp, y=mod_dens, type="l", lty=2, lwd=2, col="darkgrey")
+         ylab="", xlab="", cex.axis=0.8, font.axis=2, type="l", col=col_seriesdens)
+    lines(x=xpp, y=mod_dens, type="l", lty=2, lwd=2, col=col_modeldens)
     for(m in 1:M) {
       lines(x=xpp, y=reg_dens(m, xx=xpp), type="l", lty=3, col=colpal_mw[m])
     }
+    legend("topleft", legend=c("series", "model", paste0("regime ", 1:M)),
+           bty="n", col=c(col_seriesdens, col_modeldens, colpal_mw), lty=c(1, 2, 3, 3), lwd=2,
+           text.font=2, cex=0.75, x.intersp=0.5, y.intersp=1)
   }
 
   invisible(gsmar)

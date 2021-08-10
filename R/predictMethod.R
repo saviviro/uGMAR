@@ -24,17 +24,15 @@
 #'  the sample median or mean for each step and the prediction intervals are obtained from the
 #'  empirical fractiles.
 #'
-#'  The function \code{simulateGSMAR} can also be used directly for quantile based forecasting.
+#'  The function \code{simulate.gsmar} can also be used directly for quantile based forecasting.
 #'
 #' @return Returns a class \code{'gsmarpred'} object containing, among the specifications,...
-#'  \describe{
 #'    \item{$pred}{Point forecasts}
 #'    \item{$pred_ints}{Prediction intervals}
 #'    \item{$mix_pred}{Point forecasts for mixing weights}
 #'    \item{mix_pred_ints}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
-#'  }
-#' @inherit simulateGSMAR references
-#' @seealso \code{\link{simulateGSMAR}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+#' @inherit simulate.gsmar references
+#' @seealso \code{\link{simulate.gsmar}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
 #'  \code{\link{quantile_residual_tests}}, \code{\link{diagnostic_plot}}
 #' @examples
 #' \donttest{
@@ -145,7 +143,7 @@ predict.gsmar <- function(object, ..., n_ahead, nsimu=10000, pi=c(0.95, 0.8), pr
   } else { # pred_type != cond_mean: Simulate future values of the process
 
     # Simulations
-    sim <- simulateGSMAR(gsmar, nsimu=n_ahead, init_values=data, ntimes=nsimu, drop=FALSE)
+    sim <- simulate.gsmar(object=gsmar, nsim=n_ahead, init_values=data, ntimes=nsimu, drop=FALSE)
     sample <- sim$sample
     alpha_mt <- sim$mixing_weights
     colnames(alpha_mt) <- vapply(1:sum(M), function(m) paste("regime", m), character(1))

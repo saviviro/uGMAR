@@ -6,9 +6,6 @@
 \usage{
 get_regime_vars(gsmar)
 }
-\arguments{
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-}
 \value{
 Returns a length M vector containing the unconditional variances of the components processes:
   m:th element for the m:th regime.

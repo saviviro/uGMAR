@@ -34,8 +34,6 @@ will be used for all dimensions.}
 
 \item{...}{other arguments passed to \code{fn}.}
 
-\item{gsmar}{object of class \code{'gsmar'} created with the function \code{fitGSMAR} or \code{GSMAR}.}
-
 \item{custom_h}{same as \code{varying_h} but if \code{NULL} (default), then the difference \code{h} used for differentiating
 overly large degrees of freedom parameters is adjusted to avoid numerical problems, and the difference is \code{6e-6} for the other
 parameters.}

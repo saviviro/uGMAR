@@ -120,7 +120,7 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 \section{S3 methods}{
 
  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
- \code{logLik}, \code{residuals}.
+ \code{predict}, \code{simulate}, \code{logLik}, \code{residuals}.
 }
 
 \examples{

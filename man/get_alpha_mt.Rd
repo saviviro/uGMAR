@@ -62,7 +62,6 @@ Note that we index the time series as \eqn{-p+1,...,0,1,...,T} as in Kalliovirta
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
- @keywords internal
 }
 \seealso{
 \code{\link{loglikelihood_int}}

@@ -43,12 +43,10 @@ along with the prediction. Default is \code{round(length(data)*0.15)}.}
 }
 \value{
 Returns a class \code{'gsmarpred'} object containing, among the specifications,...
- \describe{
    \item{$pred}{Point forecasts}
    \item{$pred_ints}{Prediction intervals}
    \item{$mix_pred}{Point forecasts for mixing weights}
    \item{mix_pred_ints}{Individual prediction intervals for mixing weights, as \code{[, , m]}, m=1,..,M.}
- }
 }
 \description{
 \code{predict.gsmar} forecasts the specified GMAR, StMAR, or G-StMAR process by using the given
@@ -61,7 +59,7 @@ Returns a class \code{'gsmarpred'} object containing, among the specifications,.
  the sample median or mean for each step and the prediction intervals are obtained from the
  empirical fractiles.
 
- The function \code{simulateGSMAR} can also be used directly for quantile based forecasting.
+ The function \code{simulate.gsmar} can also be used directly for quantile based forecasting.
 }
 \examples{
 \donttest{
@@ -116,9 +114,8 @@ predict(gmar12, n_ahead=1, pred_type="cond_mean", plot_res=FALSE)
    \item Virolainen S. forthcoming. A mixture autoregressive model based on Gaussian and Student's t-distributions.
          Studies in Nonlinear Dynamics & Econometrics, (preprint available as arXiv:2003.05221).
  }
- @keywords internal
 }
 \seealso{
-\code{\link{simulateGSMAR}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
+\code{\link{simulate.gsmar}}, \code{\link{cond_moments}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
  \code{\link{quantile_residual_tests}}, \code{\link{diagnostic_plot}}
 }
