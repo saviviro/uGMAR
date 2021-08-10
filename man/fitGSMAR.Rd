@@ -207,6 +207,6 @@ fit32rc
 }
 \seealso{
 \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
- \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
+ \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}}, \code{\link{predict.gsmar}},
   \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 }

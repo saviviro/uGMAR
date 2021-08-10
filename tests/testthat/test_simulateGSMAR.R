@@ -7,13 +7,13 @@ params13gs <- c(0, 0.9, 1, -1, 0.5, 0.8, 1, -0.5, 0.5, 0.3, 0.4, 5, 7) # M1=1, M
 stmar12 <- GSMAR(p=1, M=2, params=params12, model="StMAR", parametrization="mean")
 gmar23 <- GSMAR(p=2, M=3, params=params23, model="GMAR")
 gstmar13 <- GSMAR(p=1, M=c(1, 2), params=params13gs, model="G-StMAR")
-set.seed(1); data12 <- simulateGSMAR(stmar12, nsimu=3)
-set.seed(2); data23 <- simulateGSMAR(gmar23, nsimu=1)
-set.seed(3); data23init <- simulateGSMAR(gmar23, nsimu=2, init_values=c(1, 1.2))
-set.seed(1); data13gs <- simulateGSMAR(gstmar13, nsimu=3)
+set.seed(1); data12 <- simulate(stmar12, nsim=3)
+set.seed(2); data23 <- simulate(gmar23, nsim=1)
+set.seed(3); data23init <- simulate(gmar23, nsim=2, init_values=c(1, 1.2))
+set.seed(1); data13gs <- simulate(gstmar13, nsim=3)
 
 
-test_that("simulateGSMAR simulates correctly from non-restricted process", {
+test_that("simulate simulates correctly from non-restricted process", {
   expect_equal(data12$sample[3], 1.859932, tolerance=1e-6)
   expect_equal(data12$componen, c(2, 1, 1))
   expect_equal(data23$sample, 1.017869, tolerance=1e-6)
@@ -30,13 +30,13 @@ params22gsr <- c(1, 1.2, 0.3, 0.3, 1, 1.2, 0.5, 6)
 gmar12r <- GSMAR(p=1, M=2, params=params12r, model="GMAR", restricted=TRUE)
 stmar23r <- GSMAR(p=2, M=3, params=params23r, model="StMAR", restricted=TRUE)
 gstmar22r <- GSMAR(p=2, M=c(1, 1), params=params22gsr, model="G-StMAR", restricted=TRUE)
-set.seed(1); data12r <- simulateGSMAR(gmar12r, nsimu=1)
-set.seed(2); data12rinit <- simulateGSMAR(gmar12r, nsimu=2, init_values=1)
-set.seed(3); data23r <- simulateGSMAR(stmar23r, nsimu=2)
-set.seed(1); data22gsr <- simulateGSMAR(gstmar22r, nsimu=2)
+set.seed(1); data12r <- simulate(gmar12r, nsim=1)
+set.seed(2); data12rinit <- simulate(gmar12r, nsim=2, init_values=1)
+set.seed(3); data23r <- simulate(stmar23r, nsim=2)
+set.seed(1); data22gsr <- simulate(gstmar22r, nsim=2)
 
 
-test_that("simulateGSMAR simulates correctly from restricted process", {
+test_that("simulate simulates correctly from restricted process", {
   expect_equal(data12r$sample, 1.018146, tolerance=1e-6)
   expect_equal(data12r$component, 2)
   expect_equal(data12r$mixing_weights[,1],  0.7716839, tolerance=1e-6)
@@ -56,12 +56,12 @@ params22gsrc <- c(0, 0, -0.99, 1, 1.2, 0.3, 10) # M1=1, M2=1, R3
 stmar22c <- GSMAR(p=2, M=2, params=params22c, model="StMAR", constraints=list(R4, R3))
 gmar32cr <- GSMAR(p=3, M=2, params=params32cr, model="GMAR", restricted=TRUE, constraints=R1)
 gstmar22cr <- GSMAR(p=2, M=c(1, 1), params=params22gsrc, model="G-StMAR", restricted=TRUE, constraints=R3)
-set.seed(1); data22c <- simulateGSMAR(stmar22c, nsimu=1)
-set.seed(2); data32cr <- simulateGSMAR(gmar32cr, nsimu=2)
-set.seed(3); data22gsrc <- simulateGSMAR(gstmar22cr, nsimu=2)
+set.seed(1); data22c <- simulate(stmar22c, nsim=1)
+set.seed(2); data32cr <- simulate(gmar32cr, nsim=2)
+set.seed(3); data22gsrc <- simulate(gstmar22cr, nsim=2)
 
 
-test_that("simulateGSMAR simulates correctly from constrained process", {
+test_that("simulate simulates correctly from constrained process", {
   expect_equal(data22c$sample, 1.240905, tolerance=1e-6)
   expect_equal(data22c$mixing_weights[,1], 0.9172016, tolerance=1e-6)
   expect_equal(data32cr$sample[2], 0.7406432, tolerance=1e-6)

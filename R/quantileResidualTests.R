@@ -6,7 +6,7 @@
 #'  and G-StMAR models, testing normality, autocorrelation, and conditional heteroscedasticity
 #'  of the quantile residuals.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @param lags_ac a numeric vector of positive integers specifying the lags for which autocorrelation is tested.
 #' @param lags_ch a numeric vector of positive integers specifying the lags for which conditional heteroscedasticity
 #'  is tested.
@@ -72,7 +72,7 @@ quantile_residual_tests <- function(gsmar, lags_ac=c(1, 3, 6, 12), lags_ch=lags_
 
   # Sample used in calculation of Omega: either simulated or the data
   if(nsimu > length(data)) {
-    omegaData <- as.matrix(simulateGSMAR(gsmar, nsimu=nsimu)$sample)
+    omegaData <- as.matrix(simulate.gsmar(gsmar, nsim=nsimu)$sample)
   } else {
     omegaData <- data
   }

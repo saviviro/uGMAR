@@ -460,7 +460,7 @@ warn_dfs <- function(object, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), 
 #'
 #' @description \code{warn_ar_roots} warns if the model contains near-unit-roots in some regimes
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @param tol if some root is smaller that \code{1 + tol}, a warning is thrown
 #' @details Warns if some moduli of the autoregressive polynomial's roots are close to one.
 #' @return Doesn't return anything.

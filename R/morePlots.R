@@ -4,12 +4,12 @@
 #'  the time series contained in the model (e.g. the time series the model was fitted to). Also plots
 #'  the regimewise conditional means/variances multiplied with the mixing weights.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @param which_moment should conditional means or variances be plotted?
 #' @details The conditional mean plot works best if the data contains positive values only.
 #' @return \code{cond_moment_plot} only plots to a graphical device and does not return anything. Numerical values
 #'  of the conditional means/variances can be extracted from the model with the dollar sign.
-#' @inherit simulateGSMAR references
+#' @inherit simulate.gsmar references
 #' @seealso \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}}, \code{\link{quantile_residual_tests}},
 #'  \code{\link{quantile_residual_plot}}
 #' @examples

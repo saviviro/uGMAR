@@ -18,7 +18,7 @@
 #'  residuals. Note that the first p observations are taken as the initial values so the mixing weights, conditional moments, and
 #'  quantile residuals start from the p+1:th observation (interpreted as t=1).
 #' @seealso \code{\link{fitGSMAR}}, \code{\link{iterate_more}}, \code{\link{add_data}}, \code{\link{stmar_to_gstmar}},
-#'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}},
+#'  \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}},
 #'  \code{\link{predict.gsmar}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 #' @inherit is_stationary references
 #' @examples
@@ -155,7 +155,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #' @description \code{add_data} adds or updates data to object of class '\code{gsmar}' that defines a GMAR, StMAR,
 #'  or G-StMAR model. Also calculates empirical mixing weights, conditional moments, and quantile residuals accordingly.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @inheritParams loglikelihood_int
 #' @inheritParams GSMAR
 #' @return Returns an object of class 'gsmar' defining the GMAR, StMAR, or G-StMAR model with the data added to the model.
@@ -313,7 +313,7 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #'
 #' @description \code{alt_gsmar} constructs a GSMAR model based on results from an arbitrary estimation round of \code{fitGSMAR}.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @inheritParams GSMAR
 #' @param which_round based on which estimation round should the model be constructed? An integer value in 1,...,\code{ncalls}.
 #' @param which_largest based on estimation round with which largest log-likelihood should the model be constructed?

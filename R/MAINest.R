@@ -57,7 +57,7 @@
 #'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
 #'  \code{predict}, \code{simulate}, \code{logLik}, \code{residuals}.
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
-#'  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulateGSMAR}}, \code{\link{predict.gsmar}},
+#'  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}}, \code{\link{predict.gsmar}},
 #'   \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 #' @references
 #'  \itemize{
@@ -303,7 +303,7 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 #'  estimation of a GMAR, StMAR or G-StMAR model (object of class \code{'gsmar'}) which already has
 #'  preliminary estimates.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @inheritParams fitGSMAR
 #' @inheritParams GSMAR
 #' @details The main purpose of \code{iterate_more} is to provide a simple and convenient tool to finalize

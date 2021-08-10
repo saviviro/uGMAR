@@ -9,7 +9,7 @@
 #'  associated with the quantile residual tests (for autocorrelation and conditional heteroskedasticity) divided by
 #'  their approximate standard errors with their approximate 95\% critical bounds (see Kalliovirta 2012, Section 3).
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @param nlags a positive integer specifying how many lags should be calculated for the autocorrelation and
 #'  conditional heteroscedasticity statistics.
 #' @param nsimu a positive integer specifying to how many simulated values from the process the covariance
@@ -32,7 +32,7 @@
 #'   For large StMAR and G-StMAR models with large data the calculations to obtain the individual statistics
 #'   may take a significantly long time without the package "gsl".
 #' @seealso \code{\link{profile_logliks}}, \code{\link{get_foc}}, \code{\link{fitGSMAR}}, \code{\link{cond_moment_plot}}, \code{\link{quantile_residual_tests}},
-#'  \code{\link{quantile_residual_plot}}, \code{\link{simulateGSMAR}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+#'  \code{\link{quantile_residual_plot}}, \code{\link{simulate.gsmar}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 #' @examples
 #' \donttest{
 #' ## The below examples the approximately 30 seconds to run.
@@ -154,11 +154,11 @@ diagnostic_plot <- function(gsmar, nlags=20, nsimu=1, plot_indstats=FALSE) {
 #'
 #' @description \code{quantile_residualsPlot} plots quantile residual time series and histogram.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit quantile_residuals references
 #' @seealso  \code{\link{profile_logliks}}, \code{\link{diagnostic_plot}}, \code{\link{fitGSMAR}}, \code{\link{GSMAR}},
-#'  \code{\link{quantile_residual_tests}}, \code{\link{simulateGSMAR}}
+#'  \code{\link{quantile_residual_tests}}, \code{\link{simulate.gsmar}}
 #' @examples
 #' \donttest{
 #' ## The below examples the approximately 15 seconds to run.
@@ -214,7 +214,7 @@ quantile_residual_plot <- function(gsmar) {
 #'
 #' @description \code{profile_logliks} plots profile log-likelihoods around the estimates.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @param scale a numeric scalar specifying the interval plotted for each estimate: the estimate plus-minus \code{abs(scale*estimate)}.
 #' @param nrows how many rows should be in the plot-matrix? The default is \code{max(ceiling(log2(nparams) - 1), 1)}.
 #' @param ncols how many columns should be in the plot-matrix? The default is \code{ceiling(nparams/nrows)}.
@@ -227,7 +227,7 @@ quantile_residual_plot <- function(gsmar) {
 #' @return  Only plots to a graphical device and doesn't return anything.
 #' @inherit loglikelihood references
 #' @seealso  \code{\link{quantile_residual_plot}}, \code{\link{diagnostic_plot}}, \code{\link{cond_moment_plot}}, \code{\link{GSMAR}},
-#'  \code{\link{quantile_residual_tests}}, \code{\link{simulateGSMAR}}
+#'  \code{\link{quantile_residual_tests}}, \code{\link{simulate.gsmar}}
 #' @examples
 #' \donttest{
 #' ## The below examples the approximately 15 seconds to run.

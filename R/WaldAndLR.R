@@ -2,7 +2,7 @@
 #'
 #' @description \code{Wald_test} performs a Wald test for a GMAR, StMAR, or G-StMAR model.
 #'
-#' @inheritParams simulateGSMAR
+#' @inheritParams simulate.gsmar
 #' @inheritParams calc_gradient
 #' @param A a size \eqn{(k x n_params)} matrix with full row rank specifying a part of the null hypothesis,
 #'   where \eqn{n_params} is the number of parameters in the (unconstrained) model.
