@@ -105,6 +105,7 @@
 
 * Implemented the S3 method 'simulate' for class 'gsmar' objects. Consequently, the function 'simulateGSMAR' is now deprecated.
 * Re-used the class 'htest' for the objects returned by the functions Wald_test and LR_test.
+* In the printout of GMAR type regimes, the variance parameter is now reported separately from the AR-equation. Also changed the "cond_sd" in front of eps in the StMAR regimes to sigma_mt.
 * Removed the documentation of internal functions from the manual.
 * Added legend to the density plot in the plot method for class 'gsmar' objects.
 * Updated doi in the reference to the G-StMAR model (Virolainen, 2021).

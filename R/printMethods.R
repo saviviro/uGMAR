@@ -32,10 +32,15 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   print_err <- function(val) { # Function for printing standard errors in brackets
     if(summary_print) cat(paste0(" (", format_value(val),")"))
   }
-  make_string <- function(n_spaces, val) paste0(c(rep(" ", n_spaces), paste0("(", format_value(val), ")")), collapse="")
-  add_string <- function(const_spaces, val1, val2) {
+  make_string <- function(n_spaces, val) paste0(c(rep(" ", n_spaces), paste0("(", format_value(val), ")")), collapse="") # makes string with spaces + standard error in brackets
+  add_string <- function(const_spaces, val1, val2, only_spaces=FALSE) { # Add characters to the standard error string to be printed in summary print below each ar-equation
     if(summary_print) {
-      err_string[length(err_string) + 1] <<- make_string(const_spaces + nchar(format_value(val1)) - nchar(format_value(val2)), val2)
+      # If only_spaces=TRUE, replaces std error with as many spaces as numbers in the value. This is used for intercepts when the model is mean-parametrized.
+      if(only_spaces) {
+        err_string[length(err_string) + 1] <<- paste0(rep(" ", times=const_spaces + nchar(format_value(val1)) + 2), collapse="") # +2 for the two brackets
+      } else {
+        err_string[length(err_string) + 1] <<- make_string(const_spaces + nchar(format_value(val1)) - nchar(format_value(val2)), val2)
+      }
     }
   }
 
@@ -46,12 +51,13 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   model <- gsmar$model$model
   restricted <- gsmar$model$restricted
   constraints <- gsmar$model$constraints
+  parametrization <- gsmar$model$parametrization
   all_mu <- get_regime_means(gsmar)
   npars <- length(params)
   nobs <- ifelse(is.null(gsmar$data), NA, length(gsmar$data))
   if(summary_print) all_vars <- get_regime_vars(gsmar)  # Unconditional regime variances
 
-  if(gsmar$model$parametrization == "mean") { # Change to intercept parametrization
+  if(parametrization == "mean") { # Change the parameter vector to intercept parametrization
     params <- change_parametrization(p=p, M=M, params=params, model=model, restricted=restricted,
                                      constraints=constraints, change_to="intercept")
   }
@@ -65,7 +71,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   # Obtain the standard errors if called from the summary method: pick them from the std error vector similarly to the parameter estimates
   if(summary_print) {
     all_ar_roots <- get_ar_roots(gsmar)
-    std_errors <- remove_all_constraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted,
+    std_errors <- remove_all_constraints(p=p, M=M, params=gsmar$std_errors, model=model, restricted=restricted, # Standard errors are for the ORIGINAL parametrization (mean or intercept)
                                          constraints=constraints) # These errors are valid ONLY IF there is NO multiplications or summations
     pars_err <- pick_pars(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
     alphas_err <- pick_alphas(p=p, M=M, params=std_errors, model=model, restricted=FALSE, constraints=NULL)
@@ -113,7 +119,7 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
   for(m in seq_len(sum(M))) { # Go through the regimes
     cat("\n")
     count <- 1
-    err_string <- list()
+    err_string <- list() # Initialize standard error string
 
     if(model == "GMAR") {
       regime_type <- "GMAR"
@@ -130,23 +136,21 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     if(summary_print) cat(paste("\nModuli of AR poly roots:", paste0(format_value(all_ar_roots[[m]]), collapse=", ")))
 
     cat(paste("\nMix weight:", format_value(alphas[m])))
-    print_err(alphas_err[m])
+    if(m != sum(M)) print_err(alphas_err[m]) # The last alpha is not parametrized, so it does not have an standard error
     cat("\nReg mean:", format_value(all_mu[m]))
-    print_err(mu_err[m])
+    if(parametrization == "mean") print_err(mu_err[m]) # No standard error for regime mean if intercept-parametrized
+    cat("\nVar param:", format_value(pars[nrow(pars), m]))
+    print_err(pars_err[nrow(pars_err), m])
 
-    if(regime_type == "StMAR") {
-      cat("\nVar param:", format_value(pars[nrow(pars), m]))
-      print_err(pars_err[nrow(pars_err), m])
-      cat("\n")
-
-      cat("Df param:", format_value(dfs[m - M1]))
+    if(regime_type == "StMAR") { # Print degrees of freedom parameter for StMAR type regimes
+      cat("\nDf param:", format_value(dfs[m - M1]))
       print_err(dfs_err[m - M1])
     }
     if(summary_print) cat("\nReg var: ", format_value(all_vars[m])) # Unconditional regime variances
     cat("\n\n")
 
     cat(paste0("y = [", format_value(all_phi0[m]), "]"))
-    add_string(const_spaces=4, all_phi0[m], phi0_err[m])
+    add_string(const_spaces=4, all_phi0[m], phi0_err[m], only_spaces=(parametrization == "mean")) # No standard error if mean-parametrization
 
     for(i1 in seq_len(p)) { # Go through the lags
       cat(paste0(" + [", format_value(pars[1 + i1, m]), "]y.", i1))
@@ -169,10 +173,11 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     cat(" + ")
 
     if(regime_type == "GMAR") {
-      cat(paste0("[sqrt(", format_value(pars[nrow(pars), m]), ")]eps"))
-      add_string(const_spaces=11, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
-    } else { # StMAR or G-StMAR regime -> time-varying conditional error variance
-      cat("[cond_sd]eps")
+      #cat(paste0("[sqrt(", format_value(pars[nrow(pars), m]), ")]eps"))
+      #add_string(const_spaces=11, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
+      cat(paste0("[sigma_m]eps"))
+    } else { # StMAR type regime has a time-varying conditional variance
+      cat(paste0("[sigma_mt]eps"))
     }
     cat("\n")
 
