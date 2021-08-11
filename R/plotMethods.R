@@ -226,7 +226,7 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
   ts.plot(data, gpars=list(main="Time series"))
   ts.plot(ts_mw, gpars=list(main="Mixing weights", ylim=c(0, 1), col=colpal_mw, lty=2))
   legend("topleft", legend=paste0("regime ", 1:M), bty="n", col=colpal_mw, lty=1, lwd=2,
-         text.font=2, cex=0.75, x.intersp=0.2, y.intersp=1, seg.len=1, inset=c(-0.03, -0.04))
+         text.font=2, cex=0.75, x.intersp=0.2, y.intersp=1, seg.len=1, inset=c(-0.03, -0.035))
 
   # Plot kernel density estimate of the data with the model implied density
   if(include_dens) {
