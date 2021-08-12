@@ -121,7 +121,7 @@ plot.gsmarpred <- function(x, ..., nt, mix_weights=TRUE, add_grid=TRUE) {
     ts.plot(mix_ts, mix_pred_ts, gpars=list(col=c(colpal_mw2, colpal_mw), ylim=c(0, 1), lty=c(rep(1, M), rep(2, M))),
             main="Mixing weights")
     legend("topleft", legend=paste0("regime ", 1:M), bty="n", col=colpal_mw, lty=1, lwd=2,
-           text.font=2, cex=0.70, x.intersp=0.5, y.intersp=1)
+           text.font=2, cex=0.70, x.intersp=0.3, y.intersp=1, seg.len=1, inset=c(-0.01, -0.035))
     if(add_grid) grid(...)
 
     # Plot mixing weight prediction intervals
