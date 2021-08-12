@@ -139,10 +139,10 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     if(m != sum(M)) print_err(alphas_err[m]) # The last alpha is not parametrized, so it does not have an standard error
     cat("\nReg mean:", format_value(all_mu[m]))
     if(parametrization == "mean") print_err(mu_err[m]) # No standard error for regime mean if intercept-parametrized
-    cat("\nVar param:", format_value(pars[nrow(pars), m]))
-    print_err(pars_err[nrow(pars_err), m])
 
-    if(regime_type == "StMAR") { # Print degrees of freedom parameter for StMAR type regimes
+    if(regime_type == "StMAR") { # Print variance and degrees of freedom parameter for StMAR type regimes
+      cat("\nVar param:", format_value(pars[nrow(pars), m]))
+      print_err(pars_err[nrow(pars_err), m])
       cat("\nDf param:", format_value(dfs[m - M1]))
       print_err(dfs_err[m - M1])
     }
@@ -175,7 +175,9 @@ print.gsmar <- function(x, ..., digits=2, summary_print=FALSE) {
     if(regime_type == "GMAR") {
       #cat(paste0("[sqrt(", format_value(pars[nrow(pars), m]), ")]eps"))
       #add_string(const_spaces=11, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
-      cat(paste0("[sigma_m]eps"))
+      cat(paste0("sqrt[", format_value(pars[nrow(pars), m]), "]eps"))
+      add_string(const_spaces=10, pars[nrow(pars), m], pars_err[nrow(pars_err), m])
+      #cat(paste0("[sigma_m]eps"))
     } else { # StMAR type regime has a time-varying conditional variance
       cat(paste0("[sigma_mt]eps"))
     }
