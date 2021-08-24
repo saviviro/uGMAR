@@ -1,9 +1,9 @@
 @book{Aomoto+Kita:2011,
   author    = {K. Aomoto and M. Kita},
   title     = {Theory of Hypergeometric Functions},
-  publisher = {Springer},
+  publisher = {Springer-Verlag},
   year      = {2011},
-  address   = {Springer Tokyo},
+  address   = {Tokyo},
   edition   = {1st},
   doi       = {10.1007/978-4-431-53938-4},
 }
@@ -28,12 +28,23 @@
 }
 
 @Article{Hankin:2007,
-    title = {Very large numbers in \proglang{R}: Introducing package Brobdingnag},
+    title = {Very Large Numbers in \proglang{R}: Introducing Package \pkg{Brobdingnag}},
     author = {R.K.S. Hankin},
     journal = {\proglang{R} News},
     year = {2007},
     volume = {7},
     number = {3},
+}
+
+@Article{Bollerslev:1986,
+  author = {T. Bollerslev},
+  title = {Generalized Autoregressive Conditional Heteroskedasticity},
+  Journal = {Journal of Econometrics},
+  year = {1986},
+  volume = {31},
+  number = {3},
+  pages = {307--327},
+  doi = {10.1016/0304-4076(86)90063-1},
 }
 
 @Article{Burgard+Neuenkirch+Nockel:2019,
@@ -45,6 +56,17 @@
   number = {7},
   pages = {2053--2070},
   doi = {10.1111/jmcb.12592},
+}
+
+@Article{Buse:1982,
+  author = {A. Buse},
+  title = {The Likelihood Ratio, Wald, and Lagrange Multiplier Tests: An Expository Note},
+  Journal = {The American Statistician},
+  year = {1982},
+  volume = {36},
+  number = {3a},
+  pages = {153--157},
+  doi = {10.1080/00031305.1982.10482817},
 }
 
 @Article{Caggiano+Castelnuovo+Colombo+Nodari:2015,
@@ -80,6 +102,31 @@
   doi = {10.1080/07350015.1995.10524579},
 }
 
+@Article{Engle:1982,
+  author = {R. F.  Engle},
+  title = {Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of United Kingdom Inflation},
+  year = {1982},
+  journal = {Econometrica},
+  volume = {50},
+  number = {4},
+  pages = {987--1007},
+  doi = {10.2307/1912773},
+}
+
+@incollection{Engle:1984,
+  author = {R. F.  Engle},
+  title = {Wald, Likelihood Ratio, and Lagrange Multiplier Tests in Econometrics},
+  booktitle = {Handbook of Econometrics},
+  publisher = {Elsevier Science B.V.},
+  year = {1984},
+  editor = {Z. Griliches and M.D. Intriligator},
+  volume = {2},
+  chapter = {13},
+  pages = {775--826},
+  address = {Amsterdam},
+  doi = {10.1016/S1573-4412(84)02005-5},
+}
+
 @Article{Fong+Li+Yau+Wong:2010,
   author = {P.W. Fong and W.K. Li and C.W. Yau and C.S.  Wong},
   title = {On a mixture vector autoregressive model},
@@ -102,11 +149,19 @@
   doi = {10.2307/3212583},
 }
 
+@Manual{Ghalanos:2020,
+    title = {\pkg{rugarch}: Univariate GARCH Models.},
+    author = {Alexios Ghalanos},
+    year = {2020},
+    note = {\proglang{R} package version 1.4-4.},
+ }
+
+
 @Article{Glasbey:2001,
   author = {C.A. Glasbey},
   title = {Non-linear Autoregressive Time Series with Multivariate Gaussian Mixtures as Marginal Distributions},
   year = {2001},
-  journal = {Journal of Royal Statistical Society: Series C},
+  journal = {Journal of Royal Statistical Society C},
   volume = {50},
   number = {2},
   pages = {143--154},
@@ -124,10 +179,19 @@
   doi = {10.1016/0304-4076(94)90038-8},
 }
 
+@book{Greene:2012,
+  author    = {W. H. Greene},
+  title     = {Econometric Analysis},
+  publisher = {Pearson},
+  year      = {2012},
+  address   = {Harlow},
+  edition   = {7th},
+  ISBN      = {9780131395381},
+}
 
-@Article{Hankin+Clausen+Murdoch:2006,
-    author = {R.K.S. Hankin and A. Clausen and D. Murdoch},
-    title = {Special Functions in \proglang{R}: Introducing the gsl Package},
+@Article{Hankin:2006,
+    author = {R.K.S. Hankin},
+    title = {Special Functions in \proglang{R}: Introducing the \pkg{gsl} Package},
     journal = {\proglang{R} News},
     year = {2006},
     month = {October},
@@ -159,6 +223,15 @@
   pages = {753-763},
   doi = {10.1111/j.1467-9469.2006.00505.x},
 }
+
+@Manual{Hyndman+Athanasopoulos+Bergmeir+Caceres+Chhay+O'Hara-Wild+Petropoulos+Razbash+Wang+Yasmeen:2021,
+    title = {\pkg{forecast}: Forecasting Functions for Time Series and Linear Models},
+    author = {R. Hyndman and G.  Athanasopoulos and C.  Bergmeir and G. Caceres and L. Chhay and M. O'Hara-Wild and F. Petropoulos and S. Razbash and E. Wang and F. Yasmeen},
+    year = {2021},
+    note = {\proglang{R} package version 8.15},
+    url = {https://pkg.robjhyndman.com/forecast/},
+}
+
 
 @Article{Kalliovirta:2012,
   author = {L. Kalliovirta},
@@ -321,18 +394,22 @@
 
 @Manual{Meitz+Preve+Saikkonen2:2018,
   author = {M. Meitz and D. Preve and P. Saikkonen},
-  title = {StMAR Toolbox: A MATLAB Toolbox for Student's t Mixture Autoregressive Models},
+  title = {\pkg{StMAR Toolbox}: A \proglang{MATLAB} Toolbox for Student's t Mixture Autoregressive Models},
   year = {2018},
   doi = {10.2139/ssrn.3237368},
 }
 
-@Article{Meitz+Saikkonen:2020,
+@Article{Meitz+Saikkonen:2021,
   author = {M. Meitz and P. Saikkonen},
-  title = {Testing for observation-dependent regime switching in mixture autoregressive models},
-  year = {2020},
+  title = {Testing for Observation-Dependent Regime Switching in Mixture Autoregressive Models},
+  year = {2021},
   journal = {Journal of Econometrics},
+   volume = {222},
+  number = {1},
+  pages = {601--624},
   doi = {10.1016/j.jeconom.2020.04.048},
 }
+
 
 @book{Meyn+Tweedie:2009,
   author    = {S. Meyn and R. Tweedie},
@@ -506,13 +583,12 @@
 
 
 @Manual{Solymos+Zawadzki:2020,
-    title = {pbapply: Adding Progress Bar to '*apply' Functions},
-    author = {Peter Solymos and Zygmunt Zawadzki},
+    title = {\pkg{pbapply}: Adding Progress Bar to '*apply' Functions},
+    author = {P. Solymos and Z. Zawadzki},
     year = {2020},
-    note = {R package version 1.4-3},
+    note = {\proglang{R} package version 1.4-3},
     url = {https://CRAN.R-project.org/package=pbapply},
 }
-
 
 @Manual{uGMAR,
     title = {uGMAR: Estimate Univariate Gaussian or Student's $t$ Mixture Autoregressive Model},
@@ -523,7 +599,7 @@
 }
 
 @Manual{Virolainen:2021,
-    title = {gmvarkit: Estimate Gaussian Mixture Vector Autoregressive Model},
+    title = {\pkg{gmvarkit}: Estimate Gaussian Mixture Vector Autoregressive Model},
     author = {S. Virolainen},
     year = {2021},
     note = {\proglang{R} package version 1.4.2},
@@ -541,8 +617,9 @@
 @Article{Virolainen:2020,
   author = {S. Virolainen},
   title = {A Mixture Autoregressive Model Based on Gaussian and Student's $t$-distributions},
-  year = {forthcoming},
+  year = {2021},
   journal = {Studies in Nonlinear Dynamics \& Econometrics},
+  doi = {10.1515/snde-2020-0060},
 }
 
 @Article{Virolainen2:2020,
@@ -551,6 +628,28 @@
   year = {2020},
   journal = {Unpublished working paper, available as arXiv:2007.04713},
   url = {https://arxiv.org/abs/2007.04713},
+}
+
+@Article{Wald:1943,
+  author = {A. Wald},
+  title = {Tests of Statistical Hypotheses Concerning Several Parameters When the Number of Observations is Large},
+  year = {1943},
+  journal = {Transactions of the American Mathematical Society},
+  volume = {54},
+  number = {3},
+  pages = {426--482},
+  doi = {10.2307/1990256},
+}
+
+@Article{Wilks:1938,
+  author = {S.S. Wilks},
+  title = {The Large-Sample Distribution of the Likelihood Ratio for Testing Composite Hypotheses},
+  year = {1938},
+  journal = {The Annals of Mathematical Statistics},
+  volume = {9},
+  number = {1},
+  pages = {60--62},
+  doi = {10.1214/aoms/1177732360},
 }
 
 @Article{Wong+Chan+Kam:2009,
@@ -568,11 +667,11 @@
   author = {C.S. Wong and W.K. Li},
   title = {On a Mixture Autoregressive Model},
   year = {2000},
-  journal = {Journal of the Royal Statistical Society},
+  journal = {Journal of the Royal Statistical Society B},
   volume = {62},
   number = {1},
   pages = {95--115},
-  doi = {10.1093/biomet/asp031},
+  doi = {10.1111/1467-9868.00222},
 }
 
 @Article{Wong+Li:2001,
@@ -596,3 +695,11 @@
   pages = {833--846},
   doi = {10.1093/biomet/88.3.833},
 }
+
+ @Manual{Wuertz+Chalabi+Boudt+Chausse+Miklovac:2020,
+    title = {\pkg{fGarch}: Rmetrics - Autoregressive Conditional Heteroskedastic Modelling},
+    author = {D. Wuertz and T. Setz and Y. Chalabi and C. Boudt and P. Chausse and M. Miklovac},
+    year = {2020},
+    note = {\proglang{R} package version 3042.83.2},
+    url = {https://CRAN.R-project.org/package=fGarch},
+  }

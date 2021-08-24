@@ -1,4 +1,4 @@
-\begin{thebibliography}{25}
+\begin{thebibliography}{32}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -12,8 +12,21 @@
 \bibitem[{Aomoto and Kita(2011)}]{Aomoto+Kita:2011}
 Aomoto K, Kita M (2011).
 \newblock \emph{Theory of Hypergeometric Functions}.
-\newblock 1st edition. Springer, Springer Tokyo.
+\newblock 1st edition. Springer-Verlag, Tokyo.
 \newblock \doi{10.1007/978-4-431-53938-4}.
+
+\bibitem[{Bollerslev(1986)}]{Bollerslev:1986}
+Bollerslev T (1986).
+\newblock \enquote{Generalized Autoregressive Conditional Heteroskedasticity.}
+\newblock \emph{Journal of Econometrics}, \textbf{31}(3), 307--327.
+\newblock \doi{10.1016/0304-4076(86)90063-1}.
+
+\bibitem[{Buse(1982)}]{Buse:1982}
+Buse A (1982).
+\newblock \enquote{The Likelihood Ratio, Wald, and Lagrange Multiplier Tests:
+  An Expository Note.}
+\newblock \emph{The American Statistician}, \textbf{36}(3a), 153--157.
+\newblock \doi{10.1080/00031305.1982.10482817}.
 
 \bibitem[{Dorsey and Mayer(1995)}]{Dorsey+Mayer:1995}
 Dorsey R, Mayer W (1995).
@@ -23,6 +36,13 @@ Dorsey R, Mayer W (1995).
   53--66.
 \newblock \doi{10.1080/07350015.1995.10524579}.
 
+\bibitem[{Engle(1982)}]{Engle:1982}
+Engle RF (1982).
+\newblock \enquote{Autoregressive Conditional Heteroscedasticity with Estimates
+  of the Variance of United Kingdom Inflation.}
+\newblock \emph{Econometrica}, \textbf{50}(4), 987--1007.
+\newblock \doi{10.2307/1912773}.
+
 \bibitem[{Galbraith and Galbraith(1974)}]{Galbraith+Galbraith:1974}
 Galbraith J, Galbraith R (1974).
 \newblock \enquote{On the Inverses of Some Patterned Matrices Arising in the
@@ -30,26 +50,40 @@ Galbraith J, Galbraith R (1974).
 \newblock \emph{Journal of Applies Probability}, \textbf{11}(1), 63--71.
 \newblock \doi{10.2307/3212583}.
 
+\bibitem[{Ghalanos(2020)}]{Ghalanos:2020}
+Ghalanos A (2020).
+\newblock \emph{\pkg{rugarch}: Univariate GARCH Models.}
+\newblock \proglang{R} package version 1.4-4.
+
 \bibitem[{Glasbey(2001)}]{Glasbey:2001}
 Glasbey C (2001).
 \newblock \enquote{Non-linear Autoregressive Time Series with Multivariate
   Gaussian Mixtures as Marginal Distributions.}
-\newblock \emph{Journal of Royal Statistical Society: Series C},
-  \textbf{50}(2), 143--154.
+\newblock \emph{Journal of Royal Statistical Society C}, \textbf{50}(2),
+  143--154.
 \newblock \doi{10.1111/1467-9876.00225}.
+
+\bibitem[{Hankin(2006)}]{Hankin:2006}
+Hankin R (2006).
+\newblock \enquote{Special Functions in \proglang{R}: Introducing the \pkg{gsl}
+  Package.}
+\newblock \emph{\proglang{R} News}, \textbf{6}(4).
 
 \bibitem[{Hankin(2007)}]{Hankin:2007}
 Hankin R (2007).
-\newblock \enquote{Very large numbers in \proglang{R}: Introducing package
-  Brobdingnag.}
+\newblock \enquote{Very Large Numbers in \proglang{R}: Introducing Package
+  \pkg{Brobdingnag}.}
 \newblock \emph{\proglang{R} News}, \textbf{7}(3).
 
-\bibitem[{Hankin \emph{et~al.}(2006)Hankin, Clausen, and
-  Murdoch}]{Hankin+Clausen+Murdoch:2006}
-Hankin R, Clausen A, Murdoch D (2006).
-\newblock \enquote{Special Functions in \proglang{R}: Introducing the gsl
-  Package.}
-\newblock \emph{\proglang{R} News}, \textbf{6}(4).
+\bibitem[{Hyndman \emph{et~al.}(2021)Hyndman, Athanasopoulos, Bergmeir,
+  Caceres, Chhay, O'Hara-Wild, Petropoulos, Razbash, Wang, and
+  Yasmeen}]{Hyndman+Athanasopoulos+Bergmeir+Caceres+Chhay+O'Hara-Wild+Petropoulos+Razbash+Wang+Yasmeen:2021}
+Hyndman R, Athanasopoulos G, Bergmeir C, Caceres G, Chhay L, O'Hara-Wild M,
+  Petropoulos F, Razbash S, Wang E, Yasmeen F (2021).
+\newblock \emph{\pkg{forecast}: Forecasting Functions for Time Series and
+  Linear Models}.
+\newblock \proglang{R} package version 8.15,
+  \urlprefix\url{https://pkg.robjhyndman.com/forecast/}.
 
 \bibitem[{Kalliovirta(2012)}]{Kalliovirta:2012}
 Kalliovirta L (2012).
@@ -91,8 +125,8 @@ Le N, Martin R, Raftery A (1996).
 \bibitem[{Meitz \emph{et~al.}(2018)Meitz, Preve, and
   Saikkonen}]{Meitz+Preve+Saikkonen2:2018}
 Meitz M, Preve D, Saikkonen P (2018).
-\newblock \emph{StMAR Toolbox: A MATLAB Toolbox for Student's t Mixture
-  Autoregressive Models}.
+\newblock \emph{\pkg{StMAR Toolbox}: A \proglang{MATLAB} Toolbox for Student's
+  t Mixture Autoregressive Models}.
 \newblock \doi{10.2139/ssrn.3237368}.
 
 \bibitem[{Meitz \emph{et~al.}(2021)Meitz, Preve, and
@@ -102,6 +136,13 @@ Meitz M, Preve D, Saikkonen P (2021).
   $t$-Distribution.}
 \newblock \emph{Communications in Statistics - Theory and Methods}.
 \newblock \doi{10.1080/03610926.2021.1916531}.
+
+\bibitem[{Meitz and Saikkonen(2021)}]{Meitz+Saikkonen:2021}
+Meitz M, Saikkonen P (2021).
+\newblock \enquote{Testing for Observation-Dependent Regime Switching in
+  Mixture Autoregressive Models.}
+\newblock \emph{Journal of Econometrics}, \textbf{222}(1), 601--624.
+\newblock \doi{10.1016/j.jeconom.2020.04.048}.
 
 \bibitem[{Monahan(1984)}]{Monahan:1984}
 Monahan J (1984).
@@ -142,8 +183,8 @@ Smith R, Dike B, Stegmann S (1995).
 
 \bibitem[{Solymos and Zawadzki(2020)}]{Solymos+Zawadzki:2020}
 Solymos P, Zawadzki Z (2020).
-\newblock \emph{pbapply: Adding Progress Bar to '*apply' Functions}.
-\newblock R package version 1.4-3,
+\newblock \emph{\pkg{pbapply}: Adding Progress Bar to '*apply' Functions}.
+\newblock \proglang{R} package version 1.4-3,
   \urlprefix\url{https://CRAN.R-project.org/package=pbapply}.
 
 \bibitem[{Virolainen(2020)}]{Virolainen2:2020}
@@ -152,25 +193,26 @@ Virolainen S (2020).
 \newblock \emph{Unpublished working paper, available as arXiv:2007.04713}.
 \newblock \urlprefix\url{https://arxiv.org/abs/2007.04713}.
 
-\bibitem[{Virolainen(2021)}]{Virolainen:2021}
-Virolainen S (2021).
-\newblock \emph{gmvarkit: Estimate Gaussian Mixture Vector Autoregressive
+\bibitem[{Virolainen(2021{\natexlab{a}})}]{Virolainen:2020}
+Virolainen S (2021{\natexlab{a}}).
+\newblock \enquote{A Mixture Autoregressive Model Based on Gaussian and
+  Student's $t$-distributions.}
+\newblock \emph{Studies in Nonlinear Dynamics \& Econometrics}.
+\newblock \doi{10.1515/snde-2020-0060}.
+
+\bibitem[{Virolainen(2021{\natexlab{b}})}]{Virolainen:2021}
+Virolainen S (2021{\natexlab{b}}).
+\newblock \emph{\pkg{gmvarkit}: Estimate Gaussian Mixture Vector Autoregressive
   Model}.
 \newblock \proglang{R} package version 1.4.2,
   \urlprefix\url{https://CRAN.R-project.org/package=gmvarkit}.
 
-\bibitem[{Virolainen(forthcoming)}]{Virolainen:2020}
-Virolainen S (forthcoming).
-\newblock \enquote{A Mixture Autoregressive Model Based on Gaussian and
-  Student's $t$-distributions.}
-\newblock \emph{Studies in Nonlinear Dynamics \& Econometrics}.
-
 \bibitem[{Wong and Li(2000)}]{Wong+Li:2000}
 Wong C, Li W (2000).
 \newblock \enquote{On a Mixture Autoregressive Model.}
-\newblock \emph{Journal of the Royal Statistical Society}, \textbf{62}(1),
+\newblock \emph{Journal of the Royal Statistical Society B}, \textbf{62}(1),
   95--115.
-\newblock \doi{10.1093/biomet/asp031}.
+\newblock \doi{10.1111/1467-9868.00222}.
 
 \bibitem[{Wong and Li(2001{\natexlab{a}})}]{Wong+Li2:2001}
 Wong C, Li W (2001{\natexlab{a}}).
@@ -185,5 +227,13 @@ Wong C, Li W (2001{\natexlab{b}}).
 \newblock \emph{Journal of the American Statistical Association},
   \textbf{96}(455), 982--995.
 \newblock \doi{10.2307/2670244}.
+
+\bibitem[{Wuertz \emph{et~al.}(2020)Wuertz, Setz, Chalabi, Boudt, Chausse, and
+  Miklovac}]{Wuertz+Chalabi+Boudt+Chausse+Miklovac:2020}
+Wuertz D, Setz T, Chalabi Y, Boudt C, Chausse P, Miklovac M (2020).
+\newblock \emph{\pkg{fGarch}: Rmetrics - Autoregressive Conditional
+  Heteroskedastic Modelling}.
+\newblock \proglang{R} package version 3042.83.2,
+  \urlprefix\url{https://CRAN.R-project.org/package=fGarch}.
 
 \end{thebibliography}
