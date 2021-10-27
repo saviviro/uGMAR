@@ -1,5 +1,7 @@
 \documentclass[nojss]{jss} % nojss articlen sijaan
 
+%\VignetteIndexEntry{uGMAR: A Family of Mixture Autoregressive Models in R}
+
 %% setwd("/Users/savi/Desktop/uGMARartikkeli/jss-article-rnw")
 %% Sweave("uGMARpaper.Rnw")
 %% tools::texi2pdf("uGMARpaper.tex")
@@ -724,7 +726,7 @@ W = (A\hat{\boldsymbol{\theta}} - c)^\top [A\mathcal{J}(\hat{\boldsymbol{\theta}
 \end{equation}
 where $\mathcal{J}(\hat{\boldsymbol{\theta}})$ is the observed information matrix evaluated at the ML estimate $\hat{\boldsymbol{\theta}}$. Under the null, the test statistic is asymptotically $\chi^2$-distributed with $k$ degrees of freedom (which is the difference in dimensions of the constrained and unconstrained parameter spaces).
 
-With \pkg{uGMAR}, the Wald test can be calculated with function \code{Wald_test}, which takes the estimated unconstrained model (as a class \code{gsmar} object) as the first argument, the matrix $A$ as the second argument, and the vector $c$ as the third argument. To exemplify, we test the same constraints as with the likelihood ratio test, i.e., that the AR parameters satisfy $\varphi_{1,i}=\varphi_{2,i}$ for $i=1,...,4$, in the G-StMAR, $p=4$, $M_1=1$, $M_2=1$ model. The $(d \times 1)$ parameter vector $\boldysmbol{\theta}$ (which is presented at the end of Section~\ref{sec:gstmar} and again in Section~\ref{sec:GSMAR}) contains the AR parameters of the first regime in the entries $2,...,5$ and the AR parameters of the second regime in the entries $8,...,11$. The appropriate matrix $A$ and vector $c$ that state the hypothesis are set in the first two lines of the following code, and the third line calculates the test.
+With \pkg{uGMAR}, the Wald test can be calculated with function \code{Wald_test}, which takes the estimated unconstrained model (as a class \code{gsmar} object) as the first argument, the matrix $A$ as the second argument, and the vector $c$ as the third argument. To exemplify, we test the same constraints as with the likelihood ratio test, i.e., that the AR parameters satisfy $\varphi_{1,i}=\varphi_{2,i}$ for $i=1,...,4$, in the G-StMAR, $p=4$, $M_1=1$, $M_2=1$ model. The $(d \times 1)$ parameter vector $\boldsymbol{\theta}$ (which is presented at the end of Section~\ref{sec:gstmar} and again in Section~\ref{sec:GSMAR}) contains the AR parameters of the first regime in the entries $2,...,5$ and the AR parameters of the second regime in the entries $8,...,11$. The appropriate matrix $A$ and vector $c$ that state the hypothesis are set in the first two lines of the following code, and the third line calculates the test.
 %
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1079,7 +1081,7 @@ and $f_m(\cdot|\mathcal{F}_{t-1})$ is the conditional density function of the $m
 In the case of a GMAR type component, the conditional density function is the Gaussian density function with mean $\mu_{m,t}$ and variance $\sigma_m^2$. For $m\leq M_1$ in (\ref{eq:condcum}), we therefore have
 %
 \begin{equation}
-\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1})du_t = \int_{-\infty}^{y_t}n_1(u_t;\mu_{m,t},\sigma_m^2) du_t= \Phi\left(\frac{u_t - \mu_{m,t}}{\sigma_m}\right),
+\int_{-\infty}^{y_t} f_m(u_t|\mathcal{F}_{t-1})du_t = \int_{-\infty}^{y_t}n_1(u_t;\mu_{m,t},\sigma_m^2) du_t= \Phi\left(\frac{y_t - \mu_{m,t}}{\sigma_m}\right),
 \end{equation}
 %
 where $\Phi (\cdot)$ is the standard normal cumulative distribution function.
