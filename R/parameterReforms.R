@@ -133,118 +133,38 @@ remove_all_constraints <- function(p, M, params, model=c("GMAR", "StMAR", "G-StM
 
 sort_components <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE) {
   model <- match.arg(model)
+  M_orig <- M
+  M <- sum(M)
+  if(M == 1) return(params)
+  alphas <- pick_alphas(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=NULL)
+  dfs <- pick_dfs(p=p, M=M_orig, params=params, model=model)
+
+  # Obtain the new ordering of the regimes
   if(model != "G-StMAR") {
-    if(M == 1) {
-      return(params)
-    }
-    alphas <- pick_alphas(p=p, M=M, params=params, model=model, restricted=restricted, constraints=NULL)
-    sortedByAlphas <- order(alphas, decreasing=TRUE) # The new ordering of the regimes
+    M2 <- ifelse(model == "StMAR", M, 0)
+    ord <- order(alphas, decreasing=TRUE) # The new ordering of the regimes
+    if(all(ord == 1:M)) return(params) # Already in the correct order
+    if(model == "StMAR") dfs <- dfs[ord]
+  } else { # G-StMAR model, sort the M1 GMAR components and M2 StMAR components eparately
+    M1 <- M_orig[1]
+    M2 <- M_orig[2]
+    if(M1 == 1 && M2 == 1) return(params) # Only one component of each type - nothing to sort
+    ord_M1 <- order(alphas[1:M1], decreasing=TRUE)
+    ord_M2 <- order(alphas[(M1 + 1):M], decreasing=TRUE)
+    ord <- c(ord_M1, M1 + ord_M2) # Overall ordering
+    if(all(ord == 1:M)) return(params) # Already in the correct order
+    dfs <- dfs[ord_M2]
+  }
 
-    # Sort the regimes
-    alphas <- alphas[sortedByAlphas]
-    pars <- pick_pars(p=p, M=M, params=params, model=model, restricted=restricted, constraints=NULL)
-    pars <- pars[,sortedByAlphas]
-    dfs <- pick_dfs(p=p, M=M, params=params, model=model)
-    if(model == "StMAR") {
-      dfs <- dfs[sortedByAlphas]
-    }
+  # Sort the regimes
+  alphas <- alphas[ord][-M]
+  pars <- pick_pars(p=p, M=M_orig, params=params, model=model, restricted=restricted, constraints=NULL)
+  pars <- pars[,ord]
 
-    # Remove the mixing weight parameter of the last regime
-    if(restricted == FALSE) {
-      return(c(as.vector(pars), alphas[-M], dfs))
-    } else { # If restricted == TRUE
-      return(c(pars[1,], pars[2:(p + 1), 1], pars[p + 2,], alphas[-M], dfs))
-    }
-  } else { # If model == "G-StMAR": Sort the M1 and M2 components separately (parameter picks are non-standard)
-    M1 <- M[1]
-    M2 <- M[2]
-    Msum <- sum(M)
-    if(restricted == FALSE) {
-      pars0 <- numeric(0) # Collect pars in here
-      alphas0 <- numeric(0) # Collect alphas in here
-      for(i1 in 1:2) { # Go through GMAR and StMAR parts separately; GMAR == 1, StMAR == 2
-        if(i1 == 1) { # GMAR type
-          pars <- matrix(params[1:(M1*(p + 2))], ncol=M1)
-        } else { # StMAR type
-          pars <- matrix(params[((M1*(p + 2)) + 1):(Msum*(p + 2))], ncol=M2)
-        }
-        if(M[i1] > 1) { # If only one component of a given type, no need to sort
-          if(i1 == 1) { # GMAR type
-            alphas <- params[(Msum*(p + 2) + 1):(Msum*(p + 2) + M1)]
-          } else { # StMAR type
-            alphas <- params[(Msum*(p + 2) + M1 + 1):(Msum*(p + 3) - 1)]
-            dfs <- pick_dfs(p=p, M=M, params=params, model=model)
-          }
-          if(i1 == 2) { # If i1 == 2, add the non-parametrized alpha
-            alphas <- c(alphas, 1 - (sum(alphas) + sum(alphas0)))
-          }
-          sortedByAlphas <- order(alphas, decreasing=TRUE) # The new ordering of the GMAR/StMAR type regimes
-
-          # Reorder the regimes of the given type
-          pars <- pars[,sortedByAlphas]
-          alphas <- alphas[sortedByAlphas]
-          if(i1 == 2) { # StMAR type
-            dfs <- dfs[sortedByAlphas]
-            alphas <- alphas[-M2] # Delete the last alpha
-          }
-        } else { # If only one component, still need to collect alphas from GMAR and dfs for StMAR
-          if(i1 == 1) {
-            alphas <- params[Msum*(p + 2) + 1]
-          } else {
-            dfs <- params[Msum*(p + 3)]
-            alphas <- numeric(0) # No alphas for StMAR if only one StMAR component
-          }
-        }
-        pars0 <- cbind(pars0, pars)
-        alphas0 <- c(alphas0, alphas)
-      }
-      return(c(as.vector(pars0), alphas0, dfs))
-    } else { # If restricted == TRUE & model == "G-StMAR"
-      phi00 <- numeric(0)
-      sigmas0 <- numeric(0)
-      alphas0 <- numeric(0)
-      arcoefs <- params[(Msum + 1):(Msum + p)]
-      for(i1 in 1:2) { # Go through GMAR and StMAR parts separately; GMAR == 1, StMAR == 2
-        if(i1 == 1) { # GMAR type
-          phi0 <- params[1:M1]
-          sigmas <- params[(Msum + p + 1):(Msum + p + M1)]
-        } else { # StMAR type
-          phi0 <- params[(M1 + 1):Msum]
-          sigmas <- params[(Msum + p + M1 + 1):(2*Msum + p)]
-          dfs <- params[(3*Msum + p):(3*Msum + M2 + p - 1)]
-        }
-        if(M[i1] > 1) { # if M[i1]==1, no need to sort
-          if(i1 == 1) { # GMAR type
-            alphas <- params[(2*Msum + p + 1):(2*Msum + p + M1)]
-          } else { # StMAR type
-            alphas <- params[(2*Msum + p + M1 + 1):(3*Msum + p - 1)]
-          }
-          if(i1 == 2) { # If i1 == 2, add the non-parametrized alpha
-            alphas <- c(alphas, 1 - (sum(alphas) + sum(alphas0)))
-          }
-          sortedByAlphas <- order(alphas, decreasing=TRUE) # New ordering of regimes
-
-          # Reorder the regimes
-          phi0 <- phi0[sortedByAlphas]
-          sigmas <- sigmas[sortedByAlphas]
-          alphas <- alphas[sortedByAlphas]
-          if(i1 == 2) {
-            dfs <- dfs[sortedByAlphas]
-            alphas <- alphas[-M2] # Delete the last alpha
-          }
-        } else { # If only one component, no sort but collect alphas
-          if(i1 == 1) {
-            alphas <- params[2*Msum + p + 1]
-          } else {
-            alphas <- NULL # No alphas if only one StMAR-component
-          }
-        }
-        phi00 <- c(phi00, phi0) # All intercepts
-        sigmas0 <- c(sigmas0, sigmas) # All variance parameters
-        alphas0 <- c(alphas0, alphas) # All alphas
-      }
-      return(c(phi00, arcoefs, sigmas0, alphas0, dfs)) # Collect the sorted parameters
-    }
+  if(restricted == FALSE) {
+    return(c(as.vector(pars), alphas, dfs))
+  } else { # If restricted == TRUE
+    return(c(pars[1,], pars[2:(p + 1), 1], pars[p + 2,], alphas, dfs))
   }
 }
 
