@@ -114,5 +114,5 @@
 
 # uGMAR 3.4.1
 
-* Added URL for bug reports
-* Corrected a typo in vignette
+* Added URL for bug reports.
+* Updated the vignette.
