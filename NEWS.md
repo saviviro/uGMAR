@@ -116,3 +116,7 @@
 
 * Added URL for bug reports.
 * Updated the vignette.
+
+# uGMAR 3.4.2
+
+* Updated the vignette.
