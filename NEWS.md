@@ -120,3 +120,4 @@
 # uGMAR 3.4.2
 
 * Updated the vignette.
+* Fixed a CRAN issue.

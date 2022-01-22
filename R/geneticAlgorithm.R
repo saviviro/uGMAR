@@ -184,11 +184,19 @@ GAfit <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FA
     nattempts <- 100
     for(i1 in 1:nattempts) {
       # Draw random parameter vectors and calculate the log-likelihoods
-      G <- replicate(popsize, random_ind_int(p, M_orig, model=model, restricted=restricted, constraints=constraints,
-                                             mu_scale=mu_scale, sigma_scale=sigma_scale))
-      init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig, params=G[,i2], model=model, restricted=restricted,
-                                                                    constraints=constraints, conditional=conditional, parametrization="mean",
-                                                                    boundaries=TRUE, checks=FALSE, to_return="loglik", minval=minval), numeric(1))
+      G <- replicate(popsize, random_ind_int(p=p, M=M_orig, model=model,
+                                             restricted=restricted,
+                                             constraints=constraints,
+                                             mu_scale=mu_scale,
+                                             sigma_scale=sigma_scale))
+      init_loks <- vapply(1:popsize, function(i2) loglikelihood_int(data=data, p=p, M=M_orig,
+                                                                    params=G[,i2], model=model,
+                                                                    restricted=restricted,
+                                                                    constraints=constraints,
+                                                                    conditional=conditional,
+                                                                    parametrization="mean",
+                                                                    boundaries=TRUE, checks=FALSE,
+                                                                    to_return="loglik", minval=minval), numeric(1))
       if(any(init_loks > minval)) break # Stop if good enough parameter vectors are found
       if(i1 == nattempts) stop("Failed to create initial population with good enough individuals. Consider setting up the initial population by hand using the argument 'initpop' of the function 'GAfit'.")
     }
