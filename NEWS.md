@@ -121,3 +121,7 @@
 
 * Fixed a CRAN issue.
 * Updated the vignette.
+
+# uGMAR 3.4.3
+
+* Updated the vignette
