@@ -58,14 +58,14 @@ For a correctly specified GSMAR model employing the maximum likelihood estimator
   manner to conventional Pearson's residuals. For more details about quantile residual based diagnostics,
   and in particular, about the quantile residual tests, see the cited article by \emph{Kalliovirta (2012)}.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
-\item \code{plot}: Plot p-values of the autocorrelation and conditional
+\item \code{plot(qrtest)}: Plot p-values of the autocorrelation and conditional
 heteroskedasticity tests.
 
-\item \code{print}: Print method for class 'qrtest' objects
-}}
+\item \code{print(qrtest)}: Print method for class 'qrtest' objects
 
+}}
 \examples{
 \donttest{
 ## The below examples take approximately 30 seconds to run.
@@ -95,11 +95,11 @@ qrt3 <- quantile_residual_tests(fit12, lags_ac=c(1, 5, 10, 15))
    \item Kalliovirta L. (2012) Misspecification tests based on quantile residuals.
            \emph{The Econometrics Journal}, \strong{15}, 358-393.
    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
-           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive model based on Student's t-distribution.
-         \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
-   \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions.
-         Studies in Nonlinear Dynamics & Econometrics, doi: 10.1515/snde-2020-0060
+           \emph{Journal of Time Series Analysis}, \strong{36}(2), 247-266.
+   \item Meitz M., Preve D., Saikkonen P. 2023. A mixture autoregressive model based on Student's t-distribution.
+         \emph{Communications in Statistics - Theory and Methods}, \strong{52}(2), 499-515.
+   \item Virolainen S. 2022. A mixture autoregressive model based on Gaussian and Student's t-distributions.
+         Studies in Nonlinear Dynamics & Econometrics, \strong{26}(4) 559-580.
  }
 }
 \seealso{

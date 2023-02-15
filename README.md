@@ -4,7 +4,6 @@
 # uGMAR
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 uGMAR provides tools for estimating and analyzing Gaussian mixture
@@ -77,14 +76,14 @@ cond_moment_plot(fit, which_moment="variance")
 
 ## References
 
-  - Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture
-    Autoregressive model for univariate time series. *Journal of Time
-    Series Analysis*, **36**, 247-266.
+- Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture
+  Autoregressive model for univariate time series. *Journal of Time
+  Series Analysis*, **36**(2), 247-266.
 
-  - Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive
-    model based on Student’s t-distribution. *Communications in
-    Statistics - Theory and Methods*, doi: 10.1080/03610926.2021.1916531
+- Meitz M., Preve D., Saikkonen P. 2023. A mixture autoregressive model
+  based on Student’s t-distribution. *Communications in Statistics -
+  Theory and Methods* **52**(2), 499-515.
 
-  - Virolainen S. 2021. A mixture autoregressive model based on Gaussian
-    and Student’s t-distributions. *Studies in Nonlinear Dynamics &
-    Econometrics*, doi: 10.1515/snde-2020-0060
+- Virolainen S. 2022. A mixture autoregressive model based on Gaussian
+  and Student’s t-distributions. *Studies in Nonlinear Dynamics &
+  Econometrics*, **26**(4), 559-580.

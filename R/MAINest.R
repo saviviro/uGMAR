@@ -65,9 +65,9 @@
 #'          nondifferentiability, and other irregular features. \emph{Journal of Business & Economic Statistics},
 #'          \strong{13}, 53-66.
 #'    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
-#'          \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-#'    \item Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive model based on Student's t-distribution.
-#'          \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
+#'          \emph{Journal of Time Series Analysis}, \strong{36}(2), 247-266.
+#'    \item Meitz M., Preve D., Saikkonen P. 2023. A mixture autoregressive model based on Student's t-distribution.
+#'          \emph{Communications in Statistics - Theory and Methods}, \strong{52}(2), 499-515.
 #'    \item Monahan J.F. 1984. A Note on Enforcing Stationarity in Autoregressive-Moving Average Models.
 #'          \emph{Biometrica} \strong{71}, 403-404.
 #'    \item Nash J. 1990. Compact Numerical Methods for Computers. Linear algebra and Function Minimization.
@@ -76,8 +76,8 @@
 #'          \emph{Transactions on Systems, Man and Cybernetics} \strong{24}, 656-667.
 #'    \item Smith R.E., Dike B.A., Stegmann S.A. 1995. Fitness inheritance in genetic algorithms.
 #'          \emph{Proceedings of the 1995 ACM Symposium on Applied Computing}, 345-350.
-#'    \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions.
-#'          Studies in Nonlinear Dynamics & Econometrics, doi: 10.1515/snde-2020-0060
+#'    \item Virolainen S. 2022. A mixture autoregressive model based on Gaussian and Student's t-distributions.
+#'          Studies in Nonlinear Dynamics & Econometrics, \strong{26}(4) 559-580.
 #'  }
 #' @examples
 #' \donttest{

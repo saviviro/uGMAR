@@ -125,3 +125,7 @@
 # uGMAR 3.4.3
 
 * Updated the vignette
+
+# uGMAR 3.4.4
+
+* Updated the references

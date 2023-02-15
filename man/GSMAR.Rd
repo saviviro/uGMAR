@@ -160,19 +160,19 @@ If \code{include_dens == TRUE}, the kernel density estimate of the data is calcu
   In the density plot black represents the kernel density estimate of the data, grey dashed line the
   model implied density, and the colored dotted lines the regime wise densities.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
-\item \code{logLik}: Log-likelihood method
+\item \code{logLik(gsmar)}: Log-likelihood method
 
-\item \code{residuals}: residuals method to extract quantile residuals
+\item \code{residuals(gsmar)}: residuals method to extract quantile residuals
 
-\item \code{summary}: summary method, standard errors in brackets
+\item \code{summary(gsmar)}: summary method, standard errors in brackets
 
-\item \code{plot}: Plot method for class 'gsmar'
+\item \code{plot(gsmar)}: Plot method for class 'gsmar'
 
-\item \code{print}: print method
+\item \code{print(gsmar)}: print method
+
 }}
-
 \examples{
 # GMAR model without data
 params22 <- c(0.9, 0.4, 0.2, 0.5, 0.7, 0.5, -0.2, 0.7, 0.7)
@@ -200,11 +200,11 @@ gstmar42r
 \references{
 \itemize{
    \item Kalliovirta L., Meitz M. and Saikkonen P. 2015. Gaussian Mixture Autoregressive model for univariate time series.
-           \emph{Journal of Time Series Analysis}, \strong{36}, 247-266.
-   \item Meitz M., Preve D., Saikkonen P. 2021. A mixture autoregressive model based on Student's t-distribution.
-           \emph{Communications in Statistics - Theory and Methods}, doi: 10.1080/03610926.2021.1916531
-   \item Virolainen S. 2021. A mixture autoregressive model based on Gaussian and Student's t-distributions.
-           Studies in Nonlinear Dynamics & Econometrics, doi: 10.1515/snde-2020-0060
+           \emph{Journal of Time Series Analysis}, \strong{36}(2), 247-266.
+   \item Meitz M., Preve D., Saikkonen P. 2023. A mixture autoregressive model based on Student's t-distribution.
+         \emph{Communications in Statistics - Theory and Methods}, \strong{52}(2), 499-515.
+   \item Virolainen S. 2022. A mixture autoregressive model based on Gaussian and Student's t-distributions.
+         Studies in Nonlinear Dynamics & Econometrics, \strong{26}(4) 559-580.
  }
 }
 \seealso{
