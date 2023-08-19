@@ -129,3 +129,7 @@
 # uGMAR 3.4.4
 
 * Updated the references
+
+# uGMAR 3.4.5
+
+* Fixed the package overview help file

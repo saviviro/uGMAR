@@ -7,5 +7,5 @@
 #'
 #'   The readme file or the vignette is a good place to start.
 #' @docType package
-#' @name uGMAR
-NULL
+#' @name uGMAR-package
+"_PACKAGE"
