@@ -133,3 +133,7 @@
 # uGMAR 3.4.5
 
 * Fixed the package overview help file
+
+# uGMAR 3.5.0
+
+* Added a functionality in fitGSMAR to automatically filter out inapproriate estimates. The automatic filtering is also set as the default option.
