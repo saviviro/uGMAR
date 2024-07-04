@@ -15,9 +15,10 @@ fitGSMAR(
   parametrization = c("intercept", "mean"),
   ncalls = round(10 + 9 * log(sum(M))),
   ncores = 2,
-  maxit = 300,
+  maxit = 500,
   seeds = NULL,
   print_res = TRUE,
+  filter_estimates = TRUE,
   ...
 )
 }
@@ -69,6 +70,8 @@ or \code{NULL} for not initializing the seed. Exists for the purpose of creating
 
 \item{print_res}{should the estimation results be printed?}
 
+\item{filter_estimates}{should likely inappropriate estimates be filtered? See details.}
+
 \item{...}{additional settings passed to the function \code{GAfit} employing the genetic algorithm.}
 }
 \value{
@@ -112,10 +115,19 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
  local-only maximum points can be built with the function \code{alt_gsmar} by adjusting the argument \code{which_largest}
  accordingly.
 
- Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters. Such parameters
- are weakly identified and induce various numerical problems. However, mixture components with large degree of freedom parameters are
- similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
- components with large degrees of freedom parameter estimates to be GMAR type with the function \code{stmar_to_gstmar}.
+ Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters.
+ Such parameters are weakly identified and induce various numerical problems. However, mixture components with large degree
+ of freedom parameter estimates are similar to the mixture components of the GMAR model. It's hence advisable to further
+ estimate a G-StMAR model by allowing the mixture components with large degrees of freedom parameter estimates to be GMAR
+ type with the function \code{stmar_to_gstmar}.
+
+ \strong{Filtering inappropriate estimates:} If \code{filter_estimates == TRUE}, the function will automatically filter
+ out estimates that it deems "inappropriate". That is, estimates that are not likely solutions of interest.
+ Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less
+ than \eqn{1.0015}; a variance parameter estimat near zero  (less than \eqn{0.0015});
+ mixing weights such that they are close to zero for almost all \eqn{t} for at least one regime; or mixing weight parameter
+ estimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself
+ by using the function \code{alt_gsmar}.
 }
 \section{S3 methods}{
 
@@ -130,8 +142,7 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
 
 ## Note that the number of estimation rounds (ncalls) is relatively small
 ## in the below examples to reduce the time required for running the examples.
-## For reliable results, a large number of estimation
-## rounds is recommended!
+## For reliable results, a large number of estimation rounds is recommended!
 
 # GMAR model
 fit12 <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=4, seeds=1:4)
@@ -140,14 +151,11 @@ plot(fit12)
 profile_logliks(fit12)
 diagnostic_plot(fit12)
 
-# StMAR model (boundary estimate + large degrees of freedom)
+# StMAR model (large estimate of the degrees of freedom)
 fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=2, seeds=c(1, 6))
-summary(fit42t, digits=4) # Four almost-unit roots in the 2nd regime!
-plot(fit42t) # Spiking mixing weights!
-fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # The second largest local max
-summary(fit42t_alt) # Overly large 2nd regime degrees of freedom estimate!
-fit42gs <- stmar_to_gstmar(fit42t_alt) # Switch to G-StMAR model
-summary(fit42gs) # Finally, an appropriate model!
+summary(fit42t) # Overly large 2nd regime degrees of freedom estimate!
+fit42gs <- stmar_to_gstmar(fit42t) # Switch to G-StMAR model
+summary(fit42gs) # An appropriate G-StMVAR model with one G and one t regime
 plot(fit42gs)
 
 # Restricted StMAR model
@@ -207,6 +215,7 @@ fit32rc
 }
 \seealso{
 \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
- \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}}, \code{\link{predict.gsmar}},
-  \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+ \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}},
+ \code{\link{predict.gsmar}}, \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}},
+ \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 }

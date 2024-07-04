@@ -15,6 +15,7 @@
 #' @param seeds a length \code{ncalls} vector containing the random number generator seed for each call to the genetic algorithm,
 #'   or \code{NULL} for not initializing the seed. Exists for the purpose of creating reproducible results.
 #' @param print_res should the estimation results be printed?
+#' @param filter_estimates should likely inappropriate estimates be filtered? See details.
 #' @param ... additional settings passed to the function \code{GAfit} employing the genetic algorithm.
 #' @details
 #'  Because of complexity and multimodality of the log-likelihood function, it's \strong{not guaranteed} that the estimation
@@ -44,10 +45,19 @@
 #'  local-only maximum points can be built with the function \code{alt_gsmar} by adjusting the argument \code{which_largest}
 #'  accordingly.
 #'
-#'  Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters. Such parameters
-#'  are weakly identified and induce various numerical problems. However, mixture components with large degree of freedom parameters are
-#'  similar to the mixture components of the GMAR model. It's hence advisable to further estimate a G-StMAR model by allowing the mixture
-#'  components with large degrees of freedom parameter estimates to be GMAR type with the function \code{stmar_to_gstmar}.
+#'  Some mixture components of the StMAR model may sometimes get very large estimates for the degrees of freedom parameters.
+#'  Such parameters are weakly identified and induce various numerical problems. However, mixture components with large degree
+#'  of freedom parameter estimates are similar to the mixture components of the GMAR model. It's hence advisable to further
+#'  estimate a G-StMAR model by allowing the mixture components with large degrees of freedom parameter estimates to be GMAR
+#'  type with the function \code{stmar_to_gstmar}.
+#'
+#'  \strong{Filtering inappropriate estimates:} If \code{filter_estimates == TRUE}, the function will automatically filter
+#'  out estimates that it deems "inappropriate". That is, estimates that are not likely solutions of interest.
+#'  Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less
+#'  than \eqn{1.0015}; a variance parameter estimat near zero  (less than \eqn{0.0015});
+#'  mixing weights such that they are close to zero for almost all \eqn{t} for at least one regime; or mixing weight parameter
+#'  estimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself
+#'  by using the function \code{alt_gsmar}.
 #' @return Returns an object of class \code{'gsmar'} defining the estimated GMAR, StMAR or G-StMAR model. The returned object contains
 #'   estimated mixing weights, some conditional and unconditional moments, and quantile residuals. Note that the first \code{p}
 #'   observations are taken as the initial values, so the mixing weights, conditional moments, and quantile residuals start from
@@ -57,8 +67,9 @@
 #'  The following S3 methods are supported for class \code{'gsmar'} objects: \code{print}, \code{summary}, \code{plot},
 #'  \code{predict}, \code{simulate}, \code{logLik}, \code{residuals}.
 #' @seealso \code{\link{GSMAR}}, \code{\link{iterate_more}}, , \code{\link{stmar_to_gstmar}}, \code{\link{add_data}},
-#'  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}}, \code{\link{predict.gsmar}},
-#'   \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}}, \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
+#'  \code{\link{profile_logliks}}, \code{\link{swap_parametrization}}, \code{\link{get_gradient}}, \code{\link{simulate.gsmar}},
+#'  \code{\link{predict.gsmar}}, \code{\link{diagnostic_plot}}, \code{\link{quantile_residual_tests}}, \code{\link{cond_moments}},
+#'  \code{\link{uncond_moments}}, \code{\link{LR_test}}, \code{\link{Wald_test}}
 #' @references
 #'  \itemize{
 #'    \item Dorsey R. E. and Mayer W. J. 1995. Genetic algorithms for estimation problems with multiple optima,
@@ -86,8 +97,7 @@
 #'
 #' ## Note that the number of estimation rounds (ncalls) is relatively small
 #' ## in the below examples to reduce the time required for running the examples.
-#' ## For reliable results, a large number of estimation
-#' ## rounds is recommended!
+#' ## For reliable results, a large number of estimation rounds is recommended!
 #'
 #' # GMAR model
 #' fit12 <- fitGSMAR(data=simudata, p=1, M=2, model="GMAR", ncalls=4, seeds=1:4)
@@ -96,14 +106,11 @@
 #' profile_logliks(fit12)
 #' diagnostic_plot(fit12)
 #'
-#' # StMAR model (boundary estimate + large degrees of freedom)
+#' # StMAR model (large estimate of the degrees of freedom)
 #' fit42t <- fitGSMAR(data=M10Y1Y, p=4, M=2, model="StMAR", ncalls=2, seeds=c(1, 6))
-#' summary(fit42t, digits=4) # Four almost-unit roots in the 2nd regime!
-#' plot(fit42t) # Spiking mixing weights!
-#' fit42t_alt <- alt_gsmar(fit42t, which_largest=2) # The second largest local max
-#' summary(fit42t_alt) # Overly large 2nd regime degrees of freedom estimate!
-#' fit42gs <- stmar_to_gstmar(fit42t_alt) # Switch to G-StMAR model
-#' summary(fit42gs) # Finally, an appropriate model!
+#' summary(fit42t) # Overly large 2nd regime degrees of freedom estimate!
+#' fit42gs <- stmar_to_gstmar(fit42t) # Switch to G-StMAR model
+#' summary(fit42gs) # An appropriate G-StMVAR model with one G and one t regime
 #' plot(fit42gs)
 #'
 #' # Restricted StMAR model
@@ -142,8 +149,8 @@
 #' @export
 
 fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted=FALSE, constraints=NULL, conditional=TRUE,
-                     parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=2, maxit=300,
-                     seeds=NULL, print_res=TRUE, ...) {
+                     parametrization=c("intercept", "mean"), ncalls=round(10 + 9*log(sum(M))), ncores=2, maxit=500,
+                     seeds=NULL, print_res=TRUE, filter_estimates=TRUE, ...) {
   # Checks etc
   if(!all_pos_ints(c(ncalls, ncores, maxit))) stop("Arguments ncalls, ncores and maxit have to be positive integers")
   if(!is.null(seeds) && length(seeds) != ncalls) stop("The argument 'seeds' needs be NULL or a vector of length 'ncalls'")
@@ -245,8 +252,8 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   # Run the variable metric algorithm
   cat("Optimizing with a variable metric algorithm...\n")
-  NEWTONresults <- pbapply::pblapply(1:ncalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method="BFGS",
-                                                                  control=list(fnscale=-1, maxit=maxit)), cl=cl)
+   NEWTONresults <- pbapply::pblapply(1:ncalls, function(i1) optim(par=GAresults[[i1]], fn=f, gr=gr, method="BFGS",
+                                                                   control=list(fnscale=-1, maxit=maxit)), cl=cl)
   parallel::stopCluster(cl=cl)
 
   loks <- vapply(1:ncalls, function(i1) NEWTONresults[[i1]]$value, numeric(1)) # Log-likelihoods
@@ -254,14 +261,15 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
 
   # Pick the parameter estimates
   if(is.null(constraints)) { # Sort regimes by mixing weight parameters if no constraints employed
-    newtonEstimates <- lapply(1:ncalls, function(i1) sort_components(p=p, M=M, params=NEWTONresults[[i1]]$par, model=model, restricted=restricted))
+    all_estimates <- lapply(1:ncalls, function(i1) sort_components(p=p, M=M, params=NEWTONresults[[i1]]$par, model=model,
+                                                                   restricted=restricted))
   } else { # Do not sort if constraints are employed (as constraint matrices would then need to be sorted as well)
-    newtonEstimates <- lapply(1:ncalls, function(i1) NEWTONresults[[i1]]$par)
+    all_estimates <- lapply(1:ncalls, function(i1) NEWTONresults[[i1]]$par)
   }
 
   # Unlogarithmize degrees of freedom parameters
   if(model == "StMAR" | model == "G-StMAR") {
-    newtonEstimates <- lapply(1:ncalls, function(i1) manipulateDFS(M=M, params=newtonEstimates[[i1]], model=model, FUN=exp))
+    all_estimates <- lapply(1:ncalls, function(i1) manipulateDFS(M=M, params=all_estimates[[i1]], model=model, FUN=exp))
   }
 
   # Print the estimation results
@@ -270,27 +278,103 @@ fitGSMAR <- function(data, p, M, model=c("GMAR", "StMAR", "G-StMAR"), restricted
     printloks()
   }
 
-  # Obtain the estimates
-  bestind <- which(loks == max(loks))[1]
-  bestfit <- NEWTONresults[[bestind]]
-  params <- newtonEstimates[[bestind]]
-  mw <- mixing_weights_int(data, p, M, params, model=model, restricted=restricted, constraints=constraints,
+  ## Obtain estimates and filter the inappropriate estimates ##
+  if(filter_estimates) {
+    cat("Filtering inappropriate estimates...\n")
+    ord_by_loks <- order(loks, decreasing=TRUE) # Ordering from largest loglik to smaller
+
+    # Go through estimates, take the estimate that yield the higher likelihood
+    # among estimates that are do not include wasted regimes or near-singular
+    # error term covariance matrices. Also checks near-the-boundary of the
+    # stationarity region.
+    for(i1 in 1:length(all_estimates)) {
+      which_round <- ord_by_loks[i1] # Est round with i1:th largest loglik
+      pars <- all_estimates[[which_round]]
+      mod <- suppressWarnings(GSMAR(data=data, p=p, M=M,
+                                    params=pars,
+                                    model=model,
+                                    restricted=restricted,
+                                    constraints=constraints,
+                                    conditional=conditional,
+                                    parametrization=parametrization,
+                                    calc_qresiduals=FALSE,
+                                    calc_cond_moments=FALSE,
+                                    calc_std_errors=FALSE))
+
+      # Checks stationarity
+      abs_ar_roots <- unlist(get_ar_roots(mod))
+      stat_ok <- !any(abs_ar_roots < 1.0015)
+
+      # Check variances
+      pars_std <- remove_all_constraints(p=p, M=M,
+                                         params=pars,
+                                         model=model,
+                                         restricted=restricted,
+                                         constraints=constraints) # Pars in standard form for pick pars fns
+      pars_by_reg <- pick_pars(p=p, M=M,
+                               params=pars_std,
+                               model=model,
+                               restricted=FALSE,
+                               constraints=NULL)
+      vars_ok <- !any(pars_by_reg[nrow(pars_by_reg),] < 0.0015)
+
+      # Check mixing weight params
+      alphas <- pick_alphas(p=p, M=M,
+                            params=pars_std,
+                            model=model,
+                            restricted=FALSE,
+                            constraints=NULL)
+      alphas_ok <- !any(alphas < 0.01)
+
+      # Check mixing weights
+      mixing_weights_ok <- tryCatch(!any(vapply(1:sum(M),
+                                                function(m) sum(mod$mixing_weights[,m] > red_criteria[1]) < red_criteria[2]*length(data),
+                                                logical(1))),
+                                    error=function(e) FALSE)
+      if(vars_ok && alphas_ok && stat_ok && mixing_weights_ok) {
+        which_best_fit <- which_round # The estimation round of the appropriate estimate with the largest loglik
+        break
+      }
+      if(i1 == length(all_estimates)) {
+        message("No 'appropriate' estimates were found!
+                 Check that all the variables are scaled to vary in similar magninutes, also not very small or large magnitudes.
+                 Consider running more estimation rounds or study the obtained estimates one-by-one with the function alt_gsmvar.")
+        if(sum(M) > 2) {
+          message("Consider also using smaller M. Too large M leads to identification problems.")
+        }
+        which_best_fit <- which(loks == max(loks))[1]
+      }
+    }
+  } else {
+    which_best_fit <- which(loks == max(loks))[1]
+  }
+  params <- all_estimates[[which_best_fit]] # The params to return
+
+  # bestind <- which(loks == max(loks))[1]
+  # bestfit <- NEWTONresults[[bestind]]
+  # params <- all_estimates[[bestind]]
+  mw <- mixing_weights_int(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                            parametrization=parametrization, to_return="mw")
+
+
 
   # Warnings and notifications
   if(any(vapply(1:sum(M), function(i1) sum(mw[,i1] > red_criteria[1]) < red_criteria[2]*length(data), logical(1)))) {
     message("At least one of the mixture components in the estimated model seems to be wasted!")
   }
-  if(bestfit$convergence == 1) message("Iteration limit was reached when estimating the best fitting individual! Iterate more with the function 'iterate_more'.")
+  if(NEWTONresults[[which_best_fit]]$convergence == 1) {
+    message(paste("Iteration limit was reached when estimating the best fitting individual!",
+                  "Iterate more with the function 'iterate_more'."))
+  }
 
   ### Wrap up ###
   ret <- GSMAR(data=data, p=p, M=M, params=params, model=model, restricted=restricted, constraints=constraints,
                conditional=conditional, parametrization=parametrization, calc_qresiduals=TRUE,
                calc_cond_moments=TRUE, calc_std_errors=TRUE)
-  ret$all_estimates <- newtonEstimates
+  ret$all_estimates <- all_estimates
   ret$all_logliks <- loks
   ret$which_converged <- converged
-  ret$which_round <- bestind # Which estimation round induced the largest log-likelihood?
+  ret$which_round <- which_best_fit # Which estimation round induced the largest log-likelihood?
   warn_ar_roots(ret)
   cat("Finished!\n")
   ret
