@@ -47,7 +47,7 @@ Returns an object of class \code{'gsmar'} defining the specified GMAR, StMAR, or
 It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
 
-  In addition to the S3 methods listed under the topic "Methods (by generic)", the \code{predict} and {simulate} methods
+  In addition to the S3 methods listed under the topic "Methods (by generic)", the \code{predict} and \code{simulate} methods
   are also available for the class 'gsmar' objects (see \code{?predict.gsmar} and \code{?simulate.gsmar}).
 }
 \examples{

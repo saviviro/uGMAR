@@ -96,7 +96,7 @@ GSMAR <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
       total_cvars <- get_cm("total_cvars")
     }
 
-    obs <- ifelse(conditional, length(data) - p, length(data)) # With conditional log-likelihood function, p observations are lost as initial values
+    obs <- ifelse(conditional, length(data) - p, length(data)) # With conditional log-likelihood function, p obs are lost as initial vals
     IC <- get_IC(loglik=lok_and_mw$loglik, npars=npars, obs=obs) # Information criteria
   }
 
@@ -275,7 +275,7 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
   if(is.null(gsmar$model$constraints) || gsmar$model$restricted) {
     new_constraints <- gsmar$model$constraints
   } else {
-    new_constraints <- gsmar$model$constraints[new_params$reg_order] # Reorder the constraint matrices if the ordering of the regimes changed
+    new_constraints <- gsmar$model$constraints[new_params$reg_order] # Reorder the constrnt mats if the ordering of the regimes changed
   }
 
   # The order M of the new model
@@ -290,7 +290,8 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
     new_M <- new_params$M
   }
 
-  if(estimate) { # Build and estimate the G-StMAR model with a variable metric algorithm using the modified parameter vector as the initial value
+  if(estimate) {
+    # Build and estimate the G-StMAR model with a variable metric algorithm using the modified parameter vector as the initial value
     tmp_mod <- GSMAR(data=gsmar$data, p=gsmar$model$p, M=new_M, params=new_params$params,
                      model=new_model, restricted=gsmar$model$restricted,
                      constraints=new_constraints, conditional=gsmar$model$conditional,
@@ -322,7 +323,7 @@ stmar_to_gstmar <- function(gsmar, maxdf=100, estimate, calc_std_errors, maxit=1
 #' @details It's sometimes useful to examine other estimates than the one with the highest log-likelihood value. This function
 #'   is just a simple wrapper to \code{GSMAR} that picks the correct estimates from an object returned by \code{fitGSMAR}.
 #'
-#'   In addition to the S3 methods listed under the topic "Methods (by generic)", the \code{predict} and {simulate} methods
+#'   In addition to the S3 methods listed under the topic "Methods (by generic)", the \code{predict} and \code{simulate} methods
 #'   are also available for the class 'gsmar' objects (see \code{?predict.gsmar} and \code{?simulate.gsmar}).
 #' @inherit GSMAR references return
 #' @inherit add_data seealso
