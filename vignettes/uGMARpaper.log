@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  6 JUN 2022 13:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 JUL 2024 15:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -7,7 +7,7 @@ entering extended mode
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2021-11-22>
 (/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/jss.cls
-Document Class: jss 2021/12/10 3.3 jss class by Achim Zeileis
+Document Class: jss 2023/03/05 3.4 jss class by Achim Zeileis
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/size11.clo
@@ -66,12 +66,6 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
 )
-(/usr/local/texlive/2021/texmf-dist/tex/latex/ae/ae.sty
-Package: ae 2001/02/12 1.3 Almost European Computer Modern
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/base/fontenc.sty
-Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
-))
 (/usr/local/texlive/2021/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2021/12/21 4.1b verbatim text (tvz,hv)
 \FV@CodeLineNo=\count191
@@ -83,12 +77,7 @@ Package: fancyvrb 2021/12/21 4.1b verbatim text (tvz,hv)
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
-LaTeX Font Info:    Trying to load font information for T1+aer on input line 11
-2.
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/ae/t1aer.fd
-File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
-))
+)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
@@ -280,14 +269,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \preSskip=\skip56
 \postMskip=\skip57
 \postSskip=\skip58
-
-
-Package hyperref Warning: Option `hyperindex' has already been used,
-(hyperref)                setting the option has no effect on input line 449.
-
-Package hyperref Info: Option `colorlinks' set `true' on input line 449.
-Package hyperref Info: Option `linktocpage' set `true' on input line 449.
-Package hyperref Info: Option `plainpages' set `false' on input line 449.
+Package hyperref Info: Option `colorlinks' set `true' on input line 447.
+Package hyperref Info: Option `linktocpage' set `true' on input line 447.
+Package hyperref Info: Option `plainpages' set `false' on input line 447.
 ) (/usr/local/texlive/2021/texmf-dist/tex/generic/thumbpdf/thumbpdf.sty
 Package: thumbpdf 2018/09/07 v3.17 Inclusion of thumbnails (HO)
 THUMBPDF: Compressed PDF objects of PDF 1.5 are not supported
@@ -535,7 +519,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 71.
 
-Underfull \vbox (badness 1472) has occurred while \output is active []
+Underfull \vbox (badness 1460) has occurred while \output is active []
 
  [1
 
@@ -609,7 +593,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 
 [10]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-259.
+262.
  (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -628,6 +612,9 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [13]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 14 []
  []
@@ -643,32 +630,60 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [16]
-<figures/plotfit42gs.png, id=429, 803.0pt x 451.6875pt>
-File: figures/plotfit42gs.png Graphic file (type png)
-<use figures/plotfit42gs.png>
-Package pdftex.def Info: figures/plotfit42gs.png  used on input line 493.
-(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
-<figures/proflogfit42gs.png, id=430, 803.0pt x 451.6875pt>
-File: figures/proflogfit42gs.png Graphic file (type png)
-<use figures/proflogfit42gs.png>
-Package pdftex.def Info: figures/proflogfit42gs.png  used on input line 500.
-(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
+! Undefined control sequence.
+l.481 ...roots of the AR polynomial less than \eqn
+                                                  {1.0015}; a variance param...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.481 ...ameter estimat near zero  (less than \eqn
+                                                  {0.0015}); mixing weights ...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.481 ...hey are close to zero for almost all \eqn
+                                                  {t} for at least one regim...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 17
  []
 
 [17]
+<figures/plotfit42gs.png, id=433, 803.0pt x 451.6875pt>
+File: figures/plotfit42gs.png Graphic file (type png)
+<use figures/plotfit42gs.png>
+Package pdftex.def Info: figures/plotfit42gs.png  used on input line 499.
+(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
+<figures/proflogfit42gs.png, id=434, 803.0pt x 451.6875pt>
+File: figures/proflogfit42gs.png Graphic file (type png)
+<use figures/proflogfit42gs.png>
+Package pdftex.def Info: figures/proflogfit42gs.png  used on input line 506.
+(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 18 []
  []
 
-[18 <./figures/plotfit42gs.png> <./figures/proflogfit42gs.png>]
+[18]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 19
  []
 
-[19]
+[19 <./figures/plotfit42gs.png> <./figures/proflogfit42gs.png>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 20 []
  []
@@ -699,16 +714,16 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [25]
-Overfull \hbox (5.7324pt too wide) in paragraph at lines 772--773
+Overfull \hbox (5.7324pt too wide) in paragraph at lines 778--779
 []\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , quan-tile re
 sid-u-als can be an-a-lyzed graph-i-cally with the func-tion \T1/lmtt/m/n/10.95
  diagnostic_plot\T1/lmr/m/n/10.95 ,
  []
 
-<figures/diagplotfit42gsr.png, id=528, 803.0pt x 451.6875pt>
+<figures/diagplotfit42gsr.png, id=527, 803.0pt x 451.6875pt>
 File: figures/diagplotfit42gsr.png Graphic file (type png)
 <use figures/diagplotfit42gsr.png>
-Package pdftex.def Info: figures/diagplotfit42gsr.png  used on input line 787.
+Package pdftex.def Info: figures/diagplotfit42gsr.png  used on input line 793.
 (pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -716,11 +731,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [26]
-Overfull \hbox (24.37775pt too wide) in paragraph at lines 800--801
-[]\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , the quan-til
-e resid-ual tests can be ap-plied with the func-tion \T1/lmtt/m/n/10.95 quantil
-e_residual_tests
- []
+Underfull \vbox (badness 1270) has occurred while \output is active []
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -728,6 +739,13 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [27 <./figures/diagplotfit42gsr.png>]
+Overfull \hbox (24.37775pt too wide) in paragraph at lines 806--807
+[]\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , the quan-til
+e resid-ual tests can be ap-plied with the func-tion \T1/lmtt/m/n/10.95 quantil
+e_residual_tests
+ []
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 28 []
  []
@@ -743,10 +761,10 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [30]
-<figures/predictfit42gs.png, id=584, 874.26625pt x 506.89375pt>
+<figures/predictfit42gs.png, id=583, 874.26625pt x 506.89375pt>
 File: figures/predictfit42gs.png Graphic file (type png)
 <use figures/predictfit42gs.png>
-Package pdftex.def Info: figures/predictfit42gs.png  used on input line 927.
+Package pdftex.def Info: figures/predictfit42gs.png  used on input line 933.
 (pdftex.def)             Requested size: 354.12434pt x 205.32178pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -754,37 +772,31 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [31]
-Underfull \hbox (badness 1331) in paragraph at lines 979--980
-[]\T1/lmr/m/n/10.95 Calculate nu-mer-i-cally ap-prox-i-mated
- []
-
-
-Underfull \hbox (badness 3449) in paragraph at lines 980--981
-\T1/lmr/m/n/10.95 ap-prox-i-mated Hes-sian of the log-
- []
-
-
-Underfull \hbox (badness 1527) in paragraph at lines 992--993
-[]\T1/lmr/m/n/10.95 Swap be-tween mean and in-ter-cept
- []
-
-
-Underfull \vbox (badness 1077) has occurred while \output is active []
-
-
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 32 []
  []
 
 [32 <./figures/predictfit42gs.png>]
+Underfull \hbox (badness 1331) in paragraph at lines 985--986
+[]\T1/lmr/m/n/10.95 Calculate nu-mer-i-cally ap-prox-i-mated
+ []
+
+
+Underfull \hbox (badness 3449) in paragraph at lines 986--987
+\T1/lmr/m/n/10.95 ap-prox-i-mated Hes-sian of the log-
+ []
+
+
+Underfull \hbox (badness 1527) in paragraph at lines 998--999
+[]\T1/lmr/m/n/10.95 Swap be-tween mean and in-ter-cept
+ []
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 33
  []
 
 [33]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 34 []
  []
@@ -820,14 +832,14 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [38]
-Overfull \hbox (6.69774pt too wide) in paragraph at lines 1039--1048
+Overfull \hbox (6.69774pt too wide) in paragraph at lines 1045--1054
  [][] 
  []
 
 <figures/figsimuexp.png, id=697, 803.0pt x 451.6875pt>
 File: figures/figsimuexp.png Graphic file (type png)
 <use figures/figsimuexp.png>
-Package pdftex.def Info: figures/figsimuexp.png  used on input line 1054.
+Package pdftex.def Info: figures/figsimuexp.png  used on input line 1060.
 (pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -859,13 +871,13 @@ Package rerunfilecheck Info: File `uGMARpaper.out' has not changed.
 (rerunfilecheck)             Checksum: DC5157A6363CBF1D6B5A44D03C190863;4946.
  ) 
 Here is how much of TeX's memory you used:
- 12511 strings out of 478353
- 197168 string characters out of 5848086
- 505402 words of memory out of 5000000
- 30232 multiletter control sequences out of 15000+600000
- 530549 words of font info for 111 fonts, out of 8000000 for 9000
+ 12447 strings out of 478353
+ 195700 string characters out of 5848086
+ 505216 words of memory out of 5000000
+ 30177 multiletter control sequences out of 15000+600000
+ 529054 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,15n,77p,1804b,508s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 75i,15n,77p,1804b,514s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
 texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/20
 21/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2021/texmf-dist
@@ -894,7 +906,7 @@ blic/lm/lmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lm
 tt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmtto10.pfb><
 /usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.p
 fb>
-Output written on uGMARpaper.pdf (43 pages, 1003534 bytes).
+Output written on uGMARpaper.pdf (43 pages, 1004593 bytes).
 PDF statistics:
  925 PDF objects out of 1000 (max. 8388607)
  794 compressed objects within 8 object streams

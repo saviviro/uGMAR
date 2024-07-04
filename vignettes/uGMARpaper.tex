@@ -230,12 +230,15 @@ In \pkg{uGMAR}, the GSMAR models are defined as class \code{gsmar} S3 objects, w
 
 Additional arguments may be supplied to \code{fitGSMAR} in order to specify, for example, whether the exact log-likelihood function should be used instead of the conditional one (\code{conditional}), whether the model should be parametrized with the intercepts $\varphi_{m,0}$ or the regimewise unconditional means $\mu_m$ (\code{parametrization}), how many estimation rounds should be performed (\code{ncalls}), and how many central processing unit (CPU) cores should be used in the estimation (\code{ncores}). Some of the estimation rounds may end up in local-only maximum points or saddle points, but reliability of the estimation results can be improved by increasing the number of estimation rounds. A large number of estimation rounds may be required particularly when the number of mixture components is large, as the surface of the log-likelihood function becomes increasingly more challenging. It is also possible to adjust the settings of the genetic algorithm that is used to find the starting values. The available options are listed in the documentation of the function \code{GAfit} to which the arguments adjusting the settings will be passed.
 
+It is also possible to automatically filter out inappropriate estimates by setting the argument \code{filter_estimates=TRUE} in \code{fitGSMAR}, which is the default option. In the following, the issue of these inappropriate solutions is discussed among other things. Therefore, this feature filtering out inappropriate solutions automatically is not utilized.
+
 Section~\ref{sec:modelselection} concluded that a StMAR model with autoregressive order $p=4$ and $M=2$ mixture components seems like a reasonable candidate for modeling the monthly interest rate spread \code{M10Y1Y}. The following code fits this model to the series using the conditional log-likelihood function and performing 12 estimation rounds with eight CPU cores. The argument \code{seeds} supplies the seeds that initialize the random number generator at the beginning of each call to the genetic algorithm, thereby yielding reproducible results.
 %
 \begin{CodeChunk}
 \begin{CodeInput}
 R> fit42t <- fitGSMAR(M10Y1Y, p = 4, M = 2, model = "StMAR",
-+    conditional = TRUE, ncalls = 12, ncores = 8, seeds = 4:15)
++    conditional = TRUE, ncalls = 12, ncores = 8, seeds = 4:15,
++    filter_estimates = FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 Using 8 cores for 12 estimation rounds...
@@ -365,7 +368,8 @@ To give an example of a case where the estimates are very close the boundary of 
 \begin{CodeChunk}
 \begin{CodeInput}
 R> fit42gs2 <- fitGSMAR(M10Y1Y, p = 4, M = c(1, 1), model = "G-StMAR",
-+    conditional = TRUE, ncalls = 16, ncores = 8, seeds = 72:87)
++    conditional = TRUE, ncalls = 16, ncores = 8, seeds = 72:87,
++    filter_estimates = FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 Using 8 cores for 16 estimation rounds...
@@ -473,6 +477,8 @@ First p autocors: 0.98 0.96 0.93 0.89
 \end{CodeChunk}
 %
 The above printout shows that the estimates related to the second-largest local maximum are the same as of the model \code{fit42gs} (which was estimated based on a StMAR model with a very large degrees of freedom parameter estimate) and that they are clearly inside the stationarity region for all regimes. If also the second-largest maximum point seems unreasonable, a GSMAR model can be built based on the next-largest maximum point by adjusting the argument \code{which_largest} in the function \code{alt_gsmar} accordingly.
+
+It is also possible to automatically filter out inappropriate estimates by setting the argument \code{filter_estimates=TRUE} in \code{fitGSMAR}. Then, the function will automatically filter out estimates that it deems "inappropriate".  That is, estimates that are not likely solutions of interest. Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less than \eqn{1.0015}; a variance parameter estimat near zero  (less than \eqn{0.0015}); mixing weights such that they are close to zero for almost all \eqn{t} for at least one regime; or mixing weight parameterestimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself by using the function \code{alt_gsmar}. \code{fitGSMAR} then returns the solution based on the largest log-likelihood that is not filtered out. Other solutions can be studied by using the function \code{alt_gsmvar} as usual.
 
 
 \subsection{Further examination of the estimates}\label{sec:examestim}
