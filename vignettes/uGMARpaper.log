@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 JUL 2024 16:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 DEC 2024 15:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -272,17 +272,36 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 Package hyperref Info: Option `colorlinks' set `true' on input line 447.
 Package hyperref Info: Option `linktocpage' set `true' on input line 447.
 Package hyperref Info: Option `plainpages' set `false' on input line 447.
-) (/usr/local/texlive/2021/texmf-dist/tex/generic/thumbpdf/thumbpdf.sty
+) (/usr/local/texlive/2021/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(/usr/local/texlive/2021/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count271
+\Gm@cntv=\count272
+\c@Gm@tempcnt=\count273
+\Gm@bindingoffset=\dimen145
+\Gm@wd@mp=\dimen146
+\Gm@odd@mp=\dimen147
+\Gm@even@mp=\dimen148
+\Gm@layoutwidth=\dimen149
+\Gm@layoutheight=\dimen150
+\Gm@layouthoffset=\dimen151
+\Gm@layoutvoffset=\dimen152
+\Gm@dimlist=\toks17
+)
+(/usr/local/texlive/2021/texmf-dist/tex/generic/thumbpdf/thumbpdf.sty
 Package: thumbpdf 2018/09/07 v3.17 Inclusion of thumbnails (HO)
 THUMBPDF: Compressed PDF objects of PDF 1.5 are not supported
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/framed/framed.sty
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \OuterFrameSep=\skip59
-\fb@frw=\dimen145
-\fb@frh=\dimen146
-\FrameRule=\dimen147
-\FrameSep=\dimen148
+\fb@frw=\dimen153
+\fb@frh=\dimen154
+\FrameRule=\dimen155
+\FrameSep=\dimen156
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2021/10/15 v2.17l AMS math features
@@ -294,51 +313,51 @@ Package: amstext 2021/08/26 v2.01 AMS text
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks17
-\ex@=\dimen149
+\@emptytoks=\toks18
+\ex@=\dimen157
 ))
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen150
+\pmbraise@=\dimen158
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2021/08/26 v2.02 operator names
 )
-\inf@bad=\count271
+\inf@bad=\count274
 LaTeX Info: Redefining \frac on input line 234.
-\uproot@=\count272
-\leftroot@=\count273
+\uproot@=\count275
+\leftroot@=\count276
 LaTeX Info: Redefining \overline on input line 399.
-\classnum@=\count274
-\DOTSCASE@=\count275
+\classnum@=\count277
+\DOTSCASE@=\count278
 LaTeX Info: Redefining \ldots on input line 496.
 LaTeX Info: Redefining \dots on input line 499.
 LaTeX Info: Redefining \cdots on input line 620.
 \Mathstrutbox@=\box51
 \strutbox@=\box52
-\big@size=\dimen151
+\big@size=\dimen159
 LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
-\macc@depth=\count276
-\c@MaxMatrixCols=\count277
+\macc@depth=\count279
+\c@MaxMatrixCols=\count280
 \dotsspace@=\muskip17
-\c@parentequation=\count278
-\dspbrk@lvl=\count279
-\tag@help=\toks18
-\row@=\count280
-\column@=\count281
-\maxfields@=\count282
-\andhelp@=\toks19
-\eqnshift@=\dimen152
-\alignsep@=\dimen153
-\tagshift@=\dimen154
-\tagwidth@=\dimen155
-\totwidth@=\dimen156
-\lineht@=\dimen157
-\@envbody=\toks20
+\c@parentequation=\count281
+\dspbrk@lvl=\count282
+\tag@help=\toks19
+\row@=\count283
+\column@=\count284
+\maxfields@=\count285
+\andhelp@=\toks20
+\eqnshift@=\dimen160
+\alignsep@=\dimen161
+\tagshift@=\dimen162
+\tagwidth@=\dimen163
+\totwidth@=\dimen164
+\lineht@=\dimen165
+\@envbody=\toks21
 \multlinegap=\skip61
 \multlinetaggap=\skip62
-\mathdisplay@stack=\toks21
+\mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2938.
 LaTeX Info: Redefining \] on input line 2939.
 )
@@ -358,15 +377,15 @@ Package: mathtools 2021/04/12 v1.27 mathematical typesetting tools
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count283
-\calc@Bcount=\count284
-\calc@Adimen=\dimen158
-\calc@Bdimen=\dimen159
+\calc@Acount=\count286
+\calc@Bcount=\count287
+\calc@Adimen=\dimen166
+\calc@Bdimen=\dimen167
 \calc@Askip=\skip63
 \calc@Bskip=\skip64
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count285
+\calc@Ccount=\count288
 \calc@Cskip=\skip65
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/mathtools/mhsetup.sty
@@ -376,19 +395,24 @@ LaTeX Info: Thecontrolsequence`\('isalreadyrobust on input line 130.
 LaTeX Info: Thecontrolsequence`\)'isalreadyrobust on input line 130.
 LaTeX Info: Thecontrolsequence`\['isalreadyrobust on input line 130.
 LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 130.
-\g_MT_multlinerow_int=\count286
-\l_MT_multwidth_dim=\dimen160
+\g_MT_multlinerow_int=\count289
+\l_MT_multwidth_dim=\dimen168
 \origjot=\skip66
-\l_MT_shortvdotswithinadjustabove_dim=\dimen161
-\l_MT_shortvdotswithinadjustbelow_dim=\dimen162
-\l_MT_above_intertext_sep=\dimen163
-\l_MT_below_intertext_sep=\dimen164
-\l_MT_above_shortintertext_sep=\dimen165
-\l_MT_below_shortintertext_sep=\dimen166
+\l_MT_shortvdotswithinadjustabove_dim=\dimen169
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen170
+\l_MT_above_intertext_sep=\dimen171
+\l_MT_below_intertext_sep=\dimen172
+\l_MT_above_shortintertext_sep=\dimen173
+\l_MT_below_shortintertext_sep=\dimen174
 \xmathstrut@box=\box53
-\xmathstrut@dim=\dimen167
+\xmathstrut@dim=\dimen175
 )
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 71
+(/usr/local/texlive/2021/texmf-dist/tex/latex/changepage/changepage.sty
+Package: changepage 2009/10/20 v1.0c check page and change page layout
+\c@cp@cntr=\count290
+\cp@tempcnt=\count291
+)
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 85
 .
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/t1lmr.fd
@@ -396,44 +420,44 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2021-12-14 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count287
+\l__color_backend_stack_int=\count292
 \l__pdf_internal_box=\box54
 )
 (./uGMARpaper.aux)
 \openout1 = `uGMARpaper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 85.
+LaTeX Font Info:    ... okay on input line 85.
 
 (/usr/local/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count288
-\scratchdimen=\dimen168
+\scratchcounter=\count293
+\scratchdimen=\dimen176
 \scratchbox=\box55
-\nofMPsegments=\count289
-\nofMParguments=\count290
-\everyMPshowfont=\toks22
-\MPscratchCnt=\count291
-\MPscratchDim=\dimen169
-\MPnumerator=\count292
-\makeMPintoPDFobject=\count293
-\everyMPtoPDFconversion=\toks23
+\nofMPsegments=\count294
+\nofMParguments=\count295
+\everyMPshowfont=\toks23
+\MPscratchCnt=\count296
+\MPscratchDim=\dimen177
+\MPnumerator=\count297
+\makeMPintoPDFobject=\count298
+\everyMPtoPDFconversion=\toks24
 ) (/usr/local/texlive/2021/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -443,7 +467,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 71.
+Package hyperref Info: Link coloring ON on input line 85.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -455,79 +479,131 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count294
+\c@section@level=\count299
 )
-LaTeX Info: Redefining \ref on input line 71.
-LaTeX Info: Redefining \pageref on input line 71.
-LaTeX Info: Redefining \nameref on input line 71.
+LaTeX Info: Redefining \ref on input line 85.
+LaTeX Info: Redefining \pageref on input line 85.
+LaTeX Info: Redefining \nameref on input line 85.
  (./uGMARpaper.out) (./uGMARpaper.out)
 \@outlinefile=\write4
 \openout4 = `uGMARpaper.out'.
 
-LaTeX Font Info:    Trying to load font information for T1+lmss on input line 7
-1.
+LaTeX Font Info:    Trying to load font information for T1+lmss on input line 8
+5.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 7
-1.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 8
+5.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 7
-1.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 8
+5.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-71.
+85.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-71.
+85.
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 71.
+(Font)              <10.95> on input line 85.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 71.
+(Font)              <8> on input line 85.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 71.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 71.
+(Font)              <6> on input line 85.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 85.
 
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 71.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 85.
 
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 71.
+(Font)              <10> on input line 85.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 71.
+(Font)              <7> on input line 85.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 71.
+(Font)              <5> on input line 85.
 
-Underfull \vbox (badness 1460) has occurred while \output is active []
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: twoside 
+* h-part:(L,W,R)=(72.26999pt, 452.9679pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 700.50687pt, 72.26999pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=452.9679pt
+* \textheight=700.50687pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=11.0pt
+* \footskip=30.0pt
+* \marginparwidth=54.2025pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [1
 
 {/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 8
-7.
+(./uGMARpaper.toc)
+\tf@toc=\write5
+\openout5 = `uGMARpaper.toc'.
 
-(/usr/local/texlive/2021/texmf-dist/tex/latex/lm/t1lmtt.fd
+pdfTeX warning (ext4): destination with the same identifier (name{page.}) has b
+een already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.93 \pagenumbering
+                   {arabic} [2]
+Underfull \vbox (badness 4556) has occurred while \output is active []
+
+
+Overfull \hbox (5.47499pt too wide) has occurred while \output is active
+[] \T1/lmr/m/n/10.95 1
+ []
+
+[1]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+11.
+ (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -538,16 +614,16 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [2]
+LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 
+137.
+ (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/ot1lmss.fd
+File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 3
  []
 
 [3]
-LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 
-109.
- (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/ot1lmss.fd
-File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 4 []
  []
@@ -558,45 +634,48 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [5]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <9> on input line 220.
+
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 6 []
  []
 
 [6]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 183.
+<figures/pacfplot.png, id=453, 803.0pt x 301.125pt>
+File: figures/pacfplot.png Graphic file (type png)
+<use figures/pacfplot.png>
+Package pdftex.def Info: figures/pacfplot.png  used on input line 246.
+(pdftex.def)             Requested size: 362.37569pt x 135.89554pt.
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 7
  []
 
 [7]
+Underfull \vbox (badness 1478) has occurred while \output is active []
+
+
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 8 []
  []
 
-[8]
-<figures/pacfplot.png, id=359, 803.0pt x 301.125pt>
-File: figures/pacfplot.png Graphic file (type png)
-<use figures/pacfplot.png>
-Package pdftex.def Info: figures/pacfplot.png  used on input line 209.
-(pdftex.def)             Requested size: 354.12434pt x 132.79866pt.
-
+[8 <./figures/pacfplot.png>]
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 9
  []
 
-[9 <./figures/pacfplot.png>]
+[9]
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+299.
+ (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 10 []
  []
 
 [10]
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-262.
- (/usr/local/texlive/2021/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 11
  []
@@ -612,14 +691,22 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [13]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 14 []
  []
 
 [14]
+<figures/plotfit42gs.png, id=525, 803.0pt x 451.6875pt>
+File: figures/plotfit42gs.png Graphic file (type png)
+<use figures/plotfit42gs.png>
+Package pdftex.def Info: figures/plotfit42gs.png  used on input line 538.
+(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
+<figures/proflogfit42gs.png, id=526, 803.0pt x 451.6875pt>
+File: figures/proflogfit42gs.png Graphic file (type png)
+<use figures/proflogfit42gs.png>
+Package pdftex.def Info: figures/proflogfit42gs.png  used on input line 545.
+(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 15
  []
@@ -629,23 +716,12 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 16 []
  []
 
-[16]
+[16 <./figures/plotfit42gs.png> <./figures/proflogfit42gs.png>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 17
  []
 
 [17]
-<figures/plotfit42gs.png, id=433, 803.0pt x 451.6875pt>
-File: figures/plotfit42gs.png Graphic file (type png)
-<use figures/plotfit42gs.png>
-Package pdftex.def Info: figures/plotfit42gs.png  used on input line 499.
-(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
-<figures/proflogfit42gs.png, id=434, 803.0pt x 451.6875pt>
-File: figures/proflogfit42gs.png Graphic file (type png)
-<use figures/proflogfit42gs.png>
-Package pdftex.def Info: figures/proflogfit42gs.png  used on input line 506.
-(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
-
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 18 []
  []
@@ -655,7 +731,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 19
  []
 
-[19 <./figures/plotfit42gs.png> <./figures/proflogfit42gs.png>]
+[19]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 20 []
  []
@@ -671,47 +747,24 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [22]
+<figures/diagplotfit42gsr.png, id=619, 803.0pt x 451.6875pt>
+File: figures/diagplotfit42gsr.png Graphic file (type png)
+<use figures/diagplotfit42gsr.png>
+Package pdftex.def Info: figures/diagplotfit42gsr.png  used on input line 838.
+(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
+
+Underfull \hbox (badness 1337) in paragraph at lines 839--839
+[]\T1/lmr/m/n/10.95 Figure 4: []Diagnostic plot for the fit-ted model \T1/lmtt/
+m/n/10.95 fit42gsr \T1/lmr/m/n/10.95 cre-ated us-ing the func-tion
+ []
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 23
  []
 
 [23]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/lmr/m/n/10.95 24 []
- []
-
-[24]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/lmr/m/n/10.95 25
- []
-
-[25]
-Overfull \hbox (5.7324pt too wide) in paragraph at lines 778--779
-[]\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , quan-tile re
-sid-u-als can be an-a-lyzed graph-i-cally with the func-tion \T1/lmtt/m/n/10.95
- diagnostic_plot\T1/lmr/m/n/10.95 ,
- []
-
-<figures/diagplotfit42gsr.png, id=527, 803.0pt x 451.6875pt>
-File: figures/diagplotfit42gsr.png Graphic file (type png)
-<use figures/diagplotfit42gsr.png>
-Package pdftex.def Info: figures/diagplotfit42gsr.png  used on input line 793.
-(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
-
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/lmr/m/n/10.95 26 []
- []
-
-[26]
-Underfull \vbox (badness 1270) has occurred while \output is active []
-
-
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/lmr/m/n/10.95 27
- []
-
-[27 <./figures/diagplotfit42gsr.png>]
-Overfull \hbox (24.37775pt too wide) in paragraph at lines 806--807
+Overfull \hbox (14.0636pt too wide) in paragraph at lines 851--852
 []\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , the quan-til
 e resid-ual tests can be ap-plied with the func-tion \T1/lmtt/m/n/10.95 quantil
 e_residual_tests
@@ -719,10 +772,36 @@ e_residual_tests
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+\T1/lmr/m/n/10.95 24 []
+ []
+
+[24 <./figures/diagplotfit42gsr.png>]
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/lmr/m/n/10.95 25
+ []
+
+[25]
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+\T1/lmr/m/n/10.95 26 []
+ []
+
+[26]
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/lmr/m/n/10.95 27
+ []
+
+[27]
+<figures/predictfit42gs.png, id=676, 874.26625pt x 506.89375pt>
+File: figures/predictfit42gs.png Graphic file (type png)
+<use figures/predictfit42gs.png>
+Package pdftex.def Info: figures/predictfit42gs.png  used on input line 985.
+(pdftex.def)             Requested size: 362.37569pt x 210.10175pt.
+
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 28 []
  []
 
-[28]
+[28 <./figures/predictfit42gs.png>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 29
  []
@@ -733,155 +812,112 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [30]
-<figures/predictfit42gs.png, id=583, 874.26625pt x 506.89375pt>
-File: figures/predictfit42gs.png Graphic file (type png)
-<use figures/predictfit42gs.png>
-Package pdftex.def Info: figures/predictfit42gs.png  used on input line 933.
-(pdftex.def)             Requested size: 354.12434pt x 205.32178pt.
+Underfull \hbox (badness 3471) in paragraph at lines 1068--1069
+[]\T1/lmr/m/n/10.95 Plot the graphs of the pro-file log-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1079--1080
+[]\T1/lmr/m/n/10.95 Swap be-tween mean and in-ter-cept
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 31
  []
 
-[31]
+[31
+
+] (./uGMARpaper.bbl
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 83.
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 32 []
  []
 
-[32 <./figures/predictfit42gs.png>]
-Underfull \hbox (badness 1331) in paragraph at lines 985--986
-[]\T1/lmr/m/n/10.95 Calculate nu-mer-i-cally ap-prox-i-mated
- []
-
-
-Underfull \hbox (badness 3449) in paragraph at lines 986--987
-\T1/lmr/m/n/10.95 ap-prox-i-mated Hes-sian of the log-
- []
-
-
-Underfull \hbox (badness 1527) in paragraph at lines 998--999
-[]\T1/lmr/m/n/10.95 Swap be-tween mean and in-ter-cept
- []
-
-
+[32]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 33
  []
 
-[33]
+[33])
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 34 []
  []
 
 [34]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
+<figures/figsimuexp.png, id=781, 803.0pt x 451.6875pt>
+File: figures/figsimuexp.png Graphic file (type png)
+<use figures/figsimuexp.png>
+Package pdftex.def Info: figures/figsimuexp.png  used on input line 1127.
+(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 35
  []
 
-[35] (./uGMARpaper.bbl
-
-LaTeX Font Warning: Font shape `T1/lmr/b/it' in size <10.95> not available
-(Font)              Font shape `T1/lmr/b/sl' tried instead on input line 26.
-
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 83.
-
+[35]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 36 []
  []
 
-[36]
+[36 <./figures/figsimuexp.png>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 37
  []
 
-[37])
+[37]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 38 []
  []
 
-[38]
-Overfull \hbox (6.69774pt too wide) in paragraph at lines 1045--1054
- [][] 
- []
-
-<figures/figsimuexp.png, id=697, 803.0pt x 451.6875pt>
-File: figures/figsimuexp.png Graphic file (type png)
-<use figures/figsimuexp.png>
-Package pdftex.def Info: figures/figsimuexp.png  used on input line 1060.
-(pdftex.def)             Requested size: 354.12434pt x 199.19798pt.
-
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/lmr/m/n/10.95 39
- []
-
-[39]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/lmr/m/n/10.95 40 []
- []
-
-[40 <./figures/figsimuexp.png>]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/lmr/m/n/10.95 41
- []
-
-[41]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/lmr/m/n/10.95 42 []
- []
-
-[42]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/lmr/m/n/10.95 43
- []
-
-[43] (./uGMARpaper.aux)
+[38] (./uGMARpaper.aux)
 Package rerunfilecheck Info: File `uGMARpaper.out' has not changed.
-(rerunfilecheck)             Checksum: DC5157A6363CBF1D6B5A44D03C190863;4946.
+(rerunfilecheck)             Checksum: 28DC449FAC53729D38E2B9FDAA49AA2F;9284.
  ) 
 Here is how much of TeX's memory you used:
- 12447 strings out of 478353
- 195700 string characters out of 5848086
- 505216 words of memory out of 5000000
- 30177 multiletter control sequences out of 15000+600000
- 529054 words of font info for 110 fonts, out of 8000000 for 9000
+ 13014 strings out of 478353
+ 204861 string characters out of 5848086
+ 516716 words of memory out of 5000000
+ 30736 multiletter control sequences out of 15000+600000
+ 526022 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,15n,77p,1804b,514s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 75i,15n,77p,1804b,554s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
 texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/20
 21/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2021/texmf-dist
 /fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvi
 ps/lm/lm-mathex.enc}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-m
 athsy.enc}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmb10.pfb><
-/usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbo10.pfb></usr/local
-/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2
-021/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2021/texmf-
-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2021/texmf-dist/fonts
-/type1/public/lm/lmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pub
-lic/lm/lmmi6.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmmi
-8.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmmi9.pfb></usr
-/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></usr/local/te
-xlive/2021/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2021/
-texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2021/texmf-dist/f
-onts/type1/public/lm/lmr8.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/p
-ublic/lm/lmr9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr
-i10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmro10.pfb></
-usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr/local/
-texlive/2021/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/
-2021/texmf-dist/fonts/type1/public/lm/lmsso10.pfb></usr/local/texlive/2021/texm
-f-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2021/texmf-dist/fon
-ts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pu
-blic/lm/lmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lm
-tt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmtto10.pfb><
-/usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.p
-fb>
-Output written on uGMARpaper.pdf (43 pages, 1004682 bytes).
+/usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local
+/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2
+021/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2021/texmf-
+dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts
+/type1/public/lm/lmmi6.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/publ
+ic/lm/lmmi8.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmmi9
+.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></us
+r/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/tex
+live/2021/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2021/te
+xmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2021/texmf-dist/fon
+ts/type1/public/lm/lmr9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pub
+lic/lm/lmri10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr
+o10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmss10.pfb></
+usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/loca
+l/texlive/2021/texmf-dist/fonts/type1/public/lm/lmsso10.pfb></usr/local/texlive
+/2021/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2021/texm
+f-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2021/texmf-dist/font
+s/type1/public/lm/lmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pu
+blic/lm/lmtt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmt
+to10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbol
+s/msbm10.pfb>
+Output written on uGMARpaper.pdf (40 pages, 978333 bytes).
 PDF statistics:
- 925 PDF objects out of 1000 (max. 8388607)
- 794 compressed objects within 8 object streams
- 160 named destinations out of 1000 (max. 500000)
- 191 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1000 PDF objects out of 1000 (max. 8388607)
+ 873 compressed objects within 9 object streams
+ 156 named destinations out of 1000 (max. 500000)
+ 375 words of extra memory for PDF output out of 10000 (max. 10000000)
 

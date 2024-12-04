@@ -3,6 +3,7 @@ Title: Estimate Univariate Gaussian and Student's t Mixture Autoregressive Model
 Version: 3.5.1
 Authors@R: person("Savi", "Virolainen", email = "savi.virolainen@helsinki.fi",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-5075-6821"))
+Maintainer: Savi Virolainen <savi.virolainen@helsinki.fi>
 Description: Maximum likelihood estimation of univariate Gaussian Mixture Autoregressive (GMAR),
     Student's t Mixture Autoregressive (StMAR), and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models, 
     quantile residual tests, graphical diagnostics, forecast and simulate from GMAR, StMAR and G-StMAR processes. 
@@ -21,7 +22,5 @@ RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2018-09-22 11:32:45 UTC; savi
-Author: Savi Virolainen [aut, cre]
-Maintainer: Savi Virolainen <savi.virolainen@helsinki.fi>
 Repository: CRAN
 Date/Publication: 2018-09-22 12:00:02 UTC

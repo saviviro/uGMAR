@@ -1,0 +1,23 @@
+\contentsline {section}{Introduction}{1}{section.1}%
+\contentsline {section}{Models}{3}{section.2}%
+\contentsline {subsection}{Mixture autoregressive models}{3}{subsection.2.1}%
+\contentsline {subsection}{The Gaussian and Student's t mixture autoregressive model}{4}{subsection.2.2}%
+\contentsline {section}{Estimation and model selection}{5}{section.3}%
+\contentsline {subsection}{Log-likelihood function}{5}{subsection.3.1}%
+\contentsline {subsection}{Two-phase estimation procedure}{5}{subsection.3.2}%
+\contentsline {subsection}{Model selection}{6}{subsection.3.3}%
+\contentsline {subsection}{Examples of unconstrained estimation}{9}{subsection.3.4}%
+\contentsline {subsection}{Further examination of the estimates}{15}{subsection.3.5}%
+\contentsline {subsection}{Examples of constrained estimation}{18}{subsection.3.6}%
+\contentsline {subsection}{Testing parameter constraints}{21}{subsection.3.7}%
+\contentsline {section}{Quantile residual based model diagnostics}{23}{section.4}%
+\contentsline {section}{Building a GSMAR model with specific parameter values}{26}{section.5}%
+\contentsline {section}{Simulation and forecasting}{27}{section.6}%
+\contentsline {subsection}{Simulation}{27}{subsection.6.1}%
+\contentsline {subsection}{Simulation based forecasting}{28}{subsection.6.2}%
+\contentsline {section}{Summary}{29}{section.7}%
+\contentsline {section}{Computational details}{29}{section.7}%
+\contentsline {section}{Acknowledgments}{30}{section.7}%
+\contentsline {section}{A table of some useful functions}{31}{section.7}%
+\contentsline {section}{Appendix A: Simulation experiment}{35}{appendix.A}%
+\contentsline {section}{Appendix B: Closed form expressions of quantile residuals}{37}{appendix.B}%

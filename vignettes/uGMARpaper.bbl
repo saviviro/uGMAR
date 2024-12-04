@@ -23,8 +23,8 @@ Bollerslev T (1986).
 
 \bibitem[{Boshnakov and Ravagli(2021)}]{Boshnakov+Ravagli:2021}
 Boshnakov GN, Ravagli D (2021).
-\newblock \emph{\pkg{mixAR}: Mixture Autoregressive Models}.
-\newblock \proglang{R} package version 0.22.5,
+\newblock \emph{mixAR: Mixture Autoregressive Models}.
+\newblock R package version 0.22.5,
   \urlprefix\url{https://CRAN.R-project.org/package=mixAR}.
 
 \bibitem[{Buse(1982)}]{Buse:1982}
@@ -65,8 +65,8 @@ Galbraith J, Galbraith R (1974).
 
 \bibitem[{Ghalanos(2020)}]{Ghalanos:2020}
 Ghalanos A (2020).
-\newblock \emph{\pkg{rugarch}: Univariate GARCH Models.}
-\newblock \proglang{R} package version 1.4-4.
+\newblock \emph{rugarch: Univariate GARCH Models.}
+\newblock R package version 1.4-4.
 
 \bibitem[{Glasbey(2001)}]{Glasbey:2001}
 Glasbey C (2001).
@@ -93,9 +93,9 @@ Hankin R (2007).
   Yasmeen}]{Hyndman+Athanasopoulos+Bergmeir+Caceres+Chhay+O'Hara-Wild+Petropoulos+Razbash+Wang+Yasmeen:2021}
 Hyndman R, Athanasopoulos G, Bergmeir C, Caceres G, Chhay L, O'Hara-Wild M,
   Petropoulos F, Razbash S, Wang E, Yasmeen F (2021).
-\newblock \emph{\pkg{forecast}: Forecasting Functions for Time Series and
-  Linear Models}.
-\newblock \proglang{R} package version 8.15,
+\newblock \emph{forecast: Forecasting Functions for Time Series and Linear
+  Models}.
+\newblock R package version 8.15,
   \urlprefix\url{https://pkg.robjhyndman.com/forecast/}.
 
 \bibitem[{Kalliovirta(2012)}]{Kalliovirta:2012}
@@ -138,8 +138,8 @@ Le N, Martin R, Raftery A (1996).
 \bibitem[{Meitz \emph{et~al.}(2018)Meitz, Preve, and
   Saikkonen}]{Meitz+Preve+Saikkonen2:2018}
 Meitz M, Preve D, Saikkonen P (2018).
-\newblock \emph{\pkg{StMAR Toolbox}: A \proglang{MATLAB} Toolbox for Student's
-  t Mixture Autoregressive Models}.
+\newblock \emph{StMAR Toolbox: A MATLAB Toolbox for Student's t Mixture
+  Autoregressive Models}.
 \newblock \doi{10.2139/ssrn.3237368}.
 
 \bibitem[{Meitz \emph{et~al.}(2023)Meitz, Preve, and
@@ -180,11 +180,10 @@ Patnaik L, Srinivas M (1994).
   656--667.
 \newblock \doi{10.1109/21.286385}.
 
-\bibitem[{{\proglang{R} Core Team}(2021)}]{R}
-{\proglang{R} Core Team} (2021).
-\newblock \emph{\proglang{R}: A Language and Environment for Statistical
-  Computing}.
-\newblock \proglang{R} Foundation for Statistical Computing, Vienna, Austria.
+\bibitem[{{R Core Team}(2021)}]{R}
+{R Core Team} (2021).
+\newblock \emph{R: A Language and Environment for Statistical Computing}.
+\newblock R Foundation for Statistical Computing, Vienna, Austria.
 \newblock \urlprefix\url{https://www.R-project.org/}.
 
 \bibitem[{Smith \emph{et~al.}(1995)Smith, Dike, and
@@ -197,16 +196,9 @@ Smith R, Dike B, Stegmann S (1995).
 
 \bibitem[{Solymos and Zawadzki(2020)}]{Solymos+Zawadzki:2020}
 Solymos P, Zawadzki Z (2020).
-\newblock \emph{\pkg{pbapply}: Adding Progress Bar to '*apply' Functions}.
-\newblock \proglang{R} package version 1.4-3,
+\newblock \emph{pbapply: Adding Progress Bar to '*apply' Functions}.
+\newblock R package version 1.4-3,
   \urlprefix\url{https://CRAN.R-project.org/package=pbapply}.
-
-\bibitem[{Virolainen(2018)}]{Virolainen:2018}
-Virolainen S (2018).
-\newblock \emph{\pkg{gmvarkit}: Estimate Gaussian and Student's t Mixture
-  Vector Autoregressive Models}.
-\newblock \proglang{R} package version 2.0.2,
-  \urlprefix\url{https://CRAN.R-project.org/package=gmvarkit}.
 
 \bibitem[{Virolainen(2021{\natexlab{a}})}]{Virolainen2:2021}
 Virolainen S (2021{\natexlab{a}}).
@@ -228,6 +220,13 @@ Virolainen S (2022).
   Student's $t$-distributions.}
 \newblock \emph{Studies in Nonlinear Dynamics \& Econometrics}, \textbf{26}(4).
 \newblock \doi{10.1515/snde-2020-0060}.
+
+\bibitem[{Virolainen(2024)}]{Virolainen:2018}
+Virolainen S (2024).
+\newblock \emph{gmvarkit: Estimate Gaussian and Student's t Mixture Vector
+  Autoregressive Models}.
+\newblock R package version 2.1.3,
+  \urlprefix\url{https://CRAN.R-project.org/package=gmvarkit}.
 
 \bibitem[{Wong and Li(2000)}]{Wong+Li:2000}
 Wong C, Li W (2000).
@@ -253,9 +252,9 @@ Wong C, Li W (2001{\natexlab{b}}).
 \bibitem[{Wuertz \emph{et~al.}(2020)Wuertz, Setz, Chalabi, Boudt, Chausse, and
   Miklovac}]{Wuertz+Chalabi+Boudt+Chausse+Miklovac:2020}
 Wuertz D, Setz T, Chalabi Y, Boudt C, Chausse P, Miklovac M (2020).
-\newblock \emph{\pkg{fGarch}: Rmetrics - Autoregressive Conditional
-  Heteroskedastic Modelling}.
-\newblock \proglang{R} package version 3042.83.2,
+\newblock \emph{fGarch: Rmetrics - Autoregressive Conditional Heteroskedastic
+  Modelling}.
+\newblock R package version 3042.83.2,
   \urlprefix\url{https://CRAN.R-project.org/package=fGarch}.
 
 \end{thebibliography}
