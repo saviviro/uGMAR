@@ -1,7 +1,8 @@
 Package: uGMAR
 Title: Estimate Univariate Gaussian and Student's t Mixture Autoregressive Models
-Version: 3.5.0
-Authors@R: person("Savi", "Virolainen", email = "savi.virolainen@helsinki.fi", role = c("aut", "cre"))
+Version: 3.5.1
+Authors@R: person("Savi", "Virolainen", email = "savi.virolainen@helsinki.fi",
+                  role = c("aut", "cre"), comment = c(ORCID = "0000-0002-5075-6821"))
 Description: Maximum likelihood estimation of univariate Gaussian Mixture Autoregressive (GMAR),
     Student's t Mixture Autoregressive (StMAR), and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models, 
     quantile residual tests, graphical diagnostics, forecast and simulate from GMAR, StMAR and G-StMAR processes. 
@@ -16,7 +17,7 @@ LazyData: true
 Imports: Brobdingnag (>= 1.2-4), parallel, pbapply (>= 1.3-2), stats
         (>= 3.3.2), gsl (>= 1.9-10.3)
 Suggests: testthat, knitr, rmarkdown
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2018-09-22 11:32:45 UTC; savi
