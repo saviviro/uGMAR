@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 DEC 2024 15:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 DEC 2024 15:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -747,7 +747,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [22]
-<figures/diagplotfit42gsr.png, id=619, 803.0pt x 451.6875pt>
+<figures/diagplotfit42gsr.png, id=617, 803.0pt x 451.6875pt>
 File: figures/diagplotfit42gsr.png Graphic file (type png)
 <use figures/diagplotfit42gsr.png>
 Package pdftex.def Info: figures/diagplotfit42gsr.png  used on input line 838.
@@ -764,11 +764,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [23]
-Overfull \hbox (14.0636pt too wide) in paragraph at lines 851--852
-[]\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , the quan-til
-e resid-ual tests can be ap-plied with the func-tion \T1/lmtt/m/n/10.95 quantil
-e_residual_tests
- []
+Underfull \vbox (badness 1502) has occurred while \output is active []
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -776,6 +772,13 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [24 <./figures/diagplotfit42gsr.png>]
+Overfull \hbox (14.0636pt too wide) in paragraph at lines 851--852
+[]\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , the quan-til
+e resid-ual tests can be ap-plied with the func-tion \T1/lmtt/m/n/10.95 quantil
+e_residual_tests
+ []
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 25
  []
@@ -914,7 +917,7 @@ s/type1/public/lm/lmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pu
 blic/lm/lmtt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmt
 to10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msbm10.pfb>
-Output written on uGMARpaper.pdf (40 pages, 978333 bytes).
+Output written on uGMARpaper.pdf (40 pages, 978412 bytes).
 PDF statistics:
  1000 PDF objects out of 1000 (max. 8388607)
  873 compressed objects within 9 object streams

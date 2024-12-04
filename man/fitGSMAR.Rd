@@ -18,6 +18,7 @@ fitGSMAR(
   maxit = 500,
   seeds = NULL,
   print_res = TRUE,
+  filter_estimates = TRUE,
   ...
 )
 }
@@ -69,6 +70,8 @@ or \code{NULL} for not initializing the seed. Exists for the purpose of creating
 
 \item{print_res}{should the estimation results be printed?}
 
+\item{filter_estimates}{should likely inappropriate estimates be filtered? See details.}
+
 \item{...}{additional settings passed to the function \code{GAfit} employing the genetic algorithm.}
 }
 \value{
@@ -118,11 +121,13 @@ Because of complexity and multimodality of the log-likelihood function, it's \st
  estimate a G-StMAR model by allowing the mixture components with large degrees of freedom parameter estimates to be GMAR
  type with the function \code{stmar_to_gstmar}.
 
- \strong{Filtering inappropriate estimates:} fitGSMAR function automatically filters out estimates that it deems "inappropriate".
- That is, estimates that are not likely solutions of interest. Specifically, it filters out solutions that incorporate regimes with
- any modulus of the roots of the AR polynomial less than \eqn{1.0015}; a variance parameter estimate near zero  (less than \eqn{0.0015});
+ \strong{Filtering inappropriate estimates:} If \code{filter_estimates == TRUE}, the function will automatically filter
+ out estimates that it deems "inappropriate". That is, estimates that are not likely solutions of interest.
+ Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less
+ than \eqn{1.0015}; a variance parameter estimat near zero  (less than \eqn{0.0015});
  mixing weights such that they are close to zero for almost all \eqn{t} for at least one regime; or mixing weight parameter
- estimate close to zero (or one). You can also examine solutions corresponding to any estimation round by using the function \code{alt_gsmar}.
+ estimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself
+ by using the function \code{alt_gsmar}.
 }
 \section{S3 methods}{
 

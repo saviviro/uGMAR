@@ -16,7 +16,7 @@
 \contentsline {subsection}{Simulation}{27}{subsection.6.1}%
 \contentsline {subsection}{Simulation based forecasting}{28}{subsection.6.2}%
 \contentsline {section}{Summary}{29}{section.7}%
-\contentsline {section}{Computational details}{29}{section.7}%
+\contentsline {section}{Computational details}{30}{section.7}%
 \contentsline {section}{Acknowledgments}{30}{section.7}%
 \contentsline {section}{A table of some useful functions}{31}{section.7}%
 \contentsline {section}{Appendix A: Simulation experiment}{35}{appendix.A}%

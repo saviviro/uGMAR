@@ -273,30 +273,30 @@ Section~\ref{sec:modelselection} concluded that a StMAR model with autoregressiv
 %
 \begin{CodeChunk}
 \begin{CodeInput}
-R> fit42t <- fitGSMAR(M10Y1Y, p = 4, M = 2, model = "StMAR",
-+    conditional = TRUE, ncalls = 12, ncores = 8, seeds = 4:15,
-+    filter_estimates = FALSE)
+R> fit42t <- fitGSMAR(M10Y1Y, p = 4, M = 2, model = "StMAR", conditional = TRUE,
++    ncalls = 10, ncores = 10, seeds = 1:10)
 \end{CodeInput}
 \begin{CodeOutput}
-Using 8 cores for 12 estimation rounds...
+Using 10 cores for 10 estimation rounds...
 Optimizing with a genetic algorithm...
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=11s
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=04s
 Results from the genetic algorithm:
 The lowest loglik:  143.403
-The mean loglik:    159.237
-The largest loglik: 172.344
+The mean loglik:    158.323
+The largest loglik: 162.947
 Optimizing with a variable metric algorithm...
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=02s
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s
 Results from the variable metric algorithm:
-The lowest loglik:  167.572
-The mean loglik:    179.117
-The largest loglik: 182.353
+The lowest loglik:  178.46
+The mean loglik:    180.683
+The largest loglik: 184.846
+Filtering inappropriate estimates...
 Finished!
 Warning message:
 In warn_dfs(p = p, M = M, params = params, model = model) :
   The model contains overly large degrees of freedom parameter values.
-  Consider switching to a G-StMAR model by setting the corresponding regimes
-  to be GMAR type with the function 'stmar_to_gstmar'.
+  Consider switching to a G-StMAR model by setting the corresponding
+  regimes to be GMAR type with the function 'stmar_to_gstmar'.
 \end{CodeOutput}
 \end{CodeChunk}
 %
@@ -398,7 +398,7 @@ Section~\ref{sec:examestim} discusses how to evaluate with \pkg{uGMAR} whether t
 
 Other statistics reported in the summary printout include the log-likelihood and values of the information criteria, the first and second moments of the process, as well as regime specific unconditional means, unconditional variances, and moduli of the roots of the AR polynomials $1-\sum_{i=1}^p\varphi_{m,i}z^i, \ m=1,...,M$. If some of the moduli are very close to one, the related estimates are near the boundary of the stationarity region. We demonstrate in Appendix~\ref{sec:simuexp} that when such solutions are accompanied with a very small variance parameter estimate, they might not be reasonable estimates and maximize the log-likelihood function for a technical reason only. Consequently, the estimate related to the next-largest local maximum could be considered.
 
-This is possible in \pkg{uGMAR}, because the estimation function \code{fitGSMAR} stores the estimates from all the estimation rounds so that a GSMAR model can be built based on any one of them, most conveniently with the function \code{alt_gsmar}. The desired estimation round can be specified either with the argument \code{which_round} or \code{which_largest}. The former specifies the round in the estimation order, whereas the latter specifies it in a decreasing order of the log-likelihoods.
+This is possible in \pkg{uGMAR}, because the estimation function \code{fitGSMAR} stores the estimates from all the estimation rounds so that a GSMAR model can be built based on any one of them, most conveniently with the function \code{alt_gsmar}. The desired estimation round can be specified either with the argument \code{which_round} or \code{which_largest}. The former specifies the round in the estimation order, whereas the latter specifies it in a decreasing order of the log-likelihoods. To demonstrate this, we use the argument \code{filter_estimates=FALSE} in the following code to prevent the filtering of inappropriate estimates.
 
 To give an example of a case where the estimates are very close the boundary of the stationarity region, we estimate the G-StMAR model directly with the following code.
 %
@@ -411,7 +411,7 @@ R> fit42gs2 <- fitGSMAR(M10Y1Y, p = 4, M = c(1, 1), model = "G-StMAR",
 \begin{CodeOutput}
 Using 8 cores for 16 estimation rounds...
 Optimizing with a genetic algorithm...
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=12s
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=06s
 Results from the genetic algorithm:
 The lowest loglik:  140.441
 The mean loglik:    155.421
@@ -425,9 +425,9 @@ The largest loglik: 192.43
 Finished!
 Warning message:
 In warn_ar_roots(ret) :
-  Regime 1 has near-unit-roots! Consider building a model from the next-
-  largest local maximum with the function 'alt_gsmar' by adjusting its
-  argument 'which_largest'.
+  Regime 1 has near-unit-roots! Consider building a model from the next-largest
+  local maximum with the function 'alt_gsmar' by adjusting its argument
+  'which_largest'.
 \end{CodeOutput}
 \end{CodeChunk}
 %
@@ -515,7 +515,7 @@ First p autocors: 0.98 0.96 0.93 0.89
 %
 The above printout shows that the estimates related to the second-largest local maximum are the same as of the model \code{fit42gs} (which was estimated based on a StMAR model with a very large degrees of freedom parameter estimate) and that they are clearly inside the stationarity region for all regimes. If also the second-largest maximum point seems unreasonable, a GSMAR model can be built based on the next-largest maximum point by adjusting the argument \code{which_largest} in the function \code{alt_gsmar} accordingly.
 
-It is also possible to automatically filter out inappropriate estimates by setting the argument \code{filter_estimates=TRUE} in \code{fitGSMAR}. Then, the function will automatically filter out estimates that it deems "inappropriate".  That is, estimates that are not likely solutions of interest. Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less than $1.0015$; a variance parameter estimat near zero  (less than $0.0015$); mixing weights such that they are close to zero for almost all $t$ for at least one regime; or mixing weight parameterestimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself by using the function \code{alt_gsmar}. \code{fitGSMAR} then returns the solution based on the largest log-likelihood that is not filtered out. Other solutions can be studied by using the function \code{alt_gsmvar} as usual.
+It is also possible to automatically filter out inappropriate estimates by setting the argument \code{filter_estimates=TRUE} in \code{fitGSMAR}, which is also the default option. Then, the function will automatically filter out estimates that it deems "inappropriate".  That is, estimates that are not likely solutions of interest. Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less than $1.0015$; a variance parameter estimat near zero  (less than $0.0015$); mixing weights such that they are close to zero for almost all $t$ for at least one regime; or mixing weight parameterestimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself by using the function \code{alt_gsmar}. \code{fitGSMAR} then returns the solution based on the largest log-likelihood that is not filtered out. Other solutions can be studied by using the function \code{alt_gsmvar} as usual.
 
 
 \subsection{Further examination of the estimates}\label{sec:examestim}
@@ -1035,7 +1035,7 @@ The model parameters are estimated with the method of maximum likelihood by empl
 \section*{Computational details}
 \addcontentsline{toc}{section}{Computational details}
 
-The results in this paper were obtained using \proglang{R}~4.1.2 and \pkg{uGMAR}~3.4.1 package running on MacBook Pro 14", 2021, with Apple M1 Pro processor, 16 Gt of unified RAM, and macOS Monterey 12.1 operating system.
+%The results in this paper were obtained using \proglang{R}~4.1.2 and \pkg{uGMAR}~3.4.1 package running on MacBook Pro 14", 2021, with Apple M1 Pro processor, 16 Gt of unified RAM, and macOS Monterey 12.1 operating system.
 
 \pkg{uGMAR} takes use of the \proglang{R} package \pkg{Brobdingnag} \citep{Hankin:2007} to handle values extremely close to zero in the evaluation of the first term of the exact log-likelihood function (\ref{eq:loglik}). The package \pkg{gsl} \citep{Hankin:2006} is utilized to calculate some of the quantile residuals (\ref{eq:qres}) with a hypergeometric function. In order to improve computational efficiency in the numerical estimation procedure, the formula proposed by \cite{Galbraith+Galbraith:1974} is utilized to directly compute the inverses of the covariance matrices $\boldsymbol{\Gamma}_m$, $m=1,...,M$, (which appear in (\ref{eq:sigmamt}), (\ref{eq:dm}), (\ref{eq:alphamt}), and in the first term of (\ref{eq:loglik})), as only the inverses are required for calculating the quantities in the log-likelihood function. Finally, the algorithm proposed by \cite{Monahan:1984} is employed to generate random stationary autoregressive coefficients in the genetic algorithm.
 
