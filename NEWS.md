@@ -137,3 +137,8 @@
 # uGMAR 3.5.0
 
 * Added a functionality in fitGSMAR to automatically filter out inapproriate estimates. The automatic filtering is also set as the default option.
+
+# uGMAR 3.5.1
+
+* Added a table of contents to the vignette.
+* Removed the argument "filter_estimates" from fitGSMAR as a redundancy, as one can in any case use alt_gsmar to examine estimates based on any estimation round. 
