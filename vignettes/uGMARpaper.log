@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 DEC 2024 15:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 JAN 2025 17:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -642,25 +642,25 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [6]
-<figures/pacfplot.png, id=453, 803.0pt x 301.125pt>
-File: figures/pacfplot.png Graphic file (type png)
-<use figures/pacfplot.png>
-Package pdftex.def Info: figures/pacfplot.png  used on input line 246.
-(pdftex.def)             Requested size: 362.37569pt x 135.89554pt.
+<figures/pacfplot.pdf, id=453, 484.81125pt x 181.67876pt>
+File: figures/pacfplot.pdf Graphic file (type pdf)
+<use figures/pacfplot.pdf>
+Package pdftex.def Info: figures/pacfplot.pdf  used on input line 246.
+(pdftex.def)             Requested size: 362.37569pt x 135.80408pt.
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 7
  []
 
 [7]
-Underfull \vbox (badness 1478) has occurred while \output is active []
+Underfull \vbox (badness 1527) has occurred while \output is active []
 
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 8 []
  []
 
-[8 <./figures/pacfplot.png>]
+[8 <./figures/pacfplot.pdf>]
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 9
  []
@@ -696,16 +696,11 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [14]
-<figures/plotfit42gs.png, id=525, 803.0pt x 451.6875pt>
-File: figures/plotfit42gs.png Graphic file (type png)
-<use figures/plotfit42gs.png>
-Package pdftex.def Info: figures/plotfit42gs.png  used on input line 538.
-(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
-<figures/proflogfit42gs.png, id=526, 803.0pt x 451.6875pt>
-File: figures/proflogfit42gs.png Graphic file (type png)
-<use figures/proflogfit42gs.png>
-Package pdftex.def Info: figures/proflogfit42gs.png  used on input line 545.
-(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
+<figures/plotfit42gs.pdf, id=529, 484.81125pt x 363.3575pt>
+File: figures/plotfit42gs.pdf Graphic file (type pdf)
+<use figures/plotfit42gs.pdf>
+Package pdftex.def Info: figures/plotfit42gs.pdf  used on input line 538.
+(pdftex.def)             Requested size: 362.37569pt x 271.60817pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 15
@@ -716,7 +711,13 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 16 []
  []
 
-[16 <./figures/plotfit42gs.png> <./figures/proflogfit42gs.png>]
+[16 <./figures/plotfit42gs.pdf>]
+<figures/proflogfit42gs.pdf, id=546, 484.81125pt x 363.3575pt>
+File: figures/proflogfit42gs.pdf Graphic file (type pdf)
+<use figures/proflogfit42gs.pdf>
+Package pdftex.def Info: figures/proflogfit42gs.pdf  used on input line 594.
+(pdftex.def)             Requested size: 362.37569pt x 271.60817pt.
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 17
  []
@@ -726,7 +727,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 18 []
  []
 
-[18]
+[18 <./figures/proflogfit42gs.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 19
  []
@@ -747,11 +748,16 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [22]
-<figures/diagplotfit42gsr.png, id=617, 803.0pt x 451.6875pt>
-File: figures/diagplotfit42gsr.png Graphic file (type png)
-<use figures/diagplotfit42gsr.png>
-Package pdftex.def Info: figures/diagplotfit42gsr.png  used on input line 838.
-(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/lmr/m/n/10.95 23
+ []
+
+[23]
+<figures/diagplotfit42gsr.pdf, id=639, 484.81125pt x 363.3575pt>
+File: figures/diagplotfit42gsr.pdf Graphic file (type pdf)
+<use figures/diagplotfit42gsr.pdf>
+Package pdftex.def Info: figures/diagplotfit42gsr.pdf  used on input line 838.
+(pdftex.def)             Requested size: 362.37569pt x 271.60817pt.
 
 Underfull \hbox (badness 1337) in paragraph at lines 839--839
 []\T1/lmr/m/n/10.95 Figure 4: []Diagnostic plot for the fit-ted model \T1/lmtt/
@@ -760,18 +766,10 @@ m/n/10.95 fit42gsr \T1/lmr/m/n/10.95 cre-ated us-ing the func-tion
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/lmr/m/n/10.95 23
- []
-
-[23]
-Underfull \vbox (badness 1502) has occurred while \output is active []
-
-
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 24 []
  []
 
-[24 <./figures/diagplotfit42gsr.png>]
+[24 <./figures/diagplotfit42gsr.pdf>]
 Overfull \hbox (14.0636pt too wide) in paragraph at lines 851--852
 []\T1/lmr/m/n/10.95 In \T1/lmr/b/n/10.95 uG-MAR\T1/lmr/m/n/10.95 , the quan-til
 e resid-ual tests can be ap-plied with the func-tion \T1/lmtt/m/n/10.95 quantil
@@ -794,22 +792,22 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [27]
-<figures/predictfit42gs.png, id=676, 874.26625pt x 506.89375pt>
-File: figures/predictfit42gs.png Graphic file (type png)
-<use figures/predictfit42gs.png>
-Package pdftex.def Info: figures/predictfit42gs.png  used on input line 985.
-(pdftex.def)             Requested size: 362.37569pt x 210.10175pt.
+<figures/predictfit42gs.pdf, id=700, 484.81125pt x 363.3575pt>
+File: figures/predictfit42gs.pdf Graphic file (type pdf)
+<use figures/predictfit42gs.pdf>
+Package pdftex.def Info: figures/predictfit42gs.pdf  used on input line 985.
+(pdftex.def)             Requested size: 362.37569pt x 271.60817pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 28 []
  []
 
-[28 <./figures/predictfit42gs.png>]
+[28]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 29
  []
 
-[29]
+[29 <./figures/predictfit42gs.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 30 []
  []
@@ -853,11 +851,11 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [34]
-<figures/figsimuexp.png, id=781, 803.0pt x 451.6875pt>
-File: figures/figsimuexp.png Graphic file (type png)
-<use figures/figsimuexp.png>
-Package pdftex.def Info: figures/figsimuexp.png  used on input line 1127.
-(pdftex.def)             Requested size: 362.37569pt x 203.84332pt.
+<figures/figsimuexp.pdf, id=814, 484.81125pt x 287.0725pt>
+File: figures/figsimuexp.pdf Graphic file (type pdf)
+<use figures/figsimuexp.pdf>
+Package pdftex.def Info: figures/figsimuexp.pdf  used on input line 1127.
+(pdftex.def)             Requested size: 362.37569pt x 214.58545pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 35
@@ -868,7 +866,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/lmr/m/n/10.95 36 []
  []
 
-[36 <./figures/figsimuexp.png>]
+[36 <./figures/figsimuexp.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/lmr/m/n/10.95 37
  []
@@ -883,9 +881,9 @@ Package rerunfilecheck Info: File `uGMARpaper.out' has not changed.
 (rerunfilecheck)             Checksum: 28DC449FAC53729D38E2B9FDAA49AA2F;9284.
  ) 
 Here is how much of TeX's memory you used:
- 13014 strings out of 478353
- 204861 string characters out of 5848086
- 516716 words of memory out of 5000000
+ 13013 strings out of 478353
+ 205001 string characters out of 5848086
+ 516710 words of memory out of 5000000
  30736 multiletter control sequences out of 15000+600000
  526022 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -917,10 +915,10 @@ s/type1/public/lm/lmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pu
 blic/lm/lmtt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmt
 to10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msbm10.pfb>
-Output written on uGMARpaper.pdf (40 pages, 978412 bytes).
+Output written on uGMARpaper.pdf (40 pages, 713404 bytes).
 PDF statistics:
- 1000 PDF objects out of 1000 (max. 8388607)
- 873 compressed objects within 9 object streams
+ 1038 PDF objects out of 1200 (max. 8388607)
+ 910 compressed objects within 10 object streams
  156 named destinations out of 1000 (max. 500000)
  375 words of extra memory for PDF output out of 10000 (max. 10000000)
 

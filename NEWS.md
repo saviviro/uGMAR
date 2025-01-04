@@ -141,3 +141,8 @@
 # uGMAR 3.5.1
 
 * Added a table of contents to the vignette.
+
+# uGMAR 3.5.2
+
+* Refined the density plot.
+* Other small updates to documentation, etc. 

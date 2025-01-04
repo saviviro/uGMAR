@@ -112,7 +112,7 @@ The model parameters are estimated by running multiple rounds of a two-phase est
 
 Other statistical software implementing the GSMAR models include the \pkg{StMAR Toolbox} for MATLAB \citep{Meitz+Preve+Saikkonen2:2018}. It currently (version 1.0.0) covers the StMAR model of autoregressive orders $p=1,2,3,4$ and $M=1,2,3$ mixture components, and it contains tools for maximum likelihood estimation, calculation of quantile residuals, simulation, and forecasting. Also the \pkg{StMAR Toolbox} estimates the model parameters by using a genetic algorithm to find starting values for a gradient based method, but \pkg{uGMAR} takes the procedure of \cite{Meitz+Preve+Saikkonen2:2018, Meitz+Preve+Saikkonen:2021} further by modifying a genetic algorithm for more efficient estimation. \pkg{uGMAR} also has the advantage that it does not impose restrictions on the order of the model and it provides a wider variety of tools for analyzing the estimated models; for instance, functions for calculating quantile residual diagnostic tests \citep{Kalliovirta:2012} and plotting the graphs of the profile log-likelihood functions about the estimate.
 
-The \proglang{R} package \pkg{gmvarkit} \citep{Virolainen:2018} functions similarly to \pkg{uGMAR} and accommodates multivariate versions of the GSMAR models, including structural models with statistically identified shocks. These models include the (structural) Gaussian mixture vector autoregressive model \citep{Kalliovirta+Meitz+Saikkonen:2016, Virolainen:2021}, the (structural) Student's $t$ mixture vector autoregressive model \citep{Virolainen2:2021}, and the (structural) Gaussian and Student's $t$ mixture vector autoregressive model \citep{Virolainen2:2021}. The \proglang{R} package \pkg{mixAR} \citep{Boshnakov+Ravagli:2021}, in turn, allows frequentist and Bayesian estimation of mixture (vector) autoregressive models with constant mixing weights \citep[e.g.,][]{Wong+Li:2000, Fong+Li+Yau+Wong:2007} and various error distributions.
+The \proglang{R} package \pkg{gmvarkit} \citep{Virolainen:2018} functions similarly to \pkg{uGMAR} and accommodates multivariate versions of the GSMAR models, including structural models with statistically identified shocks. These models include the (structural) Gaussian mixture vector autoregressive model \citep{Kalliovirta+Meitz+Saikkonen:2016, Virolainen:2025}, the (structural) Student's $t$ mixture vector autoregressive model \citep{Virolainen2:2021}, and the (structural) Gaussian and Student's $t$ mixture vector autoregressive model \citep{Virolainen2:2021}. The \proglang{R} package \pkg{mixAR} \citep{Boshnakov+Ravagli:2021}, in turn, allows frequentist and Bayesian estimation of mixture (vector) autoregressive models with constant mixing weights \citep[e.g.,][]{Wong+Li:2000, Fong+Li+Yau+Wong:2007} and various error distributions.
 
 The remainder of this paper is organized as follows. Section~\ref{sec:models} introduces the GSMAR models and discusses some of their properties. Section~\ref{sec:estimation} discusses estimation of the model parameters and model selection. It also illustrates how the GSMAR models can be estimated and examined with \pkg{uGMAR}, and how parameter constraints can be tested. In Section~\ref{sec:qres}, we describe quantile residuals and demonstrate how they can be utilized to evaluate model adequacy in \pkg{uGMAR}. Section~\ref{sec:GSMAR} shows how the GSMAR models can be built with given parameter values. In Section~\ref{sec:simufore}, we first show how to simulate observations from a GSMAR process, and then we illustrate how to forecast future values of a GSMAR process with a simulation-based Monte Carlo method. Section~\ref{sec:summary} concludes, and some useful functions in \pkg{uGMAR} are collected to a single table in Section~\ref{sec:table}. Appendix~\ref{sec:simuexp} explains why some maximum likelihood estimates, that are very near the boundary of the parameter space, might be inappropriate and demonstrates that a local maximum point that is clearly in the interior of the parameter space can often be a more reasonable estimate. Finally, Appendix~\ref{sec:qresexpr} derives closed form expressions for the quantile residuals of the GSMAR models.
 
@@ -243,7 +243,7 @@ The sample partial autocorrelation function of the series \code{M10Y1Y} \citep[c
 %
 \begin{figure}
   \centering
-  \includegraphics{figures/pacfplot.png}
+  \includegraphics{figures/pacfplot.pdf}
   \caption{The sample partial autocorrelation function of the series \code{M10Y1Y} for the lags $1,...,25$ (on the right). The sample partial autocorrelation function of the Pearson residuals of a Gaussian AR($4$) model (on the middle) and of the squared residuals (on the right) for the lags $1,...,25$. The blue dashed lines are the $95\%$ critical bounds for partial autocorrelation coefficients of an IID process.}
 \label{fig:pacf}
 \end{figure}
@@ -515,7 +515,7 @@ First p autocors: 0.98 0.96 0.93 0.89
 %
 The above printout shows that the estimates related to the second-largest local maximum are the same as of the model \code{fit42gs} (which was estimated based on a StMAR model with a very large degrees of freedom parameter estimate) and that they are clearly inside the stationarity region for all regimes. If also the second-largest maximum point seems unreasonable, a GSMAR model can be built based on the next-largest maximum point by adjusting the argument \code{which_largest} in the function \code{alt_gsmar} accordingly.
 
-It is also possible to automatically filter out inappropriate estimates by setting the argument \code{filter_estimates=TRUE} in \code{fitGSMAR}, which is also the default option. Then, the function will automatically filter out estimates that it deems "inappropriate".  That is, estimates that are not likely solutions of interest. Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less than $1.0015$; a variance parameter estimat near zero  (less than $0.0015$); mixing weights such that they are close to zero for almost all $t$ for at least one regime; or mixing weight parameterestimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself by using the function \code{alt_gsmar}. \code{fitGSMAR} then returns the solution based on the largest log-likelihood that is not filtered out. Other solutions can be studied by using the function \code{alt_gsmvar} as usual.
+It is also possible to automatically filter out inappropriate estimates by setting the argument \code{filter_estimates=TRUE} in \code{fitGSMAR}, which is also the default option. Then, the function will automatically filter out estimates that it deems "inappropriate".  That is, estimates that are not likely solutions of interest. Specifically, it filters out solutions that incorporate regimes with any modulus of the roots of the AR polynomial less than $1.0015$; a variance parameter estimate near zero  (less than $0.0015$); mixing weights such that they are close to zero for almost all $t$ for at least one regime; or mixing weight parameterestimate close to zero (or one). You can also set \code{filter_estimates=FALSE} and find the solutions of interest yourself by using the function \code{alt_gsmar}. \code{fitGSMAR} then returns the solution based on the largest log-likelihood that is not filtered out. Other solutions can be studied by using the function \code{alt_gsmvar} as usual.
 
 
 \subsection{Further examination of the estimates}\label{sec:examestim}
@@ -533,18 +533,11 @@ As Figure~\ref{fig:fit42gs} (the top and bottom left panels) shows, the first re
 
 It is also sometimes interesting to examine the time series of (one-step) conditional means and variances of the process along with the time series the model was fitted to. This can be done conveniently with the function \code{cond_moment_plot}, where the argument \code{which_moment} should be specified with \code{"mean"} or \code{"variance"} accordingly. In addition to the conditional moment of the process, \code{cond_moment_plot} also displays the conditional means or variances of the regimes multiplied by the mixing weights. Note, however, that the conditional variance of the process is not generally the same as the weighted sum of regimewise conditional variances, as it includes a component that encapsulates heteroskedasticity caused by variation in the conditional mean \cite[see][Equation (2.19)]{Virolainen:2020}.
 
-\begin{figure}[p]
+\begin{figure}[t]
   \centering
-  \includegraphics{figures/plotfit42gs.png}
+  \includegraphics{figures/plotfit42gs.pdf}
   \caption{The figure produced by the command \code{plot(fit42gs)}. On the top left, the monthly spread between the 10-year and 1-year Treasury constant maturity rates, covering the period from 1982 January to 2020 December. On the bottom left, the estimated mixing weights of the G-StMAR model (\code{fit42gs}) fitted to the interest rate spread (blue dashed line for the first regime and red dashed line for the second regime). On the right, the one-dimensional marginal stationary density of the estimated G-StMAR model (grey dashed line) along with a kernel density estimate of the spread (black solid line) and marginal stationary densities of the regimes multiplied by the mixing weight parameter estimates (blue and red dotted lines).}
 \label{fig:fit42gs}
-\end{figure}
-
-\begin{figure}[p]
-  \centering
-  \includegraphics{figures/proflogfit42gs.png}
-  \caption{The figure produced by the command \code{profile\_logliks(fit42gs)}. Graphs of the profile log-likelihood functions of the estimated G-StMAR model \code{fit42gs} with the red vertical lines pointing the estimates.}
-\label{fig:proflogfit42gs}
 \end{figure}
 
 The variable metric algorithm employed in the final estimation does not necessarily stop at a local maximum point. The algorithm might also stop at a saddle point or near a local maximum, when the algorithm is not able to increase the log-likelihood, or at any point, when the maximum number of iterations has been reached. In the latter case, the estimation function throws a warning, but saddle points and inaccurate estimates need to be detected by the researcher.
@@ -596,6 +589,13 @@ R> profile_logliks(fit42gs, scale = 0.02, precision = 200)
 %
 The output is displayed in Figure~\ref{fig:proflogfit42gs}, showing that the estimate's accuracy is reasonable, as changing any individual parameter value marginally would not visibly increase the log-likelihood. The argument \code{scale} can be adjusted to shorten or lengthen the interval shown in the horizontal axis. If one zooms in enough by setting \code{scale} to a very small number, it can be seen that the estimate is not exactly at the local maximum, but it is so close that moving there would not increase the log-likelihood notably. The argument \code{precision} can be adjusted to increase the number of points the graph is based on. For faster plotting, it can be decreased, and for more precision, it can be increased.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics{figures/proflogfit42gs.pdf}
+  \caption{The figure produced by the command \code{profile\_logliks(fit42gs)}. Graphs of the profile log-likelihood functions of the estimated G-StMAR model \code{fit42gs} with the red vertical lines pointing the estimates.}
+\label{fig:proflogfit42gs}
+\end{figure}
+
 We have discussed tools that can be utilized to evaluate whether the found estimate is a local maximum with a reasonable accuracy. It is, however, more difficult to establish that the estimate is the global maximum. With \pkg{uGMAR}, the best way to increase the reliability that the found estimate is the global maximum, is to run more estimation rounds by adjusting the argument \code{ncalls} of the estimation function \code{fitGSMAR}. When a large number of estimation rounds is run (and $M>1$), \code{fitGSMAR} often finds peculiar near-the-boundary estimates that have extremely spiky profile log-likelihood functions for some parameters and are thus difficult to find (see Appendix~\ref{sec:simuexp}). Therefore, it seems plausible that \code{fitGSMAR} also finds a reasonable ML estimate with a good reliability.
 
 \subsection{Examples of constrained estimation}\label{sec:examp_const}
@@ -614,7 +614,7 @@ R> fit42gsr <- fitGSMAR(M10Y1Y, p = 4, M = c(1, 1), model = "G-StMAR",
 \begin{CodeOutput}
 Using 8 cores for 12 estimation rounds...
 Optimizing with a genetic algorithm...
-  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=07s
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=05s
 Optimizing with a variable metric algorithm...
   |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s
 Finished!
@@ -835,7 +835,7 @@ R> diagnostic_plot(fit42gsr, nlags = 20, plot_indstats = TRUE)
 
 \begin{figure}[t]
   \centering
-  \includegraphics{figures/diagplotfit42gsr.png}
+  \includegraphics{figures/diagplotfit42gsr.pdf}
   \caption{Diagnostic plot for the fitted model \code{fit42gsr} created using the function \code{diagnostic\_plot}. The quantile residual time series (top left), normal  quantile-quantile plot (top right), sample autocorrelation functions of the quantile residuals (middle left) and squared quantile residuals (middle right), and the individual autocorrelation (bottom left) and heteroskedasticity (bottom right) statistics discussed in \citet[pp. 369-370]{Kalliovirta:2012}. The blue dashed lines in the sample autocorrelation figures are the $1.96T^{-1/2}$ lines denoting 95\% critical bounds for IID-observations, whereas for \citeauthor{Kalliovirta:2012}'s (\citeyear{Kalliovirta:2012}) individual statistics they are the approximate 95\% critical bounds.}
 \label{fig:diagplotfit42gs}
 \end{figure}
@@ -980,9 +980,9 @@ Deriving multiple-steps-ahead point predictions and prediction intervals analyti
 
 Forecasting is most conveniently done with the \code{predict} method. The available arguments include the number of steps ahead to be predicted (\code{n_ahead}), the number sample paths the forecast is based on (\code{nsimu}), possibly multiple confidence levels for prediction intervals (\code{pi}), prediction type (\code{pred_type}), and prediction interval type (\code{pi_type}). The prediction type can be either \code{median}, \code{mean}, or for one-step-ahead forecasts also the exact conditional mean, \code{cond_mean}. The prediction interval type can be any of \code{"two-sided"}, \code{"upper"}, \code{"lower"}, or \code{"none"}.
 
-\begin{figure}
+\begin{figure}[t]
   \centering
-  \includegraphics{figures/predictfit42gs.png}
+  \includegraphics{figures/predictfit42gs.pdf}
   \caption{The figure created by the \code{predict} method for the G-StMAR model \code{fit42gs}. Twelve-months-ahead point prediction for the monthly interest rate spread (top) and the model's mixing weights (bottom) together with several preceding observations and prediction intervals with confidence levels $0.95$ (outer interval) and $0.80$ (inner interval).}
 \label{fig:predictfit42gs}
 \end{figure}
@@ -1019,7 +1019,7 @@ with $mix_pred and $mix_pred_ints, respectively.
 \end{CodeOutput}
 \end{CodeChunk}
 
-The \code{predict} method plots the results by default but this can be also avoided by setting \code{plot_res = FALSE} in the arguments. The results can be plotted afterwards by using the \code{plot} method for the class \code{gsmarpred} objects that the \code{predict} method returns.
+The \code{predict} method plots the results by default, but plotting can be also avoided by setting \code{plot_res = FALSE} in the arguments. The results can be plotted afterwards by using the \code{plot} method for the class \code{gsmarpred} objects that the \code{predict} method returns.
 
 The figure created by the above example is presented in Figure~\ref{fig:predictfit42gs}. The point forecast does not predict any significant movements for the spread, but the prediction intervals appear to be skewed to the right. A possible explanation to the skewed prediction intervals is that at time of forecasting, the spread takes a value that is closer to the mean of the low-mean first regime than to the mean of the high-mean second regime. Hence, even if the process proceeds in the first regime, it does not (on average) move much lower, but switching to the second regime would (on average) lead to notably larger observations. Also, the forecast for the mixing weights reveals that after a few months, the high-mean second regime is predicted to become more probable than than the low-mean first regime, thus, explaining the skewed prediction intervals.
 
@@ -1124,7 +1124,7 @@ $\hat{\boldsymbol{\theta}}_2$ & $1.16$ & $0.39$ & $0.08$ & $0.54$ & $0.77$ & $0.
 
 \begin{figure}[p]
   \centering
-  \includegraphics{figures/figsimuexp.png}
+  \includegraphics{figures/figsimuexp.pdf}
   \caption{On the top, the GMAR $p=2$, $M=2$ process's second regime's true mixing weights (black solid line), the mixing weights based on the estimate $\hat{\boldsymbol{\theta}}_1$ in the second row of Table~\ref{tab:simuexp} (red dashed line), and the mixing weights based on the estimate $\hat{\boldsymbol{\theta}}_2$ in the third row of Table~\ref{tab:simuexp} (blue dashed line). On the bottom, the terms (\ref{eq:loglik2}) from the second term of the log-likelihood function (\ref{eq:loglik}) (green solid line) and the second regime's densities in the terms (\ref{eq:loglik2}) multiplied by the estimated mixing weights (blue dotted line), i.e., $\alpha_{2,t}n_1(y_t;\mu_{2,t},\sigma_2^2)$, both based on the estimate $\hat{\boldsymbol{\theta}}_1$. The "X"-symbols denote the points where the second regime's conditional mean for the model based on estimate $\hat{\boldsymbol{\theta}}_1$ deviates from the corresponding observation by less than $0.005$.}
 \label{fig:simuexp}
 \end{figure}

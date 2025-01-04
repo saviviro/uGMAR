@@ -292,13 +292,13 @@ plot.gsmar <- function(x, ..., include_dens=TRUE) {
     col_seriesdens <- "black"
     col_modeldens <- "darkgrey"
     plot(x=data_dens$x, y=data_dens$y, xlim=c(x0, x1), ylim=c(y0, y1), main="Density",
-         ylab="", xlab="", cex.axis=0.8, font.axis=2, type="l", col=col_seriesdens)
+         ylab="", xlab="", cex.axis=0.8, font.axis=2, lwd=1, type="l", col=col_seriesdens)
     lines(x=xpp, y=mod_dens, type="l", lty=2, lwd=2, col=col_modeldens)
     for(m in 1:M) {
-      lines(x=xpp, y=reg_dens(m, xx=xpp), type="l", lty=3, col=colpal_mw[m])
+      lines(x=xpp, y=reg_dens(m, xx=xpp), type="l", lty=3, lwd=2, col=colpal_mw[m])
     }
     legend("topleft", legend=c("series", "model", paste0("regime ", 1:M)),
-           bty="n", col=c(col_seriesdens, col_modeldens, colpal_mw), lty=c(1, 2, 3, 3), lwd=2,
+           bty="n", col=c(col_seriesdens, col_modeldens, colpal_mw), lty=c(1, 2, rep(3, times=M)), lwd=2,
            text.font=2, cex=0.75, x.intersp=0.2, y.intersp=1, seg.len=1, inset=c(-0.075, -0.01))
   }
 

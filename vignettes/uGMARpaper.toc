@@ -8,7 +8,7 @@
 \contentsline {subsection}{Model selection}{6}{subsection.3.3}%
 \contentsline {subsection}{Examples of unconstrained estimation}{9}{subsection.3.4}%
 \contentsline {subsection}{Further examination of the estimates}{15}{subsection.3.5}%
-\contentsline {subsection}{Examples of constrained estimation}{18}{subsection.3.6}%
+\contentsline {subsection}{Examples of constrained estimation}{17}{subsection.3.6}%
 \contentsline {subsection}{Testing parameter constraints}{21}{subsection.3.7}%
 \contentsline {section}{Quantile residual based model diagnostics}{23}{section.4}%
 \contentsline {section}{Building a GSMAR model with specific parameter values}{26}{section.5}%
