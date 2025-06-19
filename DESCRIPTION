@@ -1,9 +1,11 @@
 Package: uGMAR
 Title: Estimate Univariate Gaussian and Student's t Mixture Autoregressive Models
 Version: 3.6.0
-Authors@R: person("Savi", "Virolainen", email = "savi.virolainen@helsinki.fi",
-                  role = c("aut", "cre"), comment = c(ORCID = "0000-0002-5075-6821"))
-Maintainer: Savi Virolainen <savi.virolainen@helsinki.fi>
+Authors@R: person("Savi", "Virolainen",
+                  email = "savi.virolainen@helsinki.fi",
+                  role = c("aut", "cre"),
+                  comment = c(ORCID = "https://orcid.org/0000-0002-5075-6821"))
+Author: Savi Virolainen [aut, cre] (<https://orcid.org/0000-0002-5075-6821>)
 Description: Maximum likelihood estimation of univariate Gaussian Mixture Autoregressive (GMAR),
     Student's t Mixture Autoregressive (StMAR), and Gaussian and Student's t Mixture Autoregressive (G-StMAR) models, 
     quantile residual tests, graphical diagnostics, forecast and simulate from GMAR, StMAR and G-StMAR processes. 
