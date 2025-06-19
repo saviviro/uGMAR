@@ -20,14 +20,14 @@ change_regime(
 
 \item{M}{\describe{
   \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-  \item{For \strong{G-StMAR} models:}{a size (2x1) integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
+  \item{For \strong{G-StMAR} models:}{a size \eqn{(2\times 1)} integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
    first element and \emph{StMAR type} components \code{M2} in the second element. The total number of mixture components is \code{M=M1+M2}.}
 }}
 
 \item{params}{a real valued parameter vector specifying the model.
  \describe{
    \item{For \strong{non-restricted} models:}{
-     Size \eqn{(M(p+3)+M-M1-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
+     Size \eqn{(M(p+3)+M-M1-1\times 1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
      \eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}) where
      \itemize{
        \item \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,}\eqn{\sigma_{m}^2)}
@@ -42,7 +42,7 @@ change_regime(
       \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} (see the argument \code{constraints}).
      }
    \item{For \strong{restricted} models:}{
-     Size \eqn{(3M+M-M1+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
+     Size \eqn{(3M+M-M1+p-1\times 1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
      \eqn{\sigma_{1}^2,...,\sigma_{M}^2,}\eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}), where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}
      contains the AR coefficients, which are common for all regimes.
 
@@ -66,10 +66,10 @@ to be the same for all regimes.}
 
 \item{constraints}{specifies linear constraints imposed to each regime's autoregressive parameters separately.
 \describe{
-\item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+\item{For \strong{non-restricted} models:}{a list of size \eqn{(p \times q_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
   satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
   \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-\item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+\item{For \strong{restricted} models:}{a size \eqn{(p\times q)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
   \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
   \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 }
@@ -81,8 +81,8 @@ Ignore or set to \code{NULL} if applying linear constraints is not desired.}
 \describe{
   \item{For \strong{non-restricted} models:}{
     \describe{
-      \item{For \strong{GMAR} model:}{Size \eqn{(p+2x1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2)}.}
-      \item{For \strong{StMAR} model:}{Size \eqn{(p+3x1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2, \nu_{m})}.}
+      \item{For \strong{GMAR} model:}{Size \eqn{(p+2\times 1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2)}.}
+      \item{For \strong{StMAR} model:}{Size \eqn{(p+3\times 1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2, \nu_{m})}.}
       \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR type regimes and same as StMAR for StMAR type regimes.}
       \item{With \strong{linear constraints}:}{Parameter vector as described above, but vector \strong{\eqn{\phi_{m}}} replaced with
        vector \strong{\eqn{\psi_{m}}} that satisfies \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}}.}
@@ -90,8 +90,8 @@ Ignore or set to \code{NULL} if applying linear constraints is not desired.}
   }
   \item{For \strong{restricted} models:}{
     \describe{
-      \item{For \strong{GMAR} model:}{Size \eqn{(2x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
-      \item{For \strong{StMAR} model:}{Size \eqn{(3x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
+      \item{For \strong{GMAR} model:}{Size \eqn{(2\times 1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
+      \item{For \strong{StMAR} model:}{Size \eqn{(3\times 1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
       \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR type regimes and same as StMAR for StMAR type regimes.}
       \item{With \strong{linear constraints}:}{Parameter vector as described above.}
     }

@@ -8,13 +8,13 @@
 #' @param p a positive integer specifying the autoregressive order of the model.
 #' @param M \describe{
 #'   \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-#'   \item{For \strong{G-StMAR} models:}{a size (2x1) integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
+#'   \item{For \strong{G-StMAR} models:}{a size \eqn{(2\times 1)} integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
 #'    first element and \emph{StMAR type} components \code{M2} in the second element. The total number of mixture components is \code{M=M1+M2}.}
 #' }
 #' @param params a real valued parameter vector specifying the model.
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
-#'      Size \eqn{(M(p+3)+M-M1-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
+#'      Size \eqn{(M(p+3)+M-M1-1\times 1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
 #'      \eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}) where
 #'      \itemize{
 #'        \item \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,}\eqn{\sigma_{m}^2)}
@@ -29,7 +29,7 @@
 #'       \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} (see the argument \code{constraints}).
 #'      }
 #'    \item{For \strong{restricted} models:}{
-#'      Size \eqn{(3M+M-M1+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
+#'      Size \eqn{(3M+M-M1+p-1\times 1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
 #'      \eqn{\sigma_{1}^2,...,\sigma_{M}^2,}\eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}), where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}
 #'      contains the AR coefficients, which are common for all regimes.
 #'
@@ -50,10 +50,10 @@
 #'  are \emph{GMAR type} and the rest \code{M2} components are \emph{StMAR type}.
 #' @param constraints specifies linear constraints imposed to each regime's autoregressive parameters separately.
 #'   \describe{
-#'   \item{For \strong{non-restricted} models:}{a list of size \eqn{(pxq_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
+#'   \item{For \strong{non-restricted} models:}{a list of size \eqn{(p \times q_{m})} constraint matrices \strong{\eqn{C_{m}}} of full column rank
 #'     satisfying \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} for all \eqn{m=1,...,M}, where
 #'     \strong{\eqn{\phi_{m}}}\eqn{=(\phi_{m,1},...,\phi_{m,p})} and \strong{\eqn{\psi_{m}}}\eqn{=(\psi_{m,1},...,\psi_{m,q_{m}})}.}
-#'   \item{For \strong{restricted} models:}{a size \eqn{(pxq)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
+#'   \item{For \strong{restricted} models:}{a size \eqn{(p\times q)} constraint matrix \strong{\eqn{C}} of full column rank satisfying
 #'     \strong{\eqn{\phi}}\eqn{=}\strong{\eqn{C\psi}}, where \strong{\eqn{\phi}}\eqn{=(\phi_{1},...,\phi_{p})} and
 #'     \strong{\eqn{\psi}}\eqn{=\psi_{1},...,\psi_{q}}.}
 #'   }
@@ -83,19 +83,19 @@
 #'  from the p+1:th observation (interpreted as t=1).
 #'  \describe{
 #'   \item{By default:}{log-likelihood value of the specified model,}
-#'   \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in the m:th column.}
-#'   \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in the m:th column.
+#'   \item{If \code{to_return=="mw"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the mixing weights: for m:th component in the m:th column.}
+#'   \item{If \code{to_return=="mw_tplus1"}:}{a size \eqn{((n_obs-p+1)\times M)} matrix containing the mixing weights: for m:th component in the m:th column.
 #'     The last row is for \eqn{\alpha_{m,T+1}}.}
 #'   \item{If \code{to_return=="loglik_and_mw"}:}{a list of two elements. The first element contains the log-likelihood value and the
 #'     second element contains the mixing weights.}
-#'   \item{If \code{to_return=="terms"}:}{a size ((n_obs-p)x1) numeric vector containing the terms \eqn{l_{t}}.}
-#'   \item{If \code{to_return=="term_densities"}:}{a size ((n_obs-p)xM) matrix containing the conditional densities that summed over
+#'   \item{If \code{to_return=="terms"}:}{a size \eqn{((n_obs-p)\times 1)} numeric vector containing the terms \eqn{l_{t}}.}
+#'   \item{If \code{to_return=="term_densities"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the conditional densities that summed over
 #'     in the terms \eqn{l_{t}}, as \code{[t, m]}.}
-#'   \item{If \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
-#'   \item{If \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
-#'   \item{If \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
-#'   \item{If \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
-#'   \item{If \code{to_return=="qresiduals"}:}{a size ((n_obs-p)x1) vector containing the quantile residuals.}
+#'   \item{If \code{to_return=="regime_cmeans"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the regime specific conditional means.}
+#'   \item{If \code{to_return=="regime_cvars"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the regime specific conditional variances.}
+#'   \item{If \code{to_return=="total_cmeans"}:}{a size \eqn{((n_obs-p)\times 1)} vector containing the total conditional means.}
+#'   \item{If \code{to_return=="total_cvars"}:}{a size \eqn{((n_obs-p)\times 1)} vector containing the total conditional variances.}
+#'   \item{If \code{to_return=="qresiduals"}:}{a size \eqn{((n_obs-p)\times 1)} vector containing the quantile residuals.}
 #'  }
 #' @references
 #'  \itemize{
@@ -498,8 +498,8 @@ loglikelihood <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR"
 #' @details The first p observations are taken to be the initial values.
 #' @return
 #'  \describe{
-#'   \item{If \code{to_return=="mw"}:}{a size ((n_obs-p)xM) matrix containing the mixing weights: for m:th component in m:th column.}
-#'   \item{If \code{to_return=="mw_tplus1"}:}{a size ((n_obs-p+1)xM) matrix containing the mixing weights: for m:th component in m:th column.
+#'   \item{If \code{to_return=="mw"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the mixing weights: for m:th component in m:th column.}
+#'   \item{If \code{to_return=="mw_tplus1"}:}{a size \eqn{((n_obs-p+1)\times M)} matrix containing the mixing weights: for m:th component in m:th column.
 #'     The last row is for \eqn{\alpha_{m,T+1}}}.
 #'  }
 #' @inherit loglikelihood_int references
@@ -566,10 +566,10 @@ mixing_weights <- function(data, p, M, params, model=c("GMAR", "StMAR", "G-StMAR
 #'  Note that the first p observations are taken as the initial values so the conditional moments
 #'  start form the p+1:th observation (interpreted as t=1).
 #'  \describe{
-#'   \item{if \code{to_return=="regime_cmeans"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional means.}
-#'   \item{if \code{to_return=="regime_cvars"}:}{a size ((n_obs-p)xM) matrix containing the regime specific conditional variances.}
-#'   \item{if \code{to_return=="total_cmeans"}:}{a size ((n_obs-p)x1) vector containing the total conditional means.}
-#'   \item{if \code{to_return=="total_cvars"}:}{a size ((n_obs-p)x1) vector containing the total conditional variances.}
+#'   \item{if \code{to_return=="regime_cmeans"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the regime specific conditional means.}
+#'   \item{if \code{to_return=="regime_cvars"}:}{a size \eqn{((n_obs-p)\times M)} matrix containing the regime specific conditional variances.}
+#'   \item{if \code{to_return=="total_cmeans"}:}{a size \eqn{((n_obs-p)\times 1)} vector containing the total conditional means.}
+#'   \item{if \code{to_return=="total_cvars"}:}{a size \eqn{((n_obs-p)\times 1)} vector containing the total conditional variances.}
 #'  }
 #' @examples
 #' # GMAR model, regimewise conditional means and variances

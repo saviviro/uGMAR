@@ -34,12 +34,12 @@ i.e., \code{$sample} and \code{$component} will be vectors and \code{$mixing_wei
 }
 \value{
 If \code{drop==TRUE} and \code{ntimes==1} (default): \code{$sample} and \code{$component} are vectors
- and \code{$mixing_weights} is a (\code{nsim}\eqn{xM}) matrix. Otherwise, returns a list with...
+ and \code{$mixing_weights} is a (\code{nsim}\eqn{\times M}) matrix. Otherwise, returns a list with...
   \describe{
-    \item{\code{$sample}}{a size (\code{nsim}\eqn{x}\code{ntimes}) matrix containing the simulated values.}
-    \item{\code{$component}}{a size (\code{nsim}\eqn{x}\code{ntimes}) matrix containing the information from which
+    \item{\code{$sample}}{a size (\code{nsim}\eqn{\times}\code{ntimes}) matrix containing the simulated values.}
+    \item{\code{$component}}{a size (\code{nsim}\eqn{\times}\code{ntimes}) matrix containing the information from which
      mixture component each value was generated from.}
-    \item{\code{$mixing_weights}}{a size (\code{nsim}\eqn{xMx}\code{ntimes}) array containing the mixing weights corresponding to the
+    \item{\code{$mixing_weights}}{a size (\code{nsim}\eqn{\times M\times}\code{ntimes}) array containing the mixing weights corresponding to the
      sample: the dimension \code{[i, , ]} is the time index, the dimension \code{[, i, ]} indicates the regime, and the dimension
      \code{[, , i]} indicates the i:th set of simulations.}
   }

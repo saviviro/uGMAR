@@ -23,7 +23,7 @@
 #'   The parameter vectors should be of form...
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
-#'      Size \eqn{(M(p+3)+M-M1-1x1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
+#'      Size \eqn{(M(p+3)+M-M1-1\times 1)} vector \strong{\eqn{\theta}}\eqn{=}(\strong{\eqn{\upsilon_{1}}}\eqn{,...,}\strong{\eqn{\upsilon_{M}}},
 #'      \eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}) where
 #'      \itemize{
 #'        \item \strong{\eqn{\upsilon_{m}}}\eqn{=(\phi_{m,0},}\strong{\eqn{\phi_{m}}}\eqn{,}\eqn{\sigma_{m}^2)}
@@ -38,7 +38,7 @@
 #'       \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{C_{m}\psi_{m}}} (see the argument \code{constraints}).
 #'      }
 #'    \item{For \strong{restricted} models:}{
-#'      Size \eqn{(3M+M-M1+p-1x1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
+#'      Size \eqn{(3M+M-M1+p-1\times 1)} vector \strong{\eqn{\theta}}\eqn{=(\phi_{1,0},...,\phi_{M,0},}\strong{\eqn{\phi}}\eqn{,}
 #'      \eqn{\sigma_{1}^2,...,\sigma_{M}^2,}\eqn{\alpha_{1},...,\alpha_{M-1},}\strong{\eqn{\nu}}), where \strong{\eqn{\phi}}=\eqn{(\phi_{1},...,\phi_{p})}
 #'      contains the AR coefficients, which are common for all regimes.
 #'
@@ -955,8 +955,8 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
 #'      \describe{
-#'        \item{For \strong{GMAR} model:}{Size \eqn{(p+2x1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2)}.}
-#'        \item{For \strong{StMAR} model:}{Size \eqn{(p+3x1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2, \nu_{m})}.}
+#'        \item{For \strong{GMAR} model:}{Size \eqn{(p+2\times 1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2)}.}
+#'        \item{For \strong{StMAR} model:}{Size \eqn{(p+3\times 1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2, \nu_{m})}.}
 #'        \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR type regimes and same as StMAR for StMAR type regimes.}
 #'        \item{With \strong{linear constraints}:}{Parameter vector as described above, but vector \strong{\eqn{\phi_{m}}} replaced with
 #'         vector \strong{\eqn{\psi_{m}}} that satisfies \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}}.}
@@ -964,8 +964,8 @@ smart_ind <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restric
 #'    }
 #'    \item{For \strong{restricted} models:}{
 #'      \describe{
-#'        \item{For \strong{GMAR} model:}{Size \eqn{(2x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
-#'        \item{For \strong{StMAR} model:}{Size \eqn{(3x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
+#'        \item{For \strong{GMAR} model:}{Size \eqn{(2\times 1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
+#'        \item{For \strong{StMAR} model:}{Size \eqn{(3\times 1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
 #'        \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR type regimes and same as StMAR for StMAR type regimes.}
 #'        \item{With \strong{linear constraints}:}{Parameter vector as described above.}
 #'      }
@@ -1036,8 +1036,8 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 #'  \describe{
 #'    \item{For \strong{non-restricted} models:}{
 #'      \describe{
-#'        \item{For \strong{GMAR} model:}{Size \eqn{(p+2x1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2)}.}
-#'        \item{For \strong{StMAR} model:}{Size \eqn{(p+3x1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2, \nu_{m})}.}
+#'        \item{For \strong{GMAR} model:}{Size \eqn{(p+2\times 1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2)}.}
+#'        \item{For \strong{StMAR} model:}{Size \eqn{(p+3\times 1)} vector \eqn{(\phi_{m,0},\phi_{m,1},...,\phi_{m,p}, \sigma_{m}^2, \nu_{m})}.}
 #'        \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR type regimes and same as StMAR for StMAR type regimes.}
 #'        \item{With \strong{linear constraints}:}{Parameter vector as described above, but vector \strong{\eqn{\phi_{m}}} replaced with
 #'         vector \strong{\eqn{\psi_{m}}} that satisfies \strong{\eqn{\phi_{m}}}\eqn{=}\strong{\eqn{R_{m}\psi_{m}}}.}
@@ -1045,8 +1045,8 @@ extract_regime <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), re
 #'    }
 #'    \item{For \strong{restricted} models:}{
 #'      \describe{
-#'        \item{For \strong{GMAR} model:}{Size \eqn{(2x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
-#'        \item{For \strong{StMAR} model:}{Size \eqn{(3x1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
+#'        \item{For \strong{GMAR} model:}{Size \eqn{(2\times 1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2)}.}
+#'        \item{For \strong{StMAR} model:}{Size \eqn{(3\times 1)} vector \eqn{(\phi_{m,0}, \sigma_{m}^2, \nu_{m})}.}
 #'        \item{For \strong{G-StMAR} model:}{Same as GMAR for GMAR type regimes and same as StMAR for StMAR type regimes.}
 #'        \item{With \strong{linear constraints}:}{Parameter vector as described above.}
 #'      }

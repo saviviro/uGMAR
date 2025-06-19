@@ -11,7 +11,7 @@ check_pM(p, M, model = c("GMAR", "StMAR", "G-StMAR"))
 
 \item{M}{\describe{
   \item{For \strong{GMAR} and \strong{StMAR} models:}{a positive integer specifying the number of mixture components.}
-  \item{For \strong{G-StMAR} models:}{a size (2x1) integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
+  \item{For \strong{G-StMAR} models:}{a size \eqn{(2\times 1)} integer vector specifying the number of \emph{GMAR type} components \code{M1} in the
    first element and \emph{StMAR type} components \code{M2} in the second element. The total number of mixture components is \code{M=M1+M2}.}
 }}
 

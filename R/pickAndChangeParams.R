@@ -169,7 +169,7 @@ pick_alphas <- function(p, M, params, model=c("GMAR", "StMAR", "G-StMAR"), restr
 #'  the given parameter vector.
 #'
 #' @inheritParams loglikelihood_int
-#' @return Returns a \eqn{((p+2)xM)} matrix containing the parameters, column for each component.
+#' @return Returns a \eqn{((p+2)\times M)} matrix containing the parameters, column for each component.
 #'  The first row for \eqn{\phi_0} or \eqn{\mu} depending on the parametrization, the second row
 #'  for \eqn{\phi_1}, ..., the second to last row for \eqn{\phi_p}, and the last row for \eqn{\sigma^2}.
 #'  @keywords internal

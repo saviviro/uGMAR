@@ -146,3 +146,8 @@
 
 * Refined the density plot.
 * Other small updates to documentation, etc. 
+
+# uGMAR 3.6.0
+
+* Removed the years ago deprecated old functions that existed for backward compatibility.
+* Stylistic improvements to the documentation.
