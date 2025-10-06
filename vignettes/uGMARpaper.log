@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  4 JAN 2025 17:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.10)  6 OCT 2025 17:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -642,7 +642,7 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [6]
-<figures/pacfplot.pdf, id=453, 484.81125pt x 181.67876pt>
+<figures/pacfplot.pdf, id=458, 484.81125pt x 181.67876pt>
 File: figures/pacfplot.pdf Graphic file (type pdf)
 <use figures/pacfplot.pdf>
 Package pdftex.def Info: figures/pacfplot.pdf  used on input line 246.
@@ -696,7 +696,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [14]
-<figures/plotfit42gs.pdf, id=529, 484.81125pt x 363.3575pt>
+<figures/plotfit42gs.pdf, id=534, 484.81125pt x 363.3575pt>
 File: figures/plotfit42gs.pdf Graphic file (type pdf)
 <use figures/plotfit42gs.pdf>
 Package pdftex.def Info: figures/plotfit42gs.pdf  used on input line 538.
@@ -712,7 +712,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [16 <./figures/plotfit42gs.pdf>]
-<figures/proflogfit42gs.pdf, id=546, 484.81125pt x 363.3575pt>
+<figures/proflogfit42gs.pdf, id=551, 484.81125pt x 363.3575pt>
 File: figures/proflogfit42gs.pdf Graphic file (type pdf)
 <use figures/proflogfit42gs.pdf>
 Package pdftex.def Info: figures/proflogfit42gs.pdf  used on input line 594.
@@ -753,7 +753,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [23]
-<figures/diagplotfit42gsr.pdf, id=639, 484.81125pt x 363.3575pt>
+<figures/diagplotfit42gsr.pdf, id=644, 484.81125pt x 363.3575pt>
 File: figures/diagplotfit42gsr.pdf Graphic file (type pdf)
 <use figures/diagplotfit42gsr.pdf>
 Package pdftex.def Info: figures/diagplotfit42gsr.pdf  used on input line 838.
@@ -792,7 +792,7 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [27]
-<figures/predictfit42gs.pdf, id=700, 484.81125pt x 363.3575pt>
+<figures/predictfit42gs.pdf, id=705, 484.81125pt x 363.3575pt>
 File: figures/predictfit42gs.pdf Graphic file (type pdf)
 <use figures/predictfit42gs.pdf>
 Package pdftex.def Info: figures/predictfit42gs.pdf  used on input line 985.
@@ -851,10 +851,10 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [34]
-<figures/figsimuexp.pdf, id=814, 484.81125pt x 287.0725pt>
+<figures/figsimuexp.pdf, id=821, 484.81125pt x 287.0725pt>
 File: figures/figsimuexp.pdf Graphic file (type pdf)
 <use figures/figsimuexp.pdf>
-Package pdftex.def Info: figures/figsimuexp.pdf  used on input line 1127.
+Package pdftex.def Info: figures/figsimuexp.pdf  used on input line 1128.
 (pdftex.def)             Requested size: 362.37569pt x 214.58545pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -878,13 +878,13 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 
 [38] (./uGMARpaper.aux)
 Package rerunfilecheck Info: File `uGMARpaper.out' has not changed.
-(rerunfilecheck)             Checksum: 28DC449FAC53729D38E2B9FDAA49AA2F;9284.
+(rerunfilecheck)             Checksum: 04D744A81A16246D4DCBE454B75B5622;9376.
  ) 
 Here is how much of TeX's memory you used:
- 13013 strings out of 478353
- 205001 string characters out of 5848086
- 516710 words of memory out of 5000000
- 30736 multiletter control sequences out of 15000+600000
+ 13014 strings out of 478353
+ 205010 string characters out of 5848086
+ 516720 words of memory out of 5000000
+ 30737 multiletter control sequences out of 15000+600000
  526022 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,15n,77p,1804b,554s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -915,10 +915,10 @@ s/type1/public/lm/lmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pu
 blic/lm/lmtt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmt
 to10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msbm10.pfb>
-Output written on uGMARpaper.pdf (40 pages, 713404 bytes).
+Output written on uGMARpaper.pdf (40 pages, 712082 bytes).
 PDF statistics:
- 1038 PDF objects out of 1200 (max. 8388607)
- 910 compressed objects within 10 object streams
+ 1045 PDF objects out of 1200 (max. 8388607)
+ 917 compressed objects within 10 object streams
  156 named destinations out of 1000 (max. 500000)
- 375 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 383 words of extra memory for PDF output out of 10000 (max. 10000000)
 

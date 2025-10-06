@@ -151,3 +151,7 @@
 
 * Removed the years ago deprecated old functions that existed for backward compatibility.
 * Stylistic improvements to the documentation.
+
+# uGMAR 3.6.1
+
+* Updated the references in the vignette. 

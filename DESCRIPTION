@@ -1,6 +1,6 @@
 Package: uGMAR
 Title: Estimate Univariate Gaussian and Student's t Mixture Autoregressive Models
-Version: 3.6.0
+Version: 3.6.1
 Authors@R: person("Savi", "Virolainen",
                   email = "savi.virolainen@helsinki.fi",
                   role = c("aut", "cre"),

@@ -200,13 +200,6 @@ Solymos P, Zawadzki Z (2020).
 \newblock R package version 1.4-3,
   \urlprefix\url{https://CRAN.R-project.org/package=pbapply}.
 
-\bibitem[{Virolainen(2021)}]{Virolainen2:2021}
-Virolainen S (2021).
-\newblock \enquote{Gaussian and Student's $t$ mixture vector autoregressive
-  model.}
-\newblock \emph{Unpublished working paper, available as arXiv:2109.13648}.
-\newblock \urlprefix\url{https://arxiv.org/abs/2109.13648}.
-
 \bibitem[{Virolainen(2022)}]{Virolainen:2020}
 Virolainen S (2022).
 \newblock \enquote{A Mixture Autoregressive Model Based on Gaussian and
@@ -214,20 +207,29 @@ Virolainen S (2022).
 \newblock \emph{Studies in Nonlinear Dynamics \& Econometrics}, \textbf{26}(4).
 \newblock \doi{10.1515/snde-2020-0060}.
 
-\bibitem[{Virolainen(2024)}]{Virolainen:2018}
-Virolainen S (2024).
-\newblock \emph{gmvarkit: Estimate Gaussian and Student's t Mixture Vector
-  Autoregressive Models}.
-\newblock R package version 2.1.3,
+\bibitem[{Virolainen(2025{\natexlab{a}})}]{Virolainen:2018}
+Virolainen S (2025{\natexlab{a}}).
+\newblock \emph{{gmvarkit}: Estimate {Gaussian} and {Student's} $t$ Mixture
+  Vector Autoregressive Models}.
+\newblock \doi{10.32614/CRAN.package.gmvarkit}.
+\newblock R package version 2.2.0 available at CRAN:
+  \url{https://CRAN.R-project.org/package=gmvarkit},
   \urlprefix\url{https://CRAN.R-project.org/package=gmvarkit}.
 
-\bibitem[{Virolainen(2025)}]{Virolainen:2025}
-Virolainen S (2025).
+\bibitem[{Virolainen(2025{\natexlab{b}})}]{Virolainen:2025}
+Virolainen S (2025{\natexlab{b}}).
 \newblock \enquote{A statistically identified structural vector autoregression
   with endogeneously switching volatility regime.}
 \newblock \emph{Journal of Business \& Economic Statistics}, \textbf{43}(1),
   44--54.
 \newblock \doi{10.1080/07350015.2024.2322090}.
+
+\bibitem[{Virolainen({in press})}]{Virolainen2:2021}
+Virolainen S ({in press}).
+\newblock \enquote{{Gaussian} and {Student's} $t$ mixture vector autoregressive
+  model with an application to monetary policy shocks.}
+\newblock \emph{Econometrics and Statistics}.
+\newblock \doi{10.1016/j.ecosta.2025.09.003}.
 
 \bibitem[{Wong and Li(2000)}]{Wong+Li:2000}
 Wong C, Li W (2000).

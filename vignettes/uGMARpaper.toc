@@ -19,5 +19,6 @@
 \contentsline {section}{Computational details}{30}{section.7}%
 \contentsline {section}{Acknowledgments}{30}{section.7}%
 \contentsline {section}{A table of some useful functions}{31}{section.7}%
+\contentsline {section}{References}{32}{table.1}%
 \contentsline {section}{Appendix A: Simulation experiment}{35}{appendix.A}%
 \contentsline {section}{Appendix B: Closed form expressions of quantile residuals}{37}{appendix.B}%
